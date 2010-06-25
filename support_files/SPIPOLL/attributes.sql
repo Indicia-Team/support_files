@@ -36,8 +36,8 @@ INSERT INTO termlists (title, description, created_on, created_by_id, updated_on
 VALUES ('Protocol', 'The format under which this collection was surveyed.', now(), 1, now(), 1, 'bees:protocol');
 SELECT insert_term('Flash (une seule session photographique de 20mn.)', 'fra', null, 'bees:protocol');
 SELECT tmp_add_term('Flash (a single 20minute photographic session)', 'eng', null, 'bees:protocol');
-SELECT insert_term('Pose B (un ou plusieurs sessions photographiques de plus de 20mn sur 3 jour max.)', 'fra', null, 'bees:protocol');
-SELECT tmp_add_term('Pose B (one or more photographic sessions of more than 20minutes over a maximum of 3 days)', 'eng', null, 'bees:protocol');
+SELECT insert_term('Long (un ou plusieurs sessions photographiques de plus de 20mn sur 3 jour max.)', 'fra', null, 'bees:protocol');
+SELECT tmp_add_term('Long (one or more photographic sessions of more than 20minutes over a maximum of 3 days)', 'eng', null, 'bees:protocol');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
