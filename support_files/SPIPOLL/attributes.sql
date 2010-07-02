@@ -34,10 +34,10 @@ INSERT INTO sample_attributes (
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Protocol', 'The format under which this collection was surveyed.', now(), 1, now(), 1, 'bees:protocol');
-SELECT insert_term('Flash (une seule session photographique de 20mn.)', 'fra', null, 'bees:protocol');
-SELECT tmp_add_term('Flash (a single 20minute photographic session)', 'eng', null, 'bees:protocol');
-SELECT insert_term('Long (un ou plusieurs sessions photographiques de plus de 20mn sur 3 jour max.)', 'fra', null, 'bees:protocol');
-SELECT tmp_add_term('Long (one or more photographic sessions of more than 20minutes over a maximum of 3 days)', 'eng', null, 'bees:protocol');
+SELECT insert_term('Flash (une seule session photographique de 20 min.)', 'fra', null, 'bees:protocol');
+SELECT tmp_add_term('Flash (a single 20 minute photographic session)', 'eng', null, 'bees:protocol');
+SELECT insert_term('Long (une ou plusieurs sessions photographiques de plus de 20 min sur 3 jours max.)', 'fra', null, 'bees:protocol');
+SELECT tmp_add_term('Long (one or more photographic sessions of more than 20 minutes over a maximum of 3 days)', 'eng', null, 'bees:protocol');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
@@ -52,7 +52,7 @@ SELECT tmp_add_term('Self seeded', 'eng', null, 'bees:flowertype');
 SELECT insert_term('de culture', 'fra', null, 'bees:flowertype');
 SELECT tmp_add_term('Cultivated', 'eng', null, 'bees:flowertype');
 SELECT insert_term('ne se prononce pas', 'fra', null, 'bees:flowertype');
-SELECT tmp_add_term('Dont know', 'eng', null, 'bees:flowertype');
+SELECT tmp_add_term('Don''t know', 'eng', null, 'bees:flowertype');
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
@@ -127,7 +127,7 @@ SELECT tmp_add_term('75-100%', 'eng', null, 'bees:sky');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'Ciel - couverture nuageuse', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bees:sky'), 'f', 't'
+	'Sky', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bees:sky'), 'f', 't'
 );
 
 
@@ -139,8 +139,8 @@ SELECT insert_term('10-20C', 'fra', null, 'bees:temp');
 SELECT tmp_add_term('10-20C, 50-68F', 'eng', null, 'bees:temp');
 SELECT insert_term('20-30C', 'fra', null, 'bees:temp');
 SELECT tmp_add_term('20-30C, 68-86F', 'eng', null, 'bees:temp');
-SELECT insert_term('>30C', 'fra', null, 'bees:temp');
-SELECT tmp_add_term('>30C, >86F', 'eng', null, 'bees:temp');
+SELECT insert_term('> 30C', 'fra', null, 'bees:temp');
+SELECT tmp_add_term('> 30C, 86F', 'eng', null, 'bees:temp');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
@@ -163,14 +163,14 @@ SELECT tmp_add_term('strong, continuous', 'eng', null, 'bees:wind');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, termlist_id, multi_value, public, applies_to_recorder
 ) VALUES (
-	'Vent', 'L', now(), 1, now(), 1, 'f', (select id from termlists where external_key='bees:wind'), 'f', 't', 't'
+	'Wind', 'L', now(), 1, now(), 1, 'f', (select id from termlists where external_key='bees:wind'), 'f', 't', 't'
 );
 
 
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder
 ) VALUES (
-	'Fleur a l ombre', 'B', now(), 1, now(), 1, 'f', 'f', 't', 't'
+	'Shade', 'B', now(), 1, now(), 1, 'f', 'f', 't', 't'
 );
 
 
@@ -182,7 +182,7 @@ SELECT insert_term('entre 2 et 5', 'fra', null, 'bees:numInsects');
 SELECT tmp_add_term('2 - 5', 'eng', null, 'bees:numInsects');
 SELECT insert_term('plus de 5', 'fra', null, 'bees:numInsects');
 SELECT tmp_add_term('> 5', 'eng', null, 'bees:numInsects');
-SELECT insert_term('je nai pas linformation', 'fra', null, 'bees:numInsects');
+SELECT insert_term('je n''ai pas l''information', 'fra', null, 'bees:numInsects');
 SELECT tmp_add_term('dont know', 'eng', null, 'bees:numInsects');
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
