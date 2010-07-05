@@ -9,3 +9,5 @@ It does not
 The WFS_views.sql file hold the  views used to expose data to WFS. This needs to be run against the database.
 
 The *mini.png files are themeing files for the map. These are for old style controls which are not styled by CSS. They should be dropped into the iform/media/js/img directory on the DRUPAL install.
+
+The occ*.png files are required for the labeling of insects, and should be put in the misc directory.
