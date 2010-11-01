@@ -14,9 +14,56 @@ BEGIN
 		RAISE WARNING 'Unrecognised Term ID %', arg_term_id;
 		return (arg_term_id)::text;
 	END IF;
+	CLOSE curterm;
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION spipoll_get_determination_details(dettype bpchar, detuser text, detdate date) RETURNS text AS $$
+DECLARE
+	retVal	text;
+BEGIN
+	retVal := detuser||'|'||detdate::text||'|';
+	CASE dettype
+		WHEN 'B' THEN -- Considered incorrect;
+			retVal := retVal||'Doute';
+		WHEN 'C' THEN -- Correct;
+			retVal := retVal||'Valide';
+		WHEN 'I' THEN -- Incorrect;
+			retVal := retVal||'Invalide';
+		WHEN 'R' THEN -- Requires confirmation;
+			retVal := retVal||'Requires confirmation';
+		WHEN 'U' THEN -- Unconfirmed;
+			retVal := retVal||'Unconfirmed';
+		WHEN 'X' THEN -- Unidentified;
+			retVal := retVal||'Unidentified';
+		ELSE --- defaults to 'A' Considered correct;
+			retVal := retVal||'Initial';
+	END CASE;
+	return retVal;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION spipoll_get_taxon_details(tid integer, tidList integer ARRAY) RETURNS text AS $$
+DECLARE
+	retVal	text;
+	rtaxon	text;
+	tid1	integer;
+BEGIN
+	IF tid IS NOT NULL THEN
+		SELECT taxon INTO rtaxon FROM list_taxa_taxon_lists where id = tid;
+		retVal := '|'||rtaxon||'|';
+	ELSE
+		FOR tid1 IN select unnest(tidList) LOOP
+			SELECT taxon INTO rtaxon FROM list_taxa_taxon_lists where id = tid1;
+			IF retVal IS NULL THEN
+				retVal := '|';
+			END IF;
+			retVal := retVal||rtaxon||'|';
+		END LOOP;
+	END IF;
+	return retVal;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION build_spipoll_cache(arg_survey_id integer) RETURNS integer AS $$
 DECLARE
@@ -39,6 +86,7 @@ DECLARE
 	insect_number_attr_id		integer := 15;
 	---
 	mySrefSystem		integer := 27572;
+	maxHistoricalDeterminations	integer := 0; --- 0 = ALL
 	---
 	collectionrow	samples%ROWTYPE;
 	count	integer;
@@ -225,23 +273,11 @@ BEGIN
 								ELSE
 									cacherow.flower_taxon_ids := ARRAY(select '|'||unnest(rowdetermination.taxa_taxon_list_id_list)::text||'|')::text;
 								END IF;
+								cacheinsecttemplate1.flower_taxon_ids := cacherow.flower_taxon_ids;
+								cacheinsecttemplate1.flower_taxon := spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list);
 								cacherow.taxons_fleur_precise := rowdetermination.taxon_extra_info;
-								CASE rowdetermination.determination_type
-									WHEN 'B' THEN -- Considered incorrect;
-										cacheinsecttemplate1.status_fleur = 'Doute';
-									WHEN 'C' THEN -- Correct;
-										cacheinsecttemplate1.status_fleur = 'Valide';
-									WHEN 'I' THEN -- Incorrect;
-										cacheinsecttemplate1.status_fleur = 'Invalide';
-									WHEN 'R' THEN -- Requires confirmation;
-										cacheinsecttemplate1.status_fleur = 'Requires confirmation';
-									WHEN 'U' THEN -- Unconfirmed;
-										cacheinsecttemplate1.status_fleur = 'Unconfirmed';
-									WHEN 'X' THEN -- Unidentified;
-										cacheinsecttemplate1.status_fleur = 'Unidentified';
-									ELSE --- defaults to 'A' Considered correct;
-										cacheinsecttemplate1.status_fleur = '-';
-								END CASE;
+								cacheinsecttemplate1.taxons_fleur_precise := cacherow.taxons_fleur_precise;
+								cacheinsecttemplate1.status_fleur := spipoll_get_determination_details(rowdetermination.determination_type, rowdetermination.person_name::text, rowdetermination.updated_on::date);
 								OPEN curflowerimage FOR SELECT * FROM occurrence_images WHERE occurrence_id = rowflower.id AND deleted = false ORDER BY id DESC;
 								FETCH curflowerimage INTO rowflowerimage;
 								IF FOUND THEN
@@ -342,6 +378,8 @@ BEGIN
 										LOOP
 										  DECLARE
 											cacheinsectrow	spipoll_insects_cache%ROWTYPE;
+											first	boolean;
+											numHist	integer := 0;
 										  BEGIN
 										 	cacheinsectrow := cacheinsecttemplate2;
 											cacheinsectrow.insect_id := rowinsect.id;
@@ -374,63 +412,59 @@ BEGIN
 												END IF;
 											END LOOP;
 											
-											OPEN curinsectdetermination FOR SELECT * FROM determinations WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id desc;
-											FETCH curinsectdetermination INTO rowinsectdetermination;
-											IF FOUND THEN
+											first := true;
+											FOR rowinsectdetermination IN SELECT * FROM determinations WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id desc LOOP
 												IF rowinsectdetermination.updated_on > cacheinsectrow.updated THEN
 													cacheinsectrow.updated := rowinsectdetermination.updated_on;
 												END IF;
-												CASE rowinsectdetermination.determination_type
-													WHEN 'B' THEN -- Considered incorrect;
-														cacheinsectrow.status_insecte = 'Doute';
-													WHEN 'C' THEN -- Correct;
-														cacheinsectrow.status_insecte = 'Valide';
-													WHEN 'I' THEN -- Incorrect;
-														cacheinsectrow.status_insecte = 'Invalide';
-													WHEN 'R' THEN -- Requires confirmation;
-														cacheinsectrow.status_insecte = 'Requires confirmation';
-													WHEN 'U' THEN -- Unconfirmed;
-														cacheinsectrow.status_insecte = 'Unconfirmed';
-													WHEN 'X' THEN -- Unidentified;
-														cacheinsectrow.status_insecte = 'Unidentified';
-													ELSE --- defaults to 'A' Considered correct;
-														cacheinsectrow.status_insecte = '-';
-												END CASE;
-												IF rowinsectdetermination.taxa_taxon_list_id IS NOT NULL THEN
-													cacheinsectrow.insect_taxon_ids := '|'||rowinsectdetermination.taxa_taxon_list_id||'|';
+												IF first THEN
+													cacheinsectrow.insect_taxon := spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list);
+													cacheinsectrow.status_insecte := spipoll_get_determination_details(rowinsectdetermination.determination_type, rowinsectdetermination.person_name::text, rowinsectdetermination.updated_on::date);
+													IF rowinsectdetermination.taxa_taxon_list_id IS NOT NULL THEN
+														cacheinsectrow.insect_taxon_ids := '|'||rowinsectdetermination.taxa_taxon_list_id||'|';
+													ELSE
+														cacheinsectrow.insect_taxon_ids := ARRAY(select '|'||unnest(rowinsectdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+													END IF;
+													IF cacherow.insect_taxon_ids IS NULL THEN
+														cacherow.insect_taxon_ids := cacheinsectrow.insect_taxon_ids;
+													ELSE
+														cacherow.insect_taxon_ids := cacherow.insect_taxon_ids||cacheinsectrow.insect_taxon_ids;
+													END IF;
+													cacheinsectrow.taxons_insecte_precise := rowinsectdetermination.taxon_extra_info;
+													IF cacherow.taxons_insecte_precise IS NULL THEN
+														cacherow.taxons_insecte_precise := '|' || rowinsectdetermination.taxon_extra_info || '|';
+													ELSE
+														cacherow.taxons_insecte_precise := cacherow.taxons_insecte_precise || rowinsectdetermination.taxon_extra_info || '|';
+													END IF;
 												ELSE
-													cacheinsectrow.insect_taxon_ids := ARRAY(select '|'||unnest(rowinsectdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+													IF maxHistoricalDeterminations > 0 AND numHist < maxHistoricalDeterminations THEN
+														IF cacheinsectrow.insect_historical_taxon IS NULL THEN
+															cacheinsectrow.insect_historical_taxon := '{{'||spipoll_get_determination_details(rowinsectdetermination.determination_type, rowinsectdetermination.person_name::text, rowinsectdetermination.updated_on::date)||'},{'||spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list)||'}}';
+														ELSE
+															cacheinsectrow.insect_historical_taxon := cacheinsectrow.insect_historical_taxon||',{{'||spipoll_get_determination_details(rowinsectdetermination.determination_type, rowinsectdetermination.person_name::text, rowinsectdetermination.updated_on::date)||'},{'||spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list)||'}}';
+														END IF;
+														numHist := numHist+1;
+													END IF;
 												END IF;
-												IF cacherow.insect_taxon_ids IS NULL THEN
-													cacherow.insect_taxon_ids := cacheinsectrow.insect_taxon_ids;
-												ELSE
-													cacherow.insect_taxon_ids := cacherow.insect_taxon_ids||cacheinsectrow.insect_taxon_ids;
+												first = false;
+											END LOOP;
+											OPEN curinsectimage FOR SELECT * FROM occurrence_images WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id DESC;
+											FETCH curinsectimage INTO rowinsectimage;
+											IF FOUND THEN
+												cacheinsectrow.image_d_insecte = rowinsectimage.path;
+												IF rowinsectimage.updated_on > cacheinsectrow.updated THEN
+													cacheinsectrow.updated := rowinsectimage.updated_on;
 												END IF;
-												cacheinsectrow.taxons_insecte_precise := rowinsectdetermination.taxon_extra_info;
-												IF cacherow.taxons_insecte_precise IS NULL THEN
-													cacherow.taxons_insecte_precise := '|' || rowinsectdetermination.taxon_extra_info || '|';
-												ELSE
-													cacherow.taxons_insecte_precise := cacherow.taxons_insecte_precise || rowinsectdetermination.taxon_extra_info || '|';
-												END IF;
-												OPEN curinsectimage FOR SELECT * FROM occurrence_images WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id DESC;
 												FETCH curinsectimage INTO rowinsectimage;
 												IF FOUND THEN
-													cacheinsectrow.image_d_insecte = rowinsectimage.path;
-													IF rowinsectimage.updated_on > cacheinsectrow.updated THEN
-														cacheinsectrow.updated := rowinsectimage.updated_on;
-													END IF;
-													FETCH curinsectimage INTO rowinsectimage;
-													IF FOUND THEN
-														RAISE WARNING 'Multiple Insect Images on Insect ID --> %, only most recent image used, ignoring ID --> %', rowinsect.id, rowinsectimage.id ;
-													END IF;
-													--- RAISE WARNING '%', cacheinsectrow;
-													---------------------------------
-													INSERT INTO spipoll_insects_cache SELECT cacheinsectrow.*;
-													---------------------------------
+													RAISE WARNING 'Multiple Insect Images on Insect ID --> %, only most recent image used, ignoring ID --> %', rowinsect.id, rowinsectimage.id ;
 												END IF;
-												CLOSE curinsectimage;
-											END IF; --- could be flagged to be identified later 
-											CLOSE curinsectdetermination;
+												--- RAISE WARNING '%', cacheinsectrow;
+												---------------------------------
+												INSERT INTO spipoll_insects_cache SELECT cacheinsectrow.*;
+												---------------------------------
+											END IF;
+											CLOSE curinsectimage;
 										  END;
 										END LOOP;
 									END LOOP;
