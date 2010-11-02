@@ -2,19 +2,20 @@
 CREATE OR REPLACE FUNCTION spipoll_get_term(arg_term_id integer) RETURNS text AS $$
 DECLARE
 	--- set language to indicia id of the language required (1 is eng):
-	languageId integer := 8;
+	languageId integer := 6;
 	curterm refcursor;
 	termValue text;
 BEGIN
 	OPEN curterm FOR SELECT t.term::text FROM termlists_terms tt JOIN terms t ON t.id = tt.term_id AND t.language_id = languageId WHERE tt.meaning_id = arg_term_id ;
 	FETCH curterm INTO termValue;
 	IF FOUND THEN
+		CLOSE curterm;
 		return termValue;
 	ELSE
+		CLOSE curterm;
 		RAISE WARNING 'Unrecognised Term ID %', arg_term_id;
 		return (arg_term_id)::text;
 	END IF;
-	CLOSE curterm;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -68,22 +69,22 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION build_spipoll_cache(arg_survey_id integer) RETURNS integer AS $$
 DECLARE
 	-- following should be updated to reflect values in Database
-	protocol_attr_id	integer := 33;
-	closed_attr_id		integer := 30;
+	protocol_attr_id	integer := 21;
+	closed_attr_id		integer := 20;
 	cms_userid_attr_id	integer := 18;
 	cms_username_attr_id	integer := 19;
-	flower_type_attr_id		integer := 16;
-	habitat_attr_id		integer := 3;
+	flower_type_attr_id		integer := 3;
+	habitat_attr_id		integer := 1;
 	hive_attr_id		integer := 2;
 	email_attr_id		integer := 8;
-	start_time_attr_id		integer := 28;
-	end_time_attr_id		integer := 29;
-	sky_attr_id		integer := 34;
-	shade_attr_id		integer := 35;
-	temp_attr_id		integer := 36;
-	wind_attr_id		integer := 37;
-	insect_foraging_attr_id		integer := 14;
-	insect_number_attr_id		integer := 15;
+	start_time_attr_id		integer := 22;
+	end_time_attr_id		integer := 23;
+	sky_attr_id		integer := 24;
+	shade_attr_id		integer := 27;
+	temp_attr_id		integer := 25;
+	wind_attr_id		integer := 26;
+	insect_foraging_attr_id		integer := 5;
+	insect_number_attr_id		integer := 4;
 	---
 	mySrefSystem		integer := 27572;
 	maxHistoricalDeterminations	integer := 0; --- 0 = ALL
@@ -514,5 +515,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 --- BEGIN;
-select * from build_spipoll_cache(6);
+--- select * from build_spipoll_cache(2); 
 --- COMMIT;
