@@ -23,7 +23,11 @@ CREATE OR REPLACE FUNCTION spipoll_get_determination_details(dettype bpchar, det
 DECLARE
 	retVal	text;
 BEGIN
-	retVal := detuser||'|'||detdate::text||'|';
+	IF detuser IS NOT NULL THEN
+		retVal := detuser||'|'||detdate::text||'|';
+	ELSE
+		retVal := detdate::text||'|';
+	END IF;
 	CASE dettype
 		WHEN 'B' THEN -- Considered incorrect;
 			retVal := retVal||'Doute';
@@ -100,14 +104,14 @@ DECLARE
 	rowlocationimage location_images%ROWTYPE;
 	curflower refcursor;
 	rowflower occurrences%ROWTYPE;
-	curdetermination refcursor;
+	--- curdetermination refcursor;
 	rowdetermination determinations%ROWTYPE;
 	curflowerimage refcursor;
 	rowflowerimage occurrence_images%ROWTYPE;
 	rowoccurrenceattributevalue	occurrence_attribute_values%ROWTYPE;
 	rowsession		samples%ROWTYPE;
 	rowinsect	occurrences%ROWTYPE;
-	curinsectdetermination refcursor;
+	--- curinsectdetermination refcursor;
 	rowinsectdetermination determinations%ROWTYPE;
 	curinsectimage refcursor;
 	rowinsectimage occurrence_images%ROWTYPE;
@@ -129,6 +133,8 @@ BEGIN
 	  	updated				date;
 	  	sessionupdated		date;
 	  	temp				text;
+	  	first				boolean;
+	  	numHist				integer := 0;
 	  BEGIN
 		status := 2; -- 0 is open, 1 is closed, 2 is don't know
 		cacherow.collection_id := collectionrow.id;
@@ -262,23 +268,38 @@ BEGIN
 									updated := rowoccurrenceattributevalue.updated_on;
 								END IF;
 							END LOOP;
-							OPEN curdetermination FOR SELECT * FROM determinations WHERE occurrence_id = rowflower.id AND deleted = false ORDER BY id desc;
-							FETCH curdetermination INTO rowdetermination;
-							IF FOUND THEN
+							first := true;
+							numHist := 0;
+							FOR rowdetermination IN SELECT * FROM determinations WHERE occurrence_id = rowflower.id AND deleted = false ORDER BY id desc LOOP
 								IF rowdetermination.updated_on > updated THEN
 									updated := rowdetermination.updated_on;
 								END IF;
-								--- flower treated slightly differently to insect - there most always be only one flower and it must have an identification
-								IF rowdetermination.taxa_taxon_list_id IS NOT NULL THEN
-									cacherow.flower_taxon_ids := '|'||rowdetermination.taxa_taxon_list_id||'|';
+								IF first THEN
+									--- flower treated slightly differently to insect - there most always be only one flower and it must have an identification
+									IF rowdetermination.taxa_taxon_list_id IS NOT NULL THEN
+										cacherow.flower_taxon_ids := '|'||rowdetermination.taxa_taxon_list_id||'|';
+									ELSE
+										cacherow.flower_taxon_ids := ARRAY(select '|'||unnest(rowdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+									END IF;
+									cacheinsecttemplate1.flower_taxon_ids := cacherow.flower_taxon_ids;
+									cacheinsecttemplate1.flower_taxon := spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list);
+									cacherow.taxons_fleur_precise := rowdetermination.taxon_extra_info;
+									cacheinsecttemplate1.taxons_fleur_precise := cacherow.taxons_fleur_precise;
+									cacheinsecttemplate1.status_fleur_giver := rowdetermination.person_name::text;
+									cacheinsecttemplate1.status_fleur := spipoll_get_determination_details(rowdetermination.determination_type, NULL, rowdetermination.updated_on::date);
 								ELSE
-									cacherow.flower_taxon_ids := ARRAY(select '|'||unnest(rowdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+									IF maxHistoricalDeterminations = 0 OR numHist < maxHistoricalDeterminations THEN
+										IF cacheinsecttemplate1.fleur_historical_taxon IS NULL THEN
+											cacheinsecttemplate1.fleur_historical_taxon := '{{'||spipoll_get_determination_details(rowdetermination.determination_type, rowdetermination.person_name::text, rowdetermination.updated_on::date)||'},{'||spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list)||'}}';
+										ELSE
+											cacheinsecttemplate1.fleur_historical_taxon := cacheinsecttemplate1.fleur_historical_taxon||',{{'||spipoll_get_determination_details(rowdetermination.determination_type, rowdetermination.person_name::text, rowdetermination.updated_on::date)||'},{'||spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list)||'}}';
+										END IF;
+										numHist := numHist+1;
+									END IF;
 								END IF;
-								cacheinsecttemplate1.flower_taxon_ids := cacherow.flower_taxon_ids;
-								cacheinsecttemplate1.flower_taxon := spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list);
-								cacherow.taxons_fleur_precise := rowdetermination.taxon_extra_info;
-								cacheinsecttemplate1.taxons_fleur_precise := cacherow.taxons_fleur_precise;
-								cacheinsecttemplate1.status_fleur := spipoll_get_determination_details(rowdetermination.determination_type, rowdetermination.person_name::text, rowdetermination.updated_on::date);
+								first = false;
+							END LOOP;
+							IF cacherow.flower_taxon_ids is NOT NULL THEN
 								OPEN curflowerimage FOR SELECT * FROM occurrence_images WHERE occurrence_id = rowflower.id AND deleted = false ORDER BY id DESC;
 								FETCH curflowerimage INTO rowflowerimage;
 								IF FOUND THEN
@@ -379,8 +400,6 @@ BEGIN
 										LOOP
 										  DECLARE
 											cacheinsectrow	spipoll_insects_cache%ROWTYPE;
-											first	boolean;
-											numHist	integer := 0;
 										  BEGIN
 										 	cacheinsectrow := cacheinsecttemplate2;
 											cacheinsectrow.insect_id := rowinsect.id;
@@ -414,13 +433,15 @@ BEGIN
 											END LOOP;
 											
 											first := true;
+											numHist := 0;
 											FOR rowinsectdetermination IN SELECT * FROM determinations WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id desc LOOP
 												IF rowinsectdetermination.updated_on > cacheinsectrow.updated THEN
 													cacheinsectrow.updated := rowinsectdetermination.updated_on;
 												END IF;
 												IF first THEN
 													cacheinsectrow.insect_taxon := spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list);
-													cacheinsectrow.status_insecte := spipoll_get_determination_details(rowinsectdetermination.determination_type, rowinsectdetermination.person_name::text, rowinsectdetermination.updated_on::date);
+													cacheinsectrow.status_insecte_giver := rowinsectdetermination.person_name::text;
+													cacheinsectrow.status_insecte := spipoll_get_determination_details(rowinsectdetermination.determination_type, NULL, rowinsectdetermination.updated_on::date);
 													IF rowinsectdetermination.taxa_taxon_list_id IS NOT NULL THEN
 														cacheinsectrow.insect_taxon_ids := '|'||rowinsectdetermination.taxa_taxon_list_id||'|';
 													ELSE
@@ -438,7 +459,7 @@ BEGIN
 														cacherow.taxons_insecte_precise := cacherow.taxons_insecte_precise || rowinsectdetermination.taxon_extra_info || '|';
 													END IF;
 												ELSE
-													IF maxHistoricalDeterminations > 0 AND numHist < maxHistoricalDeterminations THEN
+													IF maxHistoricalDeterminations = 0 OR numHist < maxHistoricalDeterminations THEN
 														IF cacheinsectrow.insect_historical_taxon IS NULL THEN
 															cacheinsectrow.insect_historical_taxon := '{{'||spipoll_get_determination_details(rowinsectdetermination.determination_type, rowinsectdetermination.person_name::text, rowinsectdetermination.updated_on::date)||'},{'||spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list)||'}}';
 														ELSE
@@ -481,7 +502,6 @@ BEGIN
 							ELSE
 								RAISE WARNING 'Could not find Determination for Flower ID --> %, Collection % not cached', rowflower.id, collectionrow.id ;
 							END IF;
-							CLOSE curdetermination;
 							FETCH curflower INTO rowflower;
 							IF FOUND THEN
 								RAISE WARNING 'Multiple Flowers on Collection ID --> %, only most recent location used, ignoring ID --> %', collectionrow.id, rowflower.id ;
@@ -499,7 +519,7 @@ BEGIN
 						RAISE WARNING 'Multiple Locations on Collection ID --> %, only most recent location used, ignoring ID --> %', collectionrow.id, rowlocation.id ;
 					END IF;
 				WHEN 0 THEN
-					RAISE WARNING 'Collection not closed, ID --> %', collectionrow.id ;
+					--- RAISE WARNING 'Collection not closed, ID --> %', collectionrow.id ;
 				WHEN 2 THEN
 					RAISE WARNING 'No closed attribute found for Collection ID --> %', collectionrow.id ;
 			END CASE;
