@@ -1,7 +1,10 @@
+DROP TABLE spipoll_collections_cache CASCADE;
 CREATE TABLE spipoll_collections_cache (
     collection_id integer NOT NULL,
     datedebut date,
     datefin date,
+    closed timestamp without time zone,
+    updated timestamp without time zone,
     nom character varying(200),
     habitat_ids text,
     username text,
@@ -22,14 +25,16 @@ CREATE TABLE spipoll_collections_cache (
 SELECT AddGeometryColumn ('spipoll_collections_cache', 'geom', 900913, 'GEOMETRY', 2);
 
 CREATE OR REPLACE VIEW spipoll_collections_cache_view AS
-	SELECT * FROM spipoll_collections_cache ORDER BY datedebut DESC, collection_id DESC;
+	SELECT * FROM spipoll_collections_cache ORDER BY closed DESC;
 
+DROP TABLE spipoll_insects_cache CASCADE;
 CREATE TABLE spipoll_insects_cache (
     insect_id integer NOT NULL,
     collection_id integer NOT NULL,
     datedebut date, 
     datefin date,
-    updated date,
+    closed timestamp without time zone,
+    updated timestamp without time zone,
     nom character varying(200),
     protocol text,
     srefX text,
@@ -75,4 +80,4 @@ CREATE TABLE spipoll_insects_cache (
 SELECT AddGeometryColumn ('spipoll_insects_cache', 'geom', 900913, 'GEOMETRY', 2);
 
 CREATE OR REPLACE VIEW spipoll_insects_cache_view AS
-	SELECT * FROM spipoll_insects_cache ORDER BY datedebut DESC, collection_id DESC, insect_id;
+	SELECT * FROM spipoll_insects_cache ORDER BY closed DESC, insect_id;
