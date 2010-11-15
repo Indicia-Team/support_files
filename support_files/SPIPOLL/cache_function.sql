@@ -130,8 +130,8 @@ BEGIN
 	  	cacherow			spipoll_collections_cache%ROWTYPE;
 	  	cacheinsecttemplate1	spipoll_insects_cache%ROWTYPE;
 	  	cacheinsecttemplate2	spipoll_insects_cache%ROWTYPE;
-	  	updated				date;
-	  	sessionupdated		date;
+	  	updated				timestamp without time zone;
+	  	sessionupdated		timestamp without time zone;
 	  	temp				text;
 	  	first				boolean;
 	  	numHist				integer := 0;
@@ -194,6 +194,8 @@ BEGIN
 						ELSE
 							RAISE WARNING 'Multiple Closed Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
 						END IF;
+						cacherow.closed = rowsampleattributevalue.updated_on;
+						cacheinsecttemplate1.closed = rowsampleattributevalue.updated_on;
 					WHEN cms_username_attr_id THEN
 						IF cacherow.username IS NULL THEN
 							cacherow.username := rowsampleattributevalue.text_value;
@@ -306,6 +308,7 @@ BEGIN
 									IF rowflowerimage.updated_on > updated THEN
 										updated := rowflowerimage.updated_on;
 									END IF;
+									cacherow.updated = updated;
 									cacherow.image_de_la_fleur = rowflowerimage.path;
 									cacheinsecttemplate1.image_de_la_fleur = rowflowerimage.path;
 									FETCH curflowerimage INTO rowflowerimage;
@@ -477,6 +480,9 @@ BEGIN
 												IF rowinsectimage.updated_on > cacheinsectrow.updated THEN
 													cacheinsectrow.updated := rowinsectimage.updated_on;
 												END IF;
+												IF cacheinsectrow.updated > cacherow.updated THEN
+													cacherow.updated := cacheinsectrow.updated;
+												END IF;
 												FETCH curinsectimage INTO rowinsectimage;
 												IF FOUND THEN
 													RAISE WARNING 'Multiple Insect Images on Insect ID --> %, only most recent image used, ignoring ID --> %', rowinsect.id, rowinsectimage.id ;
@@ -504,7 +510,7 @@ BEGIN
 							END IF;
 							FETCH curflower INTO rowflower;
 							IF FOUND THEN
-								RAISE WARNING 'Multiple Flowers on Collection ID --> %, only most recent location used, ignoring ID --> %', collectionrow.id, rowflower.id ;
+								RAISE WARNING 'Multiple Flowers on Collection ID --> %, only most recent flower used, ignoring ID --> %', collectionrow.id, rowflower.id ;
 							END IF;
 						ELSE
 							RAISE WARNING 'Could not find Flower for Collection ID --> %, Collection not cached', collectionrow.id ;
@@ -535,5 +541,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 --- BEGIN;
---- select * from build_spipoll_cache(2); 
+select * from build_spipoll_cache(2); 
 --- COMMIT;
