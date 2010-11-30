@@ -50,3 +50,84 @@ INSERT INTO sample_attributes (
 	'Fiabilité du comptage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:reliability'), 'f', 't'
 );
 
+-- after the following are set up, need to set their structure blocks, as well as their website allocation
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Observer', 'T', now(), 1, now(), 1, 'f', 't'
+);
+-- start and end time already exist
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('MNHNL Month', 'Survey month', now(), 1, now(), 1, 'butterfly:Month');
+SELECT insert_term('AVRIL', 'fra', null, 'butterfly:Month'); 
+SELECT insert_term('MAI', 'fra', null, 'butterfly:Month'); 
+SELECT insert_term('JUIN', 'fra', null, 'butterfly:Month'); 
+SELECT insert_term('JUIL', 'fra', null, 'butterfly:Month'); 
+SELECT insert_term('AOUT', 'fra', null, 'butterfly:Month'); 
+SELECT insert_term('SEPT', 'fra', null, 'butterfly:Month'); 
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
+) VALUES (
+	'MNHNL Month', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:Month'), 'f', 't'
+);
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('MNHNL Number In Month', 'Survey number within this month', now(), 1, now(), 1, 'butterfly:numInMonth');
+SELECT insert_term('1', 'fra', null, 'butterfly:numInMonth'); 
+SELECT insert_term('2', 'fra', null, 'butterfly:numInMonth'); 
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
+) VALUES (
+	'Number in Month', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:numInMonth'), 'f', 't'
+);
+-- Use existing attribute for temperature
+-- need to set sort order for following termlist
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('MNHNL Wind', 'Beaufort wind Force', now(), 1, now(), 1, 'butterfly:wind');
+SELECT insert_term('Force  0: Calm. Smoke rises vertically.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  1: Smoke drift indicates wind direction, still wind vanes.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  2: Wind felt on exposed skin. Leaves rustle, vanes begin to move.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  3: Leaves and small twigs constantly moving, light flags extended.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  4: Dust and loose paper raised. Small branches begin to move.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  5: Branches of a moderate size move. Small trees in leaf begin to sway.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  6: Large branches in motion. Whistling heard in overhead wires.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  7: Whole trees in motion. Effort needed to walk against the wind.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  8: Some twigs broken from trees. Progress on foot is seriously impeded.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  9: Some branches break off trees, and some small trees blow over.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force 10: Trees are broken off or uprooted, saplings bent and deformed.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force 11: Widespread damage to vegetation. Many roofing surfaces are damaged.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force 12: Very widespread damage to vegetation. Debris may be hurled about.', 'fra', null, 'butterfly:wind');
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
+) VALUES (
+	'Wind Force', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:wind'), 'f', 't'
+);
+
+-- need to set sort order for following termlist
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('MNHNL Cloud', 'Percent Cloud Cover', now(), 1, now(), 1, 'butterfly:cloud');
+SELECT insert_term('0%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('5%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('10%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('15%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('20%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('25%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('30%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('35%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('40%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('45%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('50%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('55%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('60%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('65%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('70%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('75%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('80%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('85%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('90%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('95%', 'fra', null, 'butterfly:cloud');
+SELECT insert_term('100%', 'fra', null, 'butterfly:cloud');
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Cloud Cover', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:cloud'), 'f', 't'
+);
