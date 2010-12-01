@@ -36,7 +36,7 @@ INSERT INTO sample_attributes (
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Aucune Observation', 'B', now(), 1, now(), 1, 'f', 't'
+	'No observation', 'B', now(), 1, now(), 1, 'f', 't'
 );
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
@@ -47,7 +47,7 @@ SELECT insert_term('3', 'fra', null, 'butterfly:reliability'); --- Unreliable da
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'Fiabilité du comptage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:reliability'), 'f', 't'
+	'Survey Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:reliability'), 'f', 't'
 );
 
 -- after the following are set up, need to set their structure blocks, as well as their website allocation
@@ -59,12 +59,12 @@ INSERT INTO sample_attributes (
 -- start and end time already exist
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('MNHNL Month', 'Survey month', now(), 1, now(), 1, 'butterfly:Month');
-SELECT insert_term('AVRIL', 'fra', null, 'butterfly:Month'); 
-SELECT insert_term('MAI', 'fra', null, 'butterfly:Month'); 
-SELECT insert_term('JUIN', 'fra', null, 'butterfly:Month'); 
-SELECT insert_term('JUIL', 'fra', null, 'butterfly:Month'); 
-SELECT insert_term('AOUT', 'fra', null, 'butterfly:Month'); 
-SELECT insert_term('SEPT', 'fra', null, 'butterfly:Month'); 
+SELECT insert_term('April', 'eng', null, 'butterfly:Month'); 
+SELECT insert_term('May', 'eng', null, 'butterfly:Month'); 
+SELECT insert_term('June', 'eng', null, 'butterfly:Month'); 
+SELECT insert_term('July', 'eng', null, 'butterfly:Month'); 
+SELECT insert_term('August', 'eng', null, 'butterfly:Month'); 
+SELECT insert_term('September', 'eng', null, 'butterfly:Month'); 
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
@@ -83,19 +83,19 @@ INSERT INTO sample_attributes (
 -- need to set sort order for following termlist
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('MNHNL Wind', 'Beaufort wind Force', now(), 1, now(), 1, 'butterfly:wind');
-SELECT insert_term('Force  0: Calm. Smoke rises vertically.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  1: Smoke drift indicates wind direction, still wind vanes.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  2: Wind felt on exposed skin. Leaves rustle, vanes begin to move.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  3: Leaves and small twigs constantly moving, light flags extended.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  4: Dust and loose paper raised. Small branches begin to move.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  5: Branches of a moderate size move. Small trees in leaf begin to sway.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  6: Large branches in motion. Whistling heard in overhead wires.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  7: Whole trees in motion. Effort needed to walk against the wind.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  8: Some twigs broken from trees. Progress on foot is seriously impeded.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force  9: Some branches break off trees, and some small trees blow over.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force 10: Trees are broken off or uprooted, saplings bent and deformed.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force 11: Widespread damage to vegetation. Many roofing surfaces are damaged.', 'fra', null, 'butterfly:wind');
-SELECT insert_term('Force 12: Very widespread damage to vegetation. Debris may be hurled about.', 'fra', null, 'butterfly:wind');
+SELECT insert_term('Force  0: Calm. Smoke rises vertically.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  1: Smoke drift indicates wind direction, still wind vanes.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  2: Wind felt on exposed skin. Leaves rustle, vanes begin to move.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  3: Leaves and small twigs constantly moving, light flags extended.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  4: Dust and loose paper raised. Small branches begin to move.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  5: Branches of a moderate size move. Small trees in leaf begin to sway.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  6: Large branches in motion. Whistling heard in overhead wires.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  7: Whole trees in motion. Effort needed to walk against the wind.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  8: Some twigs broken from trees. Progress on foot is seriously impeded.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force  9: Some branches break off trees, and some small trees blow over.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force 10: Trees are broken off or uprooted, saplings bent and deformed.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force 11: Widespread damage to vegetation. Many roofing surfaces are damaged.', 'eng', null, 'butterfly:wind');
+SELECT insert_term('Force 12: Very widespread damage to vegetation. Debris may be hurled about.', 'eng', null, 'butterfly:wind');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
