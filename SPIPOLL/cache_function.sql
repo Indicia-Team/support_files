@@ -163,12 +163,14 @@ BEGIN
 			LOOP
 				CASE rowlocationattributevalue.location_attribute_id
 					WHEN habitat_attr_id THEN --- multiple values separated by |
-						IF cacheinsecttemplate1.habitat_ids IS NULL THEN
-							cacheinsecttemplate1.habitat_ids := '|' || rowlocationattributevalue.int_value || '|';
-							cacheinsecttemplate1.habitat := spipoll_get_term(rowlocationattributevalue.int_value);
-						ELSE
-							cacheinsecttemplate1.habitat_ids := cacheinsecttemplate1.habitat_ids || rowlocationattributevalue.int_value || '|';
-							cacheinsecttemplate1.habitat := cacheinsecttemplate1.habitat || ',' || spipoll_get_term(rowlocationattributevalue.int_value);
+						IF rowlocationattributevalue.int_value > 0 THEN --- zero used to indicate entry was unchecked - ie not selected - so ignore.
+							IF cacheinsecttemplate1.habitat_ids IS NULL THEN
+								cacheinsecttemplate1.habitat_ids := '|' || rowlocationattributevalue.int_value || '|';
+								cacheinsecttemplate1.habitat := spipoll_get_term(rowlocationattributevalue.int_value);
+							ELSE
+								cacheinsecttemplate1.habitat_ids := cacheinsecttemplate1.habitat_ids || rowlocationattributevalue.int_value || '|';
+								cacheinsecttemplate1.habitat := cacheinsecttemplate1.habitat || ',' || spipoll_get_term(rowlocationattributevalue.int_value);
+							END IF;
 						END IF;
 					WHEN hive_attr_id THEN
 						IF cacheinsecttemplate1.nearest_hive IS NULL THEN
