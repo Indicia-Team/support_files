@@ -1,8 +1,14 @@
+-- there are issues with straight dates. When geoserver retrieves them, they are assume to be in the local
+-- Time zone, but this is converted to GMT for the purposes of WFS etc, so it goes back one hour (and hence one day)
+-- when the data comes out.
+-- for this reason we have to convert the dates to a timestamp with time zone.
 DROP TABLE spipoll_collections_cache CASCADE;
 CREATE TABLE spipoll_collections_cache (
     collection_id integer NOT NULL,
-    datedebut date,
+    datedebut date, 
+    datedebut_txt character varying(10), 
     datefin date,
+    datefin_txt character varying(10),
     closed timestamp without time zone,
     updated timestamp without time zone,
     nom character varying(200),
@@ -32,7 +38,9 @@ CREATE TABLE spipoll_insects_cache (
     insect_id integer NOT NULL,
     collection_id integer NOT NULL,
     datedebut date, 
+    datedebut_txt character varying(10), 
     datefin date,
+    datefin_txt character varying(10),
     closed timestamp without time zone,
     updated timestamp without time zone,
     nom character varying(200),

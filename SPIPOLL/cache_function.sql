@@ -140,9 +140,13 @@ BEGIN
 		cacherow.collection_id := collectionrow.id;
 		cacheinsecttemplate1.collection_id := collectionrow.id;
 		cacherow.datedebut := collectionrow.date_start;
+		cacherow.datedebut_txt := to_char(collectionrow.date_start, 'YYYY-MM-DD');
 		cacheinsecttemplate1.datedebut := collectionrow.date_start;
+		cacheinsecttemplate1.datedebut_txt := cacherow.datedebut_txt;
 		cacherow.datefin := collectionrow.date_end;
+		cacherow.datefin_txt := to_char(collectionrow.date_end, 'YYYY-MM-DD');
 		cacheinsecttemplate1.datefin := collectionrow.date_end;
+		cacheinsecttemplate1.datefin_txt := cacherow.datefin_txt;
 		updated := collectionrow.updated_on;
 		OPEN curlocation FOR SELECT * FROM locations WHERE id = collectionrow.location_id AND deleted = false ORDER BY id DESC;
 		FETCH curlocation INTO rowlocation;
