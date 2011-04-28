@@ -295,6 +295,8 @@ BEGIN
 									cacheinsecttemplate1.taxons_fleur_precise := cacherow.taxons_fleur_precise;
 									cacheinsecttemplate1.status_fleur_giver := rowdetermination.person_name::text;
 									cacheinsecttemplate1.status_fleur := spipoll_get_determination_details(rowdetermination.determination_type, NULL, rowdetermination.updated_on::date);
+									cacherow.status_fleur_code := rowdetermination.determination_type;
+									cacheinsecttemplate1.status_fleur_code := rowdetermination.determination_type;
 								ELSE
 									IF maxHistoricalDeterminations = 0 OR numHist < maxHistoricalDeterminations THEN
 										IF cacheinsecttemplate1.fleur_historical_taxon IS NULL THEN
@@ -451,10 +453,16 @@ BEGIN
 													cacheinsectrow.insect_taxon := spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list);
 													cacheinsectrow.status_insecte_giver := rowinsectdetermination.person_name::text;
 													cacheinsectrow.status_insecte := spipoll_get_determination_details(rowinsectdetermination.determination_type, NULL, rowinsectdetermination.updated_on::date);
+													cacheinsectrow.status_insecte_code := rowinsectdetermination.determination_type;
 													IF rowinsectdetermination.taxa_taxon_list_id IS NOT NULL THEN
 														cacheinsectrow.insect_taxon_ids := '|'||rowinsectdetermination.taxa_taxon_list_id||'|';
 													ELSE
 														cacheinsectrow.insect_taxon_ids := ARRAY(select '|'||unnest(rowinsectdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+													END IF;
+													IF cacherow.status_insecte_code IS NULL THEN
+														cacherow.status_insecte_code := cacheinsectrow.status_insecte_code;
+													ELSE
+														cacherow.status_insecte_code := cacherow.status_insecte_code||cacheinsectrow.status_insecte_code;
 													END IF;
 													IF cacherow.insect_taxon_ids IS NULL THEN
 														cacherow.insect_taxon_ids := cacheinsectrow.insect_taxon_ids;
