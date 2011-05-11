@@ -52,6 +52,7 @@ CREATE TABLE spipoll_insects_cache (
     habitat_ids text,
     habitat text,
     nearest_hive integer,
+    within50m text,
     username text,
     userid text,
     email text,
@@ -85,8 +86,14 @@ CREATE TABLE spipoll_insects_cache (
     notonaflower text,
     number_insect text,
     image_de_environment character varying(200),
+    image_de_environment_camera character varying(200),
+    image_de_environment_datetime character varying(200),
     image_de_la_fleur character varying(200),
-    image_d_insecte character varying(200)
+    image_de_la_fleur_camera character varying(200),
+    image_de_la_fleur_datetime character varying(200),
+    image_d_insecte character varying(200),
+    image_d_insecte_camera character varying(200),
+    image_d_insecte_datetime character varying(200)
 ) ;
 
 SELECT AddGeometryColumn ('spipoll_insects_cache', 'geom', 900913, 'GEOMETRY', 2);

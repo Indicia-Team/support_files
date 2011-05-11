@@ -38,8 +38,26 @@ INSERT INTO location_attributes (
 ) VALUES (
 	'within50m', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bees:YesNoDontKnow'), 'f', 't'
 );
-
-
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Location Photo Camera', 'T', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Location Photo DateTime', 'T', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Occurrence Photo Camera', 'T', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Occurrence Photo DateTime', 'T', now(), 1, now(), 1, 'f', 't'
+);
 
 
 
