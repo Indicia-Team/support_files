@@ -80,6 +80,9 @@ DECLARE
 	flower_type_attr_id		integer := 3;
 	habitat_attr_id		integer := 1;
 	hive_attr_id		integer := 2;
+	within50m_attr_id		integer := 3;
+	location_picture_camera_attr_id		integer := 4;
+	location_picture_datetime_attr_id		integer := 5;
 	email_attr_id		integer := 8;
 	start_time_attr_id		integer := 22;
 	end_time_attr_id		integer := 23;
@@ -89,6 +92,8 @@ DECLARE
 	wind_attr_id		integer := 26;
 	insect_foraging_attr_id		integer := 5;
 	insect_number_attr_id		integer := 4;
+	occurrence_picture_camera_attr_id		integer := 6;
+	occurrence_picture_datetime_attr_id		integer := 7;
 	---
 	mySrefSystem		integer := 27572;
 	maxHistoricalDeterminations	integer := 0; --- 0 = ALL
@@ -182,6 +187,28 @@ BEGIN
 						ELSE
 							RAISE WARNING 'Multiple Hive Distance Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
 						END IF;
+					WHEN within50m_attr_id THEN
+						IF cacheinsecttemplate1.within50m IS NULL THEN
+							IF rowlocationattributevalue.int_value = 0 THEN
+								cacheinsecttemplate1.within50m := 'Non';
+							ELSE
+								cacheinsecttemplate1.within50m := 'Oui';
+							END IF;
+						ELSE
+							RAISE WARNING 'Multiple Within50m Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+						END IF;
+					WHEN location_picture_camera_attr_id THEN
+						IF cacheinsecttemplate1.image_de_environment_camera IS NULL THEN
+							cacheinsecttemplate1.image_de_environment_camera := rowlocationattributevalue.text_value;
+						ELSE
+							RAISE WARNING 'Multiple Location Picture Camera Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+						END IF;
+					WHEN location_picture_datetime_attr_id THEN
+						IF cacheinsecttemplate1.image_de_environment_datetime IS NULL THEN
+							cacheinsecttemplate1.image_de_environment_datetime := rowlocationattributevalue.text_value;
+						ELSE
+							RAISE WARNING 'Multiple Location Picture Datetime Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+						END IF;
 					ELSE
 						RAISE WARNING 'Unrecognised Location Attribute, Location ID --> %, LA ID --> % in LAV ID --> %: ignored', rowlocation.id, rowlocationattributevalue.location_attribute_id, rowlocationattributevalue.id ;
 				END CASE;
@@ -268,6 +295,18 @@ BEGIN
 											cacheinsecttemplate1.flower_type = spipoll_get_term(rowoccurrenceattributevalue.int_value);
 										ELSE
 											RAISE WARNING 'Multiple Flower Type Attributes for Flower ID --> %, ignored Attr ID --> %', rowflower.id, rowoccurrenceattributevalue.id ;
+										END IF;
+									WHEN occurrence_picture_camera_attr_id THEN
+										IF cacheinsecttemplate1.image_de_la_fleur_camera IS NULL THEN
+											cacheinsecttemplate1.image_de_la_fleur_camera := rowoccurrenceattributevalue.text_value;
+										ELSE
+											RAISE WARNING 'Multiple Flower Picture Camera Attributes for Flower ID --> %, ignored Attr ID --> %', rowflower.id, rowoccurrenceattributevalue.id ;
+										END IF;
+									WHEN occurrence_picture_datetime_attr_id THEN
+										IF cacheinsecttemplate1.image_de_la_fleur_datetime IS NULL THEN
+											cacheinsecttemplate1.image_de_la_fleur_datetime := rowoccurrenceattributevalue.text_value;
+										ELSE
+											RAISE WARNING 'Multiple Flower Picture Datetime Attributes for Flower ID --> %, ignored Attr ID --> %', rowflower.id, rowoccurrenceattributevalue.id ;
 										END IF;
 									ELSE
 										RAISE WARNING 'Unrecognised Flower Attribute, Flower ID --> %, OA ID --> % in OAV ID --> %: ignored', rowflower.id, rowoccurrenceattributevalue.occurrence_attribute_id, rowoccurrenceattributevalue.id ;
@@ -434,6 +473,18 @@ BEGIN
 															END IF;
 														ELSE
 															RAISE WARNING 'Multiple Foraging Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
+														END IF;
+													WHEN occurrence_picture_camera_attr_id THEN
+														IF cacheinsectrow.image_d_insecte_camera IS NULL THEN
+															cacheinsectrow.image_d_insecte_camera := rowoccurrenceattributevalue.text_value;
+														ELSE
+															RAISE WARNING 'Multiple Insect Picture Camera Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
+														END IF;
+													WHEN occurrence_picture_datetime_attr_id THEN
+														IF cacheinsectrow.image_d_insecte_datetime IS NULL THEN
+															cacheinsectrow.image_d_insecte_datetime := rowoccurrenceattributevalue.text_value;
+														ELSE
+															RAISE WARNING 'Multiple Insect Picture Datetime Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
 														END IF;
 													ELSE
 														RAISE WARNING 'Unrecognised Insect Attribute, Insect ID --> %, OA ID --> % in OAV ID --> %: ignored', rowinsect.id, rowoccurrenceattributevalue.occurrence_attribute_id, rowoccurrenceattributevalue.id ;
