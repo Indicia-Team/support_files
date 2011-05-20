@@ -25,6 +25,7 @@ CREATE TABLE spipoll_collections_cache (
     wind_ids text, 
     insect_taxon_ids text,
     status_insecte_code text,
+    notonaflower_ids text,
     taxons_insecte_precise text,
     image_de_environment character varying(200),
     image_de_la_fleur character varying(200)
@@ -84,6 +85,7 @@ CREATE TABLE spipoll_insects_cache (
     taxons_insecte_precise text,
     insect_historical_taxon text,
     notonaflower text,
+    notonaflower_id text,
     number_insect text,
     image_de_environment character varying(200),
     image_de_environment_camera character varying(200),
