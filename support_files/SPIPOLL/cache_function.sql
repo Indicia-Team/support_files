@@ -78,6 +78,7 @@ DECLARE
 	cms_userid_attr_id	integer := 18;
 	cms_username_attr_id	integer := 19;
 	flower_type_attr_id		integer := 3;
+	front_page_attr_id		integer := 29;
 	habitat_attr_id		integer := 1;
 	hive_attr_id		integer := 2;
 	within50m_attr_id		integer := 3;
@@ -153,119 +154,120 @@ BEGIN
 		cacheinsecttemplate1.datefin := collectionrow.date_end;
 		cacheinsecttemplate1.datefin_txt := cacherow.datefin_txt;
 		updated := collectionrow.updated_on;
-		OPEN curlocation FOR SELECT * FROM locations WHERE id = collectionrow.location_id AND deleted = false ORDER BY id DESC;
-		FETCH curlocation INTO rowlocation;
-		IF FOUND THEN
-			cacherow.nom := rowlocation.name;
-			cacheinsecttemplate1.nom := rowlocation.name;
-			cacherow.geom := rowlocation.centroid_geom;
-			cacheinsecttemplate1.geom := rowlocation.centroid_geom;
-			IF rowlocation.updated_on > updated THEN
-				updated := rowlocation.updated_on;
+		--- Before we check the location image etc, we need to retrieve the collection attribute: proceed only if closed.
+		FOR rowsampleattributevalue IN SELECT * FROM sample_attribute_values WHERE sample_id = collectionrow.id AND deleted = false ORDER BY id desc
+		LOOP
+			CASE rowsampleattributevalue.sample_attribute_id
+				WHEN closed_attr_id THEN
+					IF status = 2 THEN
+						status := rowsampleattributevalue.int_value;
+					ELSE
+						RAISE WARNING 'Multiple Closed Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+					END IF;
+					cacherow.closed = rowsampleattributevalue.updated_on;
+					cacheinsecttemplate1.closed = rowsampleattributevalue.updated_on;
+				WHEN cms_username_attr_id THEN
+					IF cacherow.username IS NULL THEN
+						cacherow.username := rowsampleattributevalue.text_value;
+						cacheinsecttemplate1.username :=rowsampleattributevalue.text_value;
+					ELSE
+						RAISE WARNING 'Multiple Username Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+					END IF;
+				WHEN cms_userid_attr_id THEN
+					IF cacheinsecttemplate1.userid IS NULL THEN
+						cacheinsecttemplate1.userid := rowsampleattributevalue.int_value;
+					ELSE
+						RAISE WARNING 'Multiple UserID Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+					END IF;
+				WHEN email_attr_id THEN
+					IF cacheinsecttemplate1.email IS NULL THEN
+						cacheinsecttemplate1.email := rowsampleattributevalue.text_value;
+					ELSE
+						RAISE WARNING 'Multiple Email Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+					END IF;
+				WHEN protocol_attr_id THEN
+					IF cacheinsecttemplate1.protocol IS NULL THEN
+						cacheinsecttemplate1.protocol := spipoll_get_term(rowsampleattributevalue.int_value);
+						IF position('(' in cacheinsecttemplate1.protocol) <> 0 THEN
+							cacheinsecttemplate1.protocol := substring(cacheinsecttemplate1.protocol for (position('(' in cacheinsecttemplate1.protocol)-2));
+						END IF;
+					ELSE
+						RAISE WARNING 'Multiple Protocol Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+					END IF;
+				WHEN front_page_attr_id THEN
+				ELSE
+					RAISE WARNING 'Unrecognised Collection Attribute, Collection ID --> %, SA ID --> % in SAV ID --> %: ignored', collectionrow.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
+			END CASE;
+			IF rowsampleattributevalue.updated_on > updated THEN
+				updated := rowsampleattributevalue.updated_on;
 			END IF;
-			SELECT ST_asText(ST_Transform(cacherow.geom,mySrefSystem)) INTO temp;
-			temp := trim(trailing ')' from trim(leading 'POINT(' from temp));
-			cacheinsecttemplate1.srefX = substring(temp for (position(' ' in temp) - 1));
-			cacheinsecttemplate1.srefY = substring(temp from (position(' ' in temp) + 1));
-			
-			FOR rowlocationattributevalue IN SELECT * FROM location_attribute_values WHERE location_id = rowlocation.id AND deleted = false ORDER BY id desc
-			LOOP
-				CASE rowlocationattributevalue.location_attribute_id
-					WHEN habitat_attr_id THEN --- multiple values separated by |
-						IF rowlocationattributevalue.int_value > 0 THEN --- zero used to indicate entry was unchecked - ie not selected - so ignore.
-							IF cacheinsecttemplate1.habitat_ids IS NULL THEN
-								cacheinsecttemplate1.habitat_ids := '|' || rowlocationattributevalue.int_value || '|';
-								cacheinsecttemplate1.habitat := spipoll_get_term(rowlocationattributevalue.int_value);
+		END LOOP;
+		CASE status
+			WHEN 1 THEN
+				OPEN curlocation FOR SELECT * FROM locations WHERE id = collectionrow.location_id AND deleted = false ORDER BY id DESC;
+				FETCH curlocation INTO rowlocation;
+				IF FOUND THEN
+					cacherow.nom := rowlocation.name;
+					cacheinsecttemplate1.nom := rowlocation.name;
+					cacherow.geom := rowlocation.centroid_geom;
+					cacheinsecttemplate1.geom := rowlocation.centroid_geom;
+					IF rowlocation.updated_on > updated THEN
+						updated := rowlocation.updated_on;
+					END IF;
+					SELECT ST_asText(ST_Transform(cacherow.geom,mySrefSystem)) INTO temp;
+					temp := trim(trailing ')' from trim(leading 'POINT(' from temp));
+					cacheinsecttemplate1.srefX = substring(temp for (position(' ' in temp) - 1));
+					cacheinsecttemplate1.srefY = substring(temp from (position(' ' in temp) + 1));
+
+					FOR rowlocationattributevalue IN SELECT * FROM location_attribute_values WHERE location_id = rowlocation.id AND deleted = false ORDER BY id desc
+					LOOP
+						CASE rowlocationattributevalue.location_attribute_id
+							WHEN habitat_attr_id THEN --- multiple values separated by |
+								IF rowlocationattributevalue.int_value > 0 THEN --- zero used to indicate entry was unchecked - ie not selected - so ignore.
+									IF cacheinsecttemplate1.habitat_ids IS NULL THEN
+										cacheinsecttemplate1.habitat_ids := '|' || rowlocationattributevalue.int_value || '|';
+										cacheinsecttemplate1.habitat := spipoll_get_term(rowlocationattributevalue.int_value);
+									ELSE
+										cacheinsecttemplate1.habitat_ids := cacheinsecttemplate1.habitat_ids || rowlocationattributevalue.int_value || '|';
+										cacheinsecttemplate1.habitat := cacheinsecttemplate1.habitat || ',' || spipoll_get_term(rowlocationattributevalue.int_value);
+									END IF;
+								END IF;
+							WHEN hive_attr_id THEN
+								IF cacheinsecttemplate1.nearest_hive IS NULL THEN
+									cacheinsecttemplate1.nearest_hive := rowlocationattributevalue.int_value;
+								ELSE
+									RAISE WARNING 'Multiple Hive Distance Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+								END IF;
+							WHEN within50m_attr_id THEN
+								IF cacheinsecttemplate1.within50m IS NULL THEN
+									IF rowlocationattributevalue.int_value = 0 THEN
+										cacheinsecttemplate1.within50m := 'Non';
+									ELSE
+										cacheinsecttemplate1.within50m := 'Oui';
+									END IF;
+								ELSE
+									RAISE WARNING 'Multiple Within50m Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+								END IF;
+							WHEN location_picture_camera_attr_id THEN
+								IF cacheinsecttemplate1.image_de_environment_camera IS NULL THEN
+									cacheinsecttemplate1.image_de_environment_camera := rowlocationattributevalue.text_value;
+								ELSE
+									RAISE WARNING 'Multiple Location Picture Camera Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+								END IF;
+							WHEN location_picture_datetime_attr_id THEN
+								IF cacheinsecttemplate1.image_de_environment_datetime IS NULL THEN
+									cacheinsecttemplate1.image_de_environment_datetime := rowlocationattributevalue.text_value;
+								ELSE
+									RAISE WARNING 'Multiple Location Picture Datetime Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+								END IF;
 							ELSE
-								cacheinsecttemplate1.habitat_ids := cacheinsecttemplate1.habitat_ids || rowlocationattributevalue.int_value || '|';
-								cacheinsecttemplate1.habitat := cacheinsecttemplate1.habitat || ',' || spipoll_get_term(rowlocationattributevalue.int_value);
-							END IF;
+								RAISE WARNING 'Unrecognised Location Attribute, Location ID --> %, LA ID --> % in LAV ID --> %: ignored', rowlocation.id, rowlocationattributevalue.location_attribute_id, rowlocationattributevalue.id ;
+						END CASE;
+						IF rowlocationattributevalue.updated_on > updated THEN
+							updated := rowlocationattributevalue.updated_on;
 						END IF;
-					WHEN hive_attr_id THEN
-						IF cacheinsecttemplate1.nearest_hive IS NULL THEN
-							cacheinsecttemplate1.nearest_hive := rowlocationattributevalue.int_value;
-						ELSE
-							RAISE WARNING 'Multiple Hive Distance Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
-						END IF;
-					WHEN within50m_attr_id THEN
-						IF cacheinsecttemplate1.within50m IS NULL THEN
-							IF rowlocationattributevalue.int_value = 0 THEN
-								cacheinsecttemplate1.within50m := 'Non';
-							ELSE
-								cacheinsecttemplate1.within50m := 'Oui';
-							END IF;
-						ELSE
-							RAISE WARNING 'Multiple Within50m Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
-						END IF;
-					WHEN location_picture_camera_attr_id THEN
-						IF cacheinsecttemplate1.image_de_environment_camera IS NULL THEN
-							cacheinsecttemplate1.image_de_environment_camera := rowlocationattributevalue.text_value;
-						ELSE
-							RAISE WARNING 'Multiple Location Picture Camera Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
-						END IF;
-					WHEN location_picture_datetime_attr_id THEN
-						IF cacheinsecttemplate1.image_de_environment_datetime IS NULL THEN
-							cacheinsecttemplate1.image_de_environment_datetime := rowlocationattributevalue.text_value;
-						ELSE
-							RAISE WARNING 'Multiple Location Picture Datetime Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
-						END IF;
-					ELSE
-						RAISE WARNING 'Unrecognised Location Attribute, Location ID --> %, LA ID --> % in LAV ID --> %: ignored', rowlocation.id, rowlocationattributevalue.location_attribute_id, rowlocationattributevalue.id ;
-				END CASE;
-				IF rowlocationattributevalue.updated_on > updated THEN
-					updated := rowlocationattributevalue.updated_on;
-				END IF;
-			END LOOP;
-			cacherow.habitat_ids := cacheinsecttemplate1.habitat_ids;
-			--- Before we check the location image etc, we need to retrieve the collection attribute: proceed only if closed.
-			FOR rowsampleattributevalue IN SELECT * FROM sample_attribute_values WHERE sample_id = collectionrow.id AND deleted = false ORDER BY id desc
-			LOOP
-				CASE rowsampleattributevalue.sample_attribute_id
-					WHEN closed_attr_id THEN
-						IF status = 2 THEN
-							status := rowsampleattributevalue.int_value;
-						ELSE
-							RAISE WARNING 'Multiple Closed Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
-						END IF;
-						cacherow.closed = rowsampleattributevalue.updated_on;
-						cacheinsecttemplate1.closed = rowsampleattributevalue.updated_on;
-					WHEN cms_username_attr_id THEN
-						IF cacherow.username IS NULL THEN
-							cacherow.username := rowsampleattributevalue.text_value;
-							cacheinsecttemplate1.username :=rowsampleattributevalue.text_value;
-						ELSE
-							RAISE WARNING 'Multiple Username Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
-						END IF;
-					WHEN cms_userid_attr_id THEN
-						IF cacheinsecttemplate1.userid IS NULL THEN
-							cacheinsecttemplate1.userid := rowsampleattributevalue.int_value;
-						ELSE
-							RAISE WARNING 'Multiple UserID Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
-						END IF;
-					WHEN email_attr_id THEN
-						IF cacheinsecttemplate1.email IS NULL THEN
-							cacheinsecttemplate1.email := rowsampleattributevalue.text_value;
-						ELSE
-							RAISE WARNING 'Multiple Email Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
-						END IF;
-					WHEN protocol_attr_id THEN
-						IF cacheinsecttemplate1.protocol IS NULL THEN
-							cacheinsecttemplate1.protocol := spipoll_get_term(rowsampleattributevalue.int_value);
-							IF position('(' in cacheinsecttemplate1.protocol) <> 0 THEN
-								cacheinsecttemplate1.protocol := substring(cacheinsecttemplate1.protocol for (position('(' in cacheinsecttemplate1.protocol)-2));
-							END IF;
-						ELSE
-							RAISE WARNING 'Multiple Protocol Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
-						END IF;
-					ELSE
-						RAISE WARNING 'Unrecognised Collection Attribute, Collection ID --> %, SA ID --> % in SAV ID --> %: ignored', collectionrow.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
-				END CASE;
-				IF rowsampleattributevalue.updated_on > updated THEN
-					updated := rowsampleattributevalue.updated_on;
-				END IF;
-			END LOOP;
-			CASE status
-				WHEN 1 THEN
+					END LOOP;
+					cacherow.habitat_ids := cacheinsecttemplate1.habitat_ids;
 					OPEN curlocationimage FOR SELECT * FROM location_images WHERE location_id = rowlocation.id AND deleted = false ORDER BY id DESC;
 					FETCH curlocationimage INTO rowlocationimage;
 					IF FOUND THEN
@@ -465,7 +467,13 @@ BEGIN
 															RAISE WARNING 'Multiple Insect Number Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
 														END IF;
 													WHEN insect_foraging_attr_id THEN
+														IF cacherow.notonaflower_ids IS NULL THEN
+															cacherow.notonaflower_ids := '|' || rowoccurrenceattributevalue.int_value || '|';
+														ELSE
+															cacherow.notonaflower_ids := cacherow.notonaflower_ids || rowoccurrenceattributevalue.int_value || '|';
+														END IF;
 														IF cacheinsectrow.notonaflower IS NULL THEN
+															cacheinsectrow.notonaflower_id = rowoccurrenceattributevalue.int_value;
 															IF rowoccurrenceattributevalue.int_value = 0 THEN
 																cacheinsectrow.notonaflower := 'Non';
 															ELSE
@@ -589,15 +597,15 @@ BEGIN
 					IF FOUND THEN
 						RAISE WARNING 'Multiple Locations on Collection ID --> %, only most recent location used, ignoring ID --> %', collectionrow.id, rowlocation.id ;
 					END IF;
-				WHEN 0 THEN
-					--- RAISE WARNING 'Collection not closed, ID --> %', collectionrow.id ;
-				WHEN 2 THEN
-					RAISE WARNING 'No closed attribute found for Collection ID --> %', collectionrow.id ;
-			END CASE;
-		ELSE
-			RAISE WARNING 'Could not find Location for Collection ID --> %, Collection not cached', collectionrow.id ;
-		END IF;
-		CLOSE curlocation;
+				ELSE
+					RAISE WARNING 'Could not find Location for Collection ID --> %, Collection not cached', collectionrow.id ;
+				END IF;
+				CLOSE curlocation;
+			WHEN 0 THEN
+				--- RAISE WARNING 'Collection not closed, ID --> %', collectionrow.id ;
+			WHEN 2 THEN
+				RAISE WARNING 'No closed attribute found for Collection ID --> %', collectionrow.id ;
+		END CASE;
 	  END;
     END LOOP;
 
