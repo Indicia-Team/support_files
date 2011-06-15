@@ -97,6 +97,7 @@ DECLARE
 	occurrence_picture_datetime_attr_id		integer := 7;
 	---
 	mySrefSystem		integer := 27572;
+	mySrefSystem2		integer := 4326;
 	maxHistoricalDeterminations	integer := 0; --- 0 = ALL
 	---
 	collectionrow	samples%ROWTYPE;
@@ -216,8 +217,18 @@ BEGIN
 					END IF;
 					SELECT ST_asText(ST_Transform(cacherow.geom,mySrefSystem)) INTO temp;
 					temp := trim(trailing ')' from trim(leading 'POINT(' from temp));
-					cacheinsecttemplate1.srefX = substring(temp for (position(' ' in temp) - 1));
-					cacheinsecttemplate1.srefY = substring(temp from (position(' ' in temp) + 1));
+					cacherow.srefX = substring(temp for (position(' ' in temp) - 1));
+					cacherow.srefY = substring(temp from (position(' ' in temp) + 1));
+					cacheinsecttemplate1.srefX = cacherow.srefX;
+					cacheinsecttemplate1.srefY = cacherow.srefY;
+					--- The next line is a bodge: without it, repeated calls with 4326 will fail.
+					SELECT ST_asText(ST_Transform(cacherow.geom,4267)) INTO temp;
+					SELECT ST_asText(ST_Transform(cacherow.geom,mySrefSystem2)) INTO temp;
+					temp := trim(trailing ')' from trim(leading 'POINT(' from temp));
+					cacherow.long = substring(temp for (position(' ' in temp) - 1));
+					cacherow.lat = substring(temp from (position(' ' in temp) + 1));
+					cacheinsecttemplate1.long = cacherow.long;
+					cacheinsecttemplate1.lat = cacherow.lat;
 
 					FOR rowlocationattributevalue IN SELECT * FROM location_attribute_values WHERE location_id = rowlocation.id AND deleted = false ORDER BY id desc
 					LOOP
