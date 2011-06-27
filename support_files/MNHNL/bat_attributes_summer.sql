@@ -2,6 +2,82 @@
 -- also need to set the order by in the termlists, remembering that the sort order from the front end does not get carried forward to children: have to do direct in DB
 -- have to set up the smaple attributes for CMS id, username and email.
 
+--- Tab 1: Site
+--- Nom du site : location name
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'address', 'T', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'commune', 'T', now(), 1, now(), 1, 'f', 't'
+);
+--- Type de gîte :
+--- Already defined for the winter bats. (SOME DIFFERENCES CONFIRM CAN USE SAME)
+--- Type de gîte Other :
+--- Already defined for the winter bats.
+--- Pertinence for follw up
+--- Already defined for the winter bats.
+
+--- Tab 2: Conditions
+
+--- Passage
+--- Already defined for the winter bats.
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder, validation_rules
+) VALUES (
+	'Start Time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'regex[/^(2[0-3]|[0,1][0-9]):[0-5][0-9]$/]'
+);
+INSERT INTO sample_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder, validation_rules
+) VALUES (
+	'End Time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'regex[/^(2[0-3]|[0,1][0-9]):[0-5][0-9]$/]'
+);
+
+--- Observateur(s)
+--- Already defined for the winter bats.
+
+--- Croquis du (des) trou(s) d’envol TBD
+--- À faire au verso
+
+Perturbations
+Lumière artificielle éclairant le(s) trou(s) d’envol
+Travaux de rénovation : en projet en cours récemment effectués
+Autre : ……………………………………………………………………...
+Conditions climatiques :
+Température:
+Vitesse du vent
+Humidité de l’air
+Couverture nuageuse
+Précipitations : Aucune Bruine Averses
+
+--- Fiabilité (exhaustivité) de l’inventaire : 1 - Fiable 2 – Peu fiable 3 – Non fiable
+--- Already defined for the winter bats.
+
+3. Espèces
+Observations
+Nombre d’individus
+Espèce Type d’observation
+Présence
+Emergences Cadavres
+……………………………...
+Contrôle de présence
+Comptage à l’émergence
+Photographie
+……………………………...
+
+Aucune observation
+Commentaires : ………………………………………………………………………………………………………
+………………………………………………………………………………………………………………………..
+
+
+----------------------------*********************************************___________________________
+----------------------------*********************************************___________________________
+----------------------------*********************************************___________________________
+----------------------------*********************************************___________________________
+
 INSERT INTO location_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
@@ -86,7 +162,7 @@ SELECT insert_term('Peu approprié', 'fra', null, 'bats:followup');
 SELECT tmp_add_term('A bit appropriate', 'eng', null, 'bats:followup');
 SELECT insert_term('Inapproprié', 'fra', null, 'bats:followup');
 SELECT tmp_add_term('Inappropriate', 'eng', null, 'bats:followup');
-INSERT INTO sample_attributes (
+INSERT INTO location_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
 	'site followup', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:followup'), 'f', 't'
@@ -253,21 +329,21 @@ INSERT INTO sample_attributes (
 );
 
 
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Bats Obs Type', 'Reliability of data for this Section.', now(), 1, now(), 1, 'bats:obstype');
-SELECT insert_term('Léthargie', 'fra', null, 'bats:obstype');
-SELECT tmp_add_term('Lethargic', 'eng', null, 'bats:obstype');
-SELECT insert_term('Cadavre(s)', 'fra', null, 'bats:obstype');
-SELECT tmp_add_term('Corpses', 'eng', null, 'bats:obstype');
-SELECT insert_term('Excréments', 'fra', null, 'bats:obstype'); 
-SELECT tmp_add_term('Excrement', 'eng', null, 'bats:obstype');
 INSERT INTO occurrence_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Bats Obs Type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:obstype'), 'f', 't'
+	'sleepy', 'B', now(), 1, now(), 1, 'f', 't'
 );
-
-
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'corpse', 'B', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'excrement', 'B', now(), 1, now(), 1, 'f', 't'
+);
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
