@@ -1,4 +1,9 @@
-create view btw_transects as select name, id, boundary_geom from locations where parent_id is null;
+DROP VIEW btw_transects; 
+CREATE VIEW btw_transects AS 
+ SELECT l.id, l.name, l.code, l.boundary_geom, lw.website_id
+   FROM locations l
+   LEFT JOIN locations_websites lw ON l.id = lw.location_id
+   WHERE l.parent_id IS NULL AND l.deleted = FALSE AND lw.deleted = FALSE;
 
 //In geoserver, Create a style as defined below.
 //Create layers for the above view, and for the locations table, which both use the style.
