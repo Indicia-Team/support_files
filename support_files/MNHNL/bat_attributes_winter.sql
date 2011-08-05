@@ -113,12 +113,6 @@ INSERT INTO sample_attributes (
 	'Bat Visit', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:visit'), 'f', 't'
 );
 
-INSERT INTO sample_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
-) VALUES (
-	'Observers', 'T', now(), 1, now(), 1, 'f', 't'
-);
-
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('BatCavityOpening', 'Cavity Opening', now(), 1, now(), 1, 'bats:cavityopening');
 SELECT insert_term('Fermeture artificielle', 'fra', null, 'bats:cavityopening');
@@ -253,28 +247,35 @@ INSERT INTO sample_attributes (
 );
 
 
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Bats Obs Type', 'Reliability of data for this Section.', now(), 1, now(), 1, 'bats:obstype');
-SELECT insert_term('Léthargie', 'fra', null, 'bats:obstype');
-SELECT tmp_add_term('Lethargic', 'eng', null, 'bats:obstype');
-SELECT insert_term('Cadavre(s)', 'fra', null, 'bats:obstype');
-SELECT tmp_add_term('Corpses', 'eng', null, 'bats:obstype');
-SELECT insert_term('Excréments', 'fra', null, 'bats:obstype'); 
-SELECT tmp_add_term('Excrement', 'eng', null, 'bats:obstype');
-INSERT INTO occurrence_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
-) VALUES (
-	'Bats Obs Type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:obstype'), 'f', 't'
-);
-
-
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Number: previous area', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num Bodies: previous area', 'I', now(), 1, now(), 1, 'f', 't'
 );
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Number: new area', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num Bodies: new area', 'I', now(), 1, now(), 1, 'f', 't'
+);
+
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Num Excr: previous area', 'I', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Num Excr: new area', 'I', now(), 1, now(), 1, 'f', 't'
+);
+
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Num Sleep: previous area', 'I', now(), 1, now(), 1, 'f', 't'
+);
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'Num Sleep: new area', 'I', now(), 1, now(), 1, 'f', 't'
 );
