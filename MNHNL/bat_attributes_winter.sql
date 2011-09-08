@@ -8,6 +8,12 @@ INSERT INTO location_attributes (
 	'village', 'T', now(), 1, now(), 1, 'f', 't'
 );
 
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'commune', 'T', now(), 1, now(), 1, 'f', 't'
+);
+
 CREATE OR REPLACE FUNCTION tmp_add_term(t character varying(100), lang_iso character(3), list integer, list_external_key character varying) RETURNS integer AS
 $BODY$
 DECLARE
@@ -78,6 +84,29 @@ INSERT INTO location_attributes (
 	'site type other', 'T', now(), 1, now(), 1, 'f', 't'
 );
 
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'precision', 'I', now(), 1, now(), 1, 'f', 't'
+);
+
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'codegsl', 'T', now(), 1, now(), 1, 'f', 't'
+);
+
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'profondeur', 'I', now(), 1, now(), 1, 'f', 't'
+);
+
+INSERT INTO location_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
+) VALUES (
+	'development', 'I', now(), 1, now(), 1, 'f', 't'
+);
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('BatRegularFollowup', 'Suitablity for regular follow ups', now(), 1, now(), 1, 'bats:followup');
 SELECT insert_term('Approprié', 'fra', null, 'bats:followup');
@@ -250,32 +279,18 @@ INSERT INTO sample_attributes (
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Bodies: previous area', 'I', now(), 1, now(), 1, 'f', 't'
-);
-INSERT INTO occurrence_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
-) VALUES (
-	'Num Bodies: new area', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num Bodies', 'I', now(), 1, now(), 1, 'f', 't'
 );
 
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Excr: previous area', 'I', now(), 1, now(), 1, 'f', 't'
-);
-INSERT INTO occurrence_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
-) VALUES (
-	'Num Excr: new area', 'I', now(), 1, now(), 1, 'f', 't'
+	'Excrement', 'B', now(), 1, now(), 1, 'f', 't'
 );
 
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Sleep: previous area', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num Sleepy', 'I', now(), 1, now(), 1, 'f', 't'
 );
-INSERT INTO occurrence_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
-) VALUES (
-	'Num Sleep: new area', 'I', now(), 1, now(), 1, 'f', 't'
-);
+
