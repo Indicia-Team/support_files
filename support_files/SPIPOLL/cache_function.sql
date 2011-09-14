@@ -70,7 +70,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION build_spipoll_cache(arg_survey_id integer) RETURNS integer AS $$
+CREATE OR REPLACE FUNCTION update_spipoll_cache_entry(arg_survey_id integer, arg_collection_row samples) RETURNS void AS $$
 DECLARE
 	-- following should be updated to reflect values in Database
 	protocol_attr_id	integer := 21;
@@ -100,9 +100,6 @@ DECLARE
 	mySrefSystem2		integer := 4326;
 	maxHistoricalDeterminations	integer := 0; --- 0 = ALL
 	---
-	collectionrow	samples%ROWTYPE;
-	count	integer;
-	old_id	integer;
 	rowsampleattributevalue sample_attribute_values%ROWTYPE;
 	curlocation refcursor;
 	rowlocation locations%ROWTYPE;
@@ -123,47 +120,37 @@ DECLARE
 	curinsectimage refcursor;
 	rowinsectimage occurrence_images%ROWTYPE;
 	status				integer;
+	---
+	cacherow			spipoll_collections_cache%ROWTYPE;
+	cacheinsecttemplate1	spipoll_insects_cache%ROWTYPE;
+	cacheinsecttemplate2	spipoll_insects_cache%ROWTYPE;
+	updated				timestamp without time zone;
+	sessionupdated		timestamp without time zone;
+	temp				text;
+	first				boolean;
+	numHist				integer := 0;
 BEGIN
-	count := 0;
-	old_id := -1;
-	-- This will be handled as a single transaction, so can delete everything here then rebuild it.
-	DELETE FROM spipoll_collections_cache ;
-	DELETE FROM spipoll_insects_cache ;
-	
-	FOR collectionrow IN SELECT * FROM samples
-	WHERE parent_id IS NULL AND deleted = false AND survey_id = arg_survey_id ORDER by id
-	LOOP
-	  DECLARE
-	  	cacherow			spipoll_collections_cache%ROWTYPE;
-	  	cacheinsecttemplate1	spipoll_insects_cache%ROWTYPE;
-	  	cacheinsecttemplate2	spipoll_insects_cache%ROWTYPE;
-	  	updated				timestamp without time zone;
-	  	sessionupdated		timestamp without time zone;
-	  	temp				text;
-	  	first				boolean;
-	  	numHist				integer := 0;
-	  BEGIN
 		status := 2; -- 0 is open, 1 is closed, 2 is don't know
-		cacherow.collection_id := collectionrow.id;
-		cacheinsecttemplate1.collection_id := collectionrow.id;
-		cacherow.datedebut := collectionrow.date_start;
-		cacherow.datedebut_txt := to_char(collectionrow.date_start, 'YYYY-MM-DD');
-		cacheinsecttemplate1.datedebut := collectionrow.date_start;
+		cacherow.collection_id := arg_collection_row.id;
+		cacheinsecttemplate1.collection_id := arg_collection_row.id;
+		cacherow.datedebut := arg_collection_row.date_start;
+		cacherow.datedebut_txt := to_char(arg_collection_row.date_start, 'YYYY-MM-DD');
+		cacheinsecttemplate1.datedebut := arg_collection_row.date_start;
 		cacheinsecttemplate1.datedebut_txt := cacherow.datedebut_txt;
-		cacherow.datefin := collectionrow.date_end;
-		cacherow.datefin_txt := to_char(collectionrow.date_end, 'YYYY-MM-DD');
-		cacheinsecttemplate1.datefin := collectionrow.date_end;
+		cacherow.datefin := arg_collection_row.date_end;
+		cacherow.datefin_txt := to_char(arg_collection_row.date_end, 'YYYY-MM-DD');
+		cacheinsecttemplate1.datefin := arg_collection_row.date_end;
 		cacheinsecttemplate1.datefin_txt := cacherow.datefin_txt;
-		updated := collectionrow.updated_on;
+		updated := arg_collection_row.updated_on;
 		--- Before we check the location image etc, we need to retrieve the collection attribute: proceed only if closed.
-		FOR rowsampleattributevalue IN SELECT * FROM sample_attribute_values WHERE sample_id = collectionrow.id AND deleted = false ORDER BY id desc
+		FOR rowsampleattributevalue IN SELECT * FROM sample_attribute_values WHERE sample_id = arg_collection_row.id AND deleted = false ORDER BY id desc
 		LOOP
 			CASE rowsampleattributevalue.sample_attribute_id
 				WHEN closed_attr_id THEN
 					IF status = 2 THEN
 						status := rowsampleattributevalue.int_value;
 					ELSE
-						RAISE WARNING 'Multiple Closed Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+						RAISE WARNING 'Multiple Closed Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 					cacherow.closed = rowsampleattributevalue.updated_on;
 					cacheinsecttemplate1.closed = rowsampleattributevalue.updated_on;
@@ -172,19 +159,19 @@ BEGIN
 						cacherow.username := rowsampleattributevalue.text_value;
 						cacheinsecttemplate1.username :=rowsampleattributevalue.text_value;
 					ELSE
-						RAISE WARNING 'Multiple Username Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+						RAISE WARNING 'Multiple Username Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN cms_userid_attr_id THEN
 					IF cacheinsecttemplate1.userid IS NULL THEN
 						cacheinsecttemplate1.userid := rowsampleattributevalue.int_value;
 					ELSE
-						RAISE WARNING 'Multiple UserID Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+						RAISE WARNING 'Multiple UserID Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN email_attr_id THEN
 					IF cacheinsecttemplate1.email IS NULL THEN
 						cacheinsecttemplate1.email := rowsampleattributevalue.text_value;
 					ELSE
-						RAISE WARNING 'Multiple Email Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+						RAISE WARNING 'Multiple Email Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN protocol_attr_id THEN
 					IF cacheinsecttemplate1.protocol IS NULL THEN
@@ -193,11 +180,11 @@ BEGIN
 							cacheinsecttemplate1.protocol := substring(cacheinsecttemplate1.protocol for (position('(' in cacheinsecttemplate1.protocol)-2));
 						END IF;
 					ELSE
-						RAISE WARNING 'Multiple Protocol Attributes for Collection ID --> %, ignored Attr ID --> %', collectionrow.id, rowsampleattributevalue.id ;
+						RAISE WARNING 'Multiple Protocol Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN front_page_attr_id THEN
 				ELSE
-					RAISE WARNING 'Unrecognised Collection Attribute, Collection ID --> %, SA ID --> % in SAV ID --> %: ignored', collectionrow.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
+					RAISE WARNING 'Unrecognised Collection Attribute, Collection ID --> %, SA ID --> % in SAV ID --> %: ignored', arg_collection_row.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
 			END CASE;
 			IF rowsampleattributevalue.updated_on > updated THEN
 				updated := rowsampleattributevalue.updated_on;
@@ -205,7 +192,7 @@ BEGIN
 		END LOOP;
 		CASE status
 			WHEN 1 THEN
-				OPEN curlocation FOR SELECT * FROM locations WHERE id = collectionrow.location_id AND deleted = false ORDER BY id DESC;
+				OPEN curlocation FOR SELECT * FROM locations WHERE id = arg_collection_row.location_id AND deleted = false ORDER BY id DESC;
 				FETCH curlocation INTO rowlocation;
 				IF FOUND THEN
 					cacherow.nom := rowlocation.name;
@@ -247,7 +234,7 @@ BEGIN
 								IF cacheinsecttemplate1.nearest_hive IS NULL THEN
 									cacheinsecttemplate1.nearest_hive := rowlocationattributevalue.int_value;
 								ELSE
-									RAISE WARNING 'Multiple Hive Distance Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+									RAISE WARNING 'Multiple Hive Distance Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							WHEN within50m_attr_id THEN
 								IF cacheinsecttemplate1.within50m IS NULL THEN
@@ -257,19 +244,19 @@ BEGIN
 										cacheinsecttemplate1.within50m := 'Oui';
 									END IF;
 								ELSE
-									RAISE WARNING 'Multiple Within50m Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+									RAISE WARNING 'Multiple Within50m Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							WHEN location_picture_camera_attr_id THEN
 								IF cacheinsecttemplate1.image_de_environment_camera IS NULL THEN
 									cacheinsecttemplate1.image_de_environment_camera := rowlocationattributevalue.text_value;
 								ELSE
-									RAISE WARNING 'Multiple Location Picture Camera Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+									RAISE WARNING 'Multiple Location Picture Camera Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							WHEN location_picture_datetime_attr_id THEN
 								IF cacheinsecttemplate1.image_de_environment_datetime IS NULL THEN
 									cacheinsecttemplate1.image_de_environment_datetime := rowlocationattributevalue.text_value;
 								ELSE
-									RAISE WARNING 'Multiple Location Picture Datetime Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', collectionrow.id, rowlocation.id, rowlocationattributevalue.id ;
+									RAISE WARNING 'Multiple Location Picture Datetime Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							ELSE
 								RAISE WARNING 'Unrecognised Location Attribute, Location ID --> %, LA ID --> % in LAV ID --> %: ignored', rowlocation.id, rowlocationattributevalue.location_attribute_id, rowlocationattributevalue.id ;
@@ -291,7 +278,7 @@ BEGIN
 						IF FOUND THEN
 							RAISE WARNING 'Multiple Locations Images on Location ID --> %, only most recent location used, ignoring ID --> %', rowlocation.id, rowlocationimage.id ;
 						END IF;
-						OPEN curflower FOR SELECT * FROM occurrences WHERE sample_id = collectionrow.id AND deleted = false ORDER BY id DESC;
+						OPEN curflower FOR SELECT * FROM occurrences WHERE sample_id = arg_collection_row.id AND deleted = false ORDER BY id DESC;
 						FETCH curflower INTO rowflower;
 						IF FOUND THEN
 							IF rowflower.updated_on > updated THEN
@@ -375,7 +362,7 @@ BEGIN
 									IF FOUND THEN
 										RAISE WARNING 'Multiple Flower Images on Flower ID --> %, only most recent image used, ignoring ID --> %', rowflower.id, rowflowerimage.id ;
 									END IF;
-									FOR rowsession IN SELECT * FROM samples WHERE parent_id = collectionrow.id AND deleted = false
+									FOR rowsession IN SELECT * FROM samples WHERE parent_id = arg_collection_row.id AND deleted = false
 									LOOP
 										cacheinsecttemplate2 := cacheinsecttemplate1;
 										cacheinsecttemplate2.date_de_session = rowsession.date_start;
@@ -584,39 +571,92 @@ BEGIN
 									---------------------------------
 									INSERT INTO spipoll_collections_cache SELECT cacherow.*;
 									---------------------------------
-									count := count + 1;
 								ELSE
-									RAISE WARNING 'Could not find Flower Image for Flower ID --> %, Collection % not cached', rowflower.id, collectionrow.id ;
+									RAISE WARNING 'Could not find Flower Image for Flower ID --> %, Collection % not cached', rowflower.id, arg_collection_row.id ;
 								END IF;
 								CLOSE curflowerimage;
 							ELSE
-								RAISE WARNING 'Could not find Determination for Flower ID --> %, Collection % not cached', rowflower.id, collectionrow.id ;
+								RAISE WARNING 'Could not find Determination for Flower ID --> %, Collection % not cached', rowflower.id, arg_collection_row.id ;
 							END IF;
 							FETCH curflower INTO rowflower;
 							IF FOUND THEN
-								RAISE WARNING 'Multiple Flowers on Collection ID --> %, only most recent flower used, ignoring ID --> %', collectionrow.id, rowflower.id ;
+								RAISE WARNING 'Multiple Flowers on Collection ID --> %, only most recent flower used, ignoring ID --> %', arg_collection_row.id, rowflower.id ;
 							END IF;
 						ELSE
-							RAISE WARNING 'Could not find Flower for Collection ID --> %, Collection not cached', collectionrow.id ;
+							RAISE WARNING 'Could not find Flower for Collection ID --> %, Collection not cached', arg_collection_row.id ;
 						END IF;
 						CLOSE curflower;
 					ELSE
-						RAISE WARNING 'Could not find Location Image for Location ID --> %, Collection % not cached', rowlocation.id, collectionrow.id ;
+						RAISE WARNING 'Could not find Location Image for Location ID --> %, Collection % not cached', rowlocation.id, arg_collection_row.id ;
 					END IF;
 					CLOSE curlocationimage;
 					FETCH curlocation INTO rowlocation;
 					IF FOUND THEN
-						RAISE WARNING 'Multiple Locations on Collection ID --> %, only most recent location used, ignoring ID --> %', collectionrow.id, rowlocation.id ;
+						RAISE WARNING 'Multiple Locations on Collection ID --> %, only most recent location used, ignoring ID --> %', arg_collection_row.id, rowlocation.id ;
 					END IF;
 				ELSE
-					RAISE WARNING 'Could not find Location for Collection ID --> %, Collection not cached', collectionrow.id ;
+					RAISE WARNING 'Could not find Location for Collection ID --> %, Collection not cached', arg_collection_row.id ;
 				END IF;
 				CLOSE curlocation;
 			WHEN 0 THEN
-				--- RAISE WARNING 'Collection not closed, ID --> %', collectionrow.id ;
+				--- RAISE WARNING 'Collection not closed, ID --> %', arg_collection_row.id ;
 			WHEN 2 THEN
-				RAISE WARNING 'No closed attribute found for Collection ID --> %', collectionrow.id ;
+				RAISE WARNING 'No closed attribute found for Collection ID --> %', arg_collection_row.id ;
 		END CASE;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_spipoll_cache(arg_survey_id integer, arg_back text ) RETURNS integer AS $$
+DECLARE
+	-- following should be updated to reflect values in Database
+	closed_attr_id		integer := 20;
+	count				integer;
+	attributeRow		sample_attribute_values%ROWTYPE;
+	collectionrow		samples%ROWTYPE;
+	curcollection		refcursor;
+
+BEGIN
+	count := 0;
+	FOR attributeRow IN SELECT * FROM sample_attribute_values
+	WHERE deleted = false
+		AND sample_attribute_id = closed_attr_id
+		AND updated_on > (now() - (arg_back)::INTERVAL)
+		AND int_value = 1
+	ORDER by sample_id
+	LOOP
+	  BEGIN
+		DELETE FROM spipoll_collections_cache WHERE collection_id = attributeRow.sample_id ;
+		DELETE FROM spipoll_insects_cache WHERE collection_id = attributeRow.sample_id ;
+		OPEN curcollection FOR SELECT * FROM samples WHERE id = attributeRow.sample_id AND deleted = false ORDER BY id DESC;
+		FETCH curcollection INTO collectionrow;
+		IF FOUND THEN
+			RAISE WARNING 'Processing Collection ID --> %', collectionrow.id ;
+			perform update_spipoll_cache_entry(arg_survey_id, collectionrow);
+			count := count + 1;
+		END IF;
+		CLOSE curcollection;
+	  END;
+    END LOOP;
+	return count;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION rebuild_spipoll_cache(arg_survey_id integer) RETURNS integer AS $$
+DECLARE
+	count			integer;
+	collectionrow	samples%ROWTYPE;
+BEGIN
+	count := 0;
+	-- This will be handled as a single transaction, so can delete everything here then rebuild it.
+	DELETE FROM spipoll_collections_cache ;
+	DELETE FROM spipoll_insects_cache ;
+	
+	FOR collectionrow IN SELECT * FROM samples
+	WHERE parent_id IS NULL AND deleted = false AND survey_id = arg_survey_id ORDER by id
+	LOOP
+	  BEGIN
+		perform update_spipoll_cache_entry(arg_survey_id, collectionrow);
+		count := count + 1;
 	  END;
     END LOOP;
 
@@ -625,5 +665,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 --- BEGIN;
-select * from build_spipoll_cache(2); 
+select * from update_spipoll_cache(2, '1 day'); 
 --- COMMIT;
