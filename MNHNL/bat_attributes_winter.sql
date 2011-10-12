@@ -1,3 +1,8 @@
+--- MNHNL Location types.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Location', 'MNHNL Location types', now(), 1, now(), 1, 'mnhnl:loctype');
+SELECT insert_term('WinterBats', 'eng', null, 'mnhnl:loctype');
+
 -- after the following are set up, need to set their structure blocks (sample attributes), as well as their website allocation
 -- also need to set the order by in the termlists, remembering that the sort order from the front end does not get carried forward to children: have to do direct in DB
 -- have to set up the smaple attributes for CMS id, username and email.
@@ -41,13 +46,17 @@ LANGUAGE 'plpgsql';
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('BatSiteType', 'Site Type', now(), 1, now(), 1, 'bats:sitetype');
 SELECT insert_term('Arbre creux', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Hollow Tree', 'eng', null, 'bats:sitetype');
+SELECT tmp_add_term('Hollow tree', 'eng', null, 'bats:sitetype');
+SELECT insert_term('Ardoisière', 'fra', null, 'bats:sitetype');
+SELECT tmp_add_term('Slate quarry', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Bunker', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Bunker', 'eng', null, 'bats:sitetype');
+SELECT insert_term('Carrière souterrain', 'fra', null, 'bats:sitetype');
+SELECT tmp_add_term('Underground quarry', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Casemate', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Military Pillbox', 'eng', null, 'bats:sitetype');
+SELECT tmp_add_term('Military pillbox', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Cave', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Cavern', 'eng', null, 'bats:sitetype');
+SELECT tmp_add_term('Cellar', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Clocher', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Bell tower or Steeple', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Comble', 'fra', null, 'bats:sitetype');
@@ -59,11 +68,13 @@ SELECT tmp_add_term('Icehouse', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Grenier', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Granery', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Grotte ou faille naturelle', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Cave or natural fault', 'eng', null, 'bats:sitetype');
-SELECT insert_term('Mine, carrière ou ardoisière', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Mine or quarry', 'eng', null, 'bats:sitetype');
+SELECT tmp_add_term('Semi-natural cave or fault', 'eng', null, 'bats:sitetype');
+SELECT insert_term('Grotte ou faille semi-naturelle', 'fra', null, 'bats:sitetype');
+SELECT tmp_add_term('Natural cave or fault', 'eng', null, 'bats:sitetype');
+SELECT insert_term('Mine', 'fra', null, 'bats:sitetype');
+SELECT tmp_add_term('Mine', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Nichoir', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Nest', 'eng', null, 'bats:sitetype');
+SELECT tmp_add_term('Nestbox', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Souterrain artificiel', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Artificial underground', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Tunnel', 'fra', null, 'bats:sitetype');
@@ -145,9 +156,11 @@ INSERT INTO sample_attributes (
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('BatCavityOpening', 'Cavity Opening', now(), 1, now(), 1, 'bats:cavityopening');
 SELECT insert_term('Fermeture artificielle', 'fra', null, 'bats:cavityopening');
-SELECT tmp_add_term('Blocked Off', 'eng', null, 'bats:cavityopening');
+SELECT tmp_add_term('Blocked off', 'eng', null, 'bats:cavityopening');
 SELECT insert_term('Imperméable au passage des chiroptères', 'fra', null, 'bats:cavityopening');
 SELECT tmp_add_term('Impenetrable for bats', 'eng', null, 'bats:cavityopening');
+SELECT insert_term('Imperméable au passage des hommes', 'fra', null, 'bats:cavityopening');
+SELECT tmp_add_term('Impenetrable for humans', 'eng', null, 'bats:cavityopening');
 SELECT insert_term('Système de fermeture défectueux', 'fra', null, 'bats:cavityopening');
 SELECT tmp_add_term('Defective locking system', 'eng', null, 'bats:cavityopening');
 SELECT insert_term('Entrée instable ou menacée d’obstruction', 'fra', null, 'bats:cavityopening');
@@ -172,11 +185,11 @@ SELECT tmp_add_term('Instability', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Vibrations', 'fra', null, 'bats:disturbances');
 SELECT tmp_add_term('Vibrations', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Lumière artificielle', 'fra', null, 'bats:disturbances');
-SELECT tmp_add_term('Artifical Light', 'eng', null, 'bats:disturbances');
+SELECT tmp_add_term('Artifical light', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Risques d’inondation temporaire', 'fra', null, 'bats:disturbances');
-SELECT tmp_add_term('Risk of Temporary flooding', 'eng', null, 'bats:disturbances');
+SELECT tmp_add_term('Risk of temporary flooding', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Présence de déchets toxiques', 'fra', null, 'bats:disturbances');
-SELECT tmp_add_term('Toxic Waste present', 'eng', null, 'bats:disturbances');
+SELECT tmp_add_term('Toxic waste present', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Autre', 'fra', null, 'bats:disturbances');
 SELECT tmp_add_term('Other', 'eng', null, 'bats:disturbances');
 INSERT INTO sample_attributes (
@@ -279,7 +292,7 @@ INSERT INTO sample_attributes (
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Bodies', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num Dead', 'I', now(), 1, now(), 1, 'f', 't'
 );
 
 INSERT INTO occurrence_attributes (
@@ -291,6 +304,12 @@ INSERT INTO occurrence_attributes (
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Sleepy', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num Alive', 'I', now(), 1, now(), 1, 'f', 't'
+);
+
+INSERT INTO occurrence_attributes (
+	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
+) VALUES (
+	'Bat Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't'
 );
 
