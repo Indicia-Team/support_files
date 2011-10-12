@@ -1,8 +1,6 @@
---- Reptile Location types, recommend that the meaing_id is used.
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('ReptileLocation', 'Reptile Location types', now(), 1, now(), 1, 'reptile:loctype');
-SELECT insert_term('Lux5KSquare', 'eng', null, 'reptile:loctype');
-SELECT insert_term('LizardLocation', 'eng', null, 'reptile:loctype');
+--- MNHNL Location types.
+SELECT insert_term('Lux5KSquare', 'eng', null, 'mnhnl:loctype');
+SELECT insert_term('LizardLocation', 'eng', null, 'mnhnl:loctype');
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Reptile Survey 1', 'Reptile Single Survey.', now(), 1, now(), 1, 'reptile:survey1');
