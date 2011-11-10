@@ -8,7 +8,7 @@ SELECT insert_term('1', 'eng', null, 'reptile:survey1');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'Reptile Survey 1', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey1'), 'f', 't'
+	'Survey (1)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey1'), 'f', 't'
 );
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Reptile Survey 2', 'Reptile Twin Survey.', now(), 1, now(), 1, 'reptile:survey2');
@@ -17,7 +17,7 @@ SELECT insert_term('2', 'eng', null, 'reptile:survey2');
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'Reptile Survey 2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey2'), 'f', 't'
+	'Survey (2)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey2'), 'f', 't'
 );
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public

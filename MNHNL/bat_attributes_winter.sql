@@ -1,7 +1,8 @@
 --- MNHNL Location types.
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Location', 'MNHNL Location types', now(), 1, now(), 1, 'mnhnl:loctype');
-SELECT insert_term('WinterBats', 'eng', null, 'mnhnl:loctype');
+SELECT insert_term('WinterBats Original', 'eng', null, 'mnhnl:loctype');
+SELECT insert_term('WinterBats New', 'eng', null, 'mnhnl:loctype');
 
 -- after the following are set up, need to set their structure blocks (sample attributes), as well as their website allocation
 -- also need to set the order by in the termlists, remembering that the sort order from the front end does not get carried forward to children: have to do direct in DB
@@ -51,7 +52,7 @@ SELECT insert_term('Ardoisière', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Slate quarry', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Bunker', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Bunker', 'eng', null, 'bats:sitetype');
-SELECT insert_term('Carrière souterrain', 'fra', null, 'bats:sitetype');
+SELECT insert_term('Carrière souterraine', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Underground quarry', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Casemate', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Military pillbox', 'eng', null, 'bats:sitetype');
@@ -68,9 +69,9 @@ SELECT tmp_add_term('Icehouse', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Grenier', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Granery', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Grotte ou faille naturelle', 'fra', null, 'bats:sitetype');
-SELECT tmp_add_term('Semi-natural cave or fault', 'eng', null, 'bats:sitetype');
-SELECT insert_term('Grotte ou faille semi-naturelle', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Natural cave or fault', 'eng', null, 'bats:sitetype');
+SELECT insert_term('Grotte ou faille semi-naturelle', 'fra', null, 'bats:sitetype');
+SELECT tmp_add_term('Semi-natural cave or fault', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Mine', 'fra', null, 'bats:sitetype');
 SELECT tmp_add_term('Mine', 'eng', null, 'bats:sitetype');
 SELECT insert_term('Nichoir', 'fra', null, 'bats:sitetype');
@@ -269,30 +270,30 @@ INSERT INTO sample_attributes (
 );
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Bats Reliability', 'Reliability of data for this Section.', now(), 1, now(), 1, 'bats:reliability');
-SELECT insert_term('1 - Fiable', 'fra', null, 'bats:reliability');
-SELECT tmp_add_term('1 - Reliable', 'eng', null, 'bats:reliability');
-SELECT insert_term('2 – Peu fiable', 'fra', null, 'bats:reliability');
-SELECT tmp_add_term('2 - Weakly reliable', 'eng', null, 'bats:reliability');
-SELECT insert_term('3 – Non fiable', 'fra', null, 'bats:reliability'); 
-SELECT tmp_add_term('3 - Unreliable', 'eng', null, 'bats:reliability');
+VALUES ('Reliability', 'Reliability of data for this Section.', now(), 1, now(), 1, 'bats:reliability');
+SELECT insert_term('1 - Reliable', 'eng', null, 'bats:reliability');
+SELECT tmp_add_term('1 - Fiable', 'fra', null, 'bats:reliability');
+SELECT insert_term('2 - Weakly reliable', 'eng', null, 'bats:reliability');
+SELECT tmp_add_term('2 – Peu fiable', 'fra', null, 'bats:reliability');
+SELECT insert_term('3 - Unreliable', 'eng', null, 'bats:reliability');
+SELECT tmp_add_term('3 – Non fiable', 'fra', null, 'bats:reliability'); 
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'Bats Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't'
+	'Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't'
 );
 
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'No Observation', 'B', now(), 1, now(), 1, 'f', 't'
+	'No observation', 'B', now(), 1, now(), 1, 'f', 't'
 );
 
 
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Dead', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num dead', 'I', now(), 1, now(), 1, 'f', 't'
 );
 
 INSERT INTO occurrence_attributes (
@@ -304,12 +305,12 @@ INSERT INTO occurrence_attributes (
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
 ) VALUES (
-	'Num Alive', 'I', now(), 1, now(), 1, 'f', 't'
+	'Num alive', 'I', now(), 1, now(), 1, 'f', 't'
 );
 
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'Bat Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't'
+	'Occurrence Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't'
 );
 

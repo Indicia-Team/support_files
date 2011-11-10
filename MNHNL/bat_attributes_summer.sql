@@ -308,26 +308,8 @@ INSERT INTO sample_attributes (
 	'Positions Marked', 'B', now(), 1, now(), 1, 'f', 't'
 );
 
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Bats Reliability', 'Reliability of data for this Section.', now(), 1, now(), 1, 'bats:reliability');
-SELECT insert_term('1 - Fiable', 'fra', null, 'bats:reliability');
-SELECT tmp_add_term('1 - Reliable', 'eng', null, 'bats:reliability');
-SELECT insert_term('2 – Peu fiable', 'fra', null, 'bats:reliability');
-SELECT tmp_add_term('2 - Weakly reliable', 'eng', null, 'bats:reliability');
-SELECT insert_term('3 – Non fiable', 'fra', null, 'bats:reliability'); 
-SELECT tmp_add_term('3 - Unreliable', 'eng', null, 'bats:reliability');
-INSERT INTO sample_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
-) VALUES (
-	'Bats Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't'
-);
-
-INSERT INTO sample_attributes (
-	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
-) VALUES (
-	'No Observation', 'B', now(), 1, now(), 1, 'f', 't'
-);
-
+-- Sample Reliability drop down set up by winter bats.
+-- No Observation sample attribute defined in winter bats.
 
 INSERT INTO occurrence_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public
