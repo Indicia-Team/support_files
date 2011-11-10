@@ -1,19 +1,18 @@
---- use standard count, though make sure not required.
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('MNHNL Butterfly de Jour Passage', 'Survey month', now(), 1, now(), 1, 'butterfly2:Passage');
-SELECT insert_term('Mai', 'fra', null, 'butterfly2:Passage'); 
-SELECT tmp_add_term('May', 'eng', null, 'butterfly2:Passage');
-SELECT insert_term('Juin', 'fra', null, 'butterfly2:Passage'); 
-SELECT tmp_add_term('June', 'eng', null, 'butterfly2:Passage');
-SELECT insert_term('Juillet', 'fra', null, 'butterfly2:Passage'); 
-SELECT tmp_add_term('July', 'eng', null, 'butterfly2:Passage');
-SELECT insert_term('Août', 'fra', null, 'butterfly2:Passage'); 
-SELECT tmp_add_term('August', 'eng', null, 'butterfly2:Passage');
+VALUES ('MNHNL Butterfly2 Passage', 'Survey month', now(), 1, now(), 1, 'butterfly2:Passage');
+SELECT insert_term('May', 'eng', null, 'butterfly2:Passage');
+SELECT tmp_add_term('Mai', 'fra', null, 'butterfly2:Passage'); 
+SELECT insert_term('June', 'eng', null, 'butterfly2:Passage');
+SELECT tmp_add_term('Juin', 'fra', null, 'butterfly2:Passage'); 
+SELECT insert_term('July', 'eng', null, 'butterfly2:Passage');
+SELECT tmp_add_term('Juillet', 'fra', null, 'butterfly2:Passage'); 
+SELECT insert_term('August', 'eng', null, 'butterfly2:Passage');
+SELECT tmp_add_term('Août', 'fra', null, 'butterfly2:Passage'); 
 INSERT INTO sample_attributes (
 	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public
 ) VALUES (
-	'MNHNL Butterfly de Jour Passage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly2:Passage'), 'f', 't'
+	'Passage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly2:Passage'), 'f', 't'
 );
 
 --- start time may already exist
@@ -31,3 +30,26 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Rain Checkbox', 'B', now(), 1, now(), 1, 'f', 't');
 --- for clouds use the butterfly clouds: sample attribute 'Cloud Cover'
 --- Reliability already exists : use Bats survey reliability
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('MNHNL Butterfly de Jour Sites', 'Site Names', now(), 1, now(), 1, 'butterfly2:Sites');
+SELECT insert_term('1', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('2', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('3', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('4', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('5', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('6', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('7', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('8', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('9', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('10', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('11', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('12', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('13', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('14', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('15', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('16', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('17', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('18', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('19', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('20', 'eng', null, 'butterfly2:Sites'); 
