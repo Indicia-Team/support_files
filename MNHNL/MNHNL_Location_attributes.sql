@@ -1,14 +1,12 @@
 --- MNHNL Location types.
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Location', 'MNHNL Location types', now(), 1, now(), 1, 'mnhnl:loctype');
+VALUES ('LocationTypes', 'MNHNL Location types', now(), 1, now(), 1, 'mnhnl:loctype');
 SELECT insert_term('WinterBats Confirmed', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('WinterBats Submitted', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Lux5KSquare', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('ReptileLocation', 'eng', null, 'mnhnl:loctype');
 
 -- after the following are set up, need to set their structure blocks (sample attributes), as well as their website allocation
--- also need to set the order by in the termlists, remembering that the sort order from the front end does not get carried forward to children: have to do direct in DB
--- have to set up the smaple attributes for CMS id, username and email.
 
 CREATE OR REPLACE FUNCTION tmp_add_term(t character varying(100), lang_iso character(3), list integer, list_external_key character varying) RETURNS integer AS
 $BODY$
@@ -33,6 +31,12 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql';
+
+--- There are no new Location Attributes used for COBIMO: Common Bird Monitoring: mnhnl_bird_transect_walks
+--- There are no new Location Attributes used for Butterflies1: Butterfly Monitoring: mnhnl_butterflies
+--- There are no new Location Attributes used for Butterflies2: Butterfly de Jours: mnhnl_butterflies2
+
+--- The following new Location Attributes are used for Winter Bats: mnhnl_bats
 
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Village', 'T', now(), 1, now(), 1, 'f', 't');
@@ -114,3 +118,8 @@ SELECT insert_term('18', 'eng', null, 'butterfly2:Sites');
 SELECT insert_term('19', 'eng', null, 'butterfly2:Sites'); 
 SELECT insert_term('20', 'eng', null, 'butterfly2:Sites'); 
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='butterfly2:Sites');
+
+--- The following new Location Attributes are used for Reptiles: mnhnl_reptiles
+
+INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Creator', 'T', now(), 1, now(), 1, 'f', 't');
