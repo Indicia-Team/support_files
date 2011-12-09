@@ -22,8 +22,19 @@ END
 $BODY$
 LANGUAGE 'plpgsql';
 
---- the count attribute is a standard one.
 --- we assume here that the samples attributes have been loaded in already, with their Reliability termlist
+
+--- The following new Occurrence Attributes are used for COBIMO: Common Bird Monitoring: mnhnl_bird_transect_walks (no survey allocated, direct to website)
+--- the count attribute is a standard one.
+--- TBD need to get definitions
+--- Atlas Code
+--- Overflying
+--- Territorial
+--- Approximation?
+--- Confidence
+
+--- The following new Occurrence Attributes are used for Butterflies1: Butterfly Monitoring: mnhnl_butterflies
+--- the count attribute is a standard one.
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('butterfly distribution', 'Qualitive distribution - how close species was to observer gives a indication of reliability of identification',
@@ -35,6 +46,10 @@ SELECT insert_term('0', 'eng', null, 'butterfly:distribution');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='butterfly:distribution');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Butterfly Qual Dist', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:distribution'), 'f', 't');
+
+--- The following new Occurrence Attributes are used for Winter Bats: mnhnl_bats
+--- we assume here that the samples attributes have been loaded in already, with their Reliability termlist
+
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Num alive', 'I', now(), 1, now(), 1, 'f', 't');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
@@ -43,6 +58,14 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 	'Excrement', 'B', now(), 1, now(), 1, 'f', 't');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Occurrence reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't');
+
+--- There are no new Occurrence Attributes used for Butterflies2: Butterfly de Jours: mnhnl_butterflies2
+--- the count attribute is a standard one.
+
+--- The following new Occurrence Attributes are used for Reptiles: mnhnl_reptiles
+--- the count attribute is a standard one.
+--- The Occurrence reliability is taken from the Bats attributes setup
+
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Counting', 'B', now(), 1, now(), 1, 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)

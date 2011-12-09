@@ -22,6 +22,26 @@ END
 $BODY$
 LANGUAGE 'plpgsql';
 
+--- The following new Sample Attributes are used for COBIMO: Common Bird Monitoring: mnhnl_bird_transect_walks (no survey allocated, direct to website)
+--- The Temperature, CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- TBD need to get definitions
+--- Wind Force
+--- Cloud Cover
+--- Walk started at end
+--- Closed
+--- Reliability of this data
+--- Visit number in year
+--- Precipitation
+
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder, validation_rules) VALUES (
+	'Start time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'time');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder, validation_rules) VALUES (
+	'End time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'time');
+
+--- The following new Occurrence Attributes are used for Butterflies1: Butterfly Monitoring: mnhnl_butterflies
+--- The Temperature, CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- Start Time and End Time is used from COBIMO Above.
+
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('HabitatType', 'Habitat Type for this Section.', now(), 1, now(), 1, 'butterfly:habitat');
 SELECT insert_term('URB', 'eng', null, 'butterfly:habitat'); ---  Milieux urbanisés
@@ -45,12 +65,8 @@ SELECT insert_term('3', 'eng', null, 'butterfly:reliability'); --- Unreliable da
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='butterfly:reliability');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Survey reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:reliability'), 'f', 't');
----INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
----	'Observer', 'T', now(), 1, now(), 1, 'f', 't');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder, validation_rules) VALUES (
-	'Start time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'time');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, applies_to_location, multi_value, public, applies_to_recorder, validation_rules) VALUES (
-	'End time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'time');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Observer', 'T', now(), 1, now(), 1, 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('MNHNL Month', 'Survey month', now(), 1, now(), 1, 'butterfly:Month');
 SELECT insert_term('April', 'eng', null, 'butterfly:Month'); 
@@ -113,8 +129,12 @@ SELECT insert_term('100%', 'eng', null, 'butterfly:cloud');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='butterfly:cloud');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Cloud cover', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:cloud'), 'f', 't');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Accompanied By', 'T', now(), 1, now(), 1, 'f', 't');
+
+--- The following new Sample Attributes are used for Winter Bats: mnhnl_bats
+--- The CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- Need to Check reliabilty WRT reliability in COBIMO above.
+--- No observation is used from Butterfly1 above.
+
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('BatRegularFollowup', 'Suitablity for regular follow ups', now(), 1, now(), 1, 'bats:followup');
 SELECT insert_term('Appropriate', 'eng', null, 'bats:followup');
@@ -190,6 +210,7 @@ SELECT tmp_add_term('Inconnue', 'fra', null, 'bats:humanfreq');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats:humanfreq');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Human frequentation', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:humanfreq'), 'f', 't');
+--- TBD use standard temperature as outside temp
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Temp Exterior', 'F', now(), 1, now(), 1, 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
@@ -219,8 +240,16 @@ SELECT tmp_add_term('3 – Non fiable', 'fra', null, 'bats:reliability');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats:reliability');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Reliability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:reliability'), 'f', 't');
+--- NEW
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'No observation', 'B', now(), 1, now(), 1, 'f', 't');
+	'Accompanied By', 'T', now(), 1, now(), 1, 'f', 't');
+
+--- The following new Occurrence Attributes are used for Butterflies2: Butterfly de Jours: mnhnl_butterflies2
+--- The Temperature, CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- Start Time is used from COBIMO above.
+--- Cloud Cover, No observation are used from Butterfly1 above.
+--- Reliability is used from Bats above.
+
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('MNHNL Butterfly2 Passage', 'Survey month', now(), 1, now(), 1, 'butterfly2:Passage');
 SELECT insert_term('May', 'eng', null, 'butterfly2:Passage');
@@ -240,6 +269,20 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Windspeed', 'I', now(), 1, now(), 1, 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Rain', 'B', now(), 1, now(), 1, 'f', 't');
+	
+--- The following new Sample Attributes are used for Reptiles: mnhnl_reptiles
+--- The Temperature, CMS Username, CMS User ID and Emailcount attributes are standard ones.
+--- Wind Force, Cloud Cover, No observation are used from Butterfly1 above.
+--- Rain and Duration are used from Butterflies2 above.
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('ReptileProgramme', 'Reptile Programmes', now(), 1, now(), 1, 'reptile:programme');
+SELECT insert_term('Sand Lizard Survey', 'eng', null, 'reptile:programme');
+SELECT insert_term('Common Wall Lizard Survey', 'eng', null, 'reptile:programme');
+SELECT insert_term('Smooth Snake Survey', 'eng', null, 'reptile:programme');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:programme');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Programme', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:programme'), 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Reptile Survey 1', 'Reptile Single Survey.', now(), 1, now(), 1, 'reptile:survey1');
 SELECT insert_term('1', 'eng', null, 'reptile:survey1');
