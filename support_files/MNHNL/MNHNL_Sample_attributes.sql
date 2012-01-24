@@ -284,19 +284,62 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Programme', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:programme'), 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Reptile Survey 1', 'Reptile Single Survey.', now(), 1, now(), 1, 'reptile:survey1');
-SELECT insert_term('1', 'eng', null, 'reptile:survey1');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Survey (1)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey1'), 'f', 't');
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Reptile Survey 2', 'Reptile Twin Survey.', now(), 1, now(), 1, 'reptile:survey2');
-SELECT insert_term('1', 'eng', null, 'reptile:survey2');
-SELECT insert_term('2', 'eng', null, 'reptile:survey2');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:survey2');
+VALUES ('Reptile Survey', 'Reptile Survey.', now(), 1, now(), 1, 'reptile:survey');
+SELECT insert_term('1', 'eng', null, 'reptile:survey');
+SELECT insert_term('2', 'eng', null, 'reptile:survey');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:survey');
 INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Survey (2)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey2'), 'f', 't');
+	'Survey', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (	
 	'Suitability', 'B', now(), 1, now(), 1, 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Picture provided', 'B', now(), 1, now(), 1, 'f', 't');
+
+--- The following new Sample Attributes are used for Winter Bats: mnhnl_bats
+--- The CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- Use Bat Visit, Disturbances other comment from Bats1.
+--- Start Time and End Time is used from COBIMO Above.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('BatDisturbances', 'List of Disturbances', now(), 1, now(), 1, 'bats2:disturbances');
+SELECT insert_term('Artificial light illuminating the entrance hole', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Lumière artificielle éclairant le(s) trou(s) d’envol', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Planned renovations', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Travaux de rénovation : en projet', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Renovations in progress', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Travaux de rénovation : en cours', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Renovations recently completed', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Travaux de rénovation : récemment effectués', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Other', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Autre', 'fra', null, 'bats2:disturbances');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:disturbances');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Disturbances2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:disturbances'), 't', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bat2Disturbances', 'List of Disturbances', now(), 1, now(), 1, 'bats2:disturbances');
+SELECT insert_term('Artificial light illuminating the entrance hole', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Lumière artificielle éclairant le(s) trou(s) d’envol', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Planned renovations', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Travaux de rénovation : en projet', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Renovations in progress', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Travaux de rénovation : en cours', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Renovations recently completed', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Travaux de rénovation : récemment effectués', 'fra', null, 'bats2:disturbances');
+SELECT insert_term('Other', 'eng', null, 'bats2:disturbances');
+SELECT tmp_add_term('Autre', 'fra', null, 'bats2:disturbances');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:disturbances');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Disturbances2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:disturbances'), 't', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bat2Precipitation', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:precipitation');
+SELECT insert_term('None', 'eng', null, 'bats2:precipitation');
+SELECT tmp_add_term('Aucune', 'fra', null, 'bats2:precipitation');
+SELECT insert_term('Drizzle', 'eng', null, 'bats2:precipitation');
+SELECT tmp_add_term('Bruine', 'fra', null, 'bats2:precipitation');
+SELECT insert_term('Showers', 'eng', null, 'bats2:precipitation');
+SELECT tmp_add_term('Averses', 'fra', null, 'bats2:precipitation');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:precipitation');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Precipitation2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:precipitation'), 'f', 't');
 
