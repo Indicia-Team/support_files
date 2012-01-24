@@ -70,7 +70,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION update_spipoll_cache_entry(arg_survey_id integer, arg_collection_row samples) RETURNS void AS $$
+DROP FUNCTION IF EXISTS update_spipoll_cache_entry(integer, samples);
+DROP FUNCTION IF EXISTS update_spipoll_cache_entry(integer, samples, boolean);
+CREATE OR REPLACE FUNCTION update_spipoll_cache_entry(arg_collection_row samples, batchMode boolean) RETURNS void AS $$
 DECLARE
 	-- following should be updated to reflect values in Database
 	protocol_attr_id	integer := 21;
@@ -129,6 +131,7 @@ DECLARE
 	temp				text;
 	first				boolean;
 	numHist				integer := 0;
+	taxon_type			char(1);
 BEGIN
 		status := 2; -- 0 is open, 1 is closed, 2 is don't know
 		cacherow.collection_id := arg_collection_row.id;
@@ -142,6 +145,11 @@ BEGIN
 		cacheinsecttemplate1.datefin := arg_collection_row.date_end;
 		cacheinsecttemplate1.datefin_txt := cacherow.datefin_txt;
 		updated := arg_collection_row.updated_on;
+		cacherow.insect_search := '';
+
+		DELETE FROM spipoll_collections_cache WHERE collection_id = arg_collection_row.id;
+		DELETE FROM spipoll_insects_cache WHERE collection_id = arg_collection_row.id;
+
 		--- Before we check the location image etc, we need to retrieve the collection attribute: proceed only if closed.
 		FOR rowsampleattributevalue IN SELECT * FROM sample_attribute_values WHERE sample_id = arg_collection_row.id AND deleted = false ORDER BY id desc
 		LOOP
@@ -149,7 +157,7 @@ BEGIN
 				WHEN closed_attr_id THEN
 					IF status = 2 THEN
 						status := rowsampleattributevalue.int_value;
-					ELSE
+					ELSIF batchMode = true THEN
 						RAISE WARNING 'Multiple Closed Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 					cacherow.closed = rowsampleattributevalue.updated_on;
@@ -158,19 +166,19 @@ BEGIN
 					IF cacherow.username IS NULL THEN
 						cacherow.username := rowsampleattributevalue.text_value;
 						cacheinsecttemplate1.username :=rowsampleattributevalue.text_value;
-					ELSE
+					ELSIF batchMode = true THEN
 						RAISE WARNING 'Multiple Username Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN cms_userid_attr_id THEN
 					IF cacheinsecttemplate1.userid IS NULL THEN
 						cacheinsecttemplate1.userid := rowsampleattributevalue.int_value;
-					ELSE
+					ELSIF batchMode = true THEN
 						RAISE WARNING 'Multiple UserID Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN email_attr_id THEN
 					IF cacheinsecttemplate1.email IS NULL THEN
 						cacheinsecttemplate1.email := rowsampleattributevalue.text_value;
-					ELSE
+					ELSIF batchMode = true THEN
 						RAISE WARNING 'Multiple Email Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN protocol_attr_id THEN
@@ -179,12 +187,14 @@ BEGIN
 						IF position('(' in cacheinsecttemplate1.protocol) <> 0 THEN
 							cacheinsecttemplate1.protocol := substring(cacheinsecttemplate1.protocol for (position('(' in cacheinsecttemplate1.protocol)-2));
 						END IF;
-					ELSE
+					ELSIF batchMode = true THEN
 						RAISE WARNING 'Multiple Protocol Attributes for Collection ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowsampleattributevalue.id ;
 					END IF;
 				WHEN front_page_attr_id THEN
 				ELSE
-					RAISE WARNING 'Unrecognised Collection Attribute, Collection ID --> %, SA ID --> % in SAV ID --> %: ignored', arg_collection_row.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
+					IF batchMode = true THEN
+						RAISE WARNING 'Unrecognised Collection Attribute, Collection ID --> %, SA ID --> % in SAV ID --> %: ignored', arg_collection_row.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
+					END IF;
 			END CASE;
 			IF rowsampleattributevalue.updated_on > updated THEN
 				updated := rowsampleattributevalue.updated_on;
@@ -233,7 +243,7 @@ BEGIN
 							WHEN hive_attr_id THEN
 								IF cacheinsecttemplate1.nearest_hive IS NULL THEN
 									cacheinsecttemplate1.nearest_hive := rowlocationattributevalue.int_value;
-								ELSE
+								ELSIF batchMode = true THEN
 									RAISE WARNING 'Multiple Hive Distance Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							WHEN within50m_attr_id THEN
@@ -243,23 +253,25 @@ BEGIN
 									ELSE
 										cacheinsecttemplate1.within50m := 'Oui';
 									END IF;
-								ELSE
+								ELSIF batchMode = true THEN
 									RAISE WARNING 'Multiple Within50m Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							WHEN location_picture_camera_attr_id THEN
 								IF cacheinsecttemplate1.image_de_environment_camera IS NULL THEN
 									cacheinsecttemplate1.image_de_environment_camera := rowlocationattributevalue.text_value;
-								ELSE
+								ELSIF batchMode = true THEN
 									RAISE WARNING 'Multiple Location Picture Camera Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							WHEN location_picture_datetime_attr_id THEN
 								IF cacheinsecttemplate1.image_de_environment_datetime IS NULL THEN
 									cacheinsecttemplate1.image_de_environment_datetime := rowlocationattributevalue.text_value;
-								ELSE
+								ELSIF batchMode = true THEN
 									RAISE WARNING 'Multiple Location Picture Datetime Attributes for Collection ID --> %, Location ID --> %, ignored Attr ID --> %', arg_collection_row.id, rowlocation.id, rowlocationattributevalue.id ;
 								END IF;
 							ELSE
-								RAISE WARNING 'Unrecognised Location Attribute, Location ID --> %, LA ID --> % in LAV ID --> %: ignored', rowlocation.id, rowlocationattributevalue.location_attribute_id, rowlocationattributevalue.id ;
+								IF batchMode = true THEN
+									RAISE WARNING 'Unrecognised Location Attribute, Location ID --> %, LA ID --> % in LAV ID --> %: ignored', rowlocation.id, rowlocationattributevalue.location_attribute_id, rowlocationattributevalue.id ;
+								END IF;
 						END CASE;
 						IF rowlocationattributevalue.updated_on > updated THEN
 							updated := rowlocationattributevalue.updated_on;
@@ -275,7 +287,7 @@ BEGIN
 							updated := rowlocationimage.updated_on;
 						END IF;
 						FETCH curlocationimage INTO rowlocationimage;
-						IF FOUND THEN
+						IF FOUND AND batchMode = true THEN
 							RAISE WARNING 'Multiple Locations Images on Location ID --> %, only most recent location used, ignoring ID --> %', rowlocation.id, rowlocationimage.id ;
 						END IF;
 						OPEN curflower FOR SELECT * FROM occurrences WHERE sample_id = arg_collection_row.id AND deleted = false ORDER BY id DESC;
@@ -293,23 +305,25 @@ BEGIN
 											cacherow.flower_type_id = rowoccurrenceattributevalue.int_value;
 											cacheinsecttemplate1.flower_type_id = rowoccurrenceattributevalue.int_value;
 											cacheinsecttemplate1.flower_type = spipoll_get_term(rowoccurrenceattributevalue.int_value);
-										ELSE
+										ELSIF batchMode = true THEN
 											RAISE WARNING 'Multiple Flower Type Attributes for Flower ID --> %, ignored Attr ID --> %', rowflower.id, rowoccurrenceattributevalue.id ;
 										END IF;
 									WHEN occurrence_picture_camera_attr_id THEN
 										IF cacheinsecttemplate1.image_de_la_fleur_camera IS NULL THEN
 											cacheinsecttemplate1.image_de_la_fleur_camera := rowoccurrenceattributevalue.text_value;
-										ELSE
+										ELSIF batchMode = true THEN
 											RAISE WARNING 'Multiple Flower Picture Camera Attributes for Flower ID --> %, ignored Attr ID --> %', rowflower.id, rowoccurrenceattributevalue.id ;
 										END IF;
 									WHEN occurrence_picture_datetime_attr_id THEN
 										IF cacheinsecttemplate1.image_de_la_fleur_datetime IS NULL THEN
 											cacheinsecttemplate1.image_de_la_fleur_datetime := rowoccurrenceattributevalue.text_value;
-										ELSE
+										ELSIF batchMode = true THEN
 											RAISE WARNING 'Multiple Flower Picture Datetime Attributes for Flower ID --> %, ignored Attr ID --> %', rowflower.id, rowoccurrenceattributevalue.id ;
 										END IF;
 									ELSE
-										RAISE WARNING 'Unrecognised Flower Attribute, Flower ID --> %, OA ID --> % in OAV ID --> %: ignored', rowflower.id, rowoccurrenceattributevalue.occurrence_attribute_id, rowoccurrenceattributevalue.id ;
+										IF batchMode = true THEN
+											RAISE WARNING 'Unrecognised Flower Attribute, Flower ID --> %, OA ID --> % in OAV ID --> %: ignored', rowflower.id, rowoccurrenceattributevalue.occurrence_attribute_id, rowoccurrenceattributevalue.id ;
+										END IF;
 								END CASE;
 								IF rowoccurrenceattributevalue.updated_on > updated THEN
 									updated := rowoccurrenceattributevalue.updated_on;
@@ -317,19 +331,29 @@ BEGIN
 							END LOOP;
 							first := true;
 							numHist := 0;
+							cacherow.status_fleur_code := 'X';
 							FOR rowdetermination IN SELECT * FROM determinations WHERE occurrence_id = rowflower.id AND deleted = false ORDER BY id desc LOOP
 								IF rowdetermination.updated_on > updated THEN
 									updated := rowdetermination.updated_on;
 								END IF;
 								IF first THEN
-									--- flower treated slightly differently to insect - there most always be only one flower and it must have an identification
-									IF rowdetermination.taxa_taxon_list_id IS NOT NULL THEN
-										cacherow.flower_taxon_ids := '|'||rowdetermination.taxa_taxon_list_id||'|';
-									ELSE
-										cacherow.flower_taxon_ids := ARRAY(select '|'||unnest(rowdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+									--- flower treated slightly differently to insect - there must always be only one flower and it must have an identification
+									IF rowdetermination.determination_type <> 'X' THEN --- identified
+										IF rowdetermination.taxa_taxon_list_id IS NOT NULL THEN
+											cacherow.flower_taxon_ids := '|'||rowdetermination.taxa_taxon_list_id||'|';
+											cacherow.flower_taxon_type := 'seul';
+										ELSE
+											cacherow.flower_taxon_ids := ARRAY(select '|'||unnest(rowdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+											IF array_length(rowdetermination.taxa_taxon_list_id_list, 1) < 2 THEN
+												cacherow.flower_taxon_type := 'seul';
+											ELSE
+												cacherow.flower_taxon_type := 'multi';
+											END IF;
+										END IF;
+										cacheinsecttemplate1.flower_taxon_type := cacherow.flower_taxon_type;
+										cacheinsecttemplate1.flower_taxon_ids := cacherow.flower_taxon_ids;
+										cacheinsecttemplate1.flower_taxon := spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list);
 									END IF;
-									cacheinsecttemplate1.flower_taxon_ids := cacherow.flower_taxon_ids;
-									cacheinsecttemplate1.flower_taxon := spipoll_get_taxon_details(rowdetermination.taxa_taxon_list_id, rowdetermination.taxa_taxon_list_id_list);
 									cacherow.taxons_fleur_precise := rowdetermination.taxon_extra_info;
 									cacheinsecttemplate1.taxons_fleur_precise := cacherow.taxons_fleur_precise;
 									cacheinsecttemplate1.status_fleur_giver := rowdetermination.person_name::text;
@@ -359,7 +383,7 @@ BEGIN
 									cacherow.image_de_la_fleur = rowflowerimage.path;
 									cacheinsecttemplate1.image_de_la_fleur = rowflowerimage.path;
 									FETCH curflowerimage INTO rowflowerimage;
-									IF FOUND THEN
+									IF FOUND AND batchMode = true THEN
 										RAISE WARNING 'Multiple Flower Images on Flower ID --> %, only most recent image used, ignoring ID --> %', rowflower.id, rowflowerimage.id ;
 									END IF;
 									FOR rowsession IN SELECT * FROM samples WHERE parent_id = arg_collection_row.id AND deleted = false
@@ -384,7 +408,7 @@ BEGIN
 													IF cacheinsecttemplate2.sky_ids IS NULL THEN
 														cacheinsecttemplate2.sky_ids := '|' || rowsampleattributevalue.int_value || '|';
 														cacheinsecttemplate2.ciel := spipoll_get_term(rowsampleattributevalue.int_value);
-													ELSE
+													ELSIF batchMode = true THEN
 														RAISE WARNING 'Multiple Sky Attributes for Session ID --> %, ignored Attr ID --> %', rowsession.id, rowsampleattributevalue.id ;
 													END IF;
 												WHEN shade_attr_id THEN
@@ -400,7 +424,7 @@ BEGIN
 														ELSE
 															cacheinsecttemplate2.fleur_a_lombre := 'Oui';
 														END IF;
-													ELSE
+													ELSIF batchMode = true THEN
 														RAISE WARNING 'Multiple Shade Attributes for Session ID --> %, ignored Attr ID --> %', rowsession.id, rowsampleattributevalue.id ;
 													END IF;
 												WHEN temp_attr_id THEN
@@ -412,7 +436,7 @@ BEGIN
 													IF cacheinsecttemplate2.temp_ids IS NULL THEN
 														cacheinsecttemplate2.temp_ids := '|' || rowsampleattributevalue.int_value || '|';
 														cacheinsecttemplate2.temperature := spipoll_get_term(rowsampleattributevalue.int_value);
-													ELSE
+													ELSIF batchMode = true THEN
 														RAISE WARNING 'Multiple Temp Attributes for Session ID --> %, ignored Attr ID --> %', rowsession.id, rowsampleattributevalue.id ;
 													END IF;
 												WHEN wind_attr_id THEN
@@ -424,23 +448,25 @@ BEGIN
 													IF cacheinsecttemplate2.wind_ids IS NULL THEN
 														cacheinsecttemplate2.wind_ids := '|' || rowsampleattributevalue.int_value || '|';
 														cacheinsecttemplate2.vent := spipoll_get_term(rowsampleattributevalue.int_value);
-													ELSE
+													ELSIF batchMode = true THEN
 														RAISE WARNING 'Multiple Wind Attributes for Session ID --> %, ignored Attr ID --> %', rowsession.id, rowsampleattributevalue.id ;
 													END IF;
 												WHEN start_time_attr_id THEN
 													IF cacheinsecttemplate2.starttime IS NULL THEN
 														cacheinsecttemplate2.starttime := rowsampleattributevalue.text_value;
-													ELSE
+													ELSIF batchMode = true THEN
 														RAISE WARNING 'Multiple Start Time Attributes for Session ID --> %, ignored Attr ID --> %', rowsession.id, rowsampleattributevalue.id ;
 													END IF;
 												WHEN end_time_attr_id THEN
 													IF cacheinsecttemplate2.endtime IS NULL THEN
 														cacheinsecttemplate2.endtime := rowsampleattributevalue.text_value;
-													ELSE
+													ELSIF batchMode = true THEN
 														RAISE WARNING 'Multiple Start Time Attributes for Session ID --> %, ignored Attr ID --> %', rowsession.id, rowsampleattributevalue.id ;
 													END IF;
 												ELSE
-													RAISE WARNING 'Unrecognised Session Attribute, Session ID --> %, SA ID --> % in SAV ID --> %: ignored', rowsession.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
+													IF batchMode = true THEN
+														RAISE WARNING 'Unrecognised Session Attribute, Session ID --> %, SA ID --> % in SAV ID --> %: ignored', rowsession.id, rowsampleattributevalue.sample_attribute_id, rowsampleattributevalue.id ;
+													END IF;
 											END CASE;
 											IF rowsampleattributevalue.updated_on > sessionupdated THEN
 												sessionupdated := rowsampleattributevalue.updated_on;
@@ -450,11 +476,17 @@ BEGIN
 										LOOP
 										  DECLARE
 											cacheinsectrow	spipoll_insects_cache%ROWTYPE;
+											notOnFlower char(1);
 										  BEGIN
 										 	cacheinsectrow := cacheinsecttemplate2;
 											cacheinsectrow.insect_id := rowinsect.id;
 											cacheinsectrow.geom := cacherow.geom;
 											cacheinsectrow.updated := sessionupdated;
+											notOnFlower := '0';
+											--- with V3_2 we now search more details on insects, so we have to be canny about the data stored in the
+											--- cacherow. all the queries have to be anded, plus we are very restricted by what the ogc like filter
+											--- can do. Each entry is of the format |<status: XABC>:<type: MS>:<notOnflower:YN>:<taxa_taxon_list_id>|
+											--- cacherow.insect_taxon_ids is renamed to cacherow.insect_details
 											FOR rowoccurrenceattributevalue IN SELECT * FROM occurrence_attribute_values WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id desc
 											LOOP
 												CASE rowoccurrenceattributevalue.occurrence_attribute_id
@@ -465,41 +497,44 @@ BEGIN
 															RAISE WARNING 'Multiple Insect Number Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
 														END IF;
 													WHEN insect_foraging_attr_id THEN
-														IF cacherow.notonaflower_ids IS NULL THEN
-															cacherow.notonaflower_ids := '|' || rowoccurrenceattributevalue.int_value || '|';
-														ELSE
-															cacherow.notonaflower_ids := cacherow.notonaflower_ids || rowoccurrenceattributevalue.int_value || '|';
-														END IF;
 														IF cacheinsectrow.notonaflower IS NULL THEN
+															IF cacherow.notonaflower_ids IS NULL THEN
+																cacherow.notonaflower_ids := '|' || rowoccurrenceattributevalue.int_value || '|';
+															ELSE
+																cacherow.notonaflower_ids := cacherow.notonaflower_ids || rowoccurrenceattributevalue.int_value || '|';
+															END IF;
 															cacheinsectrow.notonaflower_id = rowoccurrenceattributevalue.int_value;
 															IF rowoccurrenceattributevalue.int_value = 0 THEN
 																cacheinsectrow.notonaflower := 'Non';
 															ELSE
+																notOnFlower := '1';
 																cacheinsectrow.notonaflower := 'Oui';
 															END IF;
-														ELSE
+														ELSIF batchMode = true THEN
 															RAISE WARNING 'Multiple Foraging Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
 														END IF;
 													WHEN occurrence_picture_camera_attr_id THEN
 														IF cacheinsectrow.image_d_insecte_camera IS NULL THEN
 															cacheinsectrow.image_d_insecte_camera := rowoccurrenceattributevalue.text_value;
-														ELSE
+														ELSIF batchMode = true THEN
 															RAISE WARNING 'Multiple Insect Picture Camera Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
 														END IF;
 													WHEN occurrence_picture_datetime_attr_id THEN
 														IF cacheinsectrow.image_d_insecte_datetime IS NULL THEN
 															cacheinsectrow.image_d_insecte_datetime := rowoccurrenceattributevalue.text_value;
-														ELSE
+														ELSIF batchMode = true THEN
 															RAISE WARNING 'Multiple Insect Picture Datetime Attributes for Insect ID --> %, ignored Attr ID --> %', rowinsect.id, rowoccurrenceattributevalue.id ;
 														END IF;
 													ELSE
-														RAISE WARNING 'Unrecognised Insect Attribute, Insect ID --> %, OA ID --> % in OAV ID --> %: ignored', rowinsect.id, rowoccurrenceattributevalue.occurrence_attribute_id, rowoccurrenceattributevalue.id ;
+														IF batchMode = true THEN
+															RAISE WARNING 'Unrecognised Insect Attribute, Insect ID --> %, OA ID --> % in OAV ID --> %: ignored', rowinsect.id, rowoccurrenceattributevalue.occurrence_attribute_id, rowoccurrenceattributevalue.id ;
+														END IF;
 												END CASE;
 												IF rowoccurrenceattributevalue.updated_on > cacheinsectrow.updated THEN
 													cacheinsectrow.updated := rowoccurrenceattributevalue.updated_on;
 												END IF;
 											END LOOP;
-											
+											cacheinsectrow.status_insecte_code := 'X';
 											first := true;
 											numHist := 0;
 											FOR rowinsectdetermination IN SELECT * FROM determinations WHERE occurrence_id = rowinsect.id AND deleted = false ORDER BY id desc LOOP
@@ -507,24 +542,38 @@ BEGIN
 													cacheinsectrow.updated := rowinsectdetermination.updated_on;
 												END IF;
 												IF first THEN
-													cacheinsectrow.insect_taxon := spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list);
+													IF rowinsectdetermination.determination_type <> 'X' THEN --- identified
+														cacheinsectrow.insect_taxon := spipoll_get_taxon_details(rowinsectdetermination.taxa_taxon_list_id, rowinsectdetermination.taxa_taxon_list_id_list);
+														IF rowinsectdetermination.taxa_taxon_list_id IS NOT NULL THEN
+															cacheinsectrow.insect_taxon_ids := '|'||rowinsectdetermination.taxa_taxon_list_id||'|';
+															cacheinsectrow.insect_taxon_type := 'seul';
+															cacherow.insect_search := cacherow.insect_search||'|'||rowinsectdetermination.determination_type||':S:'||notOnFlower||':'||to_char(rowinsectdetermination.taxa_taxon_list_id,'FM09999')||'|';
+														ELSE
+															taxon_type := 'S';
+															cacheinsectrow.insect_taxon_ids := ARRAY(select '|'||unnest(rowinsectdetermination.taxa_taxon_list_id_list)::text||'|')::text;
+															IF array_length(rowinsectdetermination.taxa_taxon_list_id_list, 1) < 2 THEN
+																cacheinsectrow.insect_taxon_type := 'seul';
+															ELSE
+																taxon_type := 'M';
+																cacheinsectrow.insect_taxon_type := 'multi';
+															END IF;
+															cacherow.insect_search := cacherow.insect_search||ARRAY(select '|'||rowinsectdetermination.determination_type||':'||taxon_type||':'||notOnFlower||':'||to_char(unnest(rowinsectdetermination.taxa_taxon_list_id_list),'FM09999')||'|')::text;
+														END IF;
+														IF cacherow.insect_taxon_ids IS NULL THEN
+															cacherow.insect_taxon_ids := cacheinsectrow.insect_taxon_ids;
+														ELSE
+															cacherow.insect_taxon_ids := cacherow.insect_taxon_ids||cacheinsectrow.insect_taxon_ids;
+														END IF;
+													ELSE
+														cacherow.insect_search := cacherow.insect_search||'|X: :'||notOnFlower||':00000|';
+													END IF;
 													cacheinsectrow.status_insecte_giver := rowinsectdetermination.person_name::text;
 													cacheinsectrow.status_insecte := spipoll_get_determination_details(rowinsectdetermination.determination_type, NULL, rowinsectdetermination.updated_on::date);
 													cacheinsectrow.status_insecte_code := rowinsectdetermination.determination_type;
-													IF rowinsectdetermination.taxa_taxon_list_id IS NOT NULL THEN
-														cacheinsectrow.insect_taxon_ids := '|'||rowinsectdetermination.taxa_taxon_list_id||'|';
-													ELSE
-														cacheinsectrow.insect_taxon_ids := ARRAY(select '|'||unnest(rowinsectdetermination.taxa_taxon_list_id_list)::text||'|')::text;
-													END IF;
 													IF cacherow.status_insecte_code IS NULL THEN
-														cacherow.status_insecte_code := cacheinsectrow.status_insecte_code;
+														cacherow.status_insecte_code := cacheinsectrow.status_insecte_code; -- this may get deleted
 													ELSE
 														cacherow.status_insecte_code := cacherow.status_insecte_code||cacheinsectrow.status_insecte_code;
-													END IF;
-													IF cacherow.insect_taxon_ids IS NULL THEN
-														cacherow.insect_taxon_ids := cacheinsectrow.insect_taxon_ids;
-													ELSE
-														cacherow.insect_taxon_ids := cacherow.insect_taxon_ids||cacheinsectrow.insect_taxon_ids;
 													END IF;
 													cacheinsectrow.taxons_insecte_precise := rowinsectdetermination.taxon_extra_info;
 													IF cacherow.taxons_insecte_precise IS NULL THEN
@@ -555,10 +604,9 @@ BEGIN
 													cacherow.updated := cacheinsectrow.updated;
 												END IF;
 												FETCH curinsectimage INTO rowinsectimage;
-												IF FOUND THEN
+												IF FOUND AND batchMode = true THEN
 													RAISE WARNING 'Multiple Insect Images on Insect ID --> %, only most recent image used, ignoring ID --> %', rowinsect.id, rowinsectimage.id ;
 												END IF;
-												--- RAISE WARNING '%', cacheinsectrow;
 												---------------------------------
 												INSERT INTO spipoll_insects_cache SELECT cacheinsectrow.*;
 												---------------------------------
@@ -567,79 +615,47 @@ BEGIN
 										  END;
 										END LOOP;
 									END LOOP;
-									--- RAISE WARNING '%', cacherow;
 									---------------------------------
 									INSERT INTO spipoll_collections_cache SELECT cacherow.*;
 									---------------------------------
-								ELSE
+								ELSIF batchMode = true THEN
 									RAISE WARNING 'Could not find Flower Image for Flower ID --> %, Collection % not cached', rowflower.id, arg_collection_row.id ;
 								END IF;
 								CLOSE curflowerimage;
-							ELSE
+							ELSIF batchMode = true THEN
 								RAISE WARNING 'Could not find Determination for Flower ID --> %, Collection % not cached', rowflower.id, arg_collection_row.id ;
 							END IF;
 							FETCH curflower INTO rowflower;
-							IF FOUND THEN
+							IF FOUND AND batchMode = true THEN
 								RAISE WARNING 'Multiple Flowers on Collection ID --> %, only most recent flower used, ignoring ID --> %', arg_collection_row.id, rowflower.id ;
 							END IF;
-						ELSE
+						ELSIF batchMode = true THEN
 							RAISE WARNING 'Could not find Flower for Collection ID --> %, Collection not cached', arg_collection_row.id ;
 						END IF;
 						CLOSE curflower;
-					ELSE
+					ELSIF batchMode = true THEN
 						RAISE WARNING 'Could not find Location Image for Location ID --> %, Collection % not cached', rowlocation.id, arg_collection_row.id ;
 					END IF;
 					CLOSE curlocationimage;
 					FETCH curlocation INTO rowlocation;
-					IF FOUND THEN
+					IF FOUND AND batchMode = true THEN
 						RAISE WARNING 'Multiple Locations on Collection ID --> %, only most recent location used, ignoring ID --> %', arg_collection_row.id, rowlocation.id ;
 					END IF;
-				ELSE
+				ELSIF batchMode = true THEN
 					RAISE WARNING 'Could not find Location for Collection ID --> %, Collection not cached', arg_collection_row.id ;
 				END IF;
 				CLOSE curlocation;
 			WHEN 0 THEN
-				--- RAISE WARNING 'Collection not closed, ID --> %', arg_collection_row.id ;
+				--- Collection not closed
 			WHEN 2 THEN
-				RAISE WARNING 'No closed attribute found for Collection ID --> %', arg_collection_row.id ;
+				IF batchMode = true THEN
+					RAISE WARNING 'No closed attribute found for Collection ID --> %', arg_collection_row.id ;
+				END IF;
 		END CASE;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION update_spipoll_cache(arg_survey_id integer, arg_back text ) RETURNS integer AS $$
-DECLARE
-	-- following should be updated to reflect values in Database
-	closed_attr_id		integer := 20;
-	count				integer;
-	attributeRow		sample_attribute_values%ROWTYPE;
-	collectionrow		samples%ROWTYPE;
-	curcollection		refcursor;
-
-BEGIN
-	count := 0;
-	FOR attributeRow IN SELECT * FROM sample_attribute_values
-	WHERE deleted = false
-		AND sample_attribute_id = closed_attr_id
-		AND updated_on > (now() - (arg_back)::INTERVAL)
-		AND int_value = 1
-	ORDER by sample_id
-	LOOP
-	  BEGIN
-		DELETE FROM spipoll_collections_cache WHERE collection_id = attributeRow.sample_id ;
-		DELETE FROM spipoll_insects_cache WHERE collection_id = attributeRow.sample_id ;
-		OPEN curcollection FOR SELECT * FROM samples WHERE id = attributeRow.sample_id AND deleted = false ORDER BY id DESC;
-		FETCH curcollection INTO collectionrow;
-		IF FOUND THEN
-			RAISE WARNING 'Processing Collection ID --> %', collectionrow.id ;
-			perform update_spipoll_cache_entry(arg_survey_id, collectionrow);
-			count := count + 1;
-		END IF;
-		CLOSE curcollection;
-	  END;
-    END LOOP;
-	return count;
-END;
-$$ LANGUAGE plpgsql;
+DROP FUNCTION IF EXISTS update_spipoll_cache(integer, text );
 
 CREATE OR REPLACE FUNCTION rebuild_spipoll_cache(arg_survey_id integer) RETURNS integer AS $$
 DECLARE
@@ -655,7 +671,7 @@ BEGIN
 	WHERE parent_id IS NULL AND deleted = false AND survey_id = arg_survey_id ORDER by id
 	LOOP
 	  BEGIN
-		perform update_spipoll_cache_entry(arg_survey_id, collectionrow);
+		perform update_spipoll_cache_entry(collectionrow, true);
 		count := count + 1;
 	  END;
     END LOOP;
@@ -664,6 +680,75 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---- BEGIN;
-select * from update_spipoll_cache(2, '1 day'); 
---- COMMIT;
+CREATE OR REPLACE FUNCTION check_run_cache() RETURNS trigger AS $$
+	DECLARE
+		collectionRow	samples%ROWTYPE;
+		sessionRow		samples%ROWTYPE;
+		occRow			occurrences%ROWTYPE;
+		surveyID		integer := 2;
+		closed_attr_id	integer := 20;
+	BEGIN
+		IF TG_RELNAME='locations' THEN
+			FOR collectionRow IN SELECT * FROM samples
+				WHERE parent_id IS NULL
+					AND deleted = false
+					AND survey_id = surveyID
+					AND location_id=NEW.id
+				ORDER by id
+			LOOP
+				BEGIN
+					perform update_spipoll_cache_entry(collectionRow, false);
+				END;
+			END LOOP;
+			RETURN NEW;
+		ELSIF TG_RELNAME='samples' THEN
+			--- need to include deleted so they are removed from cache.
+			IF NEW.parent_id IS NULL AND NEW.survey_id = surveyID THEN
+				perform update_spipoll_cache_entry(NEW, false);
+			END IF;
+			RETURN NEW;
+		ELSIF TG_RELNAME='sample_attribute_values' THEN
+			--- need to include deleted so they are removed from cache.
+			IF NEW.sample_attribute_id = closed_attr_id THEN
+				SELECT * INTO collectionRow FROM samples WHERE id=NEW.sample_id AND survey_id = surveyID AND parent_id IS NULL;
+				IF FOUND THEN
+					perform update_spipoll_cache_entry(collectionRow, false);
+				END IF;
+			END IF;
+			RETURN NEW;
+		ELSIF TG_RELNAME='determinations' THEN
+			SELECT * INTO occRow FROM occurrences WHERE id=NEW.occurrence_id;
+			IF FOUND THEN
+				--- Check if flower first
+				SELECT * INTO collectionRow FROM samples WHERE id=occRow.sample_id AND survey_id = surveyID;
+				IF FOUND THEN
+					IF collectionRow.parent_id IS NULL THEN
+						perform update_spipoll_cache_entry(collectionRow, false);
+					ELSE
+						--- Check if insect
+						sessionRow := collectionRow;
+						SELECT * INTO collectionRow FROM samples WHERE id=sessionRow.parent_id AND survey_id = surveyID AND parent_id IS NULL;
+						IF FOUND THEN
+							perform update_spipoll_cache_entry(collectionRow, false);
+						END IF;
+					END IF;
+				END IF;
+			END IF;
+			RETURN NEW;
+		END IF;
+	END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER run_cache_determinations ON determinations CASCADE;
+DROP TRIGGER run_cache_locations      ON locations CASCADE;
+DROP TRIGGER run_cache_samples        ON samples CASCADE;
+DROP TRIGGER run_cache_sample_attribute_values ON sample_attribute_values CASCADE;
+CREATE TRIGGER run_cache_determinations AFTER INSERT OR UPDATE ON determinations FOR EACH ROW EXECUTE PROCEDURE check_run_cache();
+--- The locations are created early in the process, when the sample is not closed - no entry in cache
+CREATE TRIGGER run_cache_locations      AFTER UPDATE           ON locations      FOR EACH ROW EXECUTE PROCEDURE check_run_cache();
+--- The samples are created early in the process, when the sample is not closed - no entry in cache
+--- When the sample is closed, the sample is modified as well as the closed SAV being set.
+CREATE TRIGGER run_cache_sample_attribute_values AFTER UPDATE ON sample_attribute_values FOR EACH ROW EXECUTE PROCEDURE check_run_cache();
+
+--- need to run following each day.
+--- select * from rebuild_spipoll_cache(3); 
