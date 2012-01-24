@@ -225,11 +225,11 @@ SELECT tmp_add_term('Instability', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Vibrations', 'fra', null, 'bats:disturbances');
 SELECT tmp_add_term('Vibrations', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Lumière artificielle', 'fra', null, 'bats:disturbances');
-SELECT tmp_add_term('Artifical Light', 'eng', null, 'bats:disturbances');
+SELECT tmp_add_term('Artifical light', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Risques d’inondation temporaire', 'fra', null, 'bats:disturbances');
-SELECT tmp_add_term('Risk of Temporary flooding', 'eng', null, 'bats:disturbances');
+SELECT tmp_add_term('Risk of temporary flooding', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Présence de déchets toxiques', 'fra', null, 'bats:disturbances');
-SELECT tmp_add_term('Toxic Waste present', 'eng', null, 'bats:disturbances');
+SELECT tmp_add_term('Toxic waste present', 'eng', null, 'bats:disturbances');
 SELECT insert_term('Autre', 'fra', null, 'bats:disturbances');
 SELECT tmp_add_term('Other', 'eng', null, 'bats:disturbances');
 INSERT INTO sample_attributes (

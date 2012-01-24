@@ -112,3 +112,22 @@ SELECT insert_term('Undetermined', 'eng', null, 'reptile:behaviour');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:behaviour');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Behaviour', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:behaviour'), 'f', 't');
+
+--- The following new Occurrence Attributes are used for Summer Bats: mnhnl_bats2
+--- use 'Num alive', 'Num dead' from winter bats above.
+--- for a given species, there are 3 possibilities for a survey: (1) presence-absence recording, (2) count of individuals alive, (3) count of dead individuals 
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Presence-absence recording', 'B', now(), 1, now(), 1, 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Present', 'B', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bats Live Count Type', 'Bats Live Count Type.', now(), 1, now(), 1, 'bats2:livecounttype');
+SELECT insert_term('Not done', 'eng', null, 'bats2:livecounttype');
+SELECT insert_term('Leaving roost at dusk', 'eng', null, 'bats2:livecounttype');
+SELECT insert_term('Photo based', 'eng', null, 'bats2:livecounttype');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:livecounttype');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Live Count', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:livecounttype'), 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dead Count', 'B', now(), 1, now(), 1, 'f', 't');
+
