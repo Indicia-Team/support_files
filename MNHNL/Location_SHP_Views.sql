@@ -23,7 +23,7 @@ UNION
 select ST_MULTI(centroid_geom), l.code, l.name, ttl.term, l.id, l.location_type_id, lw.website_id from locations l
  JOIN locations_websites lw ON (l.id = lw.location_id and lw.deleted = false)
  JOIN detail_termlists_terms ttl on (l.location_type_id = ttl.id and ttl.preferred=true)
- WHERE l.deleted = false
+ WHERE l.deleted = false and l.boundary_geom is null
  AND GeometryType(centroid_geom) = 'POINT'
 ORDER by name,id
 ;
@@ -41,13 +41,13 @@ select l.boundary_geom, l.code, l.name, ttl.term, l.id, l.location_type_id, lw.w
  JOIN locations_websites lw ON (l.id = lw.location_id and lw.deleted = false)
  JOIN detail_termlists_terms ttl on (l.location_type_id = ttl.id and ttl.preferred=true)
  WHERE l.deleted = false
- AND GeometryType(boundary_geom) = 'MULTILINE'
+ AND GeometryType(boundary_geom) = 'MULTILINESTRING'
 UNION
 select ST_MULTI(boundary_geom), l.code, l.name, ttl.term, l.id, l.location_type_id, lw.website_id from locations l
  JOIN locations_websites lw ON (l.id = lw.location_id and lw.deleted = false)
  JOIN detail_termlists_terms ttl on (l.location_type_id = ttl.id and ttl.preferred=true)
  WHERE l.deleted = false
- AND GeometryType(boundary_geom) = 'LINE'
+ AND GeometryType(boundary_geom) = 'LINESTRING'
 ORDER by name,id
 ;
 
