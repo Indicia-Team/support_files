@@ -39,7 +39,7 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'End time', 'T', now(), 1, now(), 1, 'f', 'f', 't', 't', 'time');
 
 --- The following new Occurrence Attributes are used for Butterflies1: Butterfly Monitoring: mnhnl_butterflies
---- The Temperature, CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- The Temperature, CMS Username, CMS User ID and Email attribute is a standard one.
 --- Start Time and End Time is used from COBIMO Above.
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
@@ -131,7 +131,7 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Cloud cover', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly:cloud'), 'f', 't');
 
 --- The following new Sample Attributes are used for Winter Bats: mnhnl_bats
---- The CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- The CMS Username, CMS User ID and Email attribute is a standard one.
 --- Need to Check reliabilty WRT reliability in COBIMO above.
 --- No observation is used from Butterfly1 above.
 
@@ -156,7 +156,7 @@ SELECT insert_term('2/3', 'eng', null, 'bats:visit');
 SELECT insert_term('3/3', 'eng', null, 'bats:visit');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats:visit');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Bat Visit', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:visit'), 'f', 't');
+	'Bat visit', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:visit'), 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('BatCavityOpening', 'Cavity Opening', now(), 1, now(), 1, 'bats:cavityopening');
 SELECT insert_term('Blocked off', 'eng', null, 'bats:cavityopening');
@@ -182,7 +182,7 @@ SELECT insert_term('Instability', 'eng', null, 'bats:disturbances');
 SELECT tmp_add_term('Instabilité', 'fra', null, 'bats:disturbances');
 SELECT insert_term('Vibrations', 'eng', null, 'bats:disturbances');
 SELECT tmp_add_term('Vibrations', 'fra', null, 'bats:disturbances');
-SELECT insert_term('Artifical light', 'eng', null, 'bats:disturbances');
+SELECT insert_term('Artificial light', 'eng', null, 'bats:disturbances');
 SELECT tmp_add_term('Lumière artificielle', 'fra', null, 'bats:disturbances');
 SELECT insert_term('Risk of temporary flooding', 'eng', null, 'bats:disturbances');
 SELECT tmp_add_term('Risques d’inondation temporaire', 'fra', null, 'bats:disturbances');
@@ -245,7 +245,7 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Accompanied By', 'T', now(), 1, now(), 1, 'f', 't');
 
 --- The following new Occurrence Attributes are used for Butterflies2: Butterfly de Jours: mnhnl_butterflies2
---- The Temperature, CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- The Temperature, CMS Username, CMS User ID and Email attribute is a standard one.
 --- Start Time is used from COBIMO above.
 --- Cloud Cover, No observation are used from Butterfly1 above.
 --- Reliability is used from Bats above.
@@ -269,51 +269,46 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Windspeed', 'I', now(), 1, now(), 1, 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Rain', 'B', now(), 1, now(), 1, 'f', 't');
-	
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Butterfly2 Target Species', 'Butterfly2 Target Species', now(), 1, now(), 1, 'butterfly2:targetspecies');
+SELECT insert_term('Euphydryas aurinia', 'eng', null, 'butterfly2:targetspecies');
+SELECT insert_term('Lycaena helle', 'eng', null, 'butterfly2:targetspecies');
+SELECT insert_term('Lycaena dispar', 'eng', null, 'butterfly2:targetspecies');
+SELECT insert_term('Phengaris arion', 'eng', null, 'butterfly2:targetspecies');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Butterfly2 Target Species', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly2:targetspecies'), 't', 't');
+
 --- The following new Sample Attributes are used for Reptiles: mnhnl_reptiles
---- The Temperature, CMS Username, CMS User ID and Emailcount attributes are standard ones.
+--- The Temperature, CMS Username, CMS User ID and Email attributes are standard ones.
 --- Wind Force, Cloud Cover, No observation are used from Butterfly1 above.
 --- Rain and Duration are used from Butterflies2 above.
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('ReptileProgramme', 'Reptile Programmes', now(), 1, now(), 1, 'reptile:programme');
-SELECT insert_term('Sand Lizard Survey', 'eng', null, 'reptile:programme');
-SELECT insert_term('Common Wall Lizard Survey', 'eng', null, 'reptile:programme');
-SELECT insert_term('Smooth Snake Survey', 'eng', null, 'reptile:programme');
+VALUES ('ReptileTargetSpecies', 'Reptile Target Species', now(), 1, now(), 1, 'reptile:targetSpecies');
+SELECT insert_term('Sand Lizard (Lacerta agilis)', 'eng', null, 'reptile:targetSpecies');
+SELECT insert_term('Common Wall Lizard (Podarcis muralis)', 'eng', null, 'reptile:targetSpecies');
+SELECT insert_term('Smooth Snake (Coronella austriaca)', 'eng', null, 'reptile:targetSpecies');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:programme');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Programme', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:programme'), 'f', 't');
+	'Target Species', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:programme'), 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Reptile Survey', 'Reptile Survey.', now(), 1, now(), 1, 'reptile:survey');
-SELECT insert_term('1', 'eng', null, 'reptile:survey');
-SELECT insert_term('2', 'eng', null, 'reptile:survey');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:survey');
+VALUES ('Reptile Visit', 'Reptile Visit', now(), 1, now(), 1, 'reptile:visit');
+SELECT insert_term('1', 'eng', null, 'reptile:visit');
+SELECT insert_term('2', 'eng', null, 'reptile:visit');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:visit');
 INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Survey', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:survey'), 'f', 't');
+	'Reptile Visit', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:visit'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (	
-	'Suitability', 'B', now(), 1, now(), 1, 'f', 't');
+	'Unsuitability', 'B', now(), 1, now(), 1, 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Picture provided', 'B', now(), 1, now(), 1, 'f', 't');
 
---- The following new Sample Attributes are used for Winter Bats: mnhnl_bats
---- The CMS Username, CMS User ID and Emailcount attribute is a standard one.
+--- The following new Sample Attributes are used for Summer Bats: mnhnl_bats2
+--- The CMS Username, CMS User ID and Email attribute is a standard one.
 --- Use Bat Visit, Disturbances other comment from Bats1.
 --- Start Time and End Time is used from COBIMO Above.
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('BatDisturbances', 'List of Disturbances', now(), 1, now(), 1, 'bats2:disturbances');
-SELECT insert_term('Artificial light illuminating the entrance hole', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Lumière artificielle éclairant le(s) trou(s) d’envol', 'fra', null, 'bats2:disturbances');
-SELECT insert_term('Planned renovations', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Travaux de rénovation : en projet', 'fra', null, 'bats2:disturbances');
-SELECT insert_term('Renovations in progress', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Travaux de rénovation : en cours', 'fra', null, 'bats2:disturbances');
-SELECT insert_term('Renovations recently completed', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Travaux de rénovation : récemment effectués', 'fra', null, 'bats2:disturbances');
-SELECT insert_term('Other', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Autre', 'fra', null, 'bats2:disturbances');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:disturbances');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Disturbances2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:disturbances'), 't', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Sketch provided', 'B', now(), 1, now(), 1, 'f', 't');
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2Disturbances', 'List of Disturbances', now(), 1, now(), 1, 'bats2:disturbances');
@@ -342,4 +337,68 @@ SELECT tmp_add_term('Averses', 'fra', null, 'bats2:precipitation');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:precipitation');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Precipitation2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:precipitation'), 'f', 't');
+
+--- The following new Sample Attributes are used for Dormice: mnhnl_mammals1
+--- Start Time and End Time are used from Cobimo.
+--- Suitability checkbox is used from Reptiles.
+--- Standard Tempertaure is used.
+--- Cloud cover used from Butterflies1.
+--- Rain used from Butterflies1.
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Orientation', 'T', now(), 1, now(), 1, 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Nest height (cm)', 'I', now(), 1, now(), 1, 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Nest diameter (cm)', 'I', now(), 1, now(), 1, 'f', 't');
+--- should the following perhaps be location based?
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('DormiceHabitatType', 'Dormice Site Type', now(), 1, now(), 1, 'dormice:habitattype');
+SELECT insert_term('Forest edge', 'eng', null, 'dormice:habitattype');
+SELECT insert_term('Hedgerow', 'eng', null, 'dormice:habitattype');
+SELECT insert_term('Forest stand', 'eng', null, 'dormice:habitattype');
+SELECT insert_term('Plantation forest', 'eng', null, 'dormice:habitattype');
+SELECT insert_term('Open area in forest', 'eng', null, 'dormice:habitattype');
+SELECT insert_term('Other', 'eng', null, 'dormice:habitattype');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:habitattype');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormice habitat type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:habitattype'), 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormice habitat type other', 'T', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('DormiceSuccession', 'Dormice Succession Type', now(), 1, now(), 1, 'dormice:succession');
+SELECT insert_term('Clearcut forest', 'eng', null, 'dormice:succession');
+SELECT insert_term('Forest windfall', 'eng', null, 'dormice:succession');
+SELECT insert_term('Brambles', 'eng', null, 'dormice:succession');
+SELECT insert_term('Early-succession forest', 'eng', null, 'dormice:succession');
+SELECT insert_term('Coppice forest', 'eng', null, 'dormice:succession');
+SELECT insert_term('Early timberland forest', 'eng', null, 'dormice:succession');
+SELECT insert_term('Mature timberland forest', 'eng', null, 'dormice:succession');
+SELECT insert_term('Other', 'eng', null, 'dormice:succession');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:succession');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormice succession', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:succession'), 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormice succession other', 'T', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('DormiceBorderingHabitatType', 'Dormice Site Type', now(), 1, now(), 1, 'dormice:borderinghabitattype');
+SELECT insert_term('Broadleaved forest', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Coniferous forest', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Mixed forest', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Open area in forest', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Forest windfall', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Heathland', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Arable land', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Fallow', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Grassland', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Orchard', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Wetland', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Urban area', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Road', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Path', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Other', 'eng', null, 'dormice:borderinghabitattype');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:borderinghabitattype');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormice bordering habitat type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:borderinghabitattype'), 't', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormice bordering habitat other', 'T', now(), 1, now(), 1, 'f', 't');
 
