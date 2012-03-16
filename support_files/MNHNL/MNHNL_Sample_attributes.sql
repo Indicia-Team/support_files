@@ -275,6 +275,7 @@ SELECT insert_term('Euphydryas aurinia', 'eng', null, 'butterfly2:targetspecies'
 SELECT insert_term('Lycaena helle', 'eng', null, 'butterfly2:targetspecies');
 SELECT insert_term('Lycaena dispar', 'eng', null, 'butterfly2:targetspecies');
 SELECT insert_term('Phengaris arion', 'eng', null, 'butterfly2:targetspecies');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='butterfly2:targetspecies');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Butterfly2 Target Species', 'L', now(), 1, now(), 1, (select id from termlists where external_key='butterfly2:targetspecies'), 't', 't');
 
@@ -288,9 +289,10 @@ VALUES ('ReptileTargetSpecies', 'Reptile Target Species', now(), 1, now(), 1, 'r
 SELECT insert_term('Sand Lizard (Lacerta agilis)', 'eng', null, 'reptile:targetSpecies');
 SELECT insert_term('Common Wall Lizard (Podarcis muralis)', 'eng', null, 'reptile:targetSpecies');
 SELECT insert_term('Smooth Snake (Coronella austriaca)', 'eng', null, 'reptile:targetSpecies');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:programme');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='reptile:targetSpecies');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Target Species', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:programme'), 'f', 't');
+	'ReptileTargetSpecies', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:targetSpecies'), 'f', 't');
+
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Reptile Visit', 'Reptile Visit', now(), 1, now(), 1, 'reptile:visit');
 SELECT insert_term('1', 'eng', null, 'reptile:visit');
