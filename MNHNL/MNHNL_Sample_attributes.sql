@@ -307,11 +307,18 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 
 --- The following new Sample Attributes are used for Summer Bats: mnhnl_bats2
 --- The CMS Username, CMS User ID and Email attribute is a standard one.
---- Use Bat Visit, Disturbances other comment from Bats1.
+--- Use Disturbances other comment, Site followup, Accompanied by from Bats1.
 --- Start Time and End Time is used from COBIMO Above.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bat2Visit', 'Visit Number in Year', now(), 1, now(), 1, 'bats2:visit');
+SELECT insert_term('1 of 1', 'eng', null, 'bats2:visit');
+SELECT insert_term('1 of 2', 'eng', null, 'bats2:visit');
+SELECT insert_term('2 of 2', 'eng', null, 'bats2:visit');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:visit');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Bat2 visit', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:visit'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Sketch provided', 'B', now(), 1, now(), 1, 'f', 't');
-
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2Disturbances', 'List of Disturbances', now(), 1, now(), 1, 'bats2:disturbances');
 SELECT insert_term('Artificial light illuminating the entrance hole', 'eng', null, 'bats2:disturbances');
@@ -327,7 +334,6 @@ SELECT tmp_add_term('Autre', 'fra', null, 'bats2:disturbances');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:disturbances');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Disturbances2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:disturbances'), 't', 't');
-
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2Precipitation', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:precipitation');
 SELECT insert_term('None', 'eng', null, 'bats2:precipitation');
@@ -339,6 +345,58 @@ SELECT tmp_add_term('Averses', 'fra', null, 'bats2:precipitation');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:precipitation');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Precipitation2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:precipitation'), 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bats2SurveyMethod', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:surveymethod');
+SELECT insert_term('Presence recording', 'eng', null, 'bats2:surveymethod');
+SELECT insert_term('Picture of the maternity', 'eng', null, 'bats2:surveymethod');
+SELECT insert_term('Count at dusk emergence', 'eng', null, 'bats2:surveymethod');
+SELECT insert_term('Count in maternity roost', 'eng', null, 'bats2:surveymethod');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:surveymethod');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Bats2SurveyMethod', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:surveymethod'), 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'No record', 'B', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bats2Institution', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:institution');
+SELECT insert_term('Centre de Recerche Public - Gabriel Lippmann', 'eng', null, 'bats2:institution');
+SELECT insert_term('natur&ëmwelt', 'eng', null, 'bats2:institution');
+SELECT insert_term('Naturpark Obersauer', 'eng', null, 'bats2:institution');
+SELECT insert_term('Naturpark Our', 'eng', null, 'bats2:institution');
+SELECT insert_term('ProChirop - Büro für Fledertierforschung und -schutz', 'eng', null, 'bats2:institution');
+SELECT insert_term('Station biologique SICONA', 'eng', null, 'bats2:institution');
+SELECT insert_term('SICONA Ouest', 'eng', null, 'bats2:institution');
+SELECT insert_term('SICONA Centre', 'eng', null, 'bats2:institution');
+SELECT insert_term('SIAS - Biologische Station Naturzenter', 'eng', null, 'bats2:institution');
+SELECT insert_term('Administration de la Nature et des Forêts', 'eng', null, 'bats2:institution');
+SELECT insert_term('Musée national d''histoire naturelle', 'eng', null, 'bats2:institution');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:institution');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Institution', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:institution'), 't', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Bats2TargetSpecies', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:targetspecies');
+SELECT insert_term('Rhinolophus ferrumequinum (Grand rhinolophe/Greater horseshoe bat/Große Hufeisennase)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Rhinolophus hipposideros (Petit rhinolophe/Lesser horsehoe bat/Kleine Hufeisennase)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Barbastella barbastellus (Barbastelle commune/Barbastelle/Mopsfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Eptesicus nilssonii (Sérotine de Nilsson/Northern bat/Nordfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Eptesicus serotinus (Sérotine commune/Serotine/Breitflügelfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis bechsteinii (Murin de Bechstein/Bechstein''s bat/Bechsteinfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis brandtii (Murin de Brandt/Brandt''s bat/Große Bartfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis dasycneme (Murin des marais/Pond bat/Teichfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis daubentonii (Murin de daubenton/Daubenton''s bat/Wasserfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis emarginatus (Murin à oreilles échancrées/Geoffroy''s bat/Wimperfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis myotis (Grand murin/Greater mouse-eared bat/Große Mausohr)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis mystacinus (Murin à moustaches/Whiskerd bat/Kleine Bartfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Myotis nattereri (Murin de Natterer/Natterer''s bat/Fransenfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Nyctalus leisleri (Noctule de Leisler/Leisler''s bat/Kleine Abendsegler)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Nyctalus noctula (Noctule commune/Common noctule/Große Abendsegler)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Pipistrellus nathusii (Pipistrelle de Nathusius/Nathusius''s pipistrelle/Rauhautfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Pipistrellus pipistrellus (Pipistrelle commune/Common pipistrelle/Zwergfledermaus)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Plecotus auritus (Oreillard commun/Common long-eared bat/Braune Langohr)', 'eng', null, 'bats2:targetspecies');
+SELECT insert_term('Plecotus austriacus (Oreillard méridional/Grey long-eared bat/Graues Langohr)', 'eng', null, 'bats2:targetspecies');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:targetspecies');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Target Species', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:targetspecies'), 't', 't');
 
 --- The following new Sample Attributes are used for Dormice: mnhnl_mammals1
 --- Start Time and End Time are used from Cobimo.

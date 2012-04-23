@@ -8,7 +8,8 @@ SELECT insert_term('ReptileLocation', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('WinterBats Confirmed', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('WinterBats Submitted', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Butterflies2', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Summer Bats', 'eng', null, 'mnhnl:loctype');
+SELECT insert_term('Summer Bats Submitted', 'eng', null, 'mnhnl:loctype');
+SELECT insert_term('Summer Bats Confirmed', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Lux1KSquare', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Dormice', 'eng', null, 'mnhnl:loctype');
 
@@ -134,8 +135,11 @@ INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, 
 	'Creator', 'T', now(), 1, now(), 1, 'f', 't');
 
 --- The following new Location Attributes are used for Summer Bats: mnhnl_bats2
+--- Commune, village and Precision are used from the Bats form.
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Address', 'T', now(), 1, now(), 1, 'f', 't');
+	'Address Number', 'T', now(), 1, now(), 1, 'f', 't');
+INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Street', 'T', now(), 1, now(), 1, 'f', 't');
 --- Commune is used from Winter Bats
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2SiteType', 'Site Type 2', now(), 1, now(), 1, 'bats2:sitetype');
@@ -165,10 +169,6 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Site type2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:sitetype'), 'f', 't');
 --- Site type other from Bats1
---- Termlist for Follow up generated for Bats1 sample attribute.
-INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Site followup', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats:followup'), 'f', 't');
 
---- The following new Location Attributes are used for Summer Bats: mnhnl_bats2
---- Commune and Precision are used from the Bats form.
+
 	
