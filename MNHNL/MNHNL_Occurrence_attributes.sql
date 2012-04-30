@@ -126,6 +126,8 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'In maternity roost', 'B', now(), 1, now(), 1, 'f', 't');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Emergence Count', 'I', now(), 1, now(), 1, 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Picture of Maternity Count', 'I', now(), 1, now(), 1, 'f', 't');
 
 
