@@ -322,26 +322,18 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2Disturbances', 'List of Disturbances', now(), 1, now(), 1, 'bats2:disturbances');
 SELECT insert_term('Artificial light illuminating the entrance hole', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Lumière artificielle éclairant le(s) trou(s) d’envol', 'fra', null, 'bats2:disturbances');
 SELECT insert_term('Planned renovations', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Travaux de rénovation : en projet', 'fra', null, 'bats2:disturbances');
 SELECT insert_term('Renovations in progress', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Travaux de rénovation : en cours', 'fra', null, 'bats2:disturbances');
 SELECT insert_term('Renovations recently completed', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Travaux de rénovation : récemment effectués', 'fra', null, 'bats2:disturbances');
 SELECT insert_term('Other', 'eng', null, 'bats2:disturbances');
-SELECT tmp_add_term('Autre', 'fra', null, 'bats2:disturbances');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:disturbances');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Disturbances2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:disturbances'), 't', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2Precipitation', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:precipitation');
 SELECT insert_term('None', 'eng', null, 'bats2:precipitation');
-SELECT tmp_add_term('Aucune', 'fra', null, 'bats2:precipitation');
 SELECT insert_term('Drizzle', 'eng', null, 'bats2:precipitation');
-SELECT tmp_add_term('Bruine', 'fra', null, 'bats2:precipitation');
 SELECT insert_term('Showers', 'eng', null, 'bats2:precipitation');
-SELECT tmp_add_term('Averses', 'fra', null, 'bats2:precipitation');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:precipitation');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Precipitation2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:precipitation'), 'f', 't');
@@ -356,19 +348,21 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Bats2SurveyMethod', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:surveymethod'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'No record', 'B', now(), 1, now(), 1, 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Species Comment', 'T', now(), 1, now(), 1, 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bats2Institution', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:institution');
+SELECT insert_term('Administration de la Nature et des Forêts', 'eng', null, 'bats2:institution');
 SELECT insert_term('Centre de Recerche Public - Gabriel Lippmann', 'eng', null, 'bats2:institution');
+SELECT insert_term('Musée national d''histoire naturelle', 'eng', null, 'bats2:institution');
 SELECT insert_term('natur&ëmwelt', 'eng', null, 'bats2:institution');
 SELECT insert_term('Naturpark Obersauer', 'eng', null, 'bats2:institution');
 SELECT insert_term('Naturpark Our', 'eng', null, 'bats2:institution');
 SELECT insert_term('ProChirop - Büro für Fledertierforschung und -schutz', 'eng', null, 'bats2:institution');
-SELECT insert_term('Station biologique SICONA', 'eng', null, 'bats2:institution');
-SELECT insert_term('SICONA Ouest', 'eng', null, 'bats2:institution');
-SELECT insert_term('SICONA Centre', 'eng', null, 'bats2:institution');
 SELECT insert_term('SIAS - Biologische Station Naturzenter', 'eng', null, 'bats2:institution');
-SELECT insert_term('Administration de la Nature et des Forêts', 'eng', null, 'bats2:institution');
-SELECT insert_term('Musée national d''histoire naturelle', 'eng', null, 'bats2:institution');
+SELECT insert_term('SICONA Centre', 'eng', null, 'bats2:institution');
+SELECT insert_term('SICONA Ouest', 'eng', null, 'bats2:institution');
+SELECT insert_term('Station biologique SICONA', 'eng', null, 'bats2:institution');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:institution');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Institution', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:institution'), 't', 't');

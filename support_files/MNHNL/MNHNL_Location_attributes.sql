@@ -144,27 +144,16 @@ INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bat2SiteType', 'Site Type 2', now(), 1, now(), 1, 'bats2:sitetype');
 SELECT insert_term('Hollow tree', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Arbre creux', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Bunker', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Bunker', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Cellar', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Cave', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Bell tower or steeple', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Clocher', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Loft', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Comble', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Fort', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Fort', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Granery', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Grenier', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Nestbox', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Nichoir', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Tunnel', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Tunnel', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Shutter', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Volet', 'fra', null, 'bats2:sitetype');
 SELECT insert_term('Other', 'eng', null, 'bats2:sitetype');
-SELECT tmp_add_term('Autre', 'fra', null, 'bats2:sitetype');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='bats2:sitetype');
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Site type2', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:sitetype'), 'f', 't');
