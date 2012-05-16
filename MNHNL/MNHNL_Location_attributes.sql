@@ -137,7 +137,7 @@ INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, 
 --- The following new Location Attributes are used for Summer Bats: mnhnl_bats2
 --- Commune, village and Precision are used from the Bats form.
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Address Number', 'T', now(), 1, now(), 1, 'f', 't');
+	'Address number', 'T', now(), 1, now(), 1, 'f', 't');
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Street', 'T', now(), 1, now(), 1, 'f', 't');
 --- Commune is used from Winter Bats

@@ -353,7 +353,7 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Bats2Institution', 'List of types of precipitation', now(), 1, now(), 1, 'bats2:institution');
 SELECT insert_term('Administration de la Nature et des Forêts', 'eng', null, 'bats2:institution');
-SELECT insert_term('Centre de Recerche Public - Gabriel Lippmann', 'eng', null, 'bats2:institution');
+SELECT insert_term('Centre de Recherche Public - Gabriel Lippmann', 'eng', null, 'bats2:institution');
 SELECT insert_term('Musée national d''histoire naturelle', 'eng', null, 'bats2:institution');
 SELECT insert_term('natur&ëmwelt', 'eng', null, 'bats2:institution');
 SELECT insert_term('Naturpark Obersauer', 'eng', null, 'bats2:institution');
