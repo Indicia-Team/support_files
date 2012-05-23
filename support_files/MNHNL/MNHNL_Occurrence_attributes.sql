@@ -131,6 +131,30 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 	'Picture of Maternity Count', 'I', now(), 1, now(), 1, 'f', 't');
 
 
+--- The following new Occurrence Attributes are used for Amphibian (Sites): uses the reptiles form
+--- Standard count and occurrence reliability are used.
+--- Sex from reptiles is used.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Amphibian Type (Sites)', 'Amphibian Type (Sites)', now(), 1, now(), 1, 'amphibiansites:type');
+SELECT insert_term('Clutch', 'eng', null, 'amphibiansites:type');
+SELECT insert_term('Specimen', 'eng', null, 'amphibiansites:type');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibiansites:type');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Amphibian Type (Sites)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibiansites:type'), 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Amphibian Stage (Sites)', 'Amphibian Stage (Sites)', now(), 1, now(), 1, 'amphibiansites:stage');
+SELECT insert_term('Egg', 'eng', null, 'amphibiansites:stage');
+SELECT insert_term('Larva', 'eng', null, 'amphibiansites:stage');
+SELECT insert_term('Juvenile', 'eng', null, 'amphibiansites:stage');
+SELECT insert_term('Adult', 'eng', null, 'amphibiansites:stage');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibiansites:stage');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Amphibian Stage (Sites)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibiansites:stage'), 'f', 't');
+
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Amphibian Behaviour', 'T', now(), 1, now(), 1, 'f', 't');
+
 --- The following new Occurrence Attributes are used for Dormice: mnhnl_mammals1
 --- Standard count is used.
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
