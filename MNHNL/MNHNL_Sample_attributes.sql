@@ -570,21 +570,6 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Maximal depth', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:aquaticdepth'), 'f', 't');
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('AquaticHabitat', 'AquaticHabitat', now(), 1, now(), 1, 'amphibian:AquaticHabitat');
-SELECT insert_term('Canal/Channel', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Ditch/drain', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Lake', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Pond', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('River', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Rut', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Settling tank', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Storm-water basin', 'eng', null, 'amphibian:AquaticHabitat');
-SELECT insert_term('Stream', 'eng', null, 'amphibian:AquaticHabitat');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:AquaticHabitat');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Aquatic habitat', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:AquaticHabitat'), 'f', 't');
-
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Amphibian Recording Summary', 'Amphibian Recording Class', now(), 1, now(), 1, 'amphibian:recording');
 SELECT insert_term('Species recorded', 'eng', null, 'amphibian:recording');
 SELECT insert_term('No observations', 'eng', null, 'amphibian:recording');
