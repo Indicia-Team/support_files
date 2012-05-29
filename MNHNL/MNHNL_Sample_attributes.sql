@@ -578,4 +578,41 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Amphibian Recording Summary', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:recording'), 'f', 't');
 
+--- The following new Sample Attributes are used for Square Based Amphibians: this uses the same form as the Reptiles and Amphibians(Sites).
+--- Most shared with sites based survey
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('AmphibianSitesTargetSpecies', 'Site Based Amphibian Target Species', now(), 1, now(), 1, 'amphibian2:targetSpecies');
+SELECT insert_term('Common Midwife Toad (Alytes obstetricans)', 'eng', null, 'amphibian2:targetSpecies');
+SELECT insert_term('Edible Frog (Rana kl. esculenta)', 'eng', null, 'amphibian2:targetSpecies');
+SELECT insert_term('Common Frog (Rana temporaria)', 'eng', null, 'amphibian2:targetSpecies');
+SELECT insert_term('Great Crested Newt (Triturus cristatus)', 'eng', null, 'amphibian2:targetSpecies');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian2:targetSpecies');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'AmphibianSquaresTargetSpecies', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian2:targetSpecies'), 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('AmphibianSitesVisit', 'Visit for site based Amphibians', now(), 1, now(), 1, 'amphibian2:visit');
+SELECT insert_term('1', 'eng', null, 'amphibian2:visit');
+SELECT insert_term('2', 'eng', null, 'amphibian2:visit');
+SELECT insert_term('3', 'eng', null, 'amphibian2:visit');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian2:visit');
+INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Amphibian Visit (Squares)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian2:visit'), 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('AmphibianSquaresSurveyMethod', 'Survey Method for site based Amphibians', now(), 1, now(), 1, 'amphibian2:surveymethod');
+SELECT insert_term('Diurnal control', 'eng', null, 'amphibian2:surveymethod');
+SELECT insert_term('Diurnal adult counting', 'eng', null, 'amphibian2:surveymethod');
+SELECT insert_term('Diurnal clutch counting', 'eng', null, 'amphibian2:surveymethod');
+SELECT insert_term('Nocturnal calling survey', 'eng', null, 'amphibian2:surveymethod');
+SELECT insert_term('Adult counting (net)', 'eng', null, 'amphibian2:surveymethod');
+SELECT insert_term('Adult counting (torch)', 'eng', null, 'amphibian2:surveymethod');
+SELECT insert_term('Adult counting (trap)', 'eng', null, 'amphibian2:surveymethod');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian2:surveymethod');
+INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Amphibian Squares Survey Method', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian2:surveymethod'), 'f', 't');
+
+
+
 

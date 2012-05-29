@@ -132,8 +132,11 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 
 
 --- The following new Occurrence Attributes are used for Amphibian (Sites): uses the reptiles form
---- Standard count and occurrence reliability are used.
+--- Standard occurrence reliability are used.
 --- Sex from reptiles is used.
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Number', 'F', now(), 1, now(), 1, 'f', 't');
+	
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Amphibian Type (Sites)', 'Amphibian Type (Sites)', now(), 1, now(), 1, 'amphibiansites:type');
 SELECT insert_term('Clutch', 'eng', null, 'amphibiansites:type');
@@ -155,6 +158,16 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Amphibian Behaviour', 'T', now(), 1, now(), 1, 'f', 't');
 
+--- The following new Occurrence Attributes are used for Amphibian (Squares): uses the reptiles form
+--- Most shared with Amphibian Sites.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+  VALUES ('Units', 'Units', now(), 1, now(), 1, 'amphibian:units');
+SELECT insert_term('m2', 'eng', null, 'amphibian:units');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:units');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Units', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:units'), 'f', 't');
+
+	
 --- The following new Occurrence Attributes are used for Dormice: mnhnl_mammals1
 --- Standard count is used.
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
