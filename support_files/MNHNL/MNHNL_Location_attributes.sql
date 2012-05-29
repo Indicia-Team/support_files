@@ -163,5 +163,7 @@ INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, 
 --- The following new Location Attributes are used for Amphibian Sites: uses the same form as reptiles
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Place', 'T', now(), 1, now(), 1, 'f', 't');
+INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Square', 'T', now(), 1, now(), 1, 'f', 't');
 
 	
