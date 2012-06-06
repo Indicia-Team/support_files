@@ -1,6 +1,6 @@
 DROP VIEW btw_transects; 
 CREATE VIEW btw_transects AS 
- SELECT l.id, l.name, l.code, l.boundary_geom, lw.website_id
+ SELECT l.id, l.name, l.code, l.boundary_geom, lw.website_id, l.location_type_id
    FROM locations l
    LEFT JOIN locations_websites lw ON l.id = lw.location_id
    WHERE l.parent_id IS NULL AND l.deleted = FALSE AND lw.deleted = FALSE;
