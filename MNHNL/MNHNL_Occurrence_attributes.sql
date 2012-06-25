@@ -87,7 +87,7 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Stage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='reptile:stage'), 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Reptile Sex', 'Reptile Occurrence Stage.', now(), 1, now(), 1, 'reptile:sex');
+VALUES ('Reptile Sex', 'Reptile Occurrence Sex.', now(), 1, now(), 1, 'reptile:sex');
 SELECT insert_term('Female', 'eng', null, 'reptile:sex');
 SELECT insert_term('Male', 'eng', null, 'reptile:sex');
 SELECT insert_term('Pair', 'eng', null, 'reptile:sex');
