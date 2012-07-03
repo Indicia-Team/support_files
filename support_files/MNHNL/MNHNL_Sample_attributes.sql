@@ -510,7 +510,7 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('AquaticHabitat', 'AquaticHabitat', now(), 1, now(), 1, 'amphibian:AquaticHabitat');
-SELECT insert_term('Canal/Channel', 'eng', null, 'amphibian:AquaticHabitat');
+SELECT insert_term('Canal/channel', 'eng', null, 'amphibian:AquaticHabitat');
 SELECT insert_term('Ditch/drain', 'eng', null, 'amphibian:AquaticHabitat');
 SELECT insert_term('Lake', 'eng', null, 'amphibian:AquaticHabitat');
 SELECT insert_term('Pond', 'eng', null, 'amphibian:AquaticHabitat');
@@ -549,7 +549,7 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Insolation', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:rating'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Fish Density', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:rating'), 'f', 't');
+	'Fish density', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:rating'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Herbaceous', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:rating'), 'f', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
@@ -561,10 +561,10 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Water depth', 'Water depth', now(), 1, now(), 1, 'amphibian:aquaticdepth');
-SELECT insert_term('<10cm', 'eng', null, 'amphibian:aquaticdepth');
-SELECT insert_term('10-25cm', 'eng', null, 'amphibian:aquaticdepth');
-SELECT insert_term('25-50cm', 'eng', null, 'amphibian:aquaticdepth');
-SELECT insert_term('>50', 'eng', null, 'amphibian:aquaticdepth');
+SELECT insert_term('< 10 cm', 'eng', null, 'amphibian:aquaticdepth');
+SELECT insert_term('10-25 cm', 'eng', null, 'amphibian:aquaticdepth');
+SELECT insert_term('25-50 cm', 'eng', null, 'amphibian:aquaticdepth');
+SELECT insert_term('> 50 cm', 'eng', null, 'amphibian:aquaticdepth');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:aquaticdepth');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Maximal depth', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:aquaticdepth'), 'f', 't');
