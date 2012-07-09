@@ -138,25 +138,47 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 	'Number', 'F', now(), 1, now(), 1, 'f', 't');
 	
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Amphibian Type (Sites)', 'Amphibian Type (Sites)', now(), 1, now(), 1, 'amphibiansites:type');
-SELECT insert_term('Clutch', 'eng', null, 'amphibiansites:type');
-SELECT insert_term('Specimen', 'eng', null, 'amphibiansites:type');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibiansites:type');
+VALUES ('Amphibian Type', 'Amphibian Type', now(), 1, now(), 1, 'amphibian:type');
+SELECT insert_term('Clutch', 'eng', null, 'amphibian:type');
+SELECT insert_term('Dead specimen', 'eng', null, 'amphibian:type');
+SELECT insert_term('Specimen', 'eng', null, 'amphibian:type');
+SELECT insert_term('Undetermined', 'eng', null, 'amphibian:type');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:type');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Amphibian Type (Sites)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibiansites:type'), 'f', 't');
+	'Amphibian Type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:type'), 'f', 't');
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Amphibian Stage (Sites)', 'Amphibian Stage (Sites)', now(), 1, now(), 1, 'amphibiansites:stage');
-SELECT insert_term('Egg', 'eng', null, 'amphibiansites:stage');
-SELECT insert_term('Larva', 'eng', null, 'amphibiansites:stage');
-SELECT insert_term('Juvenile', 'eng', null, 'amphibiansites:stage');
-SELECT insert_term('Adult', 'eng', null, 'amphibiansites:stage');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibiansites:stage');
+VALUES ('Amphibian Stage', 'Amphibian Stage', now(), 1, now(), 1, 'amphibian:stage');
+SELECT insert_term('Egg', 'eng', null, 'amphibian:stage');
+SELECT insert_term('Larva', 'eng', null, 'amphibian:stage');
+SELECT insert_term('Juvenile', 'eng', null, 'amphibian:stage');
+SELECT insert_term('Adult', 'eng', null, 'amphibian:stage');
+SELECT insert_term('Undetermined', 'eng', null, 'amphibian:stage');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:stage');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Amphibian Stage (Sites)', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibiansites:stage'), 'f', 't');
+	'Amphibian Stage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:stage'), 'f', 't');
 
-INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Amphibian Behaviour', 'T', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Amphibian Behaviour', 'Amphibian Behaviour', now(), 1, now(), 1, 'amphibian:behaviour');
+SELECT insert_term('Basking', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Burrowing', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Calling', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Displaying', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Feeding', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Fighting', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Hunting', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Inactivity', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Lethargy', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Mating', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Migrating', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Ovipositing', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Resting', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Singing', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Swimming', 'eng', null, 'amphibian:behaviour');
+SELECT insert_term('Undetermined', 'eng', null, 'amphibian:behaviour');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:behaviour');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Amphibian Behaviour', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian:behaviour'), 'f', 't');
 
 --- The following new Occurrence Attributes are used for Amphibian (Squares): uses the reptiles form
 --- Most shared with Amphibian Sites.
