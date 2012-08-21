@@ -29,9 +29,33 @@ LANGUAGE 'plpgsql';
 --- TBD need to get definitions
 --- Atlas Code
 --- Overflying
---- Territorial
 --- Approximation?
 --- Confidence
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Territorial', 'B', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Atlas Code', 'BTW Altas Code',	now(), 1, now(), 1, 'btw:atlas');
+SELECT insert_term('N - No breeding bird', 'eng', null, 'btw:atlas');
+SELECT insert_term('NA00 - In breed. saison', 'eng', null, 'btw:atlas');
+SELECT insert_term('BB01 - In breed. saison in fav. habitat', 'eng', null, 'btw:atlas');
+SELECT insert_term('BB02 - Singing / parade', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC03 - Pair / males in parade (min. 3)', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC04 - Territ. behavior (min. 7 days)', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC05 - Parading pair', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC06 - Visiting potential breed. site', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC07 - Alarm / breed. behavior', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC08 - Breed. patch', 'eng', null, 'btw:atlas');
+SELECT insert_term('BC09 - Nest constr. / nest material', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD10 -', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD11 - Occup. nest / egg shells ', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD12 - Fledglings /', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD13 - Breed. adult', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD14 - Feeding /', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD15 - Nest and eggs', 'eng', null, 'btw:atlas');
+SELECT insert_term('BD16 - Nestlings', 'eng', null, 'btw:atlas');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='btw:atlas');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Atlas Code', 'L', now(), 1, now(), 1, (select id from termlists where external_key='btw:atlas'), 'f', 't');
 
 --- The following new Occurrence Attributes are used for Butterflies1: Butterfly Monitoring: mnhnl_butterflies
 --- the count attribute is a standard one.
@@ -134,8 +158,6 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 --- The following new Occurrence Attributes are used for Amphibian (Sites): uses the reptiles form
 --- Standard occurrence reliability are used.
 --- Sex from reptiles is used.
-INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Number', 'F', now(), 1, now(), 1, 'f', 't');
 	
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Amphibian Type', 'Amphibian Type', now(), 1, now(), 1, 'amphibian:type');
@@ -182,8 +204,11 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 
 --- The following new Occurrence Attributes are used for Amphibian (Squares): uses the reptiles form
 --- Most shared with Amphibian Sites.
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Number', 'F', now(), 1, now(), 1, 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
   VALUES ('Units', 'Units', now(), 1, now(), 1, 'amphibian:units');
+SELECT insert_term('individuals', 'eng', null, 'amphibian:units');
 SELECT insert_term('m2', 'eng', null, 'amphibian:units');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='amphibian:units');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
