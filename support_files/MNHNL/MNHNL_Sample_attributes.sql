@@ -423,21 +423,41 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Target Species', 'L', now(), 1, now(), 1, (select id from termlists where external_key='bats2:targetspecies'), 't', 't');
 
---- The following new Sample Attributes are used for Dormice: mnhnl_mammals1
+--- The following new Sample Attributes are used for Dormice: mnhnl_dynamic_2
 --- Start Time and End Time are used from Cobimo.
---- Suitability checkbox is used from Reptiles.
---- Standard Tempertaure is used.
+--- Standard Temperature is used.
 --- Cloud cover used from Butterflies1.
 --- Rain used from Butterflies1.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Orientation', 'Orientation', now(), 1, now(), 1, 'dormice:orientation');
+SELECT insert_term('N', 'eng', null, 'dormice:orientation');
+SELECT insert_term('NNE', 'eng', null, 'dormice:orientation');
+SELECT insert_term('NE', 'eng', null, 'dormice:orientation');
+SELECT insert_term('ENE', 'eng', null, 'dormice:orientation');
+SELECT insert_term('E', 'eng', null, 'dormice:orientation');
+SELECT insert_term('ESE', 'eng', null, 'dormice:orientation');
+SELECT insert_term('SE', 'eng', null, 'dormice:orientation');
+SELECT insert_term('SSE', 'eng', null, 'dormice:orientation');
+SELECT insert_term('S', 'eng', null, 'dormice:orientation');
+SELECT insert_term('SSW', 'eng', null, 'dormice:orientation');
+SELECT insert_term('SW', 'eng', null, 'dormice:orientation');
+SELECT insert_term('WSW', 'eng', null, 'dormice:orientation');
+SELECT insert_term('W', 'eng', null, 'dormice:orientation');
+SELECT insert_term('WNW', 'eng', null, 'dormice:orientation');
+SELECT insert_term('NW', 'eng', null, 'dormice:orientation');
+SELECT insert_term('NNW', 'eng', null, 'dormice:orientation');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:orientation');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Orientation', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:orientation'), 'f', 't');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (	
+	'Site suitability', 'B', now(), 1, now(), 1, 'f', 't');
+
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Orientation', 'T', now(), 1, now(), 1, 'f', 't');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Nest height (cm)', 'I', now(), 1, now(), 1, 'f', 't');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Nest diameter (cm)', 'I', now(), 1, now(), 1, 'f', 't');
+	'Precision', 'I', now(), 1, now(), 1, 'f', 't');
+
 --- should the following perhaps be location based?
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('DormiceHabitatType', 'Dormice Site Type', now(), 1, now(), 1, 'dormice:habitattype');
+VALUES ('DormiceHabitatType', 'Dormice Habitat Type', now(), 1, now(), 1, 'dormice:habitattype');
 SELECT insert_term('Forest edge', 'eng', null, 'dormice:habitattype');
 SELECT insert_term('Hedgerow', 'eng', null, 'dormice:habitattype');
 SELECT insert_term('Forest stand', 'eng', null, 'dormice:habitattype');
@@ -465,18 +485,19 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Dormice succession other', 'T', now(), 1, now(), 1, 'f', 't');
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('DormiceBorderingHabitatType', 'Dormice Site Type', now(), 1, now(), 1, 'dormice:borderinghabitattype');
+VALUES ('DormiceBorderingHabitatType', 'Dormice Bordering Habitat Type', now(), 1, now(), 1, 'dormice:borderinghabitattype');
 SELECT insert_term('Broadleaved forest', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Coniferous forest', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Mixed forest', 'eng', null, 'dormice:borderinghabitattype');
-SELECT insert_term('Open area in forest', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Fallow', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Forest windfall', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Heathland', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Arable land', 'eng', null, 'dormice:borderinghabitattype');
-SELECT insert_term('Fallow', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Industrial wasteland', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Grassland', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Orchard', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Wetland', 'eng', null, 'dormice:borderinghabitattype');
+SELECT insert_term('Rocky area', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Urban area', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Road', 'eng', null, 'dormice:borderinghabitattype');
 SELECT insert_term('Path', 'eng', null, 'dormice:borderinghabitattype');
@@ -486,6 +507,16 @@ INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, up
 	'Dormice bordering habitat type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:borderinghabitattype'), 't', 't');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Dormice bordering habitat other', 'T', now(), 1, now(), 1, 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('DormiceShrubDiversity', 'Dormice Shrub Diversity', now(), 1, now(), 1, 'dormice:shrubdiversity');
+SELECT insert_term('1 - 3 species', 'eng', null, 'dormice:shrubdiversity');
+SELECT insert_term('3 - 5 species', 'eng', null, 'dormice:shrubdiversity');
+SELECT insert_term('5 - 10 species', 'eng', null, 'dormice:shrubdiversity');
+SELECT insert_term('+ 10 species', 'eng', null, 'dormice:shrubdiversity');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:shrubdiversity');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormice shrub diversity', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:shrubdiversity'), 'f', 't');
 
 --- The following new Sample Attributes are used for Site Based Amphibians: this uses the same form as the Reptiles.
 --- Unsuitability comes from Reptiles.

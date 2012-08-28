@@ -166,6 +166,8 @@ INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, 
 INSERT INTO location_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Square', 'T', now(), 1, now(), 1, 'f', 't');
 
+--- No Locations attributes for Dormice.
+
 -- The village in Bats 2 is to be converted to a autocomplete termlist
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
