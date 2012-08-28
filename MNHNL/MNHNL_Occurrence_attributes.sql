@@ -217,14 +217,11 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 	
 --- The following new Occurrence Attributes are used for Dormice: mnhnl_mammals1
 --- Standard count is used.
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('Dormouse Type', 'Dormouse Type.', now(), 1, now(), 1, 'dormouse:type');
-SELECT insert_term('Specimen', 'eng', null, 'dormouse:type');
-SELECT insert_term('Nest', 'eng', null, 'dormouse:type');
-UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormouse:type');
-INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Dormouse type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:type'), 'f', 't');
-INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse Specimen', 'B', now(), 1, now(), 1, 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse Nest', 'B', now(), 1, now(), 1, 'f', 't');
+
 VALUES ('Dormouse Stage', 'Dormouse Stage.', now(), 1, now(), 1, 'dormouse:stage');
 SELECT insert_term('Adult', 'eng', null, 'dormouse:stage');
 SELECT insert_term('Pup', 'eng', null, 'dormouse:stage');
@@ -240,5 +237,39 @@ SELECT insert_term('?', 'eng', null, 'dormouse:sex');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormouse:sex');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Dormouse sex', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:sex'), 'f', 't');
+
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse nest height', 'I', now(), 1, now(), 1, 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse nest diameter', 'I', now(), 1, now(), 1, 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Orientation', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:orientation'), 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse distance to support', 'I', now(), 1, now(), 1, 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse distance to stand', 'I', now(), 1, now(), 1, 'f', 't');
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Dormouse nest composition', 'Dormouse nest composition', now(), 1, now(), 1, 'dormouse:nestcomposition');
+SELECT insert_term('Leaves', 'eng', null, 'dormouse:nestcomposition');
+SELECT insert_term('Grass', 'eng', null, 'dormouse:nestcomposition');
+SELECT insert_term('Moss', 'eng', null, 'dormouse:nestcomposition');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormouse:nestcomposition');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormouse nest composition', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:nestcomposition'), 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Dormouse nest status', 'Dormouse nest status', now(), 1, now(), 1, 'dormouse:neststatus');
+SELECT insert_term('Favourable', 'eng', null, 'dormouse:neststatus');
+SELECT insert_term('Inadequate', 'eng', null, 'dormouse:neststatus');
+SELECT insert_term('Bad', 'eng', null, 'dormouse:neststatus');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormouse:neststatus');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormouse nest status', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:neststatus'), 'f', 't');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Dormouse tree layer', 'B', now(), 1, now(), 1, 'f', 't');
+
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
+	'Supporting plant species', 'T', now(), 1, now(), 1, 'f', 't');
+
 
 
