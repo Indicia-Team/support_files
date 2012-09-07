@@ -667,6 +667,27 @@ UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FRO
 INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Amphibian Squares Survey Method', 'L', now(), 1, now(), 1, (select id from termlists where external_key='amphibian2:surveymethod'), 'f', 't');
 
+--- DragonFly Form:
+--- Use the BTW Visit, normal Start and end dates and Sample reliability.
+--- Use Amphibian Terrestrial Habitat, Aquatic Habitat, Flow, Permanence, Insolation, Fish density, Herbaceous, Shrubs, Trees, Hydrophytic vegetation, Maximal Depth
+--- Standard Temperature, Wind force, Cloud cover and Rain
 
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('DragonflyTargetSpecies', 'Dragonfly Target Species', now(), 1, now(), 1, 'dragonfly:targetSpecies');
+SELECT insert_term('Lilypad Whiteface (Leucorrhinia caudalis)', 'eng', null, 'dragonfly:targetSpecies');
+SELECT insert_term('Mercury Bluet (Coenagrion mercuriale)', 'eng', null, 'dragonfly:targetSpecies');
+SELECT insert_term('Orange-Spotted Emerald (Oxygastra curtisii)', 'eng', null, 'dragonfly:targetSpecies');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dragonfly:targetSpecies');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'DragonflyTargetSpecies', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dragonfly:targetSpecies'), 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('DragonflySurveyMethod', 'Survey Method for Squares based Amphibians', now(), 1, now(), 1, 'dragonfly:surveymethod');
+SELECT insert_term('Presence recording', 'eng', null, 'dragonfly:surveymethod');
+SELECT insert_term('Imago count', 'eng', null, 'dragonfly:surveymethod');
+SELECT insert_term('Exuviae count', 'eng', null, 'dragonfly:surveymethod');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dragonfly:surveymethod');
+INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dragonfly Survey Method', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dragonfly:surveymethod'), 'f', 't');
 
 
