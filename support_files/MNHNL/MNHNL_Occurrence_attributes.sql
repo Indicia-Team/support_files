@@ -222,6 +222,7 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Dormouse Nest', 'B', now(), 1, now(), 1, 'f', 't');
 
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Dormouse Stage', 'Dormouse Stage.', now(), 1, now(), 1, 'dormouse:stage');
 SELECT insert_term('Adult', 'eng', null, 'dormouse:stage');
 SELECT insert_term('Pup', 'eng', null, 'dormouse:stage');
@@ -271,5 +272,14 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Supporting plant species', 'T', now(), 1, now(), 1, 'f', 't');
 
+-- Dragonflies:
+--- Standard count, Occurrence Reliability, reptile Sex.
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Dragonfly Stage', 'Dormouse Stage.', now(), 1, now(), 1, 'dragonfly:stage');
+SELECT insert_term('Imago', 'eng', null, 'dragonfly:stage');
+SELECT insert_term('Exuviae', 'eng', null, 'dragonfly:stage');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dragonfly:stage');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dragonfly stage', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dragonfly:stage'), 'f', 't');
 
 

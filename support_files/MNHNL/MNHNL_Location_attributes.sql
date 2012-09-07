@@ -13,6 +13,7 @@ SELECT insert_term('Summer Bats Confirmed', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Lux1KSquare', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Dormice', 'eng', null, 'mnhnl:loctype');
 SELECT insert_term('Amphibians', 'eng', null, 'mnhnl:loctype');
+SELECT insert_term('Dragonflies', 'eng', null, 'mnhnl:loctype');
 
 -- after the following are set up, need to set their structure blocks (sample attributes), as well as their website allocation
 
@@ -108,26 +109,46 @@ INSERT INTO location_attributes (	caption, data_type, created_on, created_by_id,
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('MNHNL Butterfly de Jour Sites', 'Site Names', now(), 1, now(), 1, 'butterfly2:Sites');
-SELECT insert_term('1', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('2', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('3', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('4', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('5', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('6', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('7', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('8', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('9', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('10', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('11', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('12', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('13', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('14', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('15', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('16', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('17', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('18', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('19', 'eng', null, 'butterfly2:Sites'); 
-SELECT insert_term('20', 'eng', null, 'butterfly2:Sites'); 
+SELECT insert_term('1', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('2', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('3', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('4', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('5', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('6', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('7', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('8', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('9', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('10', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('11', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('12', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('13', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('14', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('15', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('16', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('17', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('18', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('19', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('20', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('21', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('22', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('23', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('24', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('25', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('26', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('27', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('28', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('29', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('30', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('31', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('32', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('33', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('34', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('35', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('36', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('37', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('38', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('39', 'eng', null, 'butterfly2:Sites');
+SELECT insert_term('40', 'eng', null, 'butterfly2:Sites');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='butterfly2:Sites');
 
 --- The following new Location Attributes are used for Reptiles: mnhnl_reptiles
