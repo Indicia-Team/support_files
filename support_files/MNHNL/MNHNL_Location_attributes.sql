@@ -2,18 +2,18 @@
 
 --- MNHNL Location types.
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
-VALUES ('LocationTypes', 'MNHNL Location types', now(), 1, now(), 1, 'mnhnl:loctype');
-SELECT insert_term('Lux5KSquare', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('ReptileLocation', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('WinterBats Confirmed', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('WinterBats Submitted', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Butterflies2', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Summer Bats Submitted', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Summer Bats Confirmed', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Lux1KSquare', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Dormice', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Amphibians', 'eng', null, 'mnhnl:loctype');
-SELECT insert_term('Dragonflies', 'eng', null, 'mnhnl:loctype');
+VALUES ('LocationTypes', 'MNHNL Location types', now(), 1, now(), 1, 'indicia:location_types');
+SELECT insert_term('Lux5KSquare', 'eng', null, 'indicia:location_types');
+SELECT insert_term('ReptileLocation', 'eng', null, 'indicia:location_types');
+SELECT insert_term('WinterBats Confirmed', 'eng', null, 'indicia:location_types');
+SELECT insert_term('WinterBats Submitted', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Butterflies2', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Summer Bats Submitted', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Summer Bats Confirmed', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Lux1KSquare', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Dormice', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Amphibians', 'eng', null, 'indicia:location_types');
+SELECT insert_term('Dragonflies', 'eng', null, 'indicia:location_types');
 
 -- after the following are set up, need to set their structure blocks (sample attributes), as well as their website allocation
 

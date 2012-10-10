@@ -256,7 +256,7 @@ SELECT insert_term('Grass', 'eng', null, 'dormouse:nestcomposition');
 SELECT insert_term('Moss', 'eng', null, 'dormouse:nestcomposition');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormouse:nestcomposition');
 INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Dormouse nest composition', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:nestcomposition'), 'f', 't');
+	'Dormouse nest composition', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:nestcomposition'), 't', 't');
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Dormouse nest status', 'Dormouse nest status', now(), 1, now(), 1, 'dormouse:neststatus');
