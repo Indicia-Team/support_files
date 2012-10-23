@@ -688,6 +688,6 @@ SELECT insert_term('Imago count', 'eng', null, 'dragonfly:surveymethod');
 SELECT insert_term('Exuviae count', 'eng', null, 'dragonfly:surveymethod');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dragonfly:surveymethod');
 INSERT INTO sample_attributes (	caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
-	'Dragonfly Survey Method', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dragonfly:surveymethod'), 'f', 't');
+	'Dragonfly Survey Method', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dragonfly:surveymethod'), 't', 't');
 
 
