@@ -217,10 +217,14 @@ INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id
 	
 --- The following new Occurrence Attributes are used for Dormice: mnhnl_mammals1
 --- Standard count is used.
-INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Dormouse Specimen', 'B', now(), 1, now(), 1, 'f', 't');
-INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
-	'Dormouse Nest', 'B', now(), 1, now(), 1, 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Dormouse Occurrence Type', 'Dormouse Occurrence Type', now(), 1, now(), 1, 'dormouse:occType');
+SELECT insert_term('Specimen', 'eng', null, 'dormouse:occType');
+SELECT insert_term('Nest', 'eng', null, 'dormouse:occType');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormouse:occType');
+INSERT INTO occurrence_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Dormouse Occurrence Type', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormouse:occType'), 'f', 't');
 
 INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
 VALUES ('Dormouse Stage', 'Dormouse Stage.', now(), 1, now(), 1, 'dormouse:stage');

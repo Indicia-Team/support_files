@@ -70,7 +70,7 @@ select ST_CollectionExtract(l.boundary_geom, 1), l.code, l.name, t.term, l.id, l
  JOIN terms t ON (t.id = tlt.term_id AND t.deleted = false)
  WHERE l.deleted = false
  AND GeometryType(boundary_geom) = 'GEOMETRYCOLLECTION'
- AND NOT ST_IsEmpty(ST_CollectionExtract(boundary_geom, 1))
+ AND NOT ST_IsEmpty(ST_CollectionExtract(boundary_geom, 3))
 UNION
 select l.boundary_geom, l.code, l.name, t.term, l.id, l.location_type_id, lw.website_id from locations l
  JOIN locations_websites lw ON (l.id = lw.location_id and lw.deleted = false)

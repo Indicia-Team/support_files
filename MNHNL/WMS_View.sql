@@ -1,6 +1,6 @@
 DROP VIEW btw_transects; 
 CREATE VIEW btw_transects AS 
- SELECT l.id, l.name, l.code, l.boundary_geom, lw.website_id, l.location_type_id
+ SELECT l.id, l.id as location_id, l.name, l.code, l.boundary_geom, lw.website_id, l.location_type_id
    FROM locations l
    LEFT JOIN locations_websites lw ON l.id = lw.location_id
    WHERE l.parent_id IS NULL AND l.deleted = FALSE AND lw.deleted = FALSE AND l.boundary_geom IS NOT NULL;
@@ -50,6 +50,14 @@ CREATE VIEW btw_transects AS
               <CssParameter name="font-size">12</CssParameter>
               <CssParameter name="font-color">#FF0000</CssParameter>
             </Font>
+            <LabelPlacement>
+              <PointPlacement>
+                <AnchorPoint>
+                  <AnchorPointX>0.5</AnchorPointX>
+                  <AnchorPointY>0.5</AnchorPointY>
+                </AnchorPoint>
+              </PointPlacement>
+            </LabelPlacement>
             <Halo></Halo>
           </TextSymbolizer>
         </Rule>
