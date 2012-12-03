@@ -64,7 +64,7 @@ ORDER by name,id
 
 DROP VIEW POLYGON_LOCATIONS;
 CREATE OR REPLACE VIEW POLYGON_LOCATIONS (geom, code, site, location_type, location_id, location_type_id, website_id) AS
-select ST_CollectionExtract(l.boundary_geom, 1), l.code, l.name, t.term, l.id, l.location_type_id, lw.website_id from locations l
+select ST_CollectionExtract(l.boundary_geom, 3), l.code, l.name, t.term, l.id, l.location_type_id, lw.website_id from locations l
  JOIN locations_websites lw ON (l.id = lw.location_id and lw.deleted = false)
  JOIN termlists_terms tlt ON (l.location_type_id = tlt.id and tlt.preferred=true AND tlt.deleted = false)
  JOIN terms t ON (t.id = tlt.term_id AND t.deleted = false)
