@@ -449,8 +449,15 @@ SELECT insert_term('NNW', 'eng', null, 'dormice:orientation');
 UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:orientation');
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
 	'Orientation', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:orientation'), 'f', 't');
-INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (	
-	'Site suitability', 'B', now(), 1, now(), 1, 'f', 't');
+
+INSERT INTO termlists (title, description, created_on, created_by_id, updated_on, updated_by_id, external_key)
+VALUES ('Site suitability', 'Suitability of site.', now(), 1, now(), 1, 'dormice:siteSuitability');
+SELECT insert_term('1 - Suitable site', 'eng', null, 'dormice:siteSuitability');
+SELECT insert_term('2 - Weakly suitable site', 'eng', null, 'dormice:siteSuitability');
+SELECT insert_term('3 - Unsuitable site', 'eng', null, 'dormice:siteSuitability');
+UPDATE termlists_terms SET sort_order = 10*id WHERE termlist_id = (SELECT id FROM termlists WHERE external_key='dormice:siteSuitability');
+INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, termlist_id, multi_value, public) VALUES (
+	'Site suitability', 'L', now(), 1, now(), 1, (select id from termlists where external_key='dormice:siteSuitability'), 'f', 't');
 
 INSERT INTO sample_attributes (caption, data_type, created_on, created_by_id, updated_on, updated_by_id, multi_value, public) VALUES (
 	'Precision', 'I', now(), 1, now(), 1, 'f', 't');
