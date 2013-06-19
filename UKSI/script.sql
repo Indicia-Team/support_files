@@ -385,18 +385,26 @@ and (cttl.parent_id<>pttl.id or cttl.parent_id is null);
 
 -- Set the common taxon ID for all names where a common name is available
 update taxa_taxon_lists ttl
-set common_taxon_id=tc.id, updated_on=now()
+set common_taxon_id=coalesce(tc.id, tcany.id), updated_on=now()
 from taxa t -- gives us the non-preferred external_key
 join uksi.all_names an on an.input_taxon_version_key=t.external_key
-join uksi.preferred_names pn on pn.taxon_version_key=an.recommended_taxon_version_key
-join uksi.tcn_duplicates td on td.organism_key=pn.organism_key
-join uksi.all_names anc on anc.input_taxon_version_key=td.taxon_version_key -- common name entry
-join taxa tc on tc.taxon=anc.item_name -- lookup the common name's taxon id
-join taxa_taxon_lists ttlc on ttlc.taxon_id=tc.id and ttlc.deleted=false 
+-- get a common name. There could be duplicates for this join
+left join (uksi.all_names ancany
+	join taxa tcany on tcany.taxon=ancany.item_name and tcany.deleted=false
+	join taxa_taxon_lists ttlcany on ttlcany.taxon_id=tcany.id and ttlcany.deleted=false 
+) on ancany.recommended_taxon_version_key=an.recommended_taxon_version_key 
+    and ancany.taxon_type='V' and ancany.language='en' and ancany.taxon_version_status='R'
+-- this join should resolve any cases where there are duplicates
+left join (uksi.preferred_names pn 
+	join uksi.tcn_duplicates td on td.organism_key=pn.organism_key
+	join uksi.all_names anc on anc.input_taxon_version_key=td.taxon_version_key -- common name entry
+	join taxa tc on tc.taxon=anc.item_name and tc.deleted=false -- lookup the common name's taxon id
+	join taxa_taxon_lists ttlc on ttlc.taxon_id=tc.id and ttlc.deleted=false 	    
+) on pn.taxon_version_key=an.recommended_taxon_version_key
 where t.id=ttl.taxon_id and t.deleted=false and ttl.deleted=false
-and ttl.taxon_list_id=taxonListId
-and ttlc.taxon_meaning_id=ttl.taxon_meaning_id -- ensure the chosen name is of the same meaning
-and (ttl.common_taxon_id<>tc.id or ttl.common_taxon_id is null);
+and ttl.taxon_list_id=1
+and (ttl.common_taxon_id<>coalesce(tc.id, tcany.id) or (ttl.common_taxon_id is null and coalesce(tc.id, tcany.id) is not null))
+and (coalesce(ttlc.taxon_meaning_id, ttlcany.taxon_meaning_id)=ttl.taxon_meaning_id or coalesce(ttlc.taxon_meaning_id, ttlcany.taxon_meaning_id) is null);
 
 -- Cleanup unused taxon groups
 UPDATE taxon_groups
