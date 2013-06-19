@@ -1,21 +1,7 @@
 
 /*
 
-Before running, ensure warehouse scripts are up to date so taxon_groups table has a parent_id field. 
-
- # Ensure that the scheduled_tasks process has been run and the indexes are completely populated.
- # Take any dependent sites offline. 
- # Run the 2 exports stored in the UKSI database to output text files of the required data.
- # Open the files in notepad and save as UTF8.
- # Open the files in Notepad++ and convert to UTF8 without BOM
- # Check the taxon list ID is correct in this script - it is the parameter to the function call at the end.
- # Makes sure there is a schema called UKSI ready in the database
- # Check that the COPY statements have the correct path to the script files set, currently c:\tmp
- # Search for queries marked TEST and run the subqueries, to check nothing stupid is deleted.
- # Run this script. Takes about 1.5 hrs
- # Recommend manually running scheduled_tasks with no timeout set. Takes about 3 minutes.
-   Or delete the variables entries for cache_taxa_taxon_lists and cache_taxon_searchterms then run multiple times
-
+Before running, ensure you read the documentation at https://indicia-docs.readthedocs.org/en/latest/administrating/warehouse/importing-uksi.html.
 */
 
 SET search_path=uksi, public;
