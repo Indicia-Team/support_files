@@ -280,7 +280,7 @@ UPDATE taxa t
 SET updated_on=now(), taxon_group_id=tg.id, language_id=l.id, external_key=an.recommended_taxon_version_key, search_code=an.input_taxon_version_key,
 	authority=an.authority, scientific=(an.taxon_type='S'), taxon_rank_id=tr.id, attribute=an.attribute
 FROM uksi.all_names an
-JOIN languages l on left(l.iso, 2)=an.language AND l.deleted=false
+JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
 JOIN taxon_ranks tr ON tr.rank=an.rank AND tr.deleted=false
 WHERE an.input_taxon_version_key=t.search_code
@@ -292,7 +292,7 @@ INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code,
 -- test
 SELECT an.item_name, tg.id, l.id, an.recommended_taxon_version_key, an.input_taxon_version_key, an.authority, an.taxon_type='S', tr.id, an.attribute, now(), 1, now(), 1
 FROM uksi.all_names an
-JOIN languages l on left(l.iso, 2)=an.language AND l.deleted=false
+JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
 JOIN taxon_ranks tr ON tr.rank=an.rank AND tr.deleted=false
 LEFT JOIN taxa t ON t.search_code=an.input_taxon_version_key
