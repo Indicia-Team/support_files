@@ -40,12 +40,14 @@ CREATE TABLE all_names
   input_taxon_version_key character(16),
   item_name character varying,
   authority character varying,
+  taxon_version_form character(1),
   taxon_version_status character(1),
   taxon_type character(1),
   "language" character(2),
   output_group_key character(16),
   rank character varying,
-  attribute character varying(100)
+  attribute character varying(100),
+  short_name character varying
 )
 WITH (
   OIDS=FALSE
@@ -172,6 +174,10 @@ CREATE INDEX ix_all_names_input_tvk ON uksi.all_names(input_taxon_version_key);
 
 SET search_path=indicia, public;
 
+VACUUM;
+
+ANALYZE;
+
 
 
 /* How to insert taxon_meaning_ids simultaneously into the taxon_meanings table?  Not just a sequence...  */
@@ -196,14 +202,115 @@ BEGIN
 UPDATE taxon_ranks tr
 SET short_name=COALESCE(utr.short_name, utr.long_name), sort_order=utr.sort_order
 FROM uksi.taxon_ranks utr
-WHERE tr.rank=utr.long_name;
+WHERE tr.short_name=COALESCE(utr.short_name, utr.long_name);
 
 -- Insert any missing ranks
 INSERT INTO taxon_ranks(rank, short_name, italicise_taxon, sort_order, created_on, created_by_id, updated_on, updated_by_id)
 SELECT utr.long_name, COALESCE(utr.short_name, utr.long_name), case utr.list_font_italic when 1 then true else false end, utr.sort_order, now(), 1, now(), 1
 FROM uksi.taxon_ranks utr
-LEFT JOIN taxon_ranks tr on tr.rank=utr.long_name
+LEFT JOIN taxon_ranks tr on tr.short_name=COALESCE(utr.short_name, utr.long_name)
 WHERE tr.id IS NULL;
+
+
+-- Search for 'useless' names, where there are multiple versions of a name that differ only in rank.
+drop table duplicates;
+select lower(replace(item_name, '-', ' ')) as item_name, authority, attribute, recommended_taxon_version_key, count(*)
+into temporary duplicates
+from uksi.all_names
+group by lower(replace(item_name, '-', ' ')), authority, attribute, recommended_taxon_version_key
+having count(*) > 1;
+
+
+delete from uksi.all_names where input_taxon_version_key in (
+	select an.input_taxon_version_key
+	from uksi.all_names an, duplicates dup, uksi.all_names prefrank, uksi.all_names pref
+	where dup.item_name=lower(replace(an.item_name, '-', ' '))
+		and coalesce(dup.authority, '')=coalesce(an.authority, '')
+		and coalesce(dup.attribute, '')=coalesce(an.attribute, '')
+		and dup.recommended_taxon_version_key=an.recommended_taxon_version_key 
+	-- the next 2 joins ensure that the names we are going to pull out do have an equivalent name which is the same rank as the preferred taxon
+	-- first, we fetch all the equivalent names
+	and lower(replace(prefrank.item_name, '-', ' '))=lower(replace(an.item_name, '-', ' '))
+		and coalesce(prefrank.authority, '')=coalesce(an.authority, '')
+		and coalesce(prefrank.attribute, '')=coalesce(an.attribute, '')
+		and prefrank.recommended_taxon_version_key=an.recommended_taxon_version_key
+	-- then join to all names again, this time filtering to find the preferred term, and ensuring that the records we just retrieved have the 
+	-- same rank as the preferred term
+	and pref.input_taxon_version_key=prefrank.recommended_taxon_version_key
+		and pref.rank=prefrank.rank
+	-- remove the names that we are OK to keep
+	and an.rank<>prefrank.rank
+);
+
+-- recreate our list of duplicate terms to process
+drop table duplicates;
+
+select lower(replace(item_name, '-', ' ')) as item_name, authority, attribute, recommended_taxon_version_key, count(*)
+into temporary duplicates
+from uksi.all_names
+group by lower(replace(item_name, '-', ' ')), authority, attribute, recommended_taxon_version_key
+having count(*) > 1;
+
+-- this time, we remove names which are not well-formed, when there is a well formed equivalent
+delete from uksi.all_names where input_taxon_version_key in (
+	select an.input_taxon_version_key
+	from uksi.all_names an, duplicates dup, uksi.all_names wf
+	where dup.item_name=lower(replace(an.item_name, '-', ' '))
+		and coalesce(dup.authority, '')=coalesce(an.authority, '')
+		and coalesce(dup.attribute, '')=coalesce(an.attribute, '')
+		and dup.recommended_taxon_version_key=an.recommended_taxon_version_key 
+	-- the next joins ensures that we have an equivalent well formed name
+	-- first, we fetch all the equivalent names
+	and lower(replace(wf.item_name, '-', ' '))=lower(replace(an.item_name, '-', ' '))
+		and coalesce(wf.authority, '')=coalesce(an.authority, '')
+		and coalesce(wf.attribute, '')=coalesce(an.attribute, '')
+		and wf.recommended_taxon_version_key=an.recommended_taxon_version_key
+		and wf.taxon_version_form='W'
+	-- remove the names that we are OK to keep
+	and an.taxon_version_form<>'W'
+);
+
+drop table duplicates;
+
+select lower(replace(item_name, '-', ' ')) as item_name, authority, attribute, recommended_taxon_version_key, count(*)
+into temporary duplicates
+from uksi.all_names
+group by lower(replace(item_name, '-', ' ')), authority, attribute, recommended_taxon_version_key
+having count(*) > 1;
+
+-- We are now left with a bunch of names where the Indicia equivalent pre UKSI import cannot be matched to a unique name from UKSI.
+-- Any of these which are not recorded against can be deleted in the Indicia dataset. Others can be marked as not for data entry. There 
+-- are unlikely to be many. This happens automatically later in the script if we don't match the names to an input TVK.
+
+-- Find the unmatchable taxa taxon list IDs
+select cttl.id, count(an.input_taxon_version_key)
+into temporary unmatched
+from cache_taxa_taxon_lists cttl
+join uksi.all_names an on an.item_name=cttl.taxon
+	and coalesce(an.authority, '') = coalesce(cttl.authority, '')
+join uksi.all_names pref on pref.input_taxon_version_key=an.recommended_taxon_version_key
+	and pref.item_name=cttl.preferred_taxon
+	and coalesce(pref.authority, '') = coalesce(cttl.preferred_authority, '')
+where cttl.taxon_list_id=taxonListId
+group by cttl.id, cttl.taxon
+having count(*) > 1;
+
+-- fill in the search code for all taxa we can get a distinct match for
+update taxa t
+set search_code = an.input_taxon_version_key
+from taxa_taxon_lists ttl
+join cache_taxa_taxon_lists cttl on cttl.id=ttl.id
+join uksi.all_names an on an.item_name=cttl.taxon
+	and coalesce(an.authority, '') = coalesce(cttl.authority, '')
+join uksi.all_names pref on pref.input_taxon_version_key=an.recommended_taxon_version_key
+	and pref.item_name=cttl.preferred_taxon
+	and coalesce(pref.authority, '') = coalesce(cttl.preferred_authority, '')
+where ttl.id not in (select id from unmatched)
+and ttl.taxon_id=t.id
+and t.search_code is null;
+
+drop table unmatched;
+drop table duplicates;
 
 -- Remove any taxa_taxon_lists where the item's TVK is not in the preferred names list and the item is not in use anywhere 
 CREATE TEMPORARY TABLE to_process (
@@ -282,10 +389,10 @@ SET updated_on=now(), taxon_group_id=tg.id, language_id=l.id, external_key=an.re
 FROM uksi.all_names an
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
-JOIN taxon_ranks tr ON tr.rank=an.rank AND tr.deleted=false
+JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.rank, an.short_name) AND tr.deleted=false
 WHERE an.input_taxon_version_key=t.search_code
-AND t.taxon_group_id<>tg.id OR t.language_id<>l.id OR t.external_key<>an.recommended_taxon_version_key OR t.search_code<>an.input_taxon_version_key 
-	OR t.authority<>an.authority OR t.scientific<>(an.taxon_type='S') OR t.taxon_rank_id<>tr.id OR t.attribute<>an.attribute;
+AND (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR t.external_key<>an.recommended_taxon_version_key 
+	OR t.authority<>an.authority OR t.scientific<>(an.taxon_type='S') OR t.taxon_rank_id<>tr.id OR t.attribute<>an.attribute);
 
 -- Insert any missing taxa records. 
 INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code, authority, scientific, taxon_rank_id, attribute, created_on, created_by_id, updated_on, updated_by_id)
