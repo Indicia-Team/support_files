@@ -174,12 +174,6 @@ CREATE INDEX ix_all_names_input_tvk ON uksi.all_names(input_taxon_version_key);
 
 SET search_path=indicia, public;
 
-VACUUM;
-
-ANALYZE;
-
-
-
 /* How to insert taxon_meaning_ids simultaneously into the taxon_meanings table?  Not just a sequence...  */
 CREATE OR REPLACE function f_update_uksi (taxonListId INTEGER) RETURNS boolean
     AS $func$
@@ -212,10 +206,50 @@ LEFT JOIN taxon_ranks tr on tr.short_name=COALESCE(utr.short_name, utr.long_name
 WHERE tr.id IS NULL;
 
 
+-- In the old data there are duplicate taxa (because we simply did not have enough info to separate them). So clean up...
+-- First map occurrences to the first of the 2 duplicates
+update occurrences o
+set taxa_taxon_list_id=ttl1.id, updated_on=now()
+from taxa_taxon_lists ttl1
+join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false and t1.search_code is null
+join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
+    and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
+join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
+where ttl1.taxon_list_id=taxonListId
+and ttl1.deleted=false
+and t1.id<t2.id
+and o.taxa_taxon_list_id = ttl2.id;
+
+-- same again for determinations
+update determinations d
+set taxa_taxon_list_id=ttl1.id, updated_on=now()
+from taxa_taxon_lists ttl1
+join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false and t1.search_code is null
+join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
+    and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
+join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
+where ttl1.taxon_list_id=taxonListId
+and ttl1.deleted=false
+and t1.id<t2.id
+and d.taxa_taxon_list_id = ttl2.id;
+
+-- remove the unused duplicate taxa taxon list records. 
+update taxa_taxon_lists
+set deleted=true, updated_on=now()
+where id in (select ttl2.id
+from taxa_taxon_lists ttl1
+join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false
+join taxa t2 on t2.id<>t1.id and t2.deleted=false
+    and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
+join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
+where ttl1.taxon_list_id=15
+and ttl1.deleted=false
+and t1.id<t2.id
+);
+
 -- Search for 'useless' names, where there are multiple versions of a name that differ only in rank.
-drop table duplicates;
+create temporary table duplicates as
 select lower(replace(item_name, '-', ' ')) as item_name, authority, attribute, recommended_taxon_version_key, count(*)
-into temporary duplicates
 from uksi.all_names
 group by lower(replace(item_name, '-', ' ')), authority, attribute, recommended_taxon_version_key
 having count(*) > 1;
@@ -245,8 +279,8 @@ delete from uksi.all_names where input_taxon_version_key in (
 -- recreate our list of duplicate terms to process
 drop table duplicates;
 
+create temporary table duplicates as
 select lower(replace(item_name, '-', ' ')) as item_name, authority, attribute, recommended_taxon_version_key, count(*)
-into temporary duplicates
 from uksi.all_names
 group by lower(replace(item_name, '-', ' ')), authority, attribute, recommended_taxon_version_key
 having count(*) > 1;
@@ -272,19 +306,28 @@ delete from uksi.all_names where input_taxon_version_key in (
 
 drop table duplicates;
 
-select lower(replace(item_name, '-', ' ')) as item_name, authority, attribute, recommended_taxon_version_key, count(*)
-into temporary duplicates
-from uksi.all_names
-group by lower(replace(item_name, '-', ' ')), authority, attribute, recommended_taxon_version_key
-having count(*) > 1;
+-- remove any names which are just ill-formed version of another name, because the author is missing. They don't help 
+-- data entry at all and just get in the way.
+delete from uksi.all_names where input_taxon_version_key in (
+	select s.input_taxon_version_key
+	from uksi.all_names s, uksi.all_names r 
+	where r.recommended_taxon_version_key=s.recommended_taxon_version_key
+	and s.taxon_version_form='I' and r.taxon_version_form='W'
+	and s.item_name=r.item_name
+	and s.authority is null and r.authority is not null
+	and s.rank=r.rank
+	and coalesce(s.attribute, '')=coalesce(r.attribute, '')
+	and s.taxon_type=r.taxon_type
+	and s.language=r.language
+);
 
 -- We are now left with a bunch of names where the Indicia equivalent pre UKSI import cannot be matched to a unique name from UKSI.
 -- Any of these which are not recorded against can be deleted in the Indicia dataset. Others can be marked as not for data entry. There 
 -- are unlikely to be many. This happens automatically later in the script if we don't match the names to an input TVK.
 
 -- Find the unmatchable taxa taxon list IDs
+create temporary table unmatchable as
 select cttl.id, count(an.input_taxon_version_key)
-into temporary unmatched
 from cache_taxa_taxon_lists cttl
 join uksi.all_names an on an.item_name=cttl.taxon
 	and coalesce(an.authority, '') = coalesce(cttl.authority, '')
@@ -305,12 +348,12 @@ join uksi.all_names an on an.item_name=cttl.taxon
 join uksi.all_names pref on pref.input_taxon_version_key=an.recommended_taxon_version_key
 	and pref.item_name=cttl.preferred_taxon
 	and coalesce(pref.authority, '') = coalesce(cttl.preferred_authority, '')
-where ttl.id not in (select id from unmatched)
+where ttl.id not in (select id from unmatchable)
+and ttl.taxon_list_id=taxonListId
 and ttl.taxon_id=t.id
 and t.search_code is null;
 
-drop table unmatched;
-drop table duplicates;
+drop table unmatchable;
 
 -- Remove any taxa_taxon_lists where the item's TVK is not in the preferred names list and the item is not in use anywhere 
 CREATE TEMPORARY TABLE to_process (
@@ -389,10 +432,11 @@ SET updated_on=now(), taxon_group_id=tg.id, language_id=l.id, external_key=an.re
 FROM uksi.all_names an
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
-JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.rank, an.short_name) AND tr.deleted=false
+JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.short_name, an.rank) AND tr.deleted=false
 WHERE an.input_taxon_version_key=t.search_code
-AND (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR t.external_key<>an.recommended_taxon_version_key 
-	OR t.authority<>an.authority OR t.scientific<>(an.taxon_type='S') OR t.taxon_rank_id<>tr.id OR t.attribute<>an.attribute);
+AND (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR COALESCE(t.external_key, '')<>an.recommended_taxon_version_key
+	OR COALESCE(t.authority, '')<>COALESCE(an.authority, '') OR t.scientific<>(an.taxon_type='S') 
+	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, ''));
 
 -- Insert any missing taxa records. 
 INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code, authority, scientific, taxon_rank_id, attribute, created_on, created_by_id, updated_on, updated_by_id)
@@ -401,8 +445,8 @@ SELECT an.item_name, tg.id, l.id, an.recommended_taxon_version_key, an.input_tax
 FROM uksi.all_names an
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
-JOIN taxon_ranks tr ON tr.rank=an.rank AND tr.deleted=false
-LEFT JOIN taxa t ON t.search_code=an.input_taxon_version_key
+JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.short_name, an.rank) AND tr.deleted=false
+LEFT JOIN taxa t ON t.search_code=an.input_taxon_version_key AND t.deleted=false
 WHERE t.id is null;
 
 -- Ensure any existing names are preferred that should be 
@@ -410,11 +454,13 @@ UPDATE taxa_taxon_lists SET preferred=true, updated_on=now()
 WHERE id IN (
 	SELECT ttl.id
 	FROM taxa_taxon_lists ttl
-	JOIN taxa t ON t.id=ttl.taxon_id
-	JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code
+	JOIN taxa t ON t.id=ttl.taxon_id and t.deleted=false
+	JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code and an.recommended_taxon_version_key=t.search_code
 	WHERE ttl.taxon_list_id=taxonListId
 	AND ttl.preferred=false
-) AND preferred=false;
+	AND ttl.deleted=false
+	AND ttl.allow_data_entry=true
+);
 
 startmeaning := nextval('indicia.taxon_meanings_id_seq'::regclass);
 
@@ -590,7 +636,7 @@ insert into cache_taxa_taxon_lists (
       ttlpref.id as preferred_taxa_taxon_list_id, ttlpref.parent_id, ttlpref.taxonomic_sort_order,
       t.taxon || coalesce(' ' || t.attribute, ''), t.authority,
       l.iso as language_iso, l.language,
-      tpref.taxon as preferred_taxon, tpref.authority as preferred_authority, 
+      tpref.taxon || coalesce(' ' || tpref.attribute, '') as preferred_taxon, tpref.authority as preferred_authority, 
       lpref.iso as preferred_language_iso, lpref.language as preferred_language,
       tcommon.taxon as default_common_name,
       regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g'), 
@@ -754,7 +800,7 @@ insert into cache_taxon_searchterms (
       name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id
     )
     select distinct on (cttl.id) cttl.id, cttl.taxon_list_id, cttl.taxon, cttl.taxon, cttl.taxon_group_id, cttl.taxon_group, cttl.taxon_meaning_id, cttl.preferred_taxon,
-      cttl.default_common_name, cttl.authority, cttl.language_iso, 
+      cttl.default_common_name, cttl.preferred_authority, cttl.language_iso, 
       case
         when cttl.language_iso='lat' and cttl.id=cttl.preferred_taxa_taxon_list_id then 'L' 
         when cttl.language_iso='lat' and cttl.id<>cttl.preferred_taxa_taxon_list_id then 'S' 
@@ -880,8 +926,6 @@ DROP TABLE needs_update_taxa_taxon_lists;
 
 DROP TABLE needs_update_taxon_searchterms;
 
--- Insert aggregates? 
-
 RETURN true;
 	
 END
@@ -890,4 +934,3 @@ $func$ LANGUAGE plpgsql;
 SELECT f_update_uksi(1);
 
 DROP FUNCTION f_update_uksi(integer);
-
