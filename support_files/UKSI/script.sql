@@ -321,6 +321,16 @@ delete from uksi.all_names where input_taxon_version_key in (
 	and s.language=r.language
 );
 
+-- Remove any ill-formed common names where there is a well formed common name of the same language. 
+delete from uksi.all_names an
+using uksi.all_names an2 
+where an2.recommended_taxon_version_key=an.recommended_taxon_version_key 
+    and an2.taxon_type=an.taxon_type
+    and an2.language=an.language 
+    and an2.taxon_version_form<>'U'
+    and an.taxon_type='V'
+    an.taxon_version_form='U' 
+
 -- We are now left with a bunch of names where the Indicia equivalent pre UKSI import cannot be matched to a unique name from UKSI.
 -- Any of these which are not recorded against can be deleted in the Indicia dataset. Others can be marked as not for data entry. There 
 -- are unlikely to be many. This happens automatically later in the script if we don't match the names to an input TVK.
