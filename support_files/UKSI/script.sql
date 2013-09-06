@@ -617,7 +617,7 @@ update cache_taxa_taxon_lists cttl
       preferred_language_iso=lpref.iso,
       preferred_language=lpref.language,
       default_common_name=tcommon.taxon,
-      search_name=regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g'), 
+      search_name=regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
       external_key=tpref.external_key,
       taxon_meaning_id=ttlpref.taxon_meaning_id,
       taxon_group_id = tpref.taxon_group_id,
@@ -652,7 +652,7 @@ insert into cache_taxa_taxon_lists (
       tpref.taxon || coalesce(' ' || tpref.attribute, '') as preferred_taxon, tpref.authority as preferred_authority, 
       lpref.iso as preferred_language_iso, lpref.language as preferred_language,
       tcommon.taxon as default_common_name,
-      regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g'), 
+      regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
       tpref.external_key, ttlpref.taxon_meaning_id, tpref.taxon_group_id, tg.title,
       now(), now(), ttlpref.allow_data_entry
     from taxon_lists tl
@@ -759,7 +759,7 @@ update cache_taxon_searchterms cts
 update cache_taxon_searchterms cts
     set taxa_taxon_list_id=cttl.id,
       taxon_list_id=cttl.taxon_list_id,
-      searchterm=regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g'), 
+      searchterm=regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
       original=cttl.taxon,
       taxon_group_id=cttl.taxon_group_id,
       taxon_group=cttl.taxon_group,
@@ -777,7 +777,7 @@ update cache_taxon_searchterms cts
       code_type_id=null,
       source_id=null,
       preferred=cttl.preferred,
-      searchterm_length=length(regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g')),
+      searchterm_length=length(regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g')),
       parent_id=cttl.parent_id,
       preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id
     from cache_taxa_taxon_lists cttl
@@ -853,7 +853,7 @@ insert into cache_taxon_searchterms (
       name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id
     )
     select distinct on (cttl.id) cttl.id, cttl.taxon_list_id, 
-      regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g'), 
+      regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
       cttl.taxon, cttl.taxon_group_id, cttl.taxon_group, cttl.taxon_meaning_id, cttl.preferred_taxon,
       cttl.default_common_name, cttl.authority, cttl.language_iso, 
       case
@@ -861,7 +861,7 @@ insert into cache_taxon_searchterms (
         when cttl.language_iso='lat' and cttl.id<>cttl.preferred_taxa_taxon_list_id then 'S' 
         else 'V'
       end, true, null, cttl.preferred, 
-      length(regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\\\(.+\\\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\\\?\\\\+]', '', 'g')),
+      length(regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g')),
       cttl.parent_id, cttl.preferred_taxa_taxon_list_id
     from cache_taxa_taxon_lists cttl
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified=true
