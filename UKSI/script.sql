@@ -329,7 +329,7 @@ where an2.recommended_taxon_version_key=an.recommended_taxon_version_key
     and an2.language=an.language 
     and an2.taxon_version_form<>'U'
     and an.taxon_type='V'
-    an.taxon_version_form='U' 
+    and an.taxon_version_form='U';
 
 -- We are now left with a bunch of names where the Indicia equivalent pre UKSI import cannot be matched to a unique name from UKSI.
 -- Any of these which are not recorded against can be deleted in the Indicia dataset. Others can be marked as not for data entry. There 
