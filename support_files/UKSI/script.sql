@@ -207,13 +207,14 @@ WHERE tr.id IS NULL;
 
 
 -- In the old data there are duplicate taxa (because we simply did not have enough info to separate them). So clean up...
--- First map occurrences to the first of the 2 duplicates
+-- First map occurrences to the first of the 2 duplicates. No need to re-data clean this change.
 update occurrences o
-set taxa_taxon_list_id=ttl1.id, updated_on=now()
+set taxa_taxon_list_id=ttl1.id, last_verification_check_taxa_taxon_list_id=ttl1.id, updated_on=now()
 from taxa_taxon_lists ttl1
 join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false and t1.search_code is null
 join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
     and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
+    and t2.external_key=t1.external_key
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
 where ttl1.taxon_list_id=taxonListId
 and ttl1.deleted=false
@@ -227,6 +228,7 @@ from taxa_taxon_lists ttl1
 join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false and t1.search_code is null
 join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
     and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
+    and t2.external_key=t1.external_key
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
 where ttl1.taxon_list_id=taxonListId
 and ttl1.deleted=false
@@ -241,6 +243,7 @@ from taxa_taxon_lists ttl1
 join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false
 join taxa t2 on t2.id<>t1.id and t2.deleted=false
     and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
+    and t2.external_key=t1.external_key
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
 where ttl1.taxon_list_id=15
 and ttl1.deleted=false
@@ -837,7 +840,7 @@ insert into cache_taxon_searchterms (
     from cache_taxa_taxon_lists cttl
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified='f'
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
-    where cts.taxa_taxon_list_id is null;
+    where cts.taxa_taxon_list_id is null and cttl.allow_data_entry=true;
 
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
@@ -855,7 +858,7 @@ insert into cache_taxon_searchterms (
       and ttlpref.deleted=false
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type='A'
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
-    where cts.taxa_taxon_list_id is null and cttl.language_iso='lat';
+    where cts.taxa_taxon_list_id is null and cttl.language_iso='lat' and cttl.allow_data_entry=true;
 
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
@@ -876,7 +879,7 @@ insert into cache_taxon_searchterms (
     from cache_taxa_taxon_lists cttl
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified=true
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
-    where cts.taxa_taxon_list_id is null;
+    where cts.taxa_taxon_list_id is null and cttl.allow_data_entry=true;
 
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
@@ -893,7 +896,7 @@ insert into cache_taxon_searchterms (
     join termlists_terms tltcategory on tltcategory.id=tlttype.parent_id and tltcategory.deleted=false
     join terms tcategory on tcategory.id=tltcategory.term_id and tcategory.term='searchable' and tcategory.deleted=false
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
-    where cts.taxa_taxon_list_id is null;
+    where cts.taxa_taxon_list_id is null and cttl.allow_data_entry=true;
 
 -- Insert the designation kinds that are missing
 tdKindListId := id from termlists where external_key='indicia:taxon_designation_categories';
