@@ -245,7 +245,7 @@ join taxa t2 on t2.id<>t1.id and t2.deleted=false
     and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
     and t2.external_key=t1.external_key
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
-where ttl1.taxon_list_id=15
+where ttl1.taxon_list_id=taxonListId
 and ttl1.deleted=false
 and t1.id<t2.id
 );
@@ -548,7 +548,7 @@ join uksi.all_names an on an.input_taxon_version_key=t.external_key
 -- get a common name. There could be duplicates for this join
 left join (uksi.all_names ancany
 	join taxa tcany on tcany.taxon=ancany.item_name and tcany.deleted=false
-	join taxa_taxon_lists ttlcany on ttlcany.taxon_id=tcany.id and ttlcany.deleted=false 
+	join taxa_taxon_lists ttlcany on ttlcany.taxon_id=tcany.id and ttlcany.deleted=false and ttlany.allow_data_entry=true 
 ) on ancany.recommended_taxon_version_key=an.recommended_taxon_version_key 
     and ancany.taxon_type='V' and ancany.language='en' and ancany.taxon_version_status='R'
 -- this join should resolve any cases where there are duplicates
@@ -556,10 +556,10 @@ left join (uksi.preferred_names pn
 	join uksi.tcn_duplicates td on td.organism_key=pn.organism_key
 	join uksi.all_names anc on anc.input_taxon_version_key=td.taxon_version_key -- common name entry
 	join taxa tc on tc.taxon=anc.item_name and tc.deleted=false -- lookup the common name's taxon id
-	join taxa_taxon_lists ttlc on ttlc.taxon_id=tc.id and ttlc.deleted=false 	    
+	join taxa_taxon_lists ttlc on ttlc.taxon_id=tc.id and ttlc.deleted=false and ttlc.allow_data_entry=true  	    
 ) on pn.taxon_version_key=an.recommended_taxon_version_key
 where t.id=ttl.taxon_id and t.deleted=false and ttl.deleted=false
-and ttl.taxon_list_id=1
+and ttl.taxon_list_id=taxonListId
 and (ttl.common_taxon_id<>coalesce(tc.id, tcany.id) or (ttl.common_taxon_id is null and coalesce(tc.id, tcany.id) is not null))
 and (coalesce(ttlc.taxon_meaning_id, ttlcany.taxon_meaning_id)=ttl.taxon_meaning_id or coalesce(ttlc.taxon_meaning_id, ttlcany.taxon_meaning_id) is null);
 
