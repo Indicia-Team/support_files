@@ -40,7 +40,7 @@ CREATE TABLE all_names
   input_taxon_version_key character(16),
   item_name character varying,
   authority character varying,
-  taxon_version_form character(1),
+  taxon_version_form character(1), -- U = unverified, I=irregular, W=well-formed
   taxon_version_status character(1),
   taxon_type character(1),
   "language" character(2),
@@ -330,9 +330,9 @@ using uksi.all_names an2
 where an2.recommended_taxon_version_key=an.recommended_taxon_version_key 
     and an2.taxon_type=an.taxon_type
     and an2.language=an.language 
-    and an2.taxon_version_form<>'U'
+    and an2.taxon_version_form='W'
     and an.taxon_type='V'
-    and an.taxon_version_form='U';
+    and an.taxon_version_form<>'W';
 
 -- We are now left with a bunch of names where the Indicia equivalent pre UKSI import cannot be matched to a unique name from UKSI.
 -- Any of these which are not recorded against can be deleted in the Indicia dataset. Others can be marked as not for data entry. There 
