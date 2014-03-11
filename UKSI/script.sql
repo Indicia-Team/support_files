@@ -183,11 +183,11 @@ DECLARE
 	startmeaning INTEGER;
 	lastcacheupdate timestamp without time zone;
 	tdKindListId INTEGER;
-	curs CURSOR (kindListId INTEGER) FOR SELECT dk.kind
+	curs CURSOR (ListId INTEGER) FOR SELECT dk.kind
 		FROM uksi.all_designation_kinds dk
 		LEFT JOIN cache_termlists_terms ctt 
 			ON ctt.term=dk.kind
-			AND ctt.termlist_id=kindListId
+			AND ctt.termlist_id=ListId
 		WHERE ctt.id IS NULL; 
 					
 BEGIN 
@@ -913,13 +913,15 @@ SELECT
   td.status_abbreviation,
   td.short_name,   
   td.description, 
-  ctt.id,
+  tlt.id,
   now(),
   1,
   now(),
   1
 FROM uksi.taxon_designations td
-JOIN cache_termlists_terms ctt ON ctt.term=td.kind
+JOIN terms t ON t.term=td.kind
+JOIN termlists_terms tlt on tlt.term_id=t.id and tlt.deleted=false
+JOIN termlists tl on tl.id=tlt.termlist_id and tl.deleted=false and tl.external_key='indicia:taxon_designation_categories'
 LEFT JOIN taxon_designations tdexist ON tdexist.abbreviation=td.short_name
 WHERE tdexist.id IS NULL;
 
