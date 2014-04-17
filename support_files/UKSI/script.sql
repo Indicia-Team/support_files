@@ -967,3 +967,11 @@ $func$ LANGUAGE plpgsql;
 SELECT f_update_uksi(1);
 
 DROP FUNCTION f_update_uksi(integer);
+
+-- Optional - remove unused taxon ranks
+delete from taxon_ranks where id in (
+select tr.id
+from taxon_ranks tr
+left join taxa t on t.taxon_rank_id=tr.id
+where t.id is null
+)
