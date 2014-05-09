@@ -209,7 +209,7 @@ WHERE tr.id IS NULL;
 -- In the old data there are duplicate taxa (because we simply did not have enough info to separate them). So clean up...
 -- First map occurrences to the first of the 2 duplicates. No need to re-data clean this change.
 update occurrences o
-set taxa_taxon_list_id=ttl1.id, last_verification_check_taxa_taxon_list_id=ttl1.id, updated_on=now()
+set taxa_taxon_list_id=ttl1.id, updated_on=now()
 from taxa_taxon_lists ttl1
 join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false and t1.search_code is null
 join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
@@ -218,7 +218,8 @@ join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
 where ttl1.taxon_list_id=taxonListId
 and ttl1.deleted=false
-and t1.id<t2.id
+and ttl1.id<ttl2.id
+and ttl1.allow_data_entry=true and ttl2.allow_data_entry=true
 and o.taxa_taxon_list_id = ttl2.id;
 
 -- same again for determinations
@@ -232,7 +233,8 @@ join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
 where ttl1.taxon_list_id=taxonListId
 and ttl1.deleted=false
-and t1.id<t2.id
+and ttl1.id<ttl2.id
+and ttl1.allow_data_entry=true and ttl2.allow_data_entry=true
 and d.taxa_taxon_list_id = ttl2.id;
 
 -- remove the unused duplicate taxa taxon list records. 
@@ -247,7 +249,8 @@ join taxa t2 on t2.id<>t1.id and t2.deleted=false
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
 where ttl1.taxon_list_id=taxonListId
 and ttl1.deleted=false
-and t1.id<t2.id
+and ttl1.id<ttl2.id
+and ttl1.allow_data_entry=true and ttl2.allow_data_entry=true
 );
 
 -- Search for 'useless' names, where there are multiple versions of a name that differ only in rank.
@@ -548,7 +551,7 @@ join uksi.all_names an on an.input_taxon_version_key=t.external_key
 -- get a common name. There could be duplicates for this join
 left join (uksi.all_names ancany
 	join taxa tcany on tcany.taxon=ancany.item_name and tcany.deleted=false
-	join taxa_taxon_lists ttlcany on ttlcany.taxon_id=tcany.id and ttlcany.deleted=false and ttlany.allow_data_entry=true 
+	join taxa_taxon_lists ttlcany on ttlcany.taxon_id=tcany.id and ttlcany.deleted=false and ttlcany.allow_data_entry=true 
 ) on ancany.recommended_taxon_version_key=an.recommended_taxon_version_key 
     and ancany.taxon_type='V' and ancany.language='en' and ancany.taxon_version_status='R'
 -- this join should resolve any cases where there are duplicates
