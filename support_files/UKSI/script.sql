@@ -405,6 +405,19 @@ SELECT ttl.id
 	WHERE ttl.taxon_list_id=taxonListId
 	AND an.recommended_taxon_version_key IS NULL;
 
+-- WHY DO WE END UP NEEDING TO RUN THE FOLLOWING?
+update
+ cache_taxa_taxon_lists cttl
+ set allow_data_entry=ttl.allow_data_entry
+ from taxa_taxon_lists ttl 
+ where ttl.id=cttl.id and cttl.allow_data_entry<>ttl.allow_data_entry
+
+delete from cache_taxon_searchterms cts
+where taxa_taxon_list_id in (
+select id from taxa_taxon_lists where allow_data_entry=false
+)
+----------------------------------------------------
+
 UPDATE taxa_taxon_lists ttl
 SET allow_data_entry=false, updated_on=now() 
 FROM to_process d 
@@ -600,7 +613,7 @@ create temporary table needs_update_taxa_taxon_lists as select sub.id, cast(max(
       union
       select ttl.id, ttl.deleted or ttlpref.deleted or tpref.deleted or lpref.deleted or tg.deleted
       from taxa_taxon_lists ttl
-      join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred=true
+      join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred=true and ttlpref.deleted=false
       join taxa tpref on tpref.id=ttlpref.taxon_id
       join languages lpref on lpref.id=tpref.language_id
       join taxon_groups tg on tg.id=tpref.taxon_group_id
@@ -641,15 +654,15 @@ update cache_taxa_taxon_lists cttl
       cache_updated_on=now(),
       allow_data_entry=ttlpref.allow_data_entry
     from taxon_lists tl
-    join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id 
+    join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id
     join needs_update_taxa_taxon_lists nu on nu.id=ttl.id
-    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' 
-    join taxa t on t.id=ttl.taxon_id 
-    join languages l on l.id=t.language_id 
-    join taxa tpref on tpref.id=ttlpref.taxon_id 
-    join taxon_groups tg on tg.id=tpref.taxon_group_id
-    join languages lpref on lpref.id=tpref.language_id
-    left join taxa tcommon on tcommon.id=ttlpref.common_taxon_id
+    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' and ttlpref.deleted=false
+    join taxa t on t.id=ttl.taxon_id and t.deleted=false
+    join languages l on l.id=t.language_id and l.deleted=false
+    join taxa tpref on tpref.id=ttlpref.taxon_id and tpref.deleted=false
+    join taxon_groups tg on tg.id=tpref.taxon_group_id and tg.deleted=false
+    join languages lpref on lpref.id=tpref.language_id and lpref.deleted=false
+    left join taxa tcommon on tcommon.id=ttlpref.common_taxon_id and tcommon.deleted=false
     where cttl.id=ttl.id;
 
 insert into cache_taxa_taxon_lists (
@@ -672,17 +685,17 @@ insert into cache_taxa_taxon_lists (
       tpref.external_key, ttlpref.taxon_meaning_id, tpref.taxon_group_id, tg.title,
       now(), now(), ttlpref.allow_data_entry
     from taxon_lists tl
-    join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id 
+    join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id and ttl.deleted=false
     left join cache_taxa_taxon_lists cttl on cttl.id=ttl.id
-    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' 
+    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' and ttlpref.deleted=false
     join taxa t on t.id=ttl.taxon_id and t.deleted=false
     join languages l on l.id=t.language_id and l.deleted=false
-    join taxa tpref on tpref.id=ttlpref.taxon_id 
-    join taxon_groups tg on tg.id=tpref.taxon_group_id
-    join languages lpref on lpref.id=tpref.language_id
-    left join taxa tcommon on tcommon.id=ttlpref.common_taxon_id
+    join taxa tpref on tpref.id=ttlpref.taxon_id and tpref.deleted=false
+    join taxon_groups tg on tg.id=tpref.taxon_group_id and tg.deleted=false
+    join languages lpref on lpref.id=tpref.language_id and lpref.deleted=false
+    left join taxa tcommon on tcommon.id=ttlpref.common_taxon_id and tcommon.deleted=false
     join needs_update_taxa_taxon_lists nu on nu.id=ttl.id
-    where cttl.id is null;
+    where cttl.id is null and tl.deleted=false;
 
 -- Then, do cache_taxon_searchterms
 
