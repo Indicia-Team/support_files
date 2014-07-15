@@ -545,7 +545,13 @@ LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_list_id=taxonListId AND ttl.taxon_id
     AND ttl.preferred=false AND ttl.deleted=false
 WHERE ttl.id IS NULL;
 
--- Set the parent ID for all taxa 
+-- Set the parent ID for all taxa. First we update the parent_tvk since the NHM no longer guarantee this field is maintained.
+update uksi.preferred_names c 
+set parent_tvk = p.taxon_version_key
+from uksi.preferred_names p
+where coalesce(c.parent_tvk, '')<>coalesce(p.taxon_version_key, '')
+and p.organism_key=c.parent_key
+
 update taxa_taxon_lists cttl
 set parent_id=pttl.id, updated_on=now()
 from taxa ct -- child taxon
