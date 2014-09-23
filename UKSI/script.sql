@@ -456,19 +456,27 @@ AND (tg.parent_id <> tgp.id OR tg.title <> tgimpc.taxon_group_name OR tg.descrip
 AND tg.deleted=false;
 
 -- Ensure info is correct for existing taxa
-UPDATE taxa t
-SET updated_on=now(), taxon_group_id=tg.id, language_id=l.id, external_key=an.recommended_taxon_version_key, search_code=an.input_taxon_version_key,
-	authority=an.authority, scientific=(an.taxon_type='S'), taxon_rank_id=tr.id, attribute=an.attribute, marine_flag=pn.marine_flag
+SELECT t.id, tg.id as taxon_group_id, l.id as language_id, an.recommended_taxon_version_key as external_key,
+  an.input_taxon_version_key as search_code, an.authority, (an.taxon_type='S') as scientific, tr.id as taxon_rank_id, pn.marine_flag as marine_flag
+INTO temporary to_update
 FROM uksi.all_names an
 JOIN uksi.preferred_names pn on pn.taxon_version_key=an.recommended_taxon_version_key
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
 JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.short_name, an.rank) AND tr.deleted=false
-WHERE an.input_taxon_version_key=t.search_code
-AND (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR COALESCE(t.external_key, '')<>an.recommended_taxon_version_key
+JOIN taxa t ON an.input_taxon_version_key=t.search_code
+WHERE (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR COALESCE(t.external_key, '')<>an.recommended_taxon_version_key
 	OR COALESCE(t.authority, '')<>COALESCE(an.authority, '') OR t.scientific<>(an.taxon_type='S') 
 	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, ''))
   OR t.marine_flag <> COALESCE(pn.marine_flag, false);
+
+UPDATE taxa t
+SET updated_on=now(), taxon_group_id=u.taxon_group_id, language_id=u.language_id, external_key=u.external_key, 
+    search_code=u.search_code, authority=u.authority, scientific=u.scientific, taxon_rank_id=u.taxon_rank_id, marine_flag=u.marine_flag
+FROM to_update u
+WHERE u.id=t.id;
+
+DROP TABLE to_update;
 
 -- Insert any missing taxa records. 
 INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code, authority, scientific, taxon_rank_id, attribute, created_on, created_by_id, updated_on, updated_by_id, marine_flag)
