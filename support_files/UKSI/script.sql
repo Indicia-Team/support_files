@@ -200,7 +200,7 @@ WHERE tr.short_name=COALESCE(utr.short_name, utr.long_name);
 
 -- Insert any missing ranks
 INSERT INTO taxon_ranks(rank, short_name, italicise_taxon, sort_order, created_on, created_by_id, updated_on, updated_by_id)
-SELECT utr.long_name, COALESCE(utr.short_name, utr.long_name), case utr.list_font_italic when 1 then true else false end, utr.sort_order, now(), 1, now(), 1
+SELECT DISTINCT utr.long_name, COALESCE(utr.short_name, utr.long_name), case utr.list_font_italic when 1 then true else false end, utr.sort_order, now(), 1, now(), 1
 FROM uksi.taxon_ranks utr
 LEFT JOIN taxon_ranks tr on tr.short_name=COALESCE(utr.short_name, utr.long_name)
 WHERE tr.id IS NULL;
@@ -410,12 +410,12 @@ update
  cache_taxa_taxon_lists cttl
  set allow_data_entry=ttl.allow_data_entry
  from taxa_taxon_lists ttl 
- where ttl.id=cttl.id and cttl.allow_data_entry<>ttl.allow_data_entry
+ where ttl.id=cttl.id and cttl.allow_data_entry<>ttl.allow_data_entry;
 
 delete from cache_taxon_searchterms cts
 where taxa_taxon_list_id in (
 select id from taxa_taxon_lists where allow_data_entry=false
-)
+);
 ----------------------------------------------------
 
 UPDATE taxa_taxon_lists ttl
@@ -435,10 +435,11 @@ WHERE id IN (
 	WHERE ttl.id IS NULL
 ) AND deleted=false;
 
--- Grab all the missing taxon group names
+-- Grab all the missing but used taxon group names
 INSERT INTO taxon_groups (title, created_on, created_by_id, updated_on, updated_by_id, external_key)
-SELECT taxon_group_name, now(), 1, now(), 1, taxon_group_key
+SELECT distinct taxon_group_name, now(), 1, now(), 1, taxon_group_key
 FROM uksi.taxon_groups tgimp
+JOIN uksi.all_names an on an.output_group_key = tgimp.taxon_group_key
 LEFT JOIN taxon_groups tg ON tg.external_key=tgimp.taxon_group_key AND tg.deleted=false
 WHERE tg.id IS NULL;
 
@@ -457,21 +458,23 @@ AND tg.deleted=false;
 -- Ensure info is correct for existing taxa
 UPDATE taxa t
 SET updated_on=now(), taxon_group_id=tg.id, language_id=l.id, external_key=an.recommended_taxon_version_key, search_code=an.input_taxon_version_key,
-	authority=an.authority, scientific=(an.taxon_type='S'), taxon_rank_id=tr.id, attribute=an.attribute
+	authority=an.authority, scientific=(an.taxon_type='S'), taxon_rank_id=tr.id, attribute=an.attribute, marine_flag=pn.marine_flag
 FROM uksi.all_names an
+JOIN uksi.preferred_names pn on pn.taxon_version_key=an.recommended_taxon_version_key
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
 JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.short_name, an.rank) AND tr.deleted=false
 WHERE an.input_taxon_version_key=t.search_code
 AND (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR COALESCE(t.external_key, '')<>an.recommended_taxon_version_key
 	OR COALESCE(t.authority, '')<>COALESCE(an.authority, '') OR t.scientific<>(an.taxon_type='S') 
-	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, ''));
+	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, ''))
+  OR t.marine_flag <> COALESCE(pn.marine_flag, false);
 
 -- Insert any missing taxa records. 
-INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code, authority, scientific, taxon_rank_id, attribute, created_on, created_by_id, updated_on, updated_by_id)
--- test
-SELECT an.item_name, tg.id, l.id, an.recommended_taxon_version_key, an.input_taxon_version_key, an.authority, an.taxon_type='S', tr.id, an.attribute, now(), 1, now(), 1
+INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code, authority, scientific, taxon_rank_id, attribute, created_on, created_by_id, updated_on, updated_by_id, marine_flag)
+SELECT an.item_name, tg.id, l.id, an.recommended_taxon_version_key, an.input_taxon_version_key, an.authority, an.taxon_type='S', tr.id, an.attribute, now(), 1, now(), 1, COALESCE(pn.marine_flag, false)
 FROM uksi.all_names an
+JOIN uksi.preferred_names pn on pn.taxon_version_key=an.recommended_taxon_version_key
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
 JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.short_name, an.rank) AND tr.deleted=false
@@ -550,7 +553,7 @@ update uksi.preferred_names c
 set parent_tvk = p.taxon_version_key
 from uksi.preferred_names p
 where coalesce(c.parent_tvk, '')<>coalesce(p.taxon_version_key, '')
-and p.organism_key=c.parent_key
+and p.organism_key=c.parent_key;
 
 update taxa_taxon_lists cttl
 set parent_id=pttl.id, updated_on=now()
@@ -619,7 +622,7 @@ create temporary table needs_update_taxa_taxon_lists as select sub.id, cast(max(
       union
       select ttl.id, ttl.deleted or ttlpref.deleted or tpref.deleted or lpref.deleted or tg.deleted
       from taxa_taxon_lists ttl
-      join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred=true and ttlpref.deleted=false
+      join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred=true and ttlpref.taxon_list_id=ttl.taxon_list_id and ttlpref.deleted=false
       join taxa tpref on tpref.id=ttlpref.taxon_id
       join languages lpref on lpref.id=tpref.language_id
       join taxon_groups tg on tg.id=tpref.taxon_group_id
@@ -658,11 +661,12 @@ update cache_taxa_taxon_lists cttl
       taxon_group_id = tpref.taxon_group_id,
       taxon_group = tg.title,
       cache_updated_on=now(),
-      allow_data_entry=ttlpref.allow_data_entry
+      allow_data_entry=ttlpref.allow_data_entry,
+      marine_flag=t.marine_flag
     from taxon_lists tl
     join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id
     join needs_update_taxa_taxon_lists nu on nu.id=ttl.id
-    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' and ttlpref.deleted=false
+    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' and ttlpref.taxon_list_id=ttl.taxon_list_id and ttlpref.deleted=false
     join taxa t on t.id=ttl.taxon_id and t.deleted=false
     join languages l on l.id=t.language_id and l.deleted=false
     join taxa tpref on tpref.id=ttlpref.taxon_id and tpref.deleted=false
@@ -677,7 +681,7 @@ insert into cache_taxa_taxon_lists (
       taxon, authority, language_iso, language, preferred_taxon, preferred_authority, 
       preferred_language_iso, preferred_language, default_common_name, search_name, external_key, 
       taxon_meaning_id, taxon_group_id, taxon_group,
-      cache_created_on, cache_updated_on, allow_data_entry
+      cache_created_on, cache_updated_on, allow_data_entry, marine_flag
     )
     select distinct on (ttl.id) ttl.id, ttl.preferred, 
       tl.id as taxon_list_id, tl.title as taxon_list_title, tl.website_id,
@@ -689,11 +693,11 @@ insert into cache_taxa_taxon_lists (
       tcommon.taxon as default_common_name,
       regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
       tpref.external_key, ttlpref.taxon_meaning_id, tpref.taxon_group_id, tg.title,
-      now(), now(), ttlpref.allow_data_entry
+      now(), now(), ttlpref.allow_data_entry, t.marine_flag
     from taxon_lists tl
     join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id and ttl.deleted=false
     left join cache_taxa_taxon_lists cttl on cttl.id=ttl.id
-    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' and ttlpref.deleted=false
+    join taxa_taxon_lists ttlpref on ttlpref.taxon_meaning_id=ttl.taxon_meaning_id and ttlpref.preferred='t' and ttlpref.taxon_list_id=ttl.taxon_list_id and ttlpref.deleted=false
     join taxa t on t.id=ttl.taxon_id and t.deleted=false
     join languages l on l.id=t.language_id and l.deleted=false
     join taxa tpref on tpref.id=ttlpref.taxon_id and tpref.deleted=false
@@ -762,7 +766,8 @@ update cache_taxon_searchterms cts
       preferred=cttl.preferred,
       searchterm_length=length(cttl.taxon),
       parent_id=cttl.parent_id,
-      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id
+      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id,
+      marine_flag=cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
     where cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified=false;
@@ -786,7 +791,8 @@ update cache_taxon_searchterms cts
       preferred=cttl.preferred,
       searchterm_length=length(taxon_abbreviation(cttl.taxon)),
       parent_id=cttl.parent_id,
-      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id
+      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id,
+      marine_flag=cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
     where cts.taxa_taxon_list_id=cttl.id and cts.name_type='A' and cttl.language_iso='lat';
@@ -814,7 +820,8 @@ update cache_taxon_searchterms cts
       preferred=cttl.preferred,
       searchterm_length=length(regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g')),
       parent_id=cttl.parent_id,
-      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id
+      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id,
+      marine_flag=cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
     where cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified=true;
@@ -838,7 +845,8 @@ update cache_taxon_searchterms cts
       preferred=cttl.preferred,
       searchterm_length=length(tc.code),
       parent_id=cttl.parent_id,
-      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id
+      preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id,
+      marine_flag=cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
     join taxon_codes tc on tc.taxon_meaning_id=cttl.taxon_meaning_id 
@@ -850,7 +858,7 @@ update cache_taxon_searchterms cts
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
       default_common_name, preferred_authority, language_iso,
-      name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id
+      name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id, marine_flag
     )
     select distinct on (cttl.id) cttl.id, cttl.taxon_list_id, cttl.taxon, cttl.taxon, cttl.taxon_group_id, cttl.taxon_group, cttl.taxon_meaning_id, cttl.preferred_taxon,
       cttl.default_common_name, cttl.preferred_authority, cttl.language_iso, 
@@ -858,7 +866,7 @@ insert into cache_taxon_searchterms (
         when cttl.language_iso='lat' and cttl.id=cttl.preferred_taxa_taxon_list_id then 'L' 
         when cttl.language_iso='lat' and cttl.id<>cttl.preferred_taxa_taxon_list_id then 'S' 
         else 'V'
-      end, false, null, cttl.preferred, length(cttl.taxon), cttl.parent_id, cttl.preferred_taxa_taxon_list_id
+      end, false, null, cttl.preferred, length(cttl.taxon), cttl.parent_id, cttl.preferred_taxa_taxon_list_id, cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified='f'
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
@@ -867,11 +875,11 @@ insert into cache_taxon_searchterms (
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
       default_common_name, preferred_authority, language_iso,
-      name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id
+      name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id, marine_flag
     )
     select distinct on (cttl.id) cttl.id, cttl.taxon_list_id, taxon_abbreviation(cttl.taxon), cttl.taxon, cttl.taxon_group_id, cttl.taxon_group, cttl.taxon_meaning_id, cttl.preferred_taxon,
       cttl.default_common_name, cttl.authority, cttl.language_iso, 
-      'A', null, null, cttl.preferred, length(taxon_abbreviation(cttl.taxon)), cttl.parent_id, cttl.preferred_taxa_taxon_list_id
+      'A', null, null, cttl.preferred, length(taxon_abbreviation(cttl.taxon)), cttl.parent_id, cttl.preferred_taxa_taxon_list_id, cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     join taxa_taxon_lists ttlpref 
       on ttlpref.taxon_meaning_id=cttl.taxon_meaning_id 
@@ -885,7 +893,7 @@ insert into cache_taxon_searchterms (
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
       default_common_name, preferred_authority, language_iso,
-      name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id
+      name_type, simplified, code_type_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id, marine_flag
     )
     select distinct on (cttl.id) cttl.id, cttl.taxon_list_id, 
       regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
@@ -897,7 +905,7 @@ insert into cache_taxon_searchterms (
         else 'V'
       end, true, null, cttl.preferred, 
       length(regexp_replace(regexp_replace(regexp_replace(lower(cttl.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g')),
-      cttl.parent_id, cttl.preferred_taxa_taxon_list_id
+      cttl.parent_id, cttl.preferred_taxa_taxon_list_id, cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type in ('L','S','V') and cts.simplified=true
     join needs_update_taxon_searchterms nu on nu.id=cttl.id and nu.deleted=false
@@ -906,11 +914,11 @@ insert into cache_taxon_searchterms (
 insert into cache_taxon_searchterms (
       taxa_taxon_list_id, taxon_list_id, searchterm, original, taxon_group_id, taxon_group, taxon_meaning_id, preferred_taxon,
       default_common_name, preferred_authority, language_iso,
-      name_type, simplified, code_type_id, source_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id
+      name_type, simplified, code_type_id, source_id, preferred, searchterm_length, parent_id, preferred_taxa_taxon_list_id, marine_flag
     )
     select distinct on (tc.id) cttl.id, cttl.taxon_list_id, tc.code, tc.code, cttl.taxon_group_id, cttl.taxon_group, cttl.taxon_meaning_id, cttl.preferred_taxon,
       cttl.default_common_name, cttl.authority, null, 'C', null, tc.code_type_id, tc.id, cttl.preferred, length(tc.code), 
-      cttl.parent_id, cttl.preferred_taxa_taxon_list_id
+      cttl.parent_id, cttl.preferred_taxa_taxon_list_id, cttl.marine_flag
     from cache_taxa_taxon_lists cttl
     join taxon_codes tc on tc.taxon_meaning_id=cttl.taxon_meaning_id and tc.deleted=false
     left join cache_taxon_searchterms cts on cts.taxa_taxon_list_id=cttl.id and cts.name_type='C' and cts.source_id=tc.id
