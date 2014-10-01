@@ -400,23 +400,11 @@ TRUNCATE to_process;
 INSERT INTO to_process
 SELECT ttl.id 
 	FROM taxa_taxon_lists ttl
-	JOIN taxa t ON t.id=ttl.taxon_id
+	JOIN taxa t ON t.id=ttl.taxon_id and t.deleted=false
 	LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code
 	WHERE ttl.taxon_list_id=taxonListId
 	AND an.recommended_taxon_version_key IS NULL;
 
--- WHY DO WE END UP NEEDING TO RUN THE FOLLOWING?
-update
- cache_taxa_taxon_lists cttl
- set allow_data_entry=ttl.allow_data_entry
- from taxa_taxon_lists ttl 
- where ttl.id=cttl.id and cttl.allow_data_entry<>ttl.allow_data_entry;
-
-delete from cache_taxon_searchterms cts
-where taxa_taxon_list_id in (
-select id from taxa_taxon_lists where allow_data_entry=false
-);
-----------------------------------------------------
 
 UPDATE taxa_taxon_lists ttl
 SET allow_data_entry=false, updated_on=now() 
@@ -456,7 +444,7 @@ AND (tg.parent_id <> tgp.id OR tg.title <> tgimpc.taxon_group_name OR tg.descrip
 AND tg.deleted=false;
 
 -- Ensure info is correct for existing taxa
-SELECT t.id, tg.id as taxon_group_id, l.id as language_id, an.recommended_taxon_version_key as external_key,
+SELECT t.id, an.item_name as taxon, tg.id as taxon_group_id, l.id as language_id, an.recommended_taxon_version_key as external_key,
   an.input_taxon_version_key as search_code, an.authority, (an.taxon_type='S') as scientific, tr.id as taxon_rank_id, pn.marine_flag as marine_flag
 INTO temporary to_update
 FROM uksi.all_names an
@@ -464,14 +452,14 @@ JOIN uksi.preferred_names pn on pn.taxon_version_key=an.recommended_taxon_versio
 JOIN languages l on substring(l.iso from 1 for 2)=an.language AND l.deleted=false
 JOIN taxon_groups tg ON tg.external_key=an.output_group_key AND tg.deleted=false
 JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(an.short_name, an.rank) AND tr.deleted=false
-JOIN taxa t ON an.input_taxon_version_key=t.search_code
-WHERE (t.taxon_group_id<>tg.id OR t.language_id<>l.id OR COALESCE(t.external_key, '')<>an.recommended_taxon_version_key
+JOIN taxa t ON an.input_taxon_version_key=t.search_code and t.deleted=false
+WHERE (t.taxon<>an.item_name OR t.taxon_group_id<>tg.id OR t.language_id<>l.id OR COALESCE(t.external_key, '')<>an.recommended_taxon_version_key
 	OR COALESCE(t.authority, '')<>COALESCE(an.authority, '') OR t.scientific<>(an.taxon_type='S') 
-	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, ''))
-  OR t.marine_flag <> COALESCE(pn.marine_flag, false);
+	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, '')
+  OR t.marine_flag <> COALESCE(pn.marine_flag, false));
 
 UPDATE taxa t
-SET updated_on=now(), taxon_group_id=u.taxon_group_id, language_id=u.language_id, external_key=u.external_key, 
+SET updated_on=now(), taxon=u.taxon, taxon_group_id=u.taxon_group_id, language_id=u.language_id, external_key=u.external_key, 
     search_code=u.search_code, authority=u.authority, scientific=u.scientific, taxon_rank_id=u.taxon_rank_id, marine_flag=u.marine_flag
 FROM to_update u
 WHERE u.id=t.id;
@@ -669,7 +657,7 @@ update cache_taxa_taxon_lists cttl
       taxon_group_id = tpref.taxon_group_id,
       taxon_group = tg.title,
       cache_updated_on=now(),
-      allow_data_entry=ttlpref.allow_data_entry,
+      allow_data_entry=ttl.allow_data_entry,
       marine_flag=t.marine_flag
     from taxon_lists tl
     join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id
@@ -701,7 +689,7 @@ insert into cache_taxa_taxon_lists (
       tcommon.taxon as default_common_name,
       regexp_replace(regexp_replace(regexp_replace(lower(t.taxon), E'\\(.+\\)', '', 'g'), 'ae', 'e', 'g'), E'[^a-z0-9\\?\\+]', '', 'g'), 
       tpref.external_key, ttlpref.taxon_meaning_id, tpref.taxon_group_id, tg.title,
-      now(), now(), ttlpref.allow_data_entry, t.marine_flag
+      now(), now(), ttl.allow_data_entry, t.marine_flag
     from taxon_lists tl
     join taxa_taxon_lists ttl on ttl.taxon_list_id=tl.id and ttl.deleted=false
     left join cache_taxa_taxon_lists cttl on cttl.id=ttl.id
@@ -1013,3 +1001,16 @@ from taxon_ranks tr
 left join taxa t on t.taxon_rank_id=tr.id
 where t.id is null
 )
+
+
+-- WHY DO WE END UP NEEDING TO RUN THE FOLLOWING?
+update
+ cache_taxa_taxon_lists cttl
+ set allow_data_entry=ttl.allow_data_entry
+ from taxa_taxon_lists ttl 
+ where ttl.id=cttl.id and cttl.allow_data_entry<>ttl.allow_data_entry;
+
+delete from cache_taxon_searchterms cts
+where taxa_taxon_list_id in (
+select id from taxa_taxon_lists where allow_data_entry=false
+);
