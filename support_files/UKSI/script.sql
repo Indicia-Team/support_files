@@ -205,7 +205,6 @@ FROM uksi.taxon_ranks utr
 LEFT JOIN taxon_ranks tr on tr.short_name=COALESCE(utr.short_name, utr.long_name)
 WHERE tr.id IS NULL;
 
-
 -- In the old data there are duplicate taxa (because we simply did not have enough info to separate them). So clean up...
 -- First map occurrences to the first of the 2 duplicates. No need to re-data clean this change.
 update occurrences o
@@ -242,8 +241,8 @@ update taxa_taxon_lists
 set deleted=true, updated_on=now()
 where id in (select ttl2.id
 from taxa_taxon_lists ttl1
-join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false
-join taxa t2 on t2.id<>t1.id and t2.deleted=false
+join taxa t1 on t1.id=ttl1.taxon_id and t1.deleted=false and t1.search_code is null
+join taxa t2 on t2.id<>t1.id and t2.deleted=false and t2.search_code is null
     and t2.taxon=t1.taxon and coalesce(t2.authority,'')=coalesce(t1.authority,'') and coalesce(t2.attribute,'')=coalesce(t1.attribute,'')
     and t2.external_key=t1.external_key
 join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_list_id=ttl1.taxon_list_id
@@ -252,6 +251,7 @@ and ttl1.deleted=false
 and ttl1.id<ttl2.id
 and ttl1.allow_data_entry=true and ttl2.allow_data_entry=true
 );
+*/
 
 -- Search for 'useless' names, where there are multiple versions of a name that differ only in rank.
 create temporary table duplicates as
@@ -386,7 +386,8 @@ FROM taxa_taxon_lists ttl
 	WHERE ttl.taxon_list_id=taxonListId
 	AND an.recommended_taxon_version_key IS NULL
 	AND o.id IS NULL
-	AND d.id IS NULL;
+	AND d.id IS NULL
+  AND ttl.deleted=false;
 
 UPDATE taxa_taxon_lists ttl
 SET deleted=true, updated_on=now() 
@@ -420,8 +421,8 @@ WHERE id IN (
 	SELECT t.id
 	FROM taxa t
 	LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false
-	WHERE ttl.id IS NULL
-) AND deleted=false;
+	WHERE ttl.id IS NULL AND t.deleted=false
+);
 
 -- Grab all the missing but used taxon group names
 INSERT INTO taxon_groups (title, created_on, created_by_id, updated_on, updated_by_id, external_key)
@@ -443,9 +444,11 @@ WHERE tgimpc.taxon_group_key=tg.external_key
 AND (tg.parent_id <> tgp.id OR tg.title <> tgimpc.taxon_group_name OR tg.description <> tgimpc.description)
 AND tg.deleted=false;
 
--- Ensure info is correct for existing taxa
+-- Ensure info is correct for existing taxa. First, grab the changes
 SELECT t.id, an.item_name as taxon, tg.id as taxon_group_id, l.id as language_id, an.recommended_taxon_version_key as external_key,
-  an.input_taxon_version_key as search_code, an.authority, (an.taxon_type='S') as scientific, tr.id as taxon_rank_id, pn.marine_flag as marine_flag
+  an.input_taxon_version_key as search_code, an.authority, (an.taxon_type='S') as scientific, tr.id as taxon_rank_id, 
+  pn.marine_flag as marine_flag,
+  COALESCE(t.external_key, '')<>an.recommended_taxon_version_key as pref_tvk_changing
 INTO temporary to_update
 FROM uksi.all_names an
 JOIN uksi.preferred_names pn on pn.taxon_version_key=an.recommended_taxon_version_key
@@ -457,7 +460,22 @@ WHERE (t.taxon<>an.item_name OR t.taxon_group_id<>tg.id OR t.language_id<>l.id O
 	OR COALESCE(t.authority, '')<>COALESCE(an.authority, '') OR t.scientific<>(an.taxon_type='S') 
 	OR COALESCE(t.taxon_rank_id, 0)<>COALESCE(tr.id, 0) OR COALESCE(t.attribute, '')<>COALESCE(an.attribute, '')
   OR t.marine_flag <> COALESCE(pn.marine_flag, false));
+  
+-- where a preferred tvk is about to change, ensure that existing name groups which use one of these names get updated
+update taxa_taxon_lists set updated_on=now() where id in (
+  select ttl.taxon_meaning_id
+  from taxa_taxon_lists ttl
+  join to_update tu on tu.id=ttl.taxon_id and tu.pref_tvk_changing=true
+  where ttl.taxon_list_id = taxonListId
+);
+  
+-- clear the taxon_meaning_ids for taxa_taxon_lists that are pointing to taxa where the preferred tvk is about to change
+update taxa_taxon_lists set taxon_meaning_id=null where taxon_list_id = taxonListId 
+and taxon_id in (
+  select id from to_update where pref_tvk_changing=true
+);
 
+-- ensure the taxa are up to date
 UPDATE taxa t
 SET updated_on=now(), taxon=u.taxon, taxon_group_id=u.taxon_group_id, language_id=u.language_id, external_key=u.external_key, 
     search_code=u.search_code, authority=u.authority, scientific=u.scientific, taxon_rank_id=u.taxon_rank_id, marine_flag=u.marine_flag
@@ -465,6 +483,46 @@ FROM to_update u
 WHERE u.id=t.id;
 
 DROP TABLE to_update;
+
+-- point stuff we just unlinked (because the pref tvk changed) back to existing taxon_meaning_ids where they are available
+update taxa_taxon_lists ttl1
+set taxon_meaning_id=ttl2.taxon_meaning_id, updated_on=now()
+from taxa t1
+join taxa t2 on t2.external_key=t1.external_key and t2.external_key is not null and t2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.taxon_id=t2.id and ttl2.deleted=false and ttl2.taxon_meaning_id is not null and ttl2.taxon_list_id=taxonListId and ttl2.deleted=false
+where ttl1.taxon_meaning_id is null and ttl1.deleted=false and ttl1.taxon_list_id=taxonListId
+and t1.id=ttl1.taxon_id
+and t1.deleted=false;
+
+-- and create new taxon_meaning_ids where they are not available.
+select distinct external_key, nextval('taxa_taxon_lists_id_seq'::regclass) 
+into temporary newmeanings
+from taxa where id in (select taxon_id from taxa_taxon_lists where taxon_meaning_id is null);
+
+insert into taxon_meanings select nextval from newmeanings;
+
+update taxa_taxon_lists ttl
+set taxon_meaning_id=nextval, updated_on=now()
+from newmeanings
+join taxa t on t.external_key=newmeanings.external_key
+where t.id=ttl.taxon_id;
+
+drop table newmeanings;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- Insert any missing taxa records. 
 INSERT INTO taxa (taxon, taxon_group_id, language_id, external_key, search_code, authority, scientific, taxon_rank_id, attribute, created_on, created_by_id, updated_on, updated_by_id, marine_flag)
