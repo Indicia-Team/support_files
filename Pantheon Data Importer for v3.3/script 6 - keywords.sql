@@ -1,0 +1,47 @@
+﻿--To run this script, you need to do mass replacements of
+-- JVB made dynamic
+--<taxa_taxon_list_attribute_id_for_keywords> with (select id from taxa_taxon_list_attributes where caption='keywords' and deleted=false)
+--<termlist_id_for_keywords> with (select id from termlists where external_key='indicia:keywords' and deleted=false)
+
+--Do the import itself.
+set search_path TO indicia, public;
+DO
+$do$
+declare trait_to_import RECORD;
+BEGIN 
+FOR trait_to_import IN 
+(select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now(),ittSource.id as source
+from pantheon.tbl_species_traits pst
+join pantheon.tbl_species ps on ps.species_id=pst.species_id
+join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_description in 
+('extinct','parasite','synanthropic','ubiquitous','unknown','vagrant/introduced','in buildings','compost/manure heaps','flour mills / bone works','museum collections','wood products'
+,'stored food products','bats','birds','all habitats','animal/plant remains')
+join indicia.terms iTerm on iTerm.term=pt.trait_description AND iterm.deleted=false
+join indicia.termlists_terms itt on itt.termlist_id=(select id from termlists where external_key='indicia:keywords' and deleted=false) AND itt.term_id=iTerm.id AND itt.deleted=false
+--The way the source is written is not consistant, so we need to interpret these
+left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
+((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
+(pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
+AND pst.coding_convention!='0'AND itSource.deleted=false
+left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
+left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
+GROUP BY ps.preferred_tvk,ps.species_tvk,ittl.id,itt.id,ittSource.id
+ORDER BY ps.species_tvk=ps.preferred_tvk desc
+) loop
+--Species are allowed to be associated with multiple keywords, although exact duplicate are obviously not allowed.
+IF (NOT EXISTS (
+select ttlav2.id
+from taxa_taxon_list_attribute_values ttlav2
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='keywords' and deleted=false) AND ttlav2.int_value=trait_to_import.insertion_tt AND ttlav2.deleted=false))
+THEN
+insert into
+indicia.taxa_taxon_list_attribute_values (taxa_taxon_list_id,taxa_taxon_list_attribute_id,int_value,created_by_id,created_on,updated_by_id,updated_on,source_id)
+values (trait_to_import.taxa_taxon_list_id,(select id from taxa_taxon_list_attributes where caption='keywords' and deleted=false),trait_to_import.insertion_tt,1,now(),1,now(),trait_to_import.source);
+ELSE 
+END IF;
+END LOOP;
+END
+$do$;
