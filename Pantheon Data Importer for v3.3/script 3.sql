@@ -1,10 +1,6 @@
 --To run this code, you will need to do replacements of,
---JVB made dynamic
---<termlist_id_for_ecological_div_hab_resource> with (select id from termlists where title='ecological division/habitat/resource' and deleted=false) 
---<taxa_taxon_list_attribute_id_for_ecological_div> with (select id from taxa_taxon_list_attributes where caption='ecological division')
---<taxa_taxon_list_attribute_id_for_habitats> with (select id from taxa_taxon_list_attributes where caption='habitat') 
---<taxa_taxon_list_attribute_id_for_resource> with (select id from taxa_taxon_list_attributes where caption='resource')
---<pantheon_website_id>
+--<pantheon_taxon_list_id>
+--This is the tax_list to limit the Indicia species lookup to for import
 
 --Import Ecological Divisions
 set search_path TO indicia, public;
@@ -18,17 +14,18 @@ FOR trait_to_import IN
 from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='ecological division'
 --Ecological Divs/Habitats/Resources need to use full trait id, description, parent for comparison as there are multiple terms with same description
 --ecological divisions don't have a parent
 join indicia.terms iTerm on iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' ' || '0') AND iterm.deleted=false
-join indicia.termlists_terms itt on itt.termlist_id=(select id from termlists where title='ecological division/habitat/resource' and deleted=false) AND itt.term_id=iTerm.id AND itt.deleted=false
+join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='ecological division/habitat/resource' AND itl.deleted=false
+join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
-((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
-AND pst.coding_convention!='0'AND itSource.deleted=false
+AND pst.coding_convention!='0' AND itSource.deleted=false
 left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
 left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
 GROUP BY ps.preferred_tvk,ps.species_tvk,ittl.id,itt.id,ittSource.id
@@ -64,16 +61,17 @@ FOR trait_to_import IN
 from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 --Special as 'generalist only' is missing a trait type in the data
 join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND (pt.trait_type='habitat' OR pt.trait_description = 'generalist only')
 join indicia.terms iTerm on iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' '  || pt.parent_trait_id) AND iterm.deleted=false
-join indicia.termlists_terms itt on itt.termlist_id=(select id from termlists where title='ecological division/habitat/resource' and deleted=false) AND itt.term_id=iTerm.id AND itt.deleted=false
+join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='ecological division/habitat/resource' AND itl.deleted=false
+join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
-((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
-AND pst.coding_convention!='0'AND itSource.deleted=false
+AND pst.coding_convention!='0' AND itSource.deleted=false
 left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
 left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
 GROUP BY ps.preferred_tvk,ps.species_tvk,ittl.id,itt.id,ittSource.id
@@ -106,17 +104,18 @@ FOR trait_to_import IN
 from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 --Special case as 'generalist only' is missing a trait type in the data
 join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='resource'
 --One of the resources appears at the top level and doesn't have a parent
 join indicia.terms iTerm on (iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' '  || pt.parent_trait_id) or iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' ' || '0')) AND iterm.deleted=false
-join indicia.termlists_terms itt on itt.termlist_id=(select id from termlists where title='ecological division/habitat/resource' and deleted=false) AND itt.term_id=iTerm.id AND itt.deleted=false
+join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='ecological division/habitat/resource' AND itl.deleted=false
+join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
-((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
-AND pst.coding_convention!='0'AND itSource.deleted=false
+AND pst.coding_convention!='0' AND itSource.deleted=false
 left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
 left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
 GROUP BY ps.preferred_tvk,ps.species_tvk,ittl.id,itt.id,ittSource.id
@@ -152,6 +151,7 @@ AND
 id in
 (select tt.term_id
 from termlists_terms tt
-join termlists tl on tl.id = tt.termlist_id AND tl.title = 'ecological division/habitat/resource' AND tl.website_id = 2 AND tl.deleted=false
+join termlists tl on tl.id = tt.termlist_id AND tl.title = 'ecological division/habitat/resource' AND tl.deleted=false
+join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
 where tt.deleted=false
 );

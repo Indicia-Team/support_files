@@ -1,4 +1,11 @@
-﻿/*
+
+--Replace the following tag with the path to your csv data files
+--<csv_species_traits_file_path>
+--<csv_species_file_path>
+--<csv_traits_file_path>
+--Path format (on mac) should be like '/users/joebloggs/tblSpeciesTrait.csv'
+
+/*
 Data exported from MS Access as text files, suffix .csv, field names in first row, " delimiter.
 Open each file in notepad and save as UTF-8
 Open each file in Notepad++ and convert to UTF-8 without BOM
@@ -11,26 +18,6 @@ FROM tblSpecies
 WHERE PreferredTVK is not null;
 Also treat this output for UTF-8 without BOM as above
 */
-
-set search_path=indicia, public;
-
-delete from cache_occurrences;
-delete from occurrence_attribute_values;
-delete from occurrences;
-delete from sample_attribute_values;
-delete from samples;
-delete from cache_taxa_taxon_lists;
-delete from cache_taxon_searchterms;
-delete from taxa_taxon_list_attribute_values;
-delete from taxon_lists_taxa_taxon_list_attributes;
-delete from taxa_taxon_list_attributes;
-delete from taxa_taxon_lists;
-delete from taxa;
-delete from taxon_meanings;
-delete from cache_termlists_terms where termlist_id>=14 and termlist_id<>22;
-delete from termlists_terms where termlist_id>=14 and termlist_id<>22;
-delete from terms where id not in (select term_id from termlists_terms);
-delete from termlists where id>=14 and id<>22;
 
 -- NOW, import the species
 
@@ -79,18 +66,19 @@ CONSTRAINT fk_tbl_species_traits_trait_id FOREIGN KEY (trait_id)
 	REFERENCES tbl_traits (trait_id) MATCH SIMPLE
 );
 
+
 COPY tbl_traits
-FROM '/users/john/Dropbox/tblTraits.csv'
+FROM <csv_traits_file_path>
 WITH DELIMITER ','
 CSV HEADER;
 
 COPY tbl_species
-FROM '/users/john/Dropbox/tblSpecies.csv'
+FROM <csv_species_file_path>
 WITH DELIMITER ','
 CSV HEADER;
 
 COPY tbl_species_traits
-FROM '/users/john/Dropbox/tblSpeciesTrait.csv'
+FROM <csv_species_traits_file_path>
 WITH DELIMITER ','
 CSV HEADER;
 

@@ -1,4 +1,4 @@
-﻿set search_path TO indicia, public;
+set search_path TO indicia, public;
 
 -- JVB, added missing termlists for attribute sources and term sources
 /*
@@ -90,23 +90,23 @@ id = (
 --Insert termlists
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('ecological division/habitat/resource','ecological divisions and habitats and resources',2,now(),1,now(),1,'indicia:ecological division/habitat/resource');
+('ecological division/habitat/resource','ecological divisions and habitats and resources',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:ecological division/habitat/resource');
 
 --Insert Attributes
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'ecological division','L',now(),1,now(),1,id,true
 from termlists
-where title='ecological division/habitat/resource' AND website_id = 2;
+where title='ecological division/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'habitat','L',now(),1,now(),1,id,true
 from termlists
-where title='ecological division/habitat/resource' AND website_id = 2;
+where title='ecological division/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'resource','L',now(),1,now(),1,id,true
 from termlists
-where title='ecological division/habitat/resource' AND website_id = 2;
+where title='ecological division/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 
 --Insert terms and trait codes, we manipulate the names so the trait id precedes the term name and the parent id is after the term. We then use these to create the parent term hierarchy and strip them out later.
@@ -127,13 +127,15 @@ FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='ecol
    set preferred = false, parent_id = null, 
    meaning_id = (
       select meaning_id from termlists_terms tt2
-      join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'ecological division/habitat/resource' AND tl2.website_id=2 AND tl2.deleted = false
+      join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'ecological division/habitat/resource' AND tl2.deleted = false
+      join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t2 on t2.id = tt2.term_id AND t2.term = (trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,    0)) AND t2.deleted = false
    )
    where 
    id in (
       select tt3.id from termlists_terms tt3
-      join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'ecological division/habitat/resource' AND tl3.website_id=2 AND tl3.deleted = false
+      join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'ecological division/habitat/resource' AND tl3.deleted = false
+      join websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t3 on t3.id = tt3.term_id AND t3.term=trait_to_insert.trait_code AND trait_to_insert.trait_code IS NOT NULL AND t3.deleted=false
       --There can be several trait code with the same name, so only get the last one added
       order by tt3.id desc
@@ -155,7 +157,8 @@ where tt1.deleted = false)
 where termlist_id = 
 (select tl2.id
 from termlists tl2 
-where (tl2.title = 'ecological division/habitat/resource') AND tl2.website_id = 2 AND tl2.deleted=false
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
+where tl2.title = 'ecological division/habitat/resource' AND tl2.deleted=false
 );
 
 -- Set the parent structure for the terms in the termlist
@@ -164,6 +167,7 @@ set parent_id=(
 select tt2.id
 from termlists_terms tt2
 join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'ecological division/habitat/resource'  and tl2.deleted=false
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 join terms t2 on t2.id = tt2.term_id AND t2.deleted=false
 left join terms t on t.id = tt.term_id AND t.deleted=false
 -- The terms have been set to the following format <trait_id> <term> <parent trait id>
@@ -175,7 +179,8 @@ where (substring(t.term from '[^ ]+$') = substring(t2.term from '([^ ]+)') AND t
 where tt.deleted=false AND tt.termlist_id in
 (select tl.id
 from indicia.termlists tl
-where tl.title = 'ecological division/habitat/resource' AND tl.website_id = 2 AND tl.deleted=false);
+join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
+where tl.title = 'ecological division/habitat/resource' AND tl.deleted=false);
 
 
 
@@ -193,19 +198,19 @@ where tl.title = 'ecological division/habitat/resource' AND tl.website_id = 2 AN
 --Insert Termlists
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('adult guild','adult guilds',2,now(),1,now(),1,'indicia:adult guild'),
-('larval guild','larval guilds',2,now(),1,now(),1,'indicia:larval guild');
+('adult guild','adult guilds',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:adult guild'),
+('larval guild','larval guilds',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:larval guild');
 
 --Insert attributes
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'adult guild','L',now(),1,now(),1,id
 from termlists
-where title='adult guild' AND website_id = 2;
+where title='adult guild' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'larval guild','L',now(),1,now(),1,id
 from termlists
-where title='larval guild' AND website_id = 2;
+where title='larval guild' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 
 -- JVB converted insertion of adult guild and larval guild terms into dynamic query
@@ -237,7 +242,8 @@ where tt1.deleted = false)
 where termlist_id in
 (select tl2.id
 from termlists tl2 
-where (tl2.title = 'adult guild' OR tl2.title = 'larval guild') AND tl2.website_id = 2 AND tl2.deleted=false
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
+where (tl2.title = 'adult guild' OR tl2.title = 'larval guild') AND tl2.deleted=false
 );
 
 
@@ -265,18 +271,18 @@ where (tl2.title = 'adult guild' OR tl2.title = 'larval guild') AND tl2.website_
 --Insert termlists
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('assemblage type','assemblage types',2,now(),1,now(),1,'indicia:assemblage type');
+('assemblage type','assemblage types',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:assemblage type');
 
 --Insert Attributes
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'broad assemblage type','L',now(),1,now(),1,id
 from termlists
-where title='assemblage type' AND website_id = 2;
+where title='assemblage type' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'specific assemblage type','L',now(),1,now(),1,id
 from termlists
-where title='assemblage type' AND website_id = 2;
+where title='assemblage type' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 
 --Insert terms and trait codes, we manipulate the names so the trait id precedes the term name and the parent id is after the term. We then use these to create the parent term hierarchy and strip them out later.
@@ -298,13 +304,15 @@ FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='broa
    set preferred = false, parent_id = null, 
    meaning_id = (
       select meaning_id from termlists_terms tt2
-      join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'assemblage type' AND tl2.website_id=2 AND tl2.deleted = false
+      join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'assemblage type' AND tl2.deleted = false
+      join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t2 on t2.id = tt2.term_id AND t2.term = (trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,    0)) AND t2.deleted = false
    )
    where 
    id in (
       select tt3.id from termlists_terms tt3
-      join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'assemblage type' AND tl3.website_id=2 AND tl3.deleted = false
+      join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'assemblage type' AND tl3.deleted = false
+      join websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t3 on t3.id = tt3.term_id AND t3.term=trait_to_insert.trait_code AND trait_to_insert.trait_code IS NOT NULL AND t3.deleted=false
       --There can be several trait code with the same name, so only get the last one added
       order by tt3.id desc
@@ -326,7 +334,8 @@ where tt1.deleted = false)
 where termlist_id = 
 (select tl2.id
 from termlists tl2 
-where (tl2.title = 'assemblage type') AND tl2.website_id = 2 AND tl2.deleted=false
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
+where tl2.title = 'assemblage type' AND tl2.deleted=false
 );
 
 -- Set the parent structure for the terms in the termlist
@@ -335,6 +344,7 @@ set parent_id=(
 select tt2.id
 from termlists_terms tt2
 join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'assemblage type'  and tl2.deleted=false
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 join terms t2 on t2.id = tt2.term_id AND t2.deleted=false
 left join terms t on t.id = tt.term_id AND t.deleted=false
 -- The terms have been set to the following format <trait_id> <term> <parent trait id>
@@ -346,7 +356,8 @@ where (substring(t.term from '[^ ]+$') = substring(t2.term from '([^ ]+)') AND t
 where tt.deleted=false AND tt.termlist_id in
 (select tl.id
 from indicia.termlists tl
-where tl.title = 'assemblage type' AND tl.website_id = 2 AND tl.deleted=false);
+join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
+where tl.title = 'assemblage type' AND tl.deleted=false);
 
 
 -- Reset the term names, as they have all been given names of format "<trait_id> <term> <parent_trait_id>". Remove the trait and parent trait IDs.
@@ -358,7 +369,8 @@ AND
 id in
 (select tt.term_id
 from termlists_terms tt
-join termlists tl on tl.id = tt.termlist_id AND tl.title = 'assemblage type' AND tl.website_id = 2 AND tl.deleted=false
+join termlists tl on tl.id = tt.termlist_id AND tl.title = 'assemblage type' AND tl.deleted=false
+join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
 where tt.deleted=false
 );
 
@@ -381,13 +393,13 @@ where tt.deleted=false
 --Insert Termlists
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('keywords','keywords for Pantheon',2,now(),1,now(),1,'indicia:keywords');
+('keywords','keywords for Pantheon',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:keywords');
 
 --Insert attributes
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'keywords','L',now(),1,now(),1,id,true
 from termlists
-where title='keywords' AND website_id = 2;
+where title='keywords' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 
 
@@ -419,7 +431,8 @@ from (
 	select tlt1.id as preferred_termlists_term_id, tlt1.meaning_id as preferred_meaning_id,
 	    t1.term as preferred_term, tlt2.id as code_termlists_terms_id, t2.term as code
 	from termlists_terms tlt1 
-	join termlists tl1 on tl1.id=tlt1.termlist_id and tl1.deleted=false and tl1.external_key='indicia:keywords'
+	join termlists tl1 on tl1.id=tlt1.termlist_id AND tl1.deleted=false and tl1.external_key='indicia:keywords'
+      	join websites w on w.id = tl1.website_id AND w.title='Pantheon' and w.deleted=false
 	join terms t1 on t1.id=tlt1.term_id and t1.deleted=false
 	join pantheon.tbl_traits tr on tr.trait_description=t1.term and tr.trait_source='OSIRIS' and tr.trait_type is null and tr.trait_code is not null 
 	join terms t2 on t2.term=tr.trait_code and t2.deleted=false
@@ -441,7 +454,8 @@ where tt1.deleted = false)
 where termlist_id = 
 (select tl2.id
 from termlists tl2 
-where tl2.title = 'keywords' AND tl2.website_id = 2 AND tl2.deleted=false
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
+where tl2.title = 'keywords' AND tl2.deleted=false
 );
 
 
@@ -450,42 +464,48 @@ update termlists_terms
 set parent_id = 
 (select tt2.id 
 from termlists_terms tt2
-JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.website_id = 2 AND tl2.deleted=false 
+JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.deleted=false 
+join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'synanthropic' AND t2.deleted = false
 where tt2.deleted=false)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
-join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords' AND tl3.website_id = 2
+join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords'and tl3.deleted=false
+join websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
 where t3.term in ('in buildings','compost/manure heaps','flour mills / bone works','museum collections','wood products','stored food products'));
 
 update termlists_terms
 set parent_id = 
 (select tt2.id 
 from termlists_terms tt2
-JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.website_id = 2 AND tl2.deleted=false 
+JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.deleted=false 
+JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'parasite' AND t2.deleted = false
 where tt2.deleted=false)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
-join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords' AND tl3.website_id = 2
+join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords'
+JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
 where t3.term in ('bats','birds'));
 
 update termlists_terms
 set parent_id = 
 (select tt2.id 
 from termlists_terms tt2
-JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.website_id = 2 AND tl2.deleted=false 
+JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.deleted=false 
+JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'ubiquitous' AND t2.deleted = false
 where tt2.deleted=false)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
-join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords' AND tl3.website_id = 2
+join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords'
+JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
 where t3.term in ('all habitats','animal/plant remains'));
 
 
@@ -517,23 +537,23 @@ where t3.term in ('all habitats','animal/plant remains'));
 --Insert termlists
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('plant associated','plant associations',2,now(),1,now(),1,'indicia:plant associated');
+('plant associated','plant associations',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:plant associated');
 
 --Insert attributes
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'plant associated','L',now(),1,now(),1,id,true
 from termlists
-where title='plant associated' AND website_id = 2;
+where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'vascular plant associated','L',now(),1,now(),1,id,true
 from termlists
-where title='plant associated' AND website_id = 2;
+where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'inflorescence associated','L',now(),1,now(),1,id,true
 from termlists
-where title='plant associated' AND website_id = 2;
+where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 
 
@@ -546,14 +566,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'vascular plant associated' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P1' AND t3.deleted = false
 );
 
@@ -563,14 +585,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'inflorescence associated' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P21' AND t3.deleted = false
 );
 
@@ -580,14 +604,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'nectar/pollen' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P31' AND t3.deleted = false
 );
 
@@ -598,14 +624,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'inflorescence use' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P32' AND t3.deleted = false
 );
 
@@ -617,14 +645,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'fleshy fruit' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P34' AND t3.deleted = false
 );
 
@@ -635,14 +665,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'seeds' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P33' AND t3.deleted = false
 );
 
@@ -653,14 +685,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'leaves and/or stems' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P22' AND t3.deleted = false
 );
 
@@ -670,14 +704,16 @@ update termlists_terms
 set preferred = false, parent_id = null, 
 meaning_id = (
   select meaning_id from termlists_terms tt2
-  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id=2 AND tl2.deleted = false
+  join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted = false
+  JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t2 on t2.id = tt2.term_id AND t2.term = 'roots' AND t2.deleted = false
   where tt2.deleted = false
 )
 where 
 id in (
   select tt3.id from termlists_terms tt3
-  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id=2 AND tl3.deleted = false
+  join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
+  JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P23' AND t3.deleted = false
 );
 
@@ -694,7 +730,8 @@ where tt1.deleted = false)
 where termlist_id = 
 (select tl2.id
 from termlists tl2 
-where tl2.title = 'plant associated' AND tl2.website_id = 2 AND tl2.deleted=false
+JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
+where tl2.title = 'plant associated' AND tl2.deleted=false
 );
 
 --Setup the termlist parent hierarchy.
@@ -702,14 +739,16 @@ update termlists_terms
 set parent_id = 
 (select tt2.id 
 from termlists_terms tt2
-JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id = 2 AND tl2.deleted=false 
+JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted=false 
+JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'vascular plant associated' AND t2.deleted = false
 where tt2.deleted=false)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
-join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id = 2
+join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'plant associated'
+JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
 where t3.term in ('inflorescence associated','leaves and/or stems','roots'));
 
 
@@ -717,14 +756,16 @@ update termlists_terms
 set parent_id = 
 (select tt2.id 
 from termlists_terms tt2
-JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.website_id = 2 AND tl2.deleted=false 
+JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted=false 
+JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'inflorescence associated' AND t2.deleted = false
 where tt2.deleted=false)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
-join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.website_id = 2
+join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'plant associated' 
+JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
 where t3.term in ('nectar/pollen','inflorescence use','fleshy fruit','seeds'));
 
 

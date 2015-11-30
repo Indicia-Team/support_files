@@ -1,8 +1,5 @@
-﻿--To run this code, you will need to do replacements for,
--- JVB made dynamic
---<termlist_id_for_assemblage_type> with (select id from termlists where title='assemblage type' and deleted=false)
---<taxa_taxon_list_attribute_id_for_broad_assemblages> with (select id from taxa_taxon_list_attributes where caption='broad assemblage type' and deleted=false)
---<taxa_taxon_list_attribute_id_for_specific_assemblages> with (select id from taxa_taxon_list_attributes where caption='specific assemblage type' and deleted=false)
+--To run this code, you will need to do replacements for,
+<pantheon_taxon_list_id> 
 
 --DO IMPORT
 set search_path TO indicia, public;
@@ -15,15 +12,16 @@ FOR trait_to_import IN
 from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='broad assemblage type'
 join indicia.terms iTerm on iTerm.term=pt.trait_description AND iterm.deleted=false
-join indicia.termlists_terms itt on itt.termlist_id=(select id from termlists where title='assemblage type' and deleted=false) AND itt.term_id=iTerm.id AND itt.deleted=false
+join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='assemblage type' AND itl.deleted=false
+join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
-((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
-AND pst.coding_convention!='0'AND itSource.deleted=false
+AND pst.coding_convention!='0' AND itSource.deleted=false
 left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
 left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
 GROUP BY ps.preferred_tvk,ps.species_tvk,ittl.id,itt.id,ittSource.id
@@ -60,15 +58,16 @@ FOR trait_to_import IN
 from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='specific assemblage type'
 join indicia.terms iTerm on iTerm.term=pt.trait_description AND iterm.deleted=false
-join indicia.termlists_terms itt on itt.termlist_id=(select id from termlists where title='assemblage type' and deleted=false) AND itt.term_id=iTerm.id AND itt.deleted=false
+join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='assemblage type' AND itl.deleted=false
+join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
-((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
-AND pst.coding_convention!='0'AND itSource.deleted=false
+AND pst.coding_convention!='0' AND itSource.deleted=false
 left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
 left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
 GROUP BY ps.preferred_tvk,ps.species_tvk,ittl.id,itt.id,ittSource.id

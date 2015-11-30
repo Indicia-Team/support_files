@@ -1,7 +1,5 @@
-﻿--Just perform one replacement for this script, mass replace <taxa_taxon_list_attribute_id_for_rarity_score>
--- JVB made dynamic
---<taxa_taxon_list_attribute_id_for_rarity_score> with (select id from taxa_taxon_list_attributes where caption='rarity score' and deleted=false)
---No terms with trait codes need to be added for Rarity Score
+--Just perform one replacement for this script, mass replace 
+--<pantheon_taxon_list_id>
 
 set search_path=indicia, public;
 -- Set attribute source only (attribute value comes over during import). No terms to set sources for.
@@ -26,13 +24,12 @@ FOR trait_to_import IN
 from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_description='rarity score'
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
-((pst.coding_convention ='hand' OR pst.coding_convention ='Hands Coded' OR pst.coding_convention ='hand-coded' OR pst.coding_convention ='Hand coded') AND itSource.term='predator') OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
-AND pst.coding_convention!='0'AND itSource.deleted=false
+AND pst.coding_convention!='0' AND itSource.deleted=false
 left join indicia.termlists_terms ittSource on ittSource.term_id = itSource.id AND ittSource.deleted=false
 left join indicia.termlists itlSource on itlSource.id = ittSource.termlist_id AND itlSource.title = 'Attribute value sources' AND ittSource.deleted=false
 GROUP BY ps.preferred_tvk,ps.species_tvk,pst.trait_value,ittl.id,ittSource.id
