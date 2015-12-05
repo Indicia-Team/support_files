@@ -214,11 +214,15 @@ where title='larval guild' AND website_id = (select id from websites where title
 
 
 -- JVB converted insertion of adult guild and larval guild terms into dynamic query
+-- AVB, added code to handle original special cases as originally discussed with client for data version 3.2. 
+-- Note there maybe further special cases required for 3.3, but there have not been discussed yet.
+-- Items do not need to be added to the termlists when it was agreed to map them to something else
 select insert_term(trait_value,'eng',null,'indicia:adult guild')
 from (
 	select distinct trait_value 
 	from pantheon.tbl_species_traits st
 	join pantheon.tbl_traits t on t.trait_id=st.trait_id and t.trait_description='adult guild'
+	where st.trait_value not in ('Predator','omnivore','Unknown','predator, nectivorous','Nectivorous','Parasitoid')
 	order by trait_value
 ) as subtable;
 select insert_term(trait_value,'eng',null,'indicia:larval guild')
@@ -226,9 +230,12 @@ from (
 	select distinct trait_value 
 	from pantheon.tbl_species_traits st
 	join pantheon.tbl_traits t on t.trait_id=st.trait_id and t.trait_description='larval guild'
+	where st.trait_value not in ('Predator','predatory','algivorous','herbivorous','omnivore','Parasitoid','fungivore, predator','Herbivore','fungivore, saprophagous','fungivorous','Saprophagous','saprophagus','coprophagous, necrophorus','herbivore & carnivore','cleptoparasite')
 	order by trait_value
 ) as subtable;
 
+--carnivore is an extra special case. We need to add it as it was agreed to split "herbivore & carnivore" into separate items, however we need to add it manually as it never appears in the data on its own.
+select insert_term('carnivore','eng',null,'indicia:larval guild');
 
 
 --Hold the trait source at term level for termlist attributes
