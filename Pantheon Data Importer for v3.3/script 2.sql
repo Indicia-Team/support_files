@@ -30,8 +30,9 @@ select insert_term(term,'eng',null,'indicia:attribute_sources')
 from (select distinct trait_source as term from pantheon.tbl_traits where trait_source is not null) as subtable;
 
 -- JVB changed to a dynamic query rather than hard coded list of sources, so works on new data
+-- Changed to include special cases as agreed with client, from synanthropic (ISIS) is ignored as these are mapped to ISIS and 0 as a source is completely ignored.
 select insert_term(term,'eng',null,'indicia:attribute_value_sources')
-from (select distinct coding_convention as term from pantheon.tbl_species_traits where coding_convention is not null) as subtable;
+from (select distinct coding_convention as term from pantheon.tbl_species_traits where coding_convention is not null AND coding_convention not in ('0','from synanthropic (ISIS)')) as subtable;
 
 
 
