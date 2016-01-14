@@ -1,5 +1,7 @@
 //Note the code in this file requires the supply_indicia_data_to_map_square_allocator splash_extension
-//to be specified in the form structure.
+jQuery(window).load(function () {
+  jQuery('#report-grid-0').hide();
+});
 
 //Warning to display on the public version of the Request a Square page.
 function login_to_allocate_message(features) { 
