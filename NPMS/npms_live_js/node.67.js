@@ -1,6 +1,12 @@
 //Note the code in this file requires the supply_indicia_data_to_map_square_allocator splash_extension
+
+//We want to hide the grid on the page, the ID seems to vary. Using a few separate exact selectors as I think it is possibly faster than
+//one vague selector...not sure
 jQuery(window).load(function () {
   jQuery('#report-grid-0').hide();
+  jQuery('#report-grid-1').hide();
+  jQuery('#report-grid-2').hide();
+  jQuery('#report-grid-3').hide();
 });
 
 //Warning to display on the public version of the Request a Square page.
