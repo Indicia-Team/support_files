@@ -84,7 +84,7 @@ function addUserSiteData(locationId, userIdToAdd,features) {
       {'website_id':indiciaData.website_id,'person_attribute_id':indiciaData.mySitesPsnAttrId,'user_id':userIdToAdd,'int_value':locationId,'updated_by_id':indiciaData.updatedBySystem},
       function (data) {
         if (typeof data.error === 'undefined') {
-          alert('The square '+features[0].attributes.entered_sref+' has been successfully allocated to you. Enjoy taking part, and thank you for participating.');
+          alert('The square '+features[0].attributes.entered_sref+' has been allocated to you, pending approval by the NPMS coordinator. Enjoy taking part, and thank you for participating.');
           location.reload();
         } else {
           alert(data.error);
