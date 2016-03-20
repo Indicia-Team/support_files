@@ -94,4 +94,14 @@ function addUserSiteData(locationId, userIdToAdd,features) {
     );
   }
 }
-    
+
+mapInitialisationHooks.push(function (div) {
+  //Set the click "?" map control to be the default one
+  jQuery.each(div.map.controls, function(idx, ctrl) {
+    if (ctrl.CLASS_NAME==="OpenLayers.Control") {
+      ctrl.activate();
+    } else if (ctrl.CLASS_NAME==="OpenLayers.Control.Navigation") {
+      ctrl.deactivate();
+    }
+  });
+});    
