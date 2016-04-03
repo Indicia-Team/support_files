@@ -1,7 +1,15 @@
 //Strip white space from grid references
 jQuery(window).load(function () {
-  jQuery('#imp-sref').blur(function () {
+  jQuery('#imp-sref').keyup(function() {
+    //Remove spaces from most spatial references.
+    //For lat long spatial references makes sure there is a space after N and S as a reference without a space is invalid
     jQuery('#imp-sref').val(jQuery('#imp-sref').val().replace(/\s/g,''));
+    if (jQuery('#imp-sref-system').val()=='4326') {  
+      //Always capitalise lat long spatial reference and then add a space after North or South.
+      jQuery('#imp-sref').val(jQuery('#imp-sref').val().toUpperCase());
+      jQuery('#imp-sref').val(jQuery('#imp-sref').val().replace(/N/g, 'N '));
+      jQuery('#imp-sref').val(jQuery('#imp-sref').val().replace(/S/g, 'S '));
+    }
   });
 });
 
