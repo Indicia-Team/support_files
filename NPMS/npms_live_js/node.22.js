@@ -12,8 +12,13 @@ jQuery(window).load(function () {
 //Warning to display on the public version of the Request a Square page.
 function login_to_allocate_message(features) { 
   //Only show the warning if there is a feature that has actually been clicked on, rather than for ever click on the map.
-  if (features[0]&&features[0].attributes.id) {
-    alert('Simply sign up (or login in using your existing account details) and you will be able to allocate squares to yourself using this map.')
+  if (features[0]&&features[0].attributes.id&& features[0].attributes.entered_sref) {
+    //Detect if it has been allocated by the square colour
+    if (features[0].attributes.fc==='#FFA62F') {
+      alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.")
+    } else {
+      alert("You have clicked on square "+features[0].attributes.entered_sref+ ". Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.")
+    }
   }
 }
 
