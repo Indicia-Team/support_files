@@ -1,5 +1,7 @@
 //Strip white space from grid references
 jQuery(window).load(function () {
+  //Don't allow removal of existing sketches, deletions can only be made if the user adds a photo and wants to remove it in the same session
+  jQuery('.delete-file').hide();
   jQuery('#imp-sref').keyup(function() {
     //Remove spaces from most spatial references.
     //For lat long spatial references makes sure there is a space after N and S as a reference without a space is invalid
