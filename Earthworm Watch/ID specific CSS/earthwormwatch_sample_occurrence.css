@@ -1,0 +1,121 @@
+
+
+.scOccAttrCell:not(.scEarthwormWatchCountCell) {
+  display: none;
+}
+
+#adult-soil-attr535-0, #adult-soil-attr536-0, #adult-soil-attr538-0, 
+#immature-soil-attr535-0, #immature-soil-attr536-0, #immature-soil-attr538-0,
+#adult-mustard-attr535-0, #adult-mustard-attr536-0, #adult-mustard-attr538-0, 
+#immature-mustard-attr535-0, #immature-mustard-attr536-0, #immature-mustard-attr538-0
+{
+  display: none;
+}
+
+#colour-cell-A-1 {
+  background-color:#D1CBCB;
+}
+
+#colour-cell-A-2 {
+  background-color:#ADACB1;
+}
+
+#colour-cell-A-3 {
+  background-color:#949297;
+}
+
+#colour-cell-A-4 {
+  background-color:#7C7A7F;
+}
+
+#colour-cell-A-5 {
+  background-color:#64616A;
+}
+
+#colour-cell-A-6 {
+  background-color:#171927;
+}
+
+#colour-cell-A-7 {
+  background-color:#0A0A15;
+}
+
+#colour-cell-B-1 {
+  background-color:#DCC0B5;
+}
+
+#colour-cell-B-2 {
+  background-color:#C3A6A1;
+}
+
+#colour-cell-B-3 {
+  background-color:#A48581;
+}
+
+#colour-cell-B-4 {
+  background-color:#886B67;
+}
+
+#colour-cell-B-5 {
+  background-color:#663130;
+}
+
+#colour-cell-B-6 {
+  background-color:#4B1014;
+}
+
+#colour-cell-C-1 {
+  background-color:#EBB9A0;
+}
+
+#colour-cell-C-2 {
+  background-color:#D19E89;
+}
+
+#colour-cell-C-3 {
+  background-color:#B38170;
+}
+
+#colour-cell-C-4 {
+  background-color:#966046;
+}
+
+#colour-cell-C-5 {
+  background-color:#7A260E;
+}
+
+#colour-cell-C-6 {
+  background-color:#500F01;
+}
+
+#colour-cell-D-1 {
+  background-color:#FAB385;
+}
+
+#colour-cell-D-2 {
+  background-color:#DC9473;
+}
+
+#colour-cell-D-3 {
+  background-color:#BF784C;
+}
+
+#colour-cell-D-4 {
+  background-color:#9F4E22;
+}
+
+#colour-cell-D-5 {
+  background-color:#984309;
+}
+
+#colour-cell-E-2 {
+  background-color:#E59151;
+}
+
+#colour-cell-E-3 {
+  background-color:#CC772D;
+}
+
+#colour-cell-E-4 {
+  background-color:#A84911;
+}
