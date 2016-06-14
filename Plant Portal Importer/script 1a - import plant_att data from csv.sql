@@ -1,30 +1,20 @@
 
 --Replace the following tag with the path to your csv data files
 --<csv_plant_att_file_path>
---Path format (on mac) should be like '/users/joebloggs/tblSpeciesTrait.csv'
+--Path format (on mac) should be like '/users/joebloggs/plantAtt.csv'
 
 /*
 Data exported from MS Access as text files, suffix .csv, field names in first row, " delimiter.
 Open each file in notepad and save as UTF-8
 Open each file in Notepad++ and convert to UTF-8 without BOM
-
-Also if you need to recreate the species list
-2) Upload the distinct groups from tblSpecies
-1) run this query to export the species data to import as a list (if not using an existing list):
-select distinct PreferredName, PreferredAuthority, PreferredTVK, Group
-FROM tblSpecies
-WHERE PreferredTVK is not null;
-Also treat this output for UTF-8 without BOM as above
 */
 
 -- NOW, import the data
 
-drop schema plant_portal cascade;
-
 create schema plant_portal;
 set search_path TO plant_portal, public;
 
-CREATE TABLE tbl_plant_att_19_nov_08 (
+CREATE TABLE tbl_plant_att (
 preferred_tvk varchar (25),
 brc_code varchar (15),
 taxon_name varchar (100),
@@ -71,15 +61,15 @@ comment_on_clonality varchar,
 comment_on_n_and_s_limits_in_europe varchar
 );
 
-COPY tbl_plant_att_19_nov_08
+COPY tbl_plant_att
 FROM <csv_plant_att_file_path>
 WITH DELIMITER ','
 CSV HEADER;
 
 --Manual corrections to the data as discussed with David Roy.
-delete from plant_portal.tbl_plant_att_19_nov_08
+delete from plant_portal.tbl_plant_att
 where taxon_name = 'Zostera angustifolia';
 
-update plant_portal.tbl_plant_att_19_nov_08
+update plant_portal.tbl_plant_att
 set preferred_tvk='NBNSYS0000002168'
 where taxon_name = 'Asparagus officinalis subsp.officinalis';
