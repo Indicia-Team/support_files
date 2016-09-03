@@ -2,7 +2,7 @@
 --<pantheon_taxon_list_id>
 --This is the tax_list to limit the Indicia species lookup to for import
 
---Import Ecological Divisions
+--Import Broad biotopes
 set search_path TO indicia, public;
 
 DO
@@ -15,12 +15,12 @@ from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
-join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='ecological division'
---Ecological Divs/Habitats/Resources need to use full trait id, description, parent for comparison as there are multiple terms with same description
---ecological divisions don't have a parent
+join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='broad biotope'
+--Ecological Divs/Specific biotopes/Resources need to use full trait id, description, parent for comparison as there are multiple terms with same description
+--broad biotopes don't have a parent
 join indicia.terms iTerm on iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' ' || '0') AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
-join termlists itl on itl.id = itt.termlist_id AND itl.title='ecological division/habitat/resource' AND itl.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='broad biotope/specific biotope/resource' AND itl.deleted=false
 join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
@@ -37,11 +37,11 @@ IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
 join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
-where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='ecological division') AND ttlav2.int_value=trait_to_import.insertion_tt AND ttlav2.deleted=false))
+where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='broad biotope') AND ttlav2.int_value=trait_to_import.insertion_tt AND ttlav2.deleted=false))
 THEN
 insert into
 indicia.taxa_taxon_list_attribute_values (taxa_taxon_list_id,taxa_taxon_list_attribute_id,int_value,created_by_id,created_on,updated_by_id,updated_on,source_id)
-values (trait_to_import.taxa_taxon_list_id,(select id from taxa_taxon_list_attributes where caption='ecological division'),trait_to_import.insertion_tt,1,now(),1,now(),trait_to_import.source);
+values (trait_to_import.taxa_taxon_list_id,(select id from taxa_taxon_list_attributes where caption='broad biotope'),trait_to_import.insertion_tt,1,now(),1,now(),trait_to_import.source);
 ELSE 
 END IF;
 END LOOP;
@@ -50,7 +50,7 @@ $do$;
 
 
 
---Import Habitats - Works same way as above.
+--Import Specific biotopes - Works same way as above.
 set search_path TO indicia, public;
 DO
 $do$
@@ -63,10 +63,10 @@ join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.deleted=false
 --Special as 'generalist only' is missing a trait type in the data
-join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND (pt.trait_type='habitat' OR pt.trait_description = 'generalist only')
+join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND (pt.trait_type='specific biotope' OR pt.trait_description = 'generalist only')
 join indicia.terms iTerm on iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' '  || pt.parent_trait_id) AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
-join termlists itl on itl.id = itt.termlist_id AND itl.title='ecological division/habitat/resource' AND itl.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='broad biotope/specific biotope/resource' AND itl.deleted=false
 join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
@@ -81,11 +81,11 @@ IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
 join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
-where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='habitat') AND ttlav2.int_value=trait_to_import.insertion_tt AND ttlav2.deleted=false))
+where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='specific biotope') AND ttlav2.int_value=trait_to_import.insertion_tt AND ttlav2.deleted=false))
 THEN
 insert into
 indicia.taxa_taxon_list_attribute_values (taxa_taxon_list_id,taxa_taxon_list_attribute_id,int_value,created_by_id,created_on,updated_by_id,updated_on,source_id)
-values (trait_to_import.taxa_taxon_list_id,(select id from taxa_taxon_list_attributes where caption='habitat'),trait_to_import.insertion_tt,1,now(),1,now(),trait_to_import.source);
+values (trait_to_import.taxa_taxon_list_id,(select id from taxa_taxon_list_attributes where caption='specific biotope'),trait_to_import.insertion_tt,1,now(),1,now(),trait_to_import.source);
 ELSE 
 END IF;
 END LOOP;
@@ -93,7 +93,7 @@ END
 $do$;
 
 
---Import Resources (note there a 3 resource layers underneath habitat), this makes life slightly more complicated. See notes below in the code.
+--Import Resources (note there a 3 resource layers underneath specific biotope), this makes life slightly more complicated. See notes below in the code.
 set search_path TO indicia, public;
 DO
 $do$
@@ -110,7 +110,7 @@ join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_type='resou
 --One of the resources appears at the top level and doesn't have a parent
 join indicia.terms iTerm on (iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' '  || pt.parent_trait_id) or iTerm.term=(pt.trait_id || ' ' || pt.trait_description || ' ' || '0')) AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
-join termlists itl on itl.id = itt.termlist_id AND itl.title='ecological division/habitat/resource' AND itl.deleted=false
+join termlists itl on itl.id = itt.termlist_id AND itl.title='broad biotope/specific biotope/resource' AND itl.deleted=false
 join websites w on w.id = itl.website_id AND w.title='Pantheon' AND w.deleted=false
 --The way the source is written is not consistant, so we need to interpret these
 left join indicia.terms itSource on (itSource.term=pst.coding_convention OR
@@ -141,7 +141,7 @@ $do$;
 
 
 
---Ecological division, habitats and traits need this bit after the import unlike other traits because there are multiple terms with same description, therefore we need to use trait id and parent trait for comparison also
+--Broad biotopes, specific biotopes and traits need this bit after the import unlike other traits because there are multiple terms with same description, therefore we need to use trait id and parent trait for comparison also
 -- Reset the term names, as they have all been given names of format "<trait_id> <term> <parent_trait_id>". Remove the trait and parent trait IDs.
 update terms
 set term = substring(term from '\s(.*)\s')
@@ -151,7 +151,7 @@ AND
 id in
 (select tt.term_id
 from termlists_terms tt
-join termlists tl on tl.id = tt.termlist_id AND tl.title = 'ecological division/habitat/resource' AND tl.deleted=false
+join termlists tl on tl.id = tt.termlist_id AND tl.title = 'broad biotope/specific biotope/resource' AND tl.deleted=false
 join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
 where tt.deleted=false
 );

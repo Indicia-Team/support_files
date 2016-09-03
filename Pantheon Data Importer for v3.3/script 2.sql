@@ -87,27 +87,27 @@ id = (
 
 
 
---Now setup termlist/attributes for Ecological Divisions, Habitats and Resources
+--Now setup termlist/attributes for Broad biotopes, Specific biotopes and Resources
 --Insert termlists
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('ecological division/habitat/resource','ecological divisions and habitats and resources',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:ecological division/habitat/resource');
+('broad biotope/specific biotope/resource','broad biotopes and specific biotopes and resources',(select id from websites where title='Pantheon' and deleted=false),now(),1,now(),1,'indicia:broad biotope/specific biotope/resource');
 
 --Insert Attributes
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
-select 'ecological division','L',now(),1,now(),1,id,true
+select 'broad biotope','L',now(),1,now(),1,id,true
 from termlists
-where title='ecological division/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/specific biotope/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
-select 'habitat','L',now(),1,now(),1,id,true
+select 'specific biotope','L',now(),1,now(),1,id,true
 from termlists
-where title='ecological division/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/specific biotope/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'resource','L',now(),1,now(),1,id,true
 from termlists
-where title='ecological division/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/specific biotope/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 
 --Insert terms and trait codes, we manipulate the names so the trait id precedes the term name and the parent id is after the term. We then use these to create the parent term hierarchy and strip them out later.
@@ -117,25 +117,25 @@ DO
 $do$
 declare trait_to_insert RECORD;
 BEGIN 
-FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='ecological division' or trait_type='habitat' or trait_type='resource' or trait_description = 'generalist only' order by trait_id asc) LOOP
-   perform insert_term(trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,0),'eng',null,'indicia:ecological division/habitat/resource');
+FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='broad biotope' or trait_type='specific biotope' or trait_type='resource' or trait_description = 'generalist only' order by trait_id asc) LOOP
+   perform insert_term(trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,0),'eng',null,'indicia:broad biotope/specific biotope/resource');
    IF (trait_to_insert.trait_code IS NOT NULL)
    THEN
-   perform insert_term(trait_to_insert.trait_code,'eng',null,'indicia:ecological division/habitat/resource');
+   perform insert_term(trait_to_insert.trait_code,'eng',null,'indicia:broad biotope/specific biotope/resource');
    ELSE
    END IF;
    update termlists_terms
    set preferred = false, parent_id = null, 
    meaning_id = (
       select meaning_id from termlists_terms tt2
-      join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'ecological division/habitat/resource' AND tl2.deleted = false
+      join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'broad biotope/specific biotope/resource' AND tl2.deleted = false
       join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t2 on t2.id = tt2.term_id AND t2.term = (trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,    0)) AND t2.deleted = false
    )
    where 
    id in (
       select tt3.id from termlists_terms tt3
-      join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'ecological division/habitat/resource' AND tl3.deleted = false
+      join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'broad biotope/specific biotope/resource' AND tl3.deleted = false
       join websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t3 on t3.id = tt3.term_id AND t3.term=trait_to_insert.trait_code AND trait_to_insert.trait_code IS NOT NULL AND t3.deleted=false
       --There can be several trait code with the same name, so only get the last one added
@@ -159,7 +159,7 @@ where termlist_id =
 (select tl2.id
 from termlists tl2 
 join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
-where tl2.title = 'ecological division/habitat/resource' AND tl2.deleted=false
+where tl2.title = 'broad biotope/specific biotope/resource' AND tl2.deleted=false
 );
 
 -- Set the parent structure for the terms in the termlist
@@ -167,7 +167,7 @@ update indicia.termlists_terms as tt
 set parent_id=(
 select tt2.id
 from termlists_terms tt2
-join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'ecological division/habitat/resource'  and tl2.deleted=false
+join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'broad biotope/specific biotope/resource'  and tl2.deleted=false
 join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 join terms t2 on t2.id = tt2.term_id AND t2.deleted=false
 left join terms t on t.id = tt.term_id AND t.deleted=false
@@ -181,7 +181,7 @@ where tt.deleted=false AND tt.termlist_id in
 (select tl.id
 from indicia.termlists tl
 join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
-where tl.title = 'ecological division/habitat/resource' AND tl.deleted=false);
+where tl.title = 'broad biotope/specific biotope/resource' AND tl.deleted=false);
 
 
 
