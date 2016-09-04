@@ -1,3 +1,7 @@
+--To run this code, you will need to do replacements of,
+--<pantheon_taxon_list_id>
+--This is the taxon_list to limit the Indicia species to for the taxa_taxon_list_attributes
+
 set search_path TO indicia, public;
 
 -- JVB, added missing termlists for attribute sources and term sources
@@ -99,16 +103,36 @@ select 'broad biotope','L',now(),1,now(),1,id,true
 from termlists
 where title='broad biotope/specific biotope/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='broad biotope'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'specific biotope','L',now(),1,now(),1,id,true
 from termlists
 where title='broad biotope/specific biotope/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='specific biotope'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'resource','L',now(),1,now(),1,id,true
 from termlists
 where title='broad biotope/specific biotope/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='resource'
+ORDER BY id DESC 
+LIMIT 1;
 
 --Insert terms and trait codes, we manipulate the names so the trait id precedes the term name and the parent id is after the term. We then use these to create the parent term hierarchy and strip them out later.
 --At this stage we also insert the trait codes and then set their meaning to be the same as the trait, that way they are shown as a synonym of the trait.
@@ -208,10 +232,24 @@ select 'adult guild','L',now(),1,now(),1,id
 from termlists
 where title='adult guild' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='adult guild'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'larval guild','L',now(),1,now(),1,id
 from termlists
 where title='larval guild' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='larval guild'
+ORDER BY id DESC 
+LIMIT 1;
 
 
 -- JVB converted insertion of adult guild and larval guild terms into dynamic query
@@ -287,10 +325,24 @@ select 'broad assemblage type','L',now(),1,now(),1,id
 from termlists
 where title='assemblage type' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='broad assemblage type'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'specific assemblage type','L',now(),1,now(),1,id
 from termlists
 where title='assemblage type' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='specific assemblage type'
+ORDER BY id DESC 
+LIMIT 1;
 
 
 --Insert terms and trait codes, we manipulate the names so the trait id precedes the term name and the parent id is after the term. We then use these to create the parent term hierarchy and strip them out later.
@@ -408,6 +460,13 @@ insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_
 select 'keywords','L',now(),1,now(),1,id,true
 from termlists
 where title='keywords' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='keywords'
+ORDER BY id DESC 
+LIMIT 1;
 
 
 
@@ -553,17 +612,36 @@ select 'plant associated','L',now(),1,now(),1,id,true
 from termlists
 where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='plant associated'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'vascular plant associated','L',now(),1,now(),1,id,true
 from termlists
 where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='vascular plant associated'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'inflorescence associated','L',now(),1,now(),1,id,true
 from termlists
 where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
-
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='inflorescence associated'
+ORDER BY id DESC 
+LIMIT 1;
 
 
 
@@ -795,7 +873,12 @@ insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_
 values 
 ('rarity score','I',now(),1,now(),1,'rarity score for Pantheon project');
 
-
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='rarity score'
+ORDER BY id DESC 
+LIMIT 1;
 
 
 
@@ -824,74 +907,186 @@ select 'acid mire fidelity score','Pantheon quality indices','L',now(),1,now(),1
 from termlists
 where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='acid mire fidelity score'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'calcareous grassland fidelity score','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
 where title='quality index terms' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='calcareous grassland fidelity score'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'coarse woody debris fidelity score','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
 where title='quality index mixed characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='coarse woody debris fidelity score'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('exposed riverine sediments fidelity score (D & H)','Pantheon quality indices','I',now(),1,now(),1);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='exposed riverine sediments fidelity score (D & H)'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('exposed riverine sediments fidelity score (S & B)','Pantheon quality indices','I',now(),1,now(),1);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='exposed riverine sediments fidelity score (S & B)'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('revised index of ecology continuity score','Pantheon quality indices','I',now(),1,now(),1);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='revised index of ecology continuity score'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - acid-neutral','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
 where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
-insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
-select 'seepage habitats fidelity score - calcareous','Pantheon quality indices','L',now(),1,now(),1,id
-from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='seepage habitats fidelity score - acid-neutral'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - slumping cliff','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
 where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='seepage habitats fidelity score - slumping cliff'
+ORDER BY id DESC 
+LIMIT 1;
+
+
+insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
+select 'seepage habitats fidelity score - calcareous','Pantheon quality indices','L',now(),1,now(),1,id
+from termlists
+where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='seepage habitats fidelity score - calcareous'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - stable cliff','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
 where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='seepage habitats fidelity score - stable cliff'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - woodland','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
 where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='seepage habitats fidelity score - woodland'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('soft rock cliff fidelity score','Pantheon quality indices','I',now(),1,now(),1);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='soft rock cliff fidelity score'
+ORDER BY id DESC 
+LIMIT 1;
+
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('spider indicator species for peat bogs','Pantheon quality indices','I',now(),1,now(),1);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='spider indicator species for peat bogs'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('index of ecology continuity score','Pantheon quality indices','I',now(),1,now(),1);
+
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='index of ecology continuity score'
+ORDER BY id DESC 
+LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('grazing coastal marsh score - species score','Pantheon quality indices','I',now(),1,now(),1);
 
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='grazing coastal marsh score - species score'
+ORDER BY id DESC 
+LIMIT 1;
+
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
 ('grazing coastal marsh score - salinity score','Pantheon quality indices','I',now(),1,now(),1);
 
-
+insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
+select <pantheon_taxon_list_id>,id,now(),1
+from taxa_taxon_list_attributes
+where caption='grazing coastal marsh score - salinity score'
+ORDER BY id DESC 
+LIMIT 1;
 
 
 --Insert terms. Note that no trait codes required for quality indices. Different quality score need different termlists
