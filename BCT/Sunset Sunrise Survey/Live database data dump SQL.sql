@@ -29,8 +29,6 @@
      else 'Problem with report detected, please contact developer' end as entry_grid
   FROM samples smp
   LEFT JOIN cache_occurrences o on o.sample_id=smp.id
-  JOIN surveys surv on surv.id = smp.survey_id AND smp.survey_id=376 AND surv.deleted=false	
-  JOIN websites w on w.id=surv.website_id AND w.id = 23 and w.deleted=false
   JOIN sample_attribute_values savFirstName on savFirstName.sample_id = smp.id AND savFirstName.sample_attribute_id = 36 AND savFirstName.deleted=false
   JOIN sample_attribute_values savLastName on savLastName.sample_id = smp.id AND savLastName.sample_attribute_id = 37 AND savLastName.deleted=false
   JOIN sample_attribute_values savEmail on savEmail.sample_id = smp.id AND savEmail.sample_attribute_id = 8 AND savEmail.deleted=false
@@ -43,7 +41,7 @@
   LEFT JOIN occurrence_attribute_values oavBatId on oavBatId.occurrence_id = o.id AND oavBatId.occurrence_attribute_id = 525 AND oavBatId.deleted=false
   LEFT JOIN occurrence_attribute_values oavSightingType on oavSightingType.occurrence_id = o.id AND oavSightingType.occurrence_attribute_id = 524 AND oavSightingType.deleted=false
   LEFT JOIN occurrence_attribute_values oavGridId on oavGridId.occurrence_id = o.id AND oavGridId.occurrence_attribute_id = 153 AND oavGridId.deleted=false
-  WHERE smp.deleted=false
+  WHERE smp.survey_id=376 AND smp.deleted=false 
   GROUP by smp.id, oavGridId.text_value, o.id,o.taxon,o.default_common_name,o.taxon_group,o.date_start,savfirstname.text_value,savLastName.text_value,savAddress.text_value,
 savPostCode.text_value,savEmail.text_value,savContact.int_value,savsunsetorrise.int_value,savsurveyornum.int_value,savSeeBats.int_value,oavBatId.int_value,oavSightingType.int_value
   order by o.id, entry_grid asc
