@@ -26,9 +26,10 @@
      when oavGridId.text_value = 'other-pre-loaded-grid' then 'Other (grid 2 pre-populated)' 
      when oavGridId.text_value = 'other-free-text-grid' then 'Other (grid 3 free entry)' 
      when oavGridId.text_value IS null then ''
-     else 'Problem with report detected, please contact developer' end as entry_grid
+     else 'Problem with report detected, please contact developer' end as entry_grid,
+  coalesce(cast (o.record_status as character varying),'') || coalesce(cast (o.record_substatus as character varying),'')  as record_status_and_substatus
   FROM samples smp
-  LEFT JOIN cache_occurrences o on o.sample_id=smp.id
+  LEFT JOIN cache_occurrences o on o.sample_id=smp.id AND o.training=false
   JOIN sample_attribute_values savFirstName on savFirstName.sample_id = smp.id AND savFirstName.sample_attribute_id = 36 AND savFirstName.deleted=false
   JOIN sample_attribute_values savLastName on savLastName.sample_id = smp.id AND savLastName.sample_attribute_id = 37 AND savLastName.deleted=false
   JOIN sample_attribute_values savEmail on savEmail.sample_id = smp.id AND savEmail.sample_attribute_id = 8 AND savEmail.deleted=false
@@ -43,5 +44,5 @@
   LEFT JOIN occurrence_attribute_values oavGridId on oavGridId.occurrence_id = o.id AND oavGridId.occurrence_attribute_id = 153 AND oavGridId.deleted=false
   WHERE smp.survey_id=376 AND smp.deleted=false 
   GROUP by smp.id, oavGridId.text_value, o.id,o.taxon,o.default_common_name,o.taxon_group,o.date_start,savfirstname.text_value,savLastName.text_value,savAddress.text_value,
-savPostCode.text_value,savEmail.text_value,savContact.int_value,savsunsetorrise.int_value,savsurveyornum.int_value,savSeeBats.int_value,oavBatId.int_value,oavSightingType.int_value
+savPostCode.text_value,savEmail.text_value,savContact.int_value,savsunsetorrise.int_value,savsurveyornum.int_value,savSeeBats.int_value,oavBatId.int_value,oavSightingType.int_value,o.record_status,o.record_substatus
   order by o.id, entry_grid asc
