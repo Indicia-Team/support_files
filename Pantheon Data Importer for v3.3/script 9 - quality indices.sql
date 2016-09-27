@@ -1,5 +1,5 @@
 --To run this script you need the following replacements,
-<pantheon_taxon_list_id>
+--<pantheon_taxon_list_id>
 
 
 --Do imports for traits which use a number first rather than a termlist
