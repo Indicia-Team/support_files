@@ -1,4 +1,4 @@
-﻿SELECT smp.id as sample_id, o.id as occurrence_id, o.taxon,o.default_common_name as common_name,o.taxon_group,
+SELECT smp.id as sample_id, o.id as occurrence_id, o.taxon,o.default_common_name as common_name,o.taxon_group,
   smp.entered_sref as full_precision_spatial_Ref,smp.entered_sref_system, to_char(o.date_start,'DD/MM/YYYY') as date,
   savFirstName.text_value as first_name,savLastName.text_value as last_name,
   savAddress.text_value as address, savPostCode.text_value as post_code, savEmail.text_value as email, 

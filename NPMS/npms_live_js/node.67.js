@@ -99,7 +99,7 @@ function addUserSiteData(locationId, userIdToAdd,features) {
     );
   }
 }
-
+    
 mapInitialisationHooks.push(function (div) {
   //Set the click "?" map control to be the default one
   jQuery.each(div.map.controls, function(idx, ctrl) {
@@ -109,4 +109,4 @@ mapInitialisationHooks.push(function (div) {
       ctrl.deactivate();
     }
   });
-});    
+});
