@@ -24,43 +24,64 @@ update termlists_terms
 set meaning_id = (
   select meaning_id from termlists_terms tt2
   join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'Term sources' AND tl2.deleted = false
-  join terms t2 on t2.id = tt2.term_id AND t2.term = 'ISIS' AND tt2.deleted=false
+  join terms t2 on t2.id = tt2.term_id AND t2.term = 'ISIS' AND t2.deleted=false
+  where tt2.deleted=false
+  order by tt2.id desc
+  limit 1
 )
 where 
 id = (
   select tt3.id from termlists_terms tt3
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'Attribute sources' AND tl3.deleted = false
-  join terms t3 on t3.id = tt3.term_id AND t3.term = 'ISIS' AND tt3.deleted=false
+  join terms t3 on t3.id = tt3.term_id AND t3.term = 'ISIS' AND t3.deleted=false
+  where tt3.deleted=false
+  order by tt3.id desc
+  limit 1
 )
 OR 
 id = (
   select tt3.id from termlists_terms tt3
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'Attribute value sources' AND tl3.deleted = false
-  join terms t3 on t3.id = tt3.term_id AND t3.term = 'ISIS' AND tt3.deleted=false
+  join terms t3 on t3.id = tt3.term_id AND t3.term = 'ISIS' AND t3.deleted=false
+  where tt3.deleted=false
+  order by tt3.id desc
+  limit 1
 );
 
 update termlists_terms
 set meaning_id = (
   select meaning_id from termlists_terms tt2
   join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'Term sources' AND tl2.deleted = false
-  join terms t2 on t2.id = tt2.term_id AND t2.term = 'OSIRIS' AND tt2.deleted=false
+  join terms t2 on t2.id = tt2.term_id AND t2.term = 'OSIRIS' AND t2.deleted=false
+  where tt2.deleted=false
+  order by tt2.id desc
+  limit 1
 )
 where 
 id = (
   select tt3.id from termlists_terms tt3
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'Attribute sources' AND tl3.deleted = false
-  join terms t3 on t3.id = tt3.term_id AND t3.term = 'OSIRIS' AND tt3.deleted=false
+  join terms t3 on t3.id = tt3.term_id AND t3.term = 'OSIRIS' AND t3.deleted=false
+  where tt3.deleted=false
+  order by tt3.id desc
+  limit 1
 );
 
 update termlists_terms
 set meaning_id = (
   select meaning_id from termlists_terms tt2
   join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'Term sources' AND tl2.deleted = false
-  join terms t2 on t2.id = tt2.term_id AND t2.term = 'HORUS' AND tt2.deleted=false
+  join terms t2 on t2.id = tt2.term_id AND t2.term = 'HORUS' AND t2.deleted=false
+  where tt2.deleted=false
+  order by tt2.id desc
+  limit 1
 )
 where 
 id = (
   select tt3.id from termlists_terms tt3
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'Attribute sources' AND tl3.deleted = false
-  join terms t3 on t3.id = tt3.term_id AND t3.term = 'HORUS' AND tt3.deleted=false
+  join terms t3 on t3.id = tt3.term_id AND t3.term = 'HORUS' AND t3.deleted=false
+  where tt3.deleted=false
+  order by tt3.id desc
+  limit 1
 );

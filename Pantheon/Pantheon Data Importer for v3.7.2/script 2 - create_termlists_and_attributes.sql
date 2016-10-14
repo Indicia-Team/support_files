@@ -21,36 +21,45 @@ values
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'broad biotope','L',now(),1,now(),1,id,true
 from termlists
-where title='broad biotope/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/habitat/resource' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='broad biotope'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'habitat','L',now(),1,now(),1,id,true
 from termlists
-where title='broad biotope/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/habitat/resource' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='habitat'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'resource','L',now(),1,now(),1,id,true
 from termlists
-where title='broad biotope/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/habitat/resource' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='resource'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -83,6 +92,7 @@ FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='broa
       join terms t3 on t3.id = tt3.term_id AND 
 	(t3.term=(trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,0))) AND
       	(trait_to_insert.trait_type='specific assemblage type' AND trait_to_insert.parent_trait_id IS NOT NULL) AND t3.deleted=false
+      where tt3.deleted=false
       order by tt3.id desc
       limit 1
    );
@@ -98,6 +108,7 @@ FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='broa
       join terms t3 on t3.id = tt3.term_id AND 
 	(t3.term=trait_to_insert.trait_code AND trait_to_insert.trait_code IS NOT NULL) AND
       	(trait_to_insert.trait_type='specific assemblage type' AND trait_to_insert.parent_trait_id IS NOT NULL) AND t3.deleted=false
+      where tt3.deleted=false
       order by tt3.id desc
       limit 1
    );
@@ -110,6 +121,7 @@ FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='broa
       join termlists tl2 on tl2.id = tt2.termlist_id AND tl2.title = 'broad biotope/habitat/resource' AND tl2.deleted = false
       join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t2 on t2.id = tt2.term_id AND t2.term = (trait_to_insert.trait_id || ' ' || trait_to_insert.trait_description || ' ' || coalesce(trait_to_insert.parent_trait_id,    0)) AND 	t2.deleted = false
+      where tt2.deleted=false
    )
    where 
    id in (
@@ -117,6 +129,7 @@ FOR trait_to_insert IN (select * from pantheon.tbl_traits where trait_type='broa
       join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'broad biotope/habitat/resource' AND tl3.deleted = false
       join websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
       join terms t3 on t3.id = tt3.term_id AND t3.term=trait_to_insert.trait_code AND trait_to_insert.trait_code IS NOT NULL AND t3.deleted=false
+      where tt3.deleted=false
       --There can be several trait code with the same name, so only get the last one added
       order by tt3.id desc
       limit 1
@@ -134,13 +147,17 @@ case when sort_order = 1 then
   from termlists_terms tt1
   join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Term sources' AND tl1.deleted=false
   join terms t1 on t1.id = tt1.term_id AND t1.term = 'ISIS' AND t1.deleted=false
-  where tt1.deleted = false)
+  where tt1.deleted = false
+  order by tt1.id desc
+  limit 1)
 else
   (select tt1.id
   from termlists_terms tt1
   join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Term sources' AND tl1.deleted=false
   join terms t1 on t1.id = tt1.term_id AND t1.term = 'OSIRIS' AND t1.deleted=false
-  where tt1.deleted = false)
+  where tt1.deleted = false
+  order by tt1.id desc
+  limit 1)
 end,
 --See notes above on the use of the sort_order field to determine the specific assemblage types to set the correct source
 sort_order=null
@@ -149,6 +166,8 @@ where termlist_id =
 from termlists tl2 
 join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 where tl2.title = 'broad biotope/habitat/resource' AND tl2.deleted=false
+order by tl2.id desc
+limit 1
 );
 
 -- Set the parent structure for the terms in the termlist
@@ -170,7 +189,9 @@ where tt.deleted=false AND tt.termlist_id in
 (select tl.id
 from indicia.termlists tl
 join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
-where tl.title = 'broad biotope/habitat/resource' AND tl.deleted=false);
+where tl.title = 'broad biotope/habitat/resource' AND tl.deleted=false
+order by tl.id desc
+limit 1);
 
 
 
@@ -195,24 +216,30 @@ values
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'adult guild','L',now(),1,now(),1,id
 from termlists
-where title='adult guild' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='adult guild' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='adult guild'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'larval guild','L',now(),1,now(),1,id
 from termlists
-where title='larval guild' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='larval guild' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='larval guild'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -249,12 +276,16 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Term sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'OSIRIS' AND t1.deleted=false
-where tt1.deleted = false)
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
 where termlist_id in
 (select tl2.id
 from termlists tl2 
 join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 where (tl2.title = 'adult guild' OR tl2.title = 'larval guild') AND tl2.deleted=false
+order by tl2.id desc
+limit 2
 );
 
 
@@ -277,12 +308,15 @@ where (tl2.title = 'adult guild' OR tl2.title = 'larval guild') AND tl2.deleted=
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'specific assemblage type','L',now(),1,now(),1,id
 from termlists
-where title='broad biotope/habitat/resource' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='broad biotope/habitat/resource' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='specific assemblage type'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -305,12 +339,15 @@ values
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'keywords','L',now(),1,now(),1,id,true
 from termlists
-where title='keywords' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='keywords' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='keywords'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -367,12 +404,16 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Term sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'OSIRIS' AND t1.deleted=false
-where tt1.deleted = false)
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
 where termlist_id = 
 (select tl2.id
 from termlists tl2 
 join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 where tl2.title = 'keywords' AND tl2.deleted=false
+order by tl2.id desc
+limit 1
 );
 
 
@@ -384,14 +425,19 @@ from termlists_terms tt2
 JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.deleted=false 
 join websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'synanthropic' AND t2.deleted = false
-where tt2.deleted=false)
+where tt2.deleted=false
+order by tt2.id desc
+limit 1)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
 join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords'and tl3.deleted=false
 join websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
-where t3.term in ('in buildings','compost/manure heaps','flour mills/bone works','museum collections','wood products','stored food products'));
+where t3.term in ('in buildings','compost/manure heaps','flour mills/bone works','museum collections','wood products','stored food products')
+AND t3.deleted=false
+order by t3.id desc
+limit 6);
 
 update termlists_terms
 set parent_id = 
@@ -400,14 +446,19 @@ from termlists_terms tt2
 JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.deleted=false 
 JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'parasite' AND t2.deleted = false
-where tt2.deleted=false)
+where tt2.deleted=false
+order by tt2.id desc
+limit 1)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
 join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords'
 JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
-where t3.term in ('bats','birds'));
+where t3.term in ('bats','birds')
+and t3.deleted=false
+order by t3.id desc
+limit 2);
 
 update termlists_terms
 set parent_id = 
@@ -416,14 +467,19 @@ from termlists_terms tt2
 JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'keywords' AND tl2.deleted=false 
 JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'ubiquitous' AND t2.deleted = false
-where tt2.deleted=false)
+where tt2.deleted=false
+order by tt2.id desc
+limit 1)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
 join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'keywords'
 JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
-where t3.term in ('all habitats','animal/plant remains'));
+where t3.term in ('all habitats','animal/plant remains')
+and t3.deleted=false
+order by t3.id desc
+limit 2);
 
 
 
@@ -460,24 +516,30 @@ values
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'plant associated','L',now(),1,now(),1,id,true
 from termlists
-where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='plant associated' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='plant associated'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id,multi_value)
 select 'inflorescence associated','L',now(),1,now(),1,id,true
 from termlists
-where title='plant associated' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='plant associated' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='inflorescence associated'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -501,6 +563,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P1' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 select insert_term('inflorescence-associated','eng',null,'indicia:plant associated');
@@ -520,6 +583,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P21' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 select insert_term('nectar and/or pollen','eng',null,'indicia:plant associated');
@@ -539,6 +603,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P31' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 
@@ -559,6 +624,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P32' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 
@@ -580,6 +646,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P34' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 
@@ -600,6 +667,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P33' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 
@@ -620,6 +688,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P22' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 select insert_term('roots','eng',null,'indicia:plant associated');
@@ -639,6 +708,7 @@ id in (
   join termlists tl3 on tl3.id = tt3.termlist_id AND tl3.title = 'plant associated' AND tl3.deleted = false
   JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
   join terms t3 on t3.id = tt3.term_id AND t3.term = 'P23' AND t3.deleted = false
+  where tt3.deleted=false
 );
 
 
@@ -650,12 +720,16 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Term sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'OSIRIS' AND t1.deleted=false
-where tt1.deleted = false)
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
 where termlist_id = 
 (select tl2.id
 from termlists tl2 
 JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 where tl2.title = 'plant associated' AND tl2.deleted=false
+order by tl2.id desc
+limit 1
 );
 
 --Setup the termlist parent hierarchy.
@@ -666,14 +740,19 @@ from termlists_terms tt2
 JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted=false 
 JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'plant-associated' AND t2.deleted = false
-where tt2.deleted=false)
+where tt2.deleted=false
+order by tt2.id desc
+limit 1)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
 join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'plant associated'
 JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
-where t3.term in ('inflorescence-associated','leaves and/or stems','roots'));
+where t3.term in ('inflorescence-associated','leaves and/or stems','roots')
+AND t3.deleted=false
+order by t3.id desc
+limit 3);
 
 
 update termlists_terms
@@ -683,14 +762,19 @@ from termlists_terms tt2
 JOIN termlists tl2 on tl2.id=tt2.termlist_id AND tl2.title = 'plant associated' AND tl2.deleted=false 
 JOIN websites w on w.id = tl2.website_id AND w.title='Pantheon' and w.deleted=false
 JOIN terms t2 on t2.id = tt2.term_id AND t2.term = 'inflorescence-associated' AND t2.deleted = false
-where tt2.deleted=false)
+where tt2.deleted=false
+order by tt2.id desc
+limit 1)
 where
 term_id in (select t3.id 
 from terms t3 
 join termlists_terms tt3 on tt3.term_id=t3.id
 join termlists tl3 on tl3.id=tt3.termlist_id AND tl3.title = 'plant associated' 
 JOIN websites w on w.id = tl3.website_id AND w.title='Pantheon' and w.deleted=false
-where t3.term in ('nectar and/or pollen','inflorescence','fleshy fruits','seeds'));
+where t3.term in ('nectar and/or pollen','inflorescence','fleshy fruits','seeds')
+AND t3.deleted=false
+order by t3.id desc
+limit 4);
 
 
 
@@ -715,6 +799,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='rarity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -743,36 +828,45 @@ values
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'acid mire fidelity score','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index capital characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='acid mire fidelity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'calcareous grassland fidelity score','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index terms' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index terms' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='calcareous grassland fidelity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'coarse woody debris fidelity score','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index mixed characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index mixed characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='coarse woody debris fidelity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -784,6 +878,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='exposed riverine sediments fidelity score (D & H)'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -795,6 +890,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='exposed riverine sediments fidelity score (S & B)'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -806,30 +902,37 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='revised index of ecology continuity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - acid-neutral','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index capital characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='seepage habitats fidelity score - acid-neutral'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - slumping cliff','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index capital characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='seepage habitats fidelity score - slumping cliff'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -837,36 +940,45 @@ LIMIT 1;
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - calcareous','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index capital characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='seepage habitats fidelity score - calcareous'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - stable cliff','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index capital characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='seepage habitats fidelity score - stable cliff'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'seepage habitats fidelity score - woodland','Pantheon quality indices','L',now(),1,now(),1,id
 from termlists
-where title='quality index capital characters' AND website_id = (select id from websites where title='Pantheon' and deleted=false);
+where title='quality index capital characters' 
+AND deleted=false
+AND website_id = (select id from websites where title='Pantheon' and deleted=false);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='seepage habitats fidelity score - woodland'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -878,6 +990,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='soft rock cliff fidelity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -890,6 +1003,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='spider indicator species for peat bogs'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -901,6 +1015,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='index of ecology continuity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -912,6 +1027,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='grazing coastal marsh score - species score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -923,6 +1039,7 @@ insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_lis
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='grazing coastal marsh score - salinity score'
+AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
@@ -960,8 +1077,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2004)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='acid mire fidelity score' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='acid mire fidelity score' and deleted=false
+order by id desc
+limit 1);
 
 update taxa_taxon_list_attributes
 set source_id = 
@@ -969,8 +1090,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Alexander (2003)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='calcareous grassland fidelity score' and deleted=false) ;
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='calcareous grassland fidelity score' and deleted=false
+order by id desc
+limit 1) ;
 
 
 update taxa_taxon_list_attributes
@@ -979,8 +1104,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Godfrey (2003)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='coarse woody debris fidelity score' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='coarse woody debris fidelity score' and deleted=false
+order by id desc
+limit 1);
 
 update taxa_taxon_list_attributes
 set source_id = 
@@ -988,8 +1117,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Drake & Hewitt (2007)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (D & H)' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (D & H)' and deleted=false
+order by id desc
+limit 1);
 
 update taxa_taxon_list_attributes
 set source_id = 
@@ -997,8 +1130,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Sadler & Bell (2002)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (S & B)' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (S & B)' and deleted=false
+order by id desc
+limit 1);
 
 update taxa_taxon_list_attributes
 set source_id = 
@@ -1006,8 +1143,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - acid-neutral' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - acid-neutral' and deleted=false
+order by id desc
+limit 1);
 
 update taxa_taxon_list_attributes
 set source_id = 
@@ -1015,28 +1156,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - calcareous' and deleted=false);
-
-
-update taxa_taxon_list_attributes
-set source_id = 
-(select tt1.id
-from termlists_terms tt1
-join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
-join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - slumping cliff' and deleted=false);
-
-
-update taxa_taxon_list_attributes
-set source_id = 
-(select tt1.id
-from termlists_terms tt1
-join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
-join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - stable cliff' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - calcareous' and deleted=false
+order by id desc
+limit 1);
 
 
 update taxa_taxon_list_attributes
@@ -1045,8 +1170,40 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - woodland' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - slumping cliff' and deleted=false
+order by id desc
+limit 1);
+
+
+update taxa_taxon_list_attributes
+set source_id = 
+(select tt1.id
+from termlists_terms tt1
+join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
+join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - stable cliff' and deleted=false
+order by id desc
+limit 1);
+
+
+update taxa_taxon_list_attributes
+set source_id = 
+(select tt1.id
+from termlists_terms tt1
+join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
+join terms t1 on t1.id = tt1.term_id AND t1.term = 'Boyce (2002)' AND t1.deleted=false
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='seepage habitats fidelity score - woodland' and deleted=false
+order by id desc
+limit 1);
 
 
 update taxa_taxon_list_attributes
@@ -1055,8 +1212,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Howe (2003)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='soft rock cliff fidelity score' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='soft rock cliff fidelity score' and deleted=false
+order by id desc
+limit 1);
 
 
 update taxa_taxon_list_attributes
@@ -1065,8 +1226,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Scott, Oxford & Selden (2006)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='spider indicator species for peat bogs' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='spider indicator species for peat bogs' and deleted=false
+order by id desc
+limit 1);
 
 update taxa_taxon_list_attributes
 set source_id = 
@@ -1074,8 +1239,12 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Palmer, Drake & Stewart (2010)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='grazing coastal marsh score - species score' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1)
+where id = (select id from taxa_taxon_list_attributes where caption='grazing coastal marsh score - species score' and deleted=false
+order by id desc
+limit 1);
 
 
 update taxa_taxon_list_attributes
@@ -1084,6 +1253,11 @@ set source_id =
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
 join terms t1 on t1.id = tt1.term_id AND t1.term = 'Palmer, Drake & Stewart (2010)' AND t1.deleted=false
-where tt1.deleted = false)
-where id = (select id from taxa_taxon_list_attributes where caption='grazing coastal marsh score - salinity score' and deleted=false);
+where tt1.deleted = false
+order by tt1.id desc
+limit 1
+)
+where id = (select id from taxa_taxon_list_attributes where caption='grazing coastal marsh score - salinity score' and deleted=false
+order by id desc
+limit 1);
 
