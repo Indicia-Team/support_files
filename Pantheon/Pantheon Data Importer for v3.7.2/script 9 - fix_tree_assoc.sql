@@ -1,3 +1,5 @@
+-- NB, this script will only be required for versions of the data up to 3.7.2. Later versions should 
+-- have the tree associations fixed though it won't harm anything to run this to be sure.
 --To run this script, you need to do mass replacements of
 --<pantheon_taxon_list_id>
 --<broad_biotope_attr_id>
