@@ -82,7 +82,7 @@ values
               limit 1);
           --Remove the unique number at the end of the sub-community name. See notes on this earlier in the script
           update terms
-          set term = substring(term, '^(.*?)\|'||insertion_counter)
+          set term = trim(substring(term, '^(.*?)\|'||insertion_counter))
           where id = 
           (
             select itt.term_id
