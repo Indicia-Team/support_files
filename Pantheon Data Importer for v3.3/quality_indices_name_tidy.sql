@@ -9,7 +9,6 @@ insert into score_name_tidy values
 ('calcareous grassland fidelity score', 'calcareous grassland'),
 ('coarse woody debris fidelity score', 'coarse woody debris'),
 ('exposed riverine sediments fidelity score (D & H)', 'ERS (D & H)'),
-('exposed riverine sediments fidelity score (S & B)', 'ERS (S & B)'),
 ('revised index of ecology continuity score', 'IEC (revised)'),
 ('seepage habitats fidelity score - acid-neutral', 'seepage (acid-neutral)'),
 ('seepage habitats fidelity score - calcareous', 'seepage (calcareous)'),
