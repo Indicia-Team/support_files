@@ -34,6 +34,7 @@ left join indicia.termlists_terms ittSource on ittSource.termlist_id = itlSource
 left join indicia.terms itSource on itSource.id = ittSource.term_id AND (itSource.term=pst.coding_convention OR
 (pst.coding_convention='from synanthropic (ISIS)' AND itSource.term='ISIS'))
 AND pst.coding_convention!='0' AND itSource.deleted=false
+WHERE pst.trait_value not in ('Not reviewed', 'Not assessed')
 GROUP BY ps.preferred_tvk,ps.species_tvk,pst.trait_value,ittl.id,ittSource.id
 ORDER BY ps.species_tvk=ps.preferred_tvk desc
 ) loop

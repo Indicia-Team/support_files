@@ -50,6 +50,7 @@ trait_type varchar (100),
 trait_source varchar (50),
 parent_trait_code varchar (50),
 parent_trait_id integer,
+label varchar (1),
 -- trait_id serial NOT NULL, JVB Removed as column first in table
 CONSTRAINT pk_tbl_traits PRIMARY KEY (trait_id)
 );

@@ -27,7 +27,7 @@ left join (
   join cache_termlists_terms t2 on t2.id=av2.int_value and t2.term='dung & carrion' and t2.parent_id is null
 ) on av2.taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id
 where av2.id is null
-order by cttl.preferred_taxon
+order by cttl.preferred_taxon;
 
 insert into taxa_taxon_list_attribute_values (
   taxa_taxon_list_id,

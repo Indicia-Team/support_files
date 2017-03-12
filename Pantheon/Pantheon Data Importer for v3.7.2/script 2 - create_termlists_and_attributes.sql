@@ -872,24 +872,24 @@ LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
-('exposed riverine sediments fidelity score (D & H)','Pantheon quality indices','I',now(),1,now(),1);
+('exposed riverine sediments fidelity score (DGHP)','Pantheon quality indices','I',now(),1,now(),1);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
-where caption='exposed riverine sediments fidelity score (D & H)'
+where caption='exposed riverine sediments fidelity score (DGHP)'
 AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
 
 insert into taxa_taxon_list_attributes (caption,description,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values 
-('exposed riverine sediments fidelity score (S & B)','Pantheon quality indices','I',now(),1,now(),1);
+('exposed riverine sediments fidelity score (B)','Pantheon quality indices','I',now(),1,now(),1);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <pantheon_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
-where caption='exposed riverine sediments fidelity score (S & B)'
+where caption='exposed riverine sediments fidelity score (B)'
 AND deleted=false
 ORDER BY id DESC 
 LIMIT 1;
@@ -1116,11 +1116,11 @@ set source_id =
 (select tt1.id
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
-join terms t1 on t1.id = tt1.term_id AND t1.term = 'Drake & Hewitt (2007)' AND t1.deleted=false
+join terms t1 on t1.id = tt1.term_id AND t1.term = 'Drake, Godrey, Hewitt & Parker (2007)' AND t1.deleted=false
 where tt1.deleted = false
 order by tt1.id desc
 limit 1)
-where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (D & H)' and deleted=false
+where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (DGHP)' and deleted=false
 order by id desc
 limit 1);
 
@@ -1129,11 +1129,11 @@ set source_id =
 (select tt1.id
 from termlists_terms tt1
 join termlists tl1 on tl1.id = tt1.termlist_id AND tl1.title = 'Attribute sources' AND tl1.deleted=false
-join terms t1 on t1.id = tt1.term_id AND t1.term = 'Sadler & Bell (2002)' AND t1.deleted=false
+join terms t1 on t1.id = tt1.term_id AND t1.term = 'Bates (2005)' AND t1.deleted=false
 where tt1.deleted = false
 order by tt1.id desc
 limit 1)
-where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (S & B)' and deleted=false
+where id = (select id from taxa_taxon_list_attributes where caption='exposed riverine sediments fidelity score (B)' and deleted=false
 order by id desc
 limit 1);
 
