@@ -1,5 +1,5 @@
 --To run this script, you need to do mass replacements of
---<plant_portal_taxon_list_id>
+--<plant_portal_importer_taxon_list_id>
 --This script assumes the Plant Portal website is called "Plant Portal", if it is not, then this script will need appropriate alteration.
 
 DO
@@ -11,7 +11,7 @@ DECLARE origin_to_split_array   varchar[];
 BEGIN
 --None of the origins should have a question mark, however they do, so remove them for now until I have asked about this.
 --I presume this was left in the data as it is considered unsure
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'?','');
 
 --These codes are problematic if try and replace in the real expanded terms. For instance, the code "Am" would appear in many of the expanded
@@ -19,96 +19,96 @@ set origin=replace(origin,'?','');
 --We can overcome this issue by changing the codes to be properly unique such that they would never appear in real words and such that they
 --don't clash with each other either.
 --Note that the ordering of the processing is important e.g. "SAm" is processed early to avoid clashing with "Am"
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'SAm','S:A:m');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Am4','A;m;4');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Am6','A\m\6');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Am','A/m');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'As1','A>s>1');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'As2','A<s<2');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'As','A.s');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Aus','A-u-s');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Crop','C{r{o{p');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Eur','E}u}r');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Gard','G"a"r"d');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'NHem','N?H?e?m');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'NZ','N[Z');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'SAf','S]A]f');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'Unk','U#n#k');
 
 
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'S:A:m','South America and/or Central America');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A;m;4','Western North America');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A\m\6','Eastern North America');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A/m','North America');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A>s>1','Asia between 60°E and 120°E');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A<s<2','Asia E of 120°E');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A.s','Asia east of 60°E');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'A-u-s','Australia');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'C{r{o{p','Crop plant| does not have a native range');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'E}u}r','Europe');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'G"a"r"d','Garden origin| does not have a native range');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'N?H?e?m','N Hemisphere (Europe|Asia and North America)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'N[Z','New Zealand');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'S]A]f','Southern Africa');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set origin=replace(origin,'U#n#k','Unknown');
 
 set search_path TO indicia, public;
@@ -124,7 +124,7 @@ where title='origin' AND website_id = (select id from websites where title='Plan
 --We have a taxa_taxon_list_attribute and we want to set a taxon_list for it
 --We need to make sure we set it for the correct taxa_taxon_list_attribute though, it is possible there might be more than one with the same name, so we can order them latest first and just take the most recent one (which is be the one we just created)
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
-select <plant_portal_taxon_list_id>,id,now(),1
+select <plant_portal_importer_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='origin'
 ORDER BY id DESC 
@@ -149,9 +149,9 @@ perform insert_term('Unknown','eng',null,'indicia:origin');
 
 FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id, origin as origin_to_split
-from plant_portal.tbl_plant_att ppt
+from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.origin IS NOT NULL
 ) loop
   origin_to_split_array = string_to_array(trait_to_import.origin_to_split, ',');

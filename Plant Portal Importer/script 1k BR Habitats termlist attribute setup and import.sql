@@ -1,5 +1,5 @@
 --To run this script, you need to do mass replacements of
---<plant_portal_taxon_list_id>
+--<plant_portal_importer_taxon_list_id>
 --This script assumes the Plant Portal website is called "Plant Portal", if it is not, then this script will need appropriate alteration.
 
 DO
@@ -12,307 +12,307 @@ BEGIN
 
 --Can't use comma separation, so replace with | as some of the br_habitats names actually contain commas.
 --Process numbers high to low because the single digit replacements would incorrectly replace digits in the large values
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'23, ','Inshore sublittoral sediment (only Zostera marina)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 23','|Inshore sublittoral sediment (only Zostera marina)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'23|','Inshore sublittoral sediment (only Zostera marina)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|23','|Inshore sublittoral sediment (only Zostera marina)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Inshore sublittoral sediment (only Zostera marina)'
 where br_habitats='23';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'21, ','Littoral sediment (includes saltmarsh and saltmarsh pools)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 21','|Littoral sediment (includes saltmarsh and saltmarsh pools)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'21|','Littoral sediment (includes saltmarsh and saltmarsh pools)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|21','|Littoral sediment (includes saltmarsh and saltmarsh pools)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Littoral sediment (includes saltmarsh and saltmarsh pools)'
 where br_habitats='21';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'19, ','Supralittoral sediment (strandlines, shingle, coastal dunes)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 19','|Supralittoral sediment (strandlines, shingle, coastal dunes)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'19|','Supralittoral sediment (strandlines, shingle, coastal dunes)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|19','|Supralittoral sediment (strandlines, shingle, coastal dunes)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Supralittoral sediment (strandlines, shingle, coastal dunes)'
 where br_habitats='19';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'18, ','Supralittoral rock (does not include maritime grassland)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 18','|Supralittoral rock (does not include maritime grassland)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'18|','Supralittoral rock (does not include maritime grassland)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|18','|Supralittoral rock (does not include maritime grassland)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Supralittoral rock (does not include maritime grassland)'
 where br_habitats='18';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'17, ','Built-up areas and gardens|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 17','|Built-up areas and gardens');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'17|','Built-up areas and gardens|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|17','|Built-up areas and gardens');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Built-up areas and gardens'
 where br_habitats='17';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'16, ','Inland rock (heterogeneous - quarries, limestone pavement, cliffs, screes, skeletal soils over rock)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 16','|Inland rock (heterogeneous - quarries, limestone pavement, cliffs, screes, skeletal soils over rock)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'16|','Inland rock (heterogeneous - quarries, limestone pavement, cliffs, screes, skeletal soils over rock)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|16','|Inland rock (heterogeneous - quarries, limestone pavement, cliffs, screes, skeletal soils over rock)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Inland rock (heterogeneous - quarries, limestone pavement, cliffs, screes, skeletal soils over rock)'
 where br_habitats='16';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'15, ','Montane habitats (acid grassland and heath with montane species)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 15','|Montane habitats (acid grassland and heath with montane species)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'15|','Montane habitats (acid grassland and heath with montane species)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|15','|Montane habitats (acid grassland and heath with montane species)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Montane habitats (acid grassland and heath with montane species)'
 where br_habitats='15';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'14, ','Rivers and streams|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 14','|Rivers and streams');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'14|','Rivers and streams|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|14','|Rivers and streams');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Rivers and streams'
 where br_habitats='14';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'13, ','Standing water and canals|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 13','|Standing water and canals');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'13|','Standing water and canals|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|13','|Standing water and canals');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Standing water and canals'
 where br_habitats='13';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'12, ','Bog (on deep peat; includes bog pools and acid lowland valley mires on
 slightly shallower peat)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 12','|Bog (on deep peat; includes bog pools and acid lowland valley mires on
 slightly shallower peat)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'12|','Bog (on deep peat; includes bog pools and acid lowland valley mires on
 slightly shallower peat)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|12','|Bog (on deep peat; includes bog pools and acid lowland valley mires on
 slightly shallower peat)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Bog (on deep peat; includes bog pools and acid lowland valley mires on
 slightly shallower peat)'
 where br_habitats='12';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'11, ','Fen, marsh and swamp (not wooded; includes flushes, rush-pastures, springs and
 mud communities)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 11','|Fen, marsh and swamp (not wooded; includes flushes, rush-pastures, springs and
 mud communities)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'11|','Fen, marsh and swamp (not wooded; includes flushes, rush-pastures, springs and
 mud communities)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|11','|Fen, marsh and swamp (not wooded; includes flushes, rush-pastures, springs and
 mud communities)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Fen, marsh and swamp (not wooded; includes flushes, rush-pastures, springs and
 mud communities)'
 where br_habitats='11';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'10, ','Dwarf shrub heath (cover of dwarf shrubs at least 25%)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 10','|Dwarf shrub heath (cover of dwarf shrubs at least 25%)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'10|','Dwarf shrub heath (cover of dwarf shrubs at least 25%)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|10','|Dwarf shrub heath (cover of dwarf shrubs at least 25%)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Dwarf shrub heath (cover of dwarf shrubs at least 25%)'
 where br_habitats='10';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'9, ','Bracken|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 9','|Bracken');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'9|','Bracken|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|9','|Bracken');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Bracken'
 where br_habitats='9';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'8, ','Acid grassland (includes non-calcareous sandy grassland)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 8','|Acid grassland (includes non-calcareous sandy grassland)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'8|','Acid grassland (includes non-calcareous sandy grassland)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|8','|Acid grassland (includes non-calcareous sandy grassland)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Acid grassland (includes non-calcareous sandy grassland)'
 where br_habitats='8';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'7, ','Calcareous grassland (includes lowland and montane types)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 7','|Calcareous grassland (includes lowland and montane types)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'7|','Calcareous grassland (includes lowland and montane types)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|7','|Calcareous grassland (includes lowland and montane types)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Calcareous grassland (includes lowland and montane types)'
 where br_habitats='7';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'6, ','Neutral grassland (includes coarse Arrhenatherum grassland)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 6','|Neutral grassland (includes coarse Arrhenatherum grassland)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'6|','Neutral grassland (includes coarse Arrhenatherum grassland)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|6','|Neutral grassland (includes coarse Arrhenatherum grassland)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Neutral grassland (includes coarse Arrhenatherum grassland)'
 where br_habitats='6';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'5, ','Improved grassland|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 5','|Improved grassland');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'5|','Improved grassland|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|5','|Improved grassland');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Improved grassland'
 where br_habitats='5';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'4, ','Arable and horticultural (includes orchards, excludes domestic gardens)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 4','|Arable and horticultural (includes orchards, excludes domestic gardens)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'4|','Arable and horticultural (includes orchards, excludes domestic gardens)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|4','|Arable and horticultural (includes orchards, excludes domestic gardens)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Arable and horticultural (includes orchards, excludes domestic gardens)'
 where br_habitats='4';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'3, ','Boundary and linear features (eg hedges, roadsides, walls)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 3','|Boundary and linear features (eg hedges, roadsides, walls)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'3|','Boundary and linear features (eg hedges, roadsides, walls)|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|3','|Boundary and linear features (eg hedges, roadsides, walls)');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Boundary and linear features (eg hedges, roadsides, walls)'
 where br_habitats='3';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'2, ','Coniferous woodland|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 2','|Coniferous woodland');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'2|','Coniferous woodland|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|2','|Coniferous woodland');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Coniferous woodland'
 where br_habitats='2';
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'1, ','Broadleaved, mixed and yew woodland|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,', 1','|Broadleaved, mixed and yew woodland');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'1|','Broadleaved, mixed and yew woodland|');
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats=replace(br_habitats,'|1','|Broadleaved, mixed and yew woodland');
 
-update plant_portal.tbl_plant_att
+update plant_portal_importer.tbl_plant_att
 set br_habitats='Broadleaved, mixed and yew woodland'
 where br_habitats='1';
 
@@ -330,7 +330,7 @@ where title='BR Habitats' AND website_id = (select id from websites where title=
 --We have a taxa_taxon_list_attribute and we want to set a taxon_list for it
 --We need to make sure we set it for the correct taxa_taxon_list_attribute though, it is possible there might be more than one with the same name, so we can order them latest first and just take the most recent one (which is be the one we just created)
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
-select <plant_portal_taxon_list_id>,id,now(),1
+select <plant_portal_importer_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='BR Habitats'
 ORDER BY id DESC 
@@ -363,9 +363,9 @@ perform insert_term('Inshore sublittoral sediment (only Zostera marina)','eng',n
 
 FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id, br_habitats as br_habitats_to_split
-from plant_portal.tbl_plant_att ppt
+from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.br_habitats IS NOT NULL
 ) loop
   br_habitats_to_split_array = string_to_array(trait_to_import.br_habitats_to_split, '|');
