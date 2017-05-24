@@ -17,12 +17,12 @@ where w='w';
 
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('Woodiness','Woodiness for Plant Portal project',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:woodiness');
+('Woodiness','Woodiness for Plant Portal project',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:woodiness');
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Woodiness','L',now(),1,now(),1,id
 from termlists
-where title='Woodiness' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Woodiness' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 --We have a taxa_taxon_list_attribute and we want to set a taxon_list for it
 --We need to make sure we set it for the correct taxa_taxon_list_attribute though, it is possible there might be more than one with the same name, so we can order them latest first and just take the most recent one (which is be the one we just created)
@@ -237,17 +237,17 @@ where clone2='Tip';
 
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('Categories of clonality','Categories of clonality for Plant Portal project',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:categories_of_clonality');
+('Categories of clonality','Categories of clonality for Plant Portal project',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:categories_of_clonality');
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Categories of clonality 1','L',now(),1,now(),1,id
 from termlists
-where title='Categories of clonality' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Categories of clonality' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Categories of clonality 2','L',now(),1,now(),1,id
 from termlists
-where title='Categories of clonality' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Categories of clonality' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)

@@ -38,12 +38,12 @@ where ns='NH';
 set search_path TO indicia, public;
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('Native status','Native status',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:native_status');
+('Native status','Native status',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:native_status');
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Native status','L',now(),1,now(),1,id
 from termlists
-where title='Native status' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Native status' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 --We have a taxa_taxon_list_attribute and we want to set a taxon_list for it
 --We need to make sure we set it for the correct taxa_taxon_list_attribute though, it is possible there might be more than one with the same name, so we can order them latest first and just take the most recent one (which is be the one we just created)
@@ -147,12 +147,12 @@ where cs='VU';
 
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('Conservation status','Conservation status',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:conservation_status');
+('Conservation status','Conservation status',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:conservation_status');
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Conservation status','L',now(),1,now(),1,id
 from termlists
-where title='Conservation status' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Conservation status' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <plant_portal_taxon_list_id>,id,now(),1
@@ -253,12 +253,12 @@ where rs='' or rs IS NULL;
 
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('Rarity status','Rarity status',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:rarity_status');
+('Rarity status','Rarity status',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:rarity_status');
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Rarity status','L',now(),1,now(),1,id
 from termlists
-where title='Rarity status' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Rarity status' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
 select <plant_portal_taxon_list_id>,id,now(),1

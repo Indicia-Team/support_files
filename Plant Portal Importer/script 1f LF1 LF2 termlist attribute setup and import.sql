@@ -83,17 +83,17 @@ where lf2='Th';
 set search_path TO indicia, public;
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('Life form','Life forms for Plant Portal project',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:life_form');
+('Life form','Life forms for Plant Portal project',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:life_form');
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Life form 1','L',now(),1,now(),1,id
 from termlists
-where title='Life form' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Life form' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'Life form 2','L',now(),1,now(),1,id
 from termlists
-where title='Life form' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='Life form' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 
 --We have a taxa_taxon_list_attribute and we want to set a taxon_list for it

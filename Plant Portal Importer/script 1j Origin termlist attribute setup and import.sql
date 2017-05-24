@@ -1,5 +1,5 @@
 --To run this script, you need to do mass replacements of
---<plant_port_taxon_list_id>
+--<plant_portal_taxon_list_id>
 --This script assumes the Plant Portal website is called "Plant Portal", if it is not, then this script will need appropriate alteration.
 
 DO
@@ -114,17 +114,17 @@ set origin=replace(origin,'U#n#k','Unknown');
 set search_path TO indicia, public;
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
-('origin','Origin terms for Plant Portal',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:origin');
+('origin','Origin terms for Plant Portal',(select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1),now(),1,now(),1,'indicia:origin');
 
 insert into taxa_taxon_list_attributes (caption,multi_value,data_type,created_on,created_by_id,updated_on,updated_by_id,termlist_id)
 select 'origin',true,'L',now(),1,now(),1,id
 from termlists
-where title='origin' AND website_id = (select id from websites where title='Plant Portal' and deleted=false);
+where title='origin' AND website_id = (select id from websites where title='Plant Portal' and deleted=false order by id desc limit 1);
 
 --We have a taxa_taxon_list_attribute and we want to set a taxon_list for it
 --We need to make sure we set it for the correct taxa_taxon_list_attribute though, it is possible there might be more than one with the same name, so we can order them latest first and just take the most recent one (which is be the one we just created)
 insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
-select <plant_port_taxon_list_id>,id,now(),1
+select <plant_portal_taxon_list_id>,id,now(),1
 from taxa_taxon_list_attributes
 where caption='origin'
 ORDER BY id DESC 
@@ -151,7 +151,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id, origin as origin_to_split
 from plant_portal.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_port_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_taxon_list_id> AND ittl.deleted=false
 where ppt.origin IS NOT NULL
 ) loop
   origin_to_split_array = string_to_array(trait_to_import.origin_to_split, ',');
@@ -182,7 +182,7 @@ where ppt.origin IS NOT NULL
            )
            values (
              trait_to_import.taxa_taxon_list_id,
-             (select id from taxa_taxon_list_attributes where caption='origin' and deleted=false),
+             (select id from taxa_taxon_list_attributes where caption='origin' and deleted=false order by id desc limit 1),
              --As the comma separated origin field is split and cycled through we need to collect the termlist term to insert.
              --This probably isn't fast way to do this, but it is a one off import and it is advantageous to keep this import as similar to the other ones as possible
              (select itt.id 
