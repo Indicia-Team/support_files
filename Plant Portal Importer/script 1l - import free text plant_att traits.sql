@@ -71,7 +71,9 @@ FOR trait_to_import IN
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
-where ppt.brc_code IS NOT NULL
+--We check for empty space also. The reason for this is we needed to correct the format of the original file before processing and to do that I have included a space for 
+--blanks instead of nothing.
+where ppt.brc_code IS NOT NULL AND ppt.brc_code != ' '
 ) loop
 --We don't need to do any checks to make sure we aren't adding duplicate attribute data (unlike Pantheon) as there are only preferred_tvks in the import
 --data and these only contain one attribute value each per trait.
@@ -101,7 +103,7 @@ FOR trait_to_import IN
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
-where ppt.source_for_max_height IS NOT NULL
+where ppt.source_for_max_height IS NOT NULL AND ppt.source_for_max_height != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
@@ -128,7 +130,7 @@ FOR trait_to_import IN
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
-where ppt.comment_on_life_form IS NOT NULL
+where ppt.comment_on_life_form IS NOT NULL AND ppt.comment_on_life_form != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
@@ -155,7 +157,7 @@ FOR trait_to_import IN
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
-where ppt.comment_on_clonality IS NOT NULL
+where ppt.comment_on_clonality IS NOT NULL AND ppt.comment_on_clonality != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
@@ -182,7 +184,7 @@ FOR trait_to_import IN
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
-where ppt.comment_on_n_and_s_limits_in_europe IS NOT NULL
+where ppt.comment_on_n_and_s_limits_in_europe IS NOT NULL AND ppt.comment_on_n_and_s_limits_in_europe != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
