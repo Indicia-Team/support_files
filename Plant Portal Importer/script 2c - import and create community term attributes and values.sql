@@ -6,9 +6,8 @@ declare termlists_term_attribute_to_import RECORD;
 declare trait_to_import RECORD;
 BEGIN
 FOR termlists_term_attribute_to_import IN 
-(select distinct preferred_tvk 
-from plant_portal.tbl_nvc_floristic_tables 
-where species_constancy_value is null 
+(select distinct preferred_tvk from plant_portal_importer.tbl_nvc_floristic_tables 
+where species_constancy_value is null
 order by preferred_tvk) loop
 --Each one is an integer attribute value
 insert into termlists_term_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id)
@@ -26,7 +25,7 @@ END LOOP;
 --Do the import itself.
 FOR trait_to_import IN 
 (select ittComm.id as termlists_term_id,tta.id as termlists_term_attribute_id,ppt.special_variable_value as insertion_value,1,now(),1,now()	
- from plant_portal.tbl_nvc_floristic_tables ppt
+ from plant_portal_importer.tbl_nvc_floristic_tables ppt
   --The community we are dealing with comes from the back end of the community_or_sub_community_name field, here we return everything after the last , and space. If there no sub-community then we just return the main community
   join indicia.terms iTermComm on iTermComm.term=coalesce(substring(ppt.community_or_sub_community_name, '^.*,\s*(.*)$'),substring(ppt.community_or_sub_community_name, '^.*')) AND itermComm.deleted=false
   join indicia.termlists_terms ittComm on ittComm.term_id=iTermComm.id AND ittComm.deleted=false
@@ -39,7 +38,7 @@ FOR trait_to_import IN
   join termlists_termlists_term_attributes ttla on ttla.termlists_term_attribute_id = tta.id AND ttla.termlist_id = itlComm.id AND ttla.deleted=false
 
   --If we are dealing with a sub-community, then it will have a parent which comes from the front of the community_or_sub_community_name field
-  where (ittCommParent.id IS NULL OR iTermCommParent.term = substring(ppt.community_or_sub_community_name, '[^,]*'))
+  where (ittCommParent.id IS NULL OR iTermCommParent.term = substring(ppt.community_or_sub_community_name, '[^,]*')) AND ppt.special_variable_value IS NOT NULL AND ppt.special_variable_value != '888'
 ) loop
 IF (NOT EXISTS (
   select ttav2.id

@@ -17,7 +17,7 @@ values
   --Loop through the data rows
   FOR row_to_import IN
   (select DISTINCT ppt.community_or_sub_community_name as community_or_sub_community_name_to_split, ppt.community_level_code as community_level_code, ppt.community_or_sub_community_code as community_or_sub_community_code
-  from plant_portal.tbl_nvc_floristic_tables ppt
+  from plant_portal_importer.tbl_nvc_floristic_tables ppt
   where ppt.community_or_sub_community_name IS NOT NULL
   ) loop
     --Split up the community and sub-community names for the row
@@ -103,7 +103,7 @@ values
   --the flag is preferred, so we can only switch the preferred flag off aftwards
   FOR row_to_import IN
   (select DISTINCT ppt.community_level_code as community_level_code, ppt.community_or_sub_community_code as community_or_sub_community_code
-  from plant_portal.tbl_nvc_floristic_tables ppt
+  from plant_portal_importer.tbl_nvc_floristic_tables ppt
   where ppt.community_or_sub_community_name IS NOT NULL
   ) loop
     update termlists_terms

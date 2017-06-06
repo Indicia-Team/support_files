@@ -3,15 +3,7 @@
 --<csv_nvc_floristic_tables_file_path>
 --Path format (on mac) should be like '/users/joebloggs/nvc_floristic_tables.csv'
 
-/*
-Data exported from MS Access as text files, suffix .csv, field names in first row, " delimiter.
-Open each file in notepad and save as UTF-8
-Open each file in Notepad++ and convert to UTF-8 without BOM
-*/
-
--- NOW, import the data
-
-set search_path TO plant_portal, public;
+set search_path TO plant_portal_importer, public;
 
 CREATE TABLE tbl_nvc_floristic_tables (
 row_number integer,
