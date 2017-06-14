@@ -6,18 +6,18 @@ declare termlists_term_attribute_to_import RECORD;
 declare trait_to_import RECORD;
 BEGIN
 FOR termlists_term_attribute_to_import IN 
-(select distinct preferred_tvk from plant_portal_importer.tbl_nvc_floristic_tables 
+(select distinct species_name_or_special_variable from plant_portal_importer.tbl_nvc_floristic_tables 
 where species_constancy_value is null
-order by preferred_tvk) loop
+order by species_name_or_special_variable) loop
 --Each one is an integer attribute value
 insert into termlists_term_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id)
 values (
-termlists_term_attribute_to_import.preferred_tvk
+termlists_term_attribute_to_import.species_name_or_special_variable
 ,'I',now(),1,now(),1);
 
 insert into termlists_termlists_term_attributes (termlists_term_attribute_id,termlist_id,created_on,created_by_id)
 values (
-(select id from termlists_term_attributes where caption = termlists_term_attribute_to_import.preferred_tvk and deleted=false order by id desc limit 1),
+(select id from termlists_term_attributes where caption = termlists_term_attribute_to_import.species_name_or_special_variable and deleted=false order by id desc limit 1),
 (select id from termlists where title = 'Community or sub community name' and deleted=false order by id desc limit 1)
 ,now(),1);
 END LOOP;
@@ -34,11 +34,11 @@ FOR trait_to_import IN
   left join indicia.termlists_terms ittCommParent on ittCommParent.id = ittComm.parent_id AND ittCommParent.deleted = false
   left join indicia.terms iTermCommParent on iTermCommParent.id=ittCommParent.term_id AND ittCommParent.deleted=false
 
-  join termlists_term_attributes tta on tta.caption=ppt.preferred_tvk AND tta.deleted=false
+  join termlists_term_attributes tta on tta.caption=ppt.species_name_or_special_variable AND tta.deleted=false
   join termlists_termlists_term_attributes ttla on ttla.termlists_term_attribute_id = tta.id AND ttla.termlist_id = itlComm.id AND ttla.deleted=false
 
   --If we are dealing with a sub-community, then it will have a parent which comes from the front of the community_or_sub_community_name field
-  where (ittCommParent.id IS NULL OR iTermCommParent.term = substring(ppt.community_or_sub_community_name, '[^,]*')) AND ppt.special_variable_value IS NOT NULL AND ppt.special_variable_value != '888'
+  where (ittCommParent.id IS NULL OR iTermCommParent.term = substring(ppt.community_or_sub_community_name, '[^,]*')) AND ppt.special_variable_value IS NOT NULL
 ) loop
 IF (NOT EXISTS (
   select ttav2.id
