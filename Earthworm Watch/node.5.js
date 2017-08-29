@@ -1,5 +1,9 @@
 
 jQuery(document).ready(function($) {
+  $('#imp-sref-system').change(function () {
+    $('#imp-sref').val('');
+  });
+  
   $('.scEarthwormCountCell').show();
   $('.deh-required').hide();
   if ($('#samples-grid').find('.empty-row').length !== 0) {

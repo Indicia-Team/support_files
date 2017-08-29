@@ -1,0 +1,4 @@
+The code has been committed here rather than the main repository as
+- The CSS and JS files include specific IDs
+- The earthwormwatch_sample_occurrence.php file only works with the old iForm code on the Earthworm Watch site. The changes required are not huge, but a logged version of the file as it is on the Earthworm Watch website is beneficial for simplicity.
+The main repository earthwormwatch_sample_occurrence.php is kept up to date also, but won’t run as is on the live site currently until the iForm is updated.
