@@ -367,7 +367,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.Hght as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Hght IS NOT NULL
 ) loop
 --We don't need to do any checks to make sure we aren't adding duplicate attribute data (unlike Pantheon) as there are only preferred_tvks in the import
@@ -376,7 +376,7 @@ where ppt.Hght IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Height (terrestrial) (Hght)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -400,13 +400,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.GB as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.GB IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='No of 10-km squares in Britain (inc Isle of Man)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -429,13 +429,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.IR as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.IR IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='No of 10-km squares in Ireland' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -458,13 +458,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.CI as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.CI IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='No of 10-km squares in Channel Islands' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -487,13 +487,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.Prec as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Prec IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Annual precipitation' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -516,13 +516,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.L as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.L IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Ellenberg indicator value (L)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -545,13 +545,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.F as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.F IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Ellenberg indicator value (F)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -574,13 +574,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.R as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.R IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Ellenberg indicator value (R)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -603,13 +603,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.N as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.N IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Ellenberg indicator value (N)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -632,13 +632,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.S as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.S IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Ellenberg indicator value (S)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -661,7 +661,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.Len as float) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Len IS NOT NULL
 ) loop
 --We don't need to do any checks to make sure we aren't adding duplicate attribute data (unlike Pantheon) as there are only preferred_tvks in the import
@@ -669,7 +669,7 @@ where ppt.Len IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Length (aquatic)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -692,13 +692,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.Chg as float) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Chg IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Change index' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -721,7 +721,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.Tjan as float) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Tjan IS NOT NULL
 ) loop
 --We don't need to do any checks to make sure we aren't adding duplicate attribute data (unlike Pantheon) as there are only preferred_tvks in the import
@@ -729,7 +729,7 @@ where ppt.Tjan IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='January mean temperature' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -752,7 +752,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.Tjul as float) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Tjul IS NOT NULL
 ) loop
 --We don't need to do any checks to make sure we aren't adding duplicate attribute data (unlike Pantheon) as there are only preferred_tvks in the import
@@ -760,7 +760,7 @@ where ppt.Tjul IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='July mean temperature' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -855,14 +855,14 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,1 as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.C IS NOT NULL
 ) loop
 --Guard against duplicates caused by accidently running importer twice
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Continentality in europe' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -893,14 +893,14 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.NBI as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.NBI IS NOT NULL
 ) loop
 --Guard against duplicates caused by accidently running importer twice
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Reaching northern European limit in British Isles' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -931,14 +931,14 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.SBI as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.SBI IS NOT NULL
 ) loop
 --Guard against duplicates caused by accidently running importer twice
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Reaching southern European limit in British Isles' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -968,14 +968,14 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,1 as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.Co IS NOT NULL
 ) loop
 --Guard against duplicates caused by accidently running importer twice
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Coastal' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -1070,7 +1070,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.ns AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Native status' AND itl.deleted=false
@@ -1081,7 +1081,7 @@ where ppt.ns IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Native status' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1181,7 +1181,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.cs AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Conservation status' AND itl.deleted=false
@@ -1192,7 +1192,7 @@ where ppt.cs IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Conservation status' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1289,7 +1289,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.rs AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Rarity status' AND itl.deleted=false
@@ -1301,7 +1301,7 @@ where ppt.rs IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Rarity status' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1415,7 +1415,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.p1 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Perennation' AND itl.deleted=false
@@ -1425,7 +1425,7 @@ where ppt.p1 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Perennation 1' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1447,7 +1447,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.p2 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Perennation' AND itl.deleted=false
@@ -1457,7 +1457,7 @@ where ppt.p2 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Perennation 2' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1611,7 +1611,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.lf1 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Life form' AND itl.deleted=false
@@ -1621,7 +1621,7 @@ where ppt.lf1 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Life form 1' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1643,7 +1643,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.lf2 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Life form' AND itl.deleted=false
@@ -1653,7 +1653,7 @@ where ppt.lf2 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Life form 2' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1721,7 +1721,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.w AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Woodiness' AND itl.deleted=false
@@ -1731,7 +1731,7 @@ where ppt.w IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Woodiness' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -1977,7 +1977,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.clone1 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Categories of clonality' AND itl.deleted=false
@@ -1987,7 +1987,7 @@ where ppt.clone1 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Categories of clonality 1' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -2009,7 +2009,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.clone2 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Categories of clonality' AND itl.deleted=false
@@ -2019,7 +2019,7 @@ where ppt.clone2 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Categories of clonality 2' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -2125,7 +2125,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.e1 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Biogeographic element, major biome (E1)' AND itl.deleted=false
@@ -2135,7 +2135,7 @@ where ppt.e1 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Biogeographic element, major biome (E1)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -2225,7 +2225,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,itt.id as insertion_tt,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 join indicia.terms iTerm on iTerm.term=ppt.e2 AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='Biogeographic element, eastern limit category (E2)' AND itl.deleted=false
@@ -2235,7 +2235,7 @@ where ppt.e2 IS NOT NULL
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Biogeographic element, eastern limit category (E2)' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false))
 THEN
 insert into
@@ -2382,13 +2382,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.NEur_lower as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.NEur_lower IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Lat of northern European limit 5º band (NEur)-LV' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -2413,13 +2413,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.NEur_higher as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.NEur_higher IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Lat of northern European limit 5º band (NEur)-HV' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -2444,13 +2444,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.SEur_lower as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.SEur_lower IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Lat of northern European limit 5º band (SEur)-LV' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -2474,13 +2474,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,cast(ppt.SEur_higher as integer) as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.SEur_higher IS NOT NULL
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Lat of northern European limit 5º band (SEur)-HV' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -2650,7 +2650,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id, origin as origin_to_split
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.origin IS NOT NULL
 ) loop
   origin_to_split_array = string_to_array(trait_to_import.origin_to_split, ',');
@@ -2660,7 +2660,7 @@ where ppt.origin IS NOT NULL
          IF (NOT EXISTS (
            select ttlav2.id
            from taxa_taxon_list_attribute_values ttlav2
-           join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+           join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
            join termlists_terms itt on itt.id = ttlav2.int_value AND itt.deleted=false
            join termlists itl on itl.id = itt.termlist_id AND itl.title='origin' AND itl.deleted=false
            join websites w on w.id = itl.website_id AND w.title='Plant Portal' AND w.deleted=false
@@ -3092,7 +3092,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id, br_habitats as br_habitats_to_split
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.br_habitats IS NOT NULL
 ) loop
   br_habitats_to_split_array = string_to_array(trait_to_import.br_habitats_to_split, '|');
@@ -3102,7 +3102,7 @@ where ppt.br_habitats IS NOT NULL
          IF (NOT EXISTS (
            select ttlav2.id
            from taxa_taxon_list_attribute_values ttlav2
-           join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+           join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
            join termlists_terms itt on itt.id = ttlav2.int_value AND itt.deleted=false
            join termlists itl on itl.id = itt.termlist_id AND itl.title='BR Habitats' AND itl.deleted=false
            join websites w on w.id = itl.website_id AND w.title='Plant Portal' AND w.deleted=false
@@ -3239,7 +3239,7 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,ppt.brc_code as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 --We check for empty space also. The reason for this is we needed to correct the format of the original file before processing and to do that I have included a space for 
 --blanks instead of nothing.
 where ppt.brc_code IS NOT NULL AND ppt.brc_code != ' '
@@ -3250,7 +3250,7 @@ where ppt.brc_code IS NOT NULL AND ppt.brc_code != ' '
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='BRC code' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -3271,13 +3271,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,ppt.source_for_max_height as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.source_for_max_height IS NOT NULL AND ppt.source_for_max_height != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Source for maximum height' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -3298,13 +3298,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,ppt.comment_on_life_form as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.comment_on_life_form IS NOT NULL AND ppt.comment_on_life_form != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Comment on life form' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -3325,13 +3325,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,ppt.comment_on_clonality as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.comment_on_clonality IS NOT NULL AND ppt.comment_on_clonality != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Comment on clonality' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
@@ -3352,13 +3352,13 @@ FOR trait_to_import IN
 (select ittl.id as taxa_taxon_list_id,ppt.comment_on_n_and_s_limits_in_europe as insertion_val,1,now(),1,now()
 from plant_portal_importer.tbl_plant_att ppt
 join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
+join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<plant_portal_importer_taxon_list_id> AND ittl.deleted=false
 where ppt.comment_on_n_and_s_limits_in_europe IS NOT NULL AND ppt.comment_on_n_and_s_limits_in_europe != ' '
 ) loop
 IF (NOT EXISTS (
 select ttlav2.id
 from taxa_taxon_list_attribute_values ttlav2
-join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
 where ttlav2.taxa_taxon_list_attribute_id = (select id from taxa_taxon_list_attributes where caption='Comment on north and south limits in Europe' and deleted=false order by id desc limit 1) AND ttlav2.deleted=false
 ORDER BY ttlav2.id desc))
 THEN
