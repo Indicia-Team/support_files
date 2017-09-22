@@ -228,7 +228,7 @@ $do$;
   perform insert_term('V','eng',null,'indicia:species_constancy_value');
 
   insert into taxa_taxon_list_attributes (caption,data_type,termlist_id,created_on,created_by_id,updated_on,updated_by_id)
-  values ('Species constancy value','T',(select id from termlists where title = 'Species constancy value' order by id desc limit 1),now(),1,now(),1);
+  values ('Species constancy value','L',(select id from termlists where title = 'Species constancy value' order by id desc limit 1),now(),1,now(),1);
 
   insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
   select <taxa_taxon_list_id_to_import_into>,id,now(),1
