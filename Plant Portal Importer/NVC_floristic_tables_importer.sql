@@ -262,7 +262,7 @@ $do$;
   (select distinct ittl.id as taxa_taxon_list_id,ppt.maximum_abundance_species as insertion_int,1,now(),1,now(),ittComm.id as comm_sub_comm_tt_id
     from plant_portal_importer.tbl_nvc_floristic_tables ppt
     join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-    join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<taxa_taxon_list_id_to_import_into> AND ittl.deleted=false
+    join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<taxa_taxon_list_id_to_import_into> AND ittl.deleted=false
     --The community we are dealing with comes from the back end of the community_or_sub_community_name field, here we return everything after the last , and space. If there no sub-community then we just return the main community
     left join indicia.terms iTermComm on iTermComm.term=coalesce(substring(ppt.community_or_sub_community_name, '^.*,\s*(.*)$'),substring(ppt.community_or_sub_community_name, '^.*')) AND itermComm.deleted=false
     left join indicia.termlists_terms ittComm on ittComm.term_id=iTermComm.id AND ittComm.deleted=false
@@ -277,7 +277,7 @@ $do$;
   IF (NOT EXISTS (
     select ttlav2.id
     from taxa_taxon_list_attribute_values ttlav2
-    join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+    join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
     --Need to check ttlav2.int_value=trait_to_import.insertion_int, we only don't want to do insertions
     --if the values exactly match. We should allow different values for the same species.
     where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Maximum abundance of species' and deleted=false order by id desc limit 1) AND ttlav2.int_value=trait_to_import.insertion_int AND ttlav2.int_value=trait_to_import.comm_sub_comm_tt_id AND ttlav2.deleted=false))
@@ -302,7 +302,7 @@ $do$;
   (select distinct ittl.id as taxa_taxon_list_id, ittSCV.id as insertion_int,1,now(),1,now(),ittComm.id as comm_sub_comm_tt_id
     from plant_portal_importer.tbl_nvc_floristic_tables ppt
     join indicia.taxa it on it.external_key=ppt.preferred_tvk AND it.deleted=false
-    join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<taxa_taxon_list_id_to_import_into> AND ittl.deleted=false
+    join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.preferred=true AND ittl.taxon_list_id=<taxa_taxon_list_id_to_import_into> AND ittl.deleted=false
 
     left join indicia.terms iTermSCV on iTermSCV.term=ppt.species_constancy_value AND itermSCV.deleted=false
     left join indicia.termlists_terms ittSCV on ittSCV.term_id=iTermSCV.id AND ittSCV.deleted=false
@@ -322,7 +322,7 @@ $do$;
   IF (NOT EXISTS (
     select ttlav2.id
     from taxa_taxon_list_attribute_values ttlav2
-    join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
+    join taxa_taxon_lists ttl2 on ttl2.id = ttlav2.taxa_taxon_list_id AND ttl2.preferred=true AND ttl2.id=trait_to_import.taxa_taxon_list_id AND ttl2.deleted=false
     --Need to check ttlav2.int_value=trait_to_import.insertion_int, we only don't want to do insertions
     --if the values exactly match. We should allow different values for the same species.
     where ttlav2.taxa_taxon_list_attribute_id=(select id from taxa_taxon_list_attributes where caption='Species constancy value' and deleted=false order by id desc limit 1) AND ttlav2.int_value=trait_to_import.insertion_int AND ttlav2.int_value=trait_to_import.comm_sub_comm_tt_id AND ttlav2.deleted=false))
