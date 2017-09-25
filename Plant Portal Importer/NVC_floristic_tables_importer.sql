@@ -24,6 +24,63 @@ FROM <csv_nvc_floristic_tables_file_path>
 WITH DELIMITER ','
 CSV HEADER;
 
+set search_path TO indicia, public;
+--Create sources and associated attributes
+DO
+$do$
+BEGIN
+
+perform insert_term('British Plant Communities (NVC floristic tables)','eng',null,'indicia:plant_portal_sources');
+
+insert into termlists_term_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id)
+values (
+'Source link'
+,'T',now(),1,now(),1);
+
+insert into termlists_termlists_term_attributes (termlists_term_attribute_id,termlist_id,created_on,created_by_id)
+values (
+(select id from termlists_term_attributes where caption = 'Source link' and deleted=false order by id desc limit 1),
+(select id from termlists where external_key='indicia:plant_portal_sources' and deleted=false order by id desc limit 1)
+,now(),1);
+
+insert into
+indicia.termlists_term_attribute_values (termlists_term_id,termlists_term_attribute_id,text_value,created_by_id,created_on,updated_by_id,updated_on)
+values (
+(select id from termlists_terms where 
+termlist_id = (select id from termlists where external_key='indicia:plant_portal_sources' and deleted=false order by id desc limit 1) 
+AND 
+term_id = (select id from terms where term = 'British Plant Communities (NVC floristic tables)' and deleted=false order by id desc limit 1)),
+(select id from termlists_term_attributes where caption = 'Source link' order by id desc limit 1),
+'http://jncc.defra.gov.uk/page-4265'
+,1,now(),1,now());
+
+insert into termlists_term_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id)
+values (
+'Source references'
+,'T',now(),1,now(),1);
+
+insert into termlists_termlists_term_attributes (termlists_term_attribute_id,termlist_id,created_on,created_by_id)
+values (
+(select id from termlists_term_attributes where caption = 'Source references' and deleted=false order by id desc limit 1),
+(select id from termlists where external_key='indicia:plant_portal_sources' and deleted=false order by id desc limit 1)
+,now(),1);
+
+insert into
+indicia.termlists_term_attribute_values (termlists_term_id,termlists_term_attribute_id,text_value,created_by_id,created_on,updated_by_id,updated_on)
+values (
+(select id from termlists_terms where 
+termlist_id = (select id from termlists where external_key='indicia:plant_portal_sources' and deleted=false order by id desc limit 1) 
+AND 
+term_id = (select id from terms where term = 'British Plant Communities (NVC floristic tables)' and deleted=false order by id desc limit 1)),
+(select id from termlists_term_attributes where caption = 'Source references' order by id desc limit 1),
+'Rodwell, J.S. (Ed.). (1991). British Plant Communities (5 Volumes). Cambridge University Press, Cambridge, UK.'
+,1,now(),1,now());
+
+
+END
+$do$;
+
+
 --This script assumes the Plant Portal website is called "Plant Portal", if it is not, then this script will need appropriate alteration.
 
 DO
@@ -36,7 +93,6 @@ DECLARE insertion_counter integer;
 BEGIN
 insertion_counter=0;
 
-set search_path TO indicia, public;
 insert into indicia.termlists (title,description,website_id,created_on,created_by_id,updated_on,updated_by_id,external_key)
 values 
 ('Community or sub community name','Community or sub community names for Plant Portal',(select id from websites where title='Plant Portal' and deleted=false),now(),1,now(),1,'indicia:community_or_sub_community_name');
@@ -227,8 +283,12 @@ $do$;
   perform insert_term('IV','eng',null,'indicia:species_constancy_value');
   perform insert_term('V','eng',null,'indicia:species_constancy_value');
 
-  insert into taxa_taxon_list_attributes (caption,data_type,termlist_id,created_on,created_by_id,updated_on,updated_by_id)
-  values ('Species constancy value','L',(select id from termlists where title = 'Species constancy value' order by id desc limit 1),now(),1,now(),1);
+  insert into taxa_taxon_list_attributes (caption,data_type,termlist_id,created_on,created_by_id,updated_on,updated_by_id,source_id)
+  values ('Species constancy value','L',(select id from termlists where title = 'Species constancy value' order by id desc limit 1),now(),1,now(),1,
+  (select id from termlists_terms where 
+    termlist_id = (select id from termlists where external_key='indicia:plant_portal_sources' and deleted=false order by id desc limit 1) 
+    AND 
+    term_id = (select id from terms where term = 'British Plant Communities (NVC floristic tables)' and deleted=false order by id desc limit 1)));
 
   insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
   select <taxa_taxon_list_id_to_import_into>,id,now(),1
@@ -237,9 +297,13 @@ $do$;
   ORDER BY id DESC 
   LIMIT 1;
 
-  insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,description)
+  insert into taxa_taxon_list_attributes (caption,data_type,created_on,created_by_id,updated_on,updated_by_id,description,source_id)
   values 
-  ('Maximum abundance of species','I',now(),1,now(),1,'Maximum abundance species for plant portal project');
+  ('Maximum abundance of species','I',now(),1,now(),1,'Maximum abundance species for plant portal project',
+  (select id from termlists_terms where 
+    termlist_id = (select id from termlists where external_key='indicia:plant_portal_sources' and deleted=false order by id desc limit 1) 
+    AND 
+    term_id = (select id from terms where term = 'British Plant Communities (NVC floristic tables)' and deleted=false order by id desc limit 1)));
 
   insert into taxon_lists_taxa_taxon_list_attributes (taxon_list_id,taxa_taxon_list_attribute_id,created_on,created_by_id)
   select <taxa_taxon_list_id_to_import_into>,id,now(),1
