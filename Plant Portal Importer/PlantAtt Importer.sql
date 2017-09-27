@@ -65,16 +65,6 @@ FROM <csv_plant_att_file_path>
 WITH DELIMITER ','
 CSV HEADER;
 
---Manual corrections to the data as discussed with David Roy.
-delete from plant_portal_importer.tbl_plant_att
-where taxon_name = 'Zostera angustifolia';
-
-update plant_portal_importer.tbl_plant_att
-set preferred_tvk='NBNSYS0000002168'
-where taxon_name = 'Asparagus officinalis subsp.officinalis';
-
-
-
 set search_path=indicia, public;
 DO
 $do$
