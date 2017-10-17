@@ -1,0 +1,1 @@
+On the training site node.26.js needs its name changed to node.71.js
