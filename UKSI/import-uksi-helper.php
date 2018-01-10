@@ -168,10 +168,29 @@ HELP;
     }
   }
 
+  /**
+   * Update the cache_* tables.
+   *
+   * Rather than run dedicated scripts, which could get out of step with the
+   * code in the cache_builder module, we load the scripts from the module's
+   * config file and run those. There is no need to process deletions as these
+   * are done as the sync scripts go along.
+   *
+   * @param obj $conn
+   *   Database connection
+   * @param array $settings
+   *   Script settings.
+   */
   public static function updateCaches($conn, $settings) {
     require_once $settings['warehouse-path'] . 'modules/cache_builder/config/cache_builder.php';
-    $tables = ['taxa_taxon_lists', 'taxon_searchterms', 'occurrences'];
+    $tables = [
+      'termlists_terms',
+      'taxa_taxon_lists',
+      'taxon_searchterms',
+      'occurrences',
+    ];
     $needsUpdateJoins = [
+      'termlists_terms' => "join termlists_terms nu on nu.id=tlt.id and nu.updated_on>(select last_scheduled_task_check from system where name='cache_builder')",
       'taxa_taxon_lists' => 'join uksi.changed_taxa_taxon_list_ids nu on nu.id=ttl.id',
       'taxon_searchterms' => 'join uksi.changed_taxa_taxon_list_ids nu on nu.id=cttl.id',
       'occurrences' => 'join uksi.changed_occurrence_ids nu on nu.id=o.id',
@@ -204,7 +223,7 @@ HELP;
         echo " - OK\n";
       }
     }
-    pg_query("UPDATE system SET last_scheduled_task_check=now() WHERE name='cache_builder'");
+    pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='cache_builder'");
   }
 
 }

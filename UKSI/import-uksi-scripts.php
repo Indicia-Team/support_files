@@ -179,11 +179,15 @@ $scripts = [
     'result' => 'Number of attribute values relinked to preferred names',
   ],
   [
-    'file' => '33 - cleanup.sql',
+    'file' => '33 - designations.sql',
+    'description' => 'Update the taxon designations data',
+  ],
+  [
+    'file' => '34 - cleanup.sql',
     'description' => 'Tidy up orphaned records',
   ],
   [
-    'file' => '34 - ensure cache update is thorough.sql',
+    'file' => '35 - ensure cache update is thorough.sql',
     'description' => 'Ensure updated common and preferred names are applied to all names in concept',
   ],
 ];
