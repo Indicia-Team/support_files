@@ -27,6 +27,11 @@ Optional
  --start=n         Start at script numbered n.
 ```
 
+Example:
+```
+php import-uksi.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
+```
+
 **Once you have run the script remember to restart your scheduled tasks**.
 
 For notes on regenerating the text files containing the UKSI data, see the
