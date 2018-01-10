@@ -203,9 +203,11 @@ HELP;
       }
       foreach ($updates as $queryName => $qry) {
         echo "  - $queryName (UPDATE)";
+        $startScript = microtime(TRUE);
         $qry = str_replace('#join_needs_update#', $needsUpdateJoins[$table], $qry);
         pg_query($conn, $qry);
-        echo " - OK\n";
+        $time = round(microtime(TRUE) - $startScript, 1);
+        echo " - OK ({$time}s)\n";
       }
       $inserts = $config[$table]['insert'];
       if (!is_array($inserts)) {
@@ -213,6 +215,7 @@ HELP;
       }
       foreach ($inserts as $queryName => $qry) {
         echo "  - $queryName (INSERT)";
+        $startScript = microtime(TRUE);
         $qry = str_replace('#join_needs_update#', $needsUpdateJoins[$table], $qry);
         $result = @pg_query($conn, $qry);
         if ($result === FALSE) {
@@ -220,7 +223,29 @@ HELP;
           echo "$qry\n";
           die("\nError in script: " . pg_last_error($conn) . "\n");
         }
-        echo " - OK\n";
+        $time = round(microtime(TRUE) - $startScript, 1);
+        echo " - OK ({$time}s)\n";
+      }
+      if (!empty($config[$table]['extra_multi_record_updates'])) {
+        foreach ($config[$table]['extra_multi_record_updates'] as $queryName => $qry) {
+          echo "  - $queryName (EXTRAS)";
+          $startScript = microtime(TRUE);
+          $singularTable = preg_replace('/s$/', '', $table);
+          $qry = str_replace(
+            ["needs_update_$table", '#master_list_id#'],
+            ["uksi.changed_{$singularTable}_ids", $settings['taxon_list_id']],
+            $qry
+          );
+
+          $result = @pg_query($conn, $qry);
+          if ($result === FALSE) {
+            echo "\nQuery failed:\n";
+            echo "$qry\n";
+            die("\nError in script: " . pg_last_error($conn) . "\n");
+          }
+          $time = round(microtime(TRUE) - $startScript, 1);
+          echo " - OK ({$time}s)\n";
+        }
       }
     }
     pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='cache_builder'");
