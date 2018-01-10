@@ -1,0 +1,79 @@
+0,"Unk","Unknown",0
+10,"Kng","Kingdom",0
+20,"SubKng","Subkingdom",0
+30,"Phl","Phylum",0
+30,"Div(b)","Division",0
+40,"SubPhl","Subphylum",0
+40,"SubDiv","Subdivision",0
+50,"SupCls","Superclass",0
+60,"Cls","Class",0
+70,"SubCls","Subclass",0
+90,"SupOrd","Superorder",0
+100,"Ord","Order",0
+120,"InfOrd","Infraorder",0
+110,"SubOrd","Suborder",0
+150,"Ser(z)","Series",0
+130,"Sec(z)","Section",0
+170,"SupFam","Superfamily",0
+180,"Fam","Family",0
+190,"SubFam","Subfamily",0
+210,"Trb","Tribe",0
+230,"GenHyb","Generic hybrid",1
+230,"Gen","Genus",1
+240,"SubGen","Subgenus",1
+250,"Sec(b)","Section",1
+270,"Ser(b)","Series",1
+290,"SppGrp","Species group",1
+290,"Agg","Species aggregate",1
+300,"Spp","Species",1
+300,"SppHyb","Species hybrid",1
+320,"SubSppHyb","Subspecies hybrid",1
+320,"SubSpp","Subspecies",1
+350,"Rac","Race",1
+350,"Frm","Form",1
+320,"Abb","Abberation",1
+330,"Var","Variety",1
+80,"InfCls","Infraclass",0
+140,"SubSec(z)","Subsection",0
+280,"SubSer(b)","Subseries",1
+200,"SupTrb","Supertribe",0
+220,"SubTrb","Subtribe",0
+260,"SubSec(b)","Subsection",1
+160,"SubSer(z)","Subseries",0
+300,"NoSpp","Nothospecies",1
+310,"MicSpp","Microspecies",1
+320,"NoSubSpp","Nothosubspecies",1
+320,"MicGen","Microgene",1
+320,"PraSpp","Praespecies",1
+320,"SubLus","Sublusus",1
+330,"VarHyb","Varietal hybrid",1
+330,"NoVar","Nothovariety",1
+330,"Cult","Cultivar",0
+340,"SubVar","Subvariety",1
+360,"SubFrm","Subform",1
+330,"ConVar","Convariety",1
+330,"Fac","Facies",1
+178,"FamAgg","Family aggregate",0
+100,"OrdAgg","Ordinal aggregate",0
+330,"Mor","Morphotype",1
+350,"FrmHyb","Form hybrid",1
+0,,"rank name",0
+0,,"excluded word",0
+0,,"vernacular name",0
+0,,"latin word",1
+110,"Coh","Cohort",1
+350,"FrmSpc","Forma specialis",1
+330,"ecad","ecad",0
+175,"Div(z)","Division",0
+370,"FunGp","Functional group",0
+310,"SubAgg","Subspecies aggregate",1
+228,"GenAgg","Genus aggregate",0
+0,"Unr","Unranked",0
+290,"SppPP","Species pro parte",0
+290,"SppSL","Species sensu lato",0
+330,"Brd","Breed",0
+25,"InfKng","Infrakingdom",0
+45,"InfPhl","Infraphylum",0
+125,"ParOrd","Parvorder",0
+5,"Emp","Empire",0
+5,"Dom","Domain",0
