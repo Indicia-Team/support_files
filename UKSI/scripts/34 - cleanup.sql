@@ -32,10 +32,18 @@ DELETE FROM taxon_groups WHERE id IN (
   AND tg.title NOT IN (SELECT taxon_group_name FROM uksi.taxon_groups)
 );
 
--- Clean up any orphaned taxon meanings. Only likely as a result of errors or
--- partial script runs.
-DELETE FROM taxon_meanings WHERE id IN (
-  SELECT tm.id FROM taxon_meanings tm
-  LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=tm.id
-  WHERE ttl.id IS NULL
-);
+-- Just in case, remove any taxon meanings that are not in use.
+-- This could occur if a taxon is flagged as redundant/deleted in
+-- UKSI.
+SELECT DISTINCT tm.id
+INTO TEMPORARY to_delete
+FROM taxon_meanings tm
+LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=tm.id
+WHERE ttl.id IS NULL;
+-- Before removing the taxon meanings, remove related dead records.
+DELETE FROM taxon_codes WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
+DELETE FROM taxon_media WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
+DELETE FROM species_alerts WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
+-- Remove the taxon meanings.
+DELETE FROM taxon_meanings WHERE id IN (SELECT id FROM to_delete);
+DROP TABLE to_delete;
