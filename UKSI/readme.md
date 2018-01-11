@@ -32,6 +32,22 @@ Example:
 php import-uksi.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
 ```
 
+Notes on running the script:
+* If your php executable is not on your path, then you will need to include the
+  path in the call, e.g:
+  ```
+  /path/to/php/php.exe import-uksi.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
+  ```
+* If the uksi schema already exists from a previuos UKSI import (using the
+  old script method), if the permissions are wrong then an error will be
+  generated in step 1 when you run the tool. If this happens, use pgAdmin
+  to delete the uksi schema before running the tool again.
+* You will need to ensure the php executable is running as a user which has
+  read access to the text files containing the UKSI data extracted from
+  Microsoft Access. One way to do that on Windows is to right click the folder
+  containing the text files and select Properties, then use the Security tab
+  to grant read access to the Users account.
+
 **Once you have run the script remember to restart your scheduled tasks**.
 
 For notes on regenerating the text files containing the UKSI data, see the
