@@ -19,6 +19,7 @@ SELECT DISTINCT null::integer AS id,
   null::varchar AS common_taxon_tvk,
   false AS is_new,
   false AS changed,
+  null::boolean as orig_preferred,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
   null::integer AS orig_common_taxon_id
