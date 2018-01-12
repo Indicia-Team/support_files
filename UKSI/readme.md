@@ -47,6 +47,9 @@ Notes on running the script:
   Microsoft Access. One way to do that on Windows is to right click the folder
   containing the text files and select Properties, then use the Security tab
   to grant read access to the Users account.
+* If you experience an error whilst running the tool and are able to resolve
+  the error, you can restart the tool at a certain script number by adding
+  ```start=<script number>``` to the command line parameters and running the tool again.
 
 **Once you have run the script remember to restart your scheduled tasks**.
 
