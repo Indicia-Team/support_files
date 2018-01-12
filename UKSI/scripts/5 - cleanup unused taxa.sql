@@ -10,6 +10,12 @@ WHERE ttl.id IS NULL;
 DELETE FROM taxon_codes WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM taxon_media WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM species_alerts WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
+-- Correct mistakes in cache table which would otherwise block us from tidying.
+UPDATE cache_taxon_searchterms
+SET taxon_meaning_id=ttl.taxon_meaning_id
+FROM taxa_taxon_lists ttl
+WHERE ttl.id=cts.taxa_taxon_list_id
+AND ttl.taxom_meaning_id<>cts.taxon_meaning_id;
 -- Remove the taxon meanings.
 DELETE FROM taxon_meanings WHERE id IN (SELECT id FROM to_delete);
 DROP TABLE to_delete;
