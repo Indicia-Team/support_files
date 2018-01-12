@@ -15,7 +15,7 @@ UPDATE cache_taxon_searchterms cts
 SET taxon_meaning_id=ttl.taxon_meaning_id
 FROM taxa_taxon_lists ttl
 WHERE ttl.id=cts.taxa_taxon_list_id
-AND ttl.taxom_meaning_id<>cts.taxon_meaning_id;
+AND ttl.taxon_meaning_id<>cts.taxon_meaning_id;
 -- Remove the taxon meanings.
 DELETE FROM taxon_meanings WHERE id IN (SELECT id FROM to_delete);
 DROP TABLE to_delete;
