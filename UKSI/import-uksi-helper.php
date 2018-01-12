@@ -28,6 +28,7 @@ Optional
  --data-path       The path to the folder containing the 8 text files exported from the UKSI MS Access database.
                    When not supplied, the files must be in the same folder as this PHP script.
  --start=n         Start at script numbered n.
+ --stop=n          Stop after script numbered n.
 
 HELP;
 

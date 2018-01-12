@@ -15,6 +15,10 @@ foreach ($scripts as $idx => $script) {
   if (!empty($settings['start']) && ($idx + 1) < $settings['start']) {
     continue;
   }
+  // Allow abort at certain script.
+  if (!empty($settings['stop']) && ($idx + 1) > $settings['stop']) {
+    break;
+  }
   echo ($idx + 1) . ' - ' . (empty($script['description']) ? $script['file'] : $script['description']);
   $sql = file_get_contents("scripts/$script[file]");
   // Apply settings as replacements Twig style.
@@ -35,5 +39,8 @@ foreach ($scripts as $idx => $script) {
     ImportUksiHelper::echoScriptOutputs($conn, $script, $result);
   }
 }
-importUksiHelper::updateCaches($connections['default'], $settings);
+if (empty($settings['stop'])) {
+  // Update the cache_* tables, unless doing an incomplete run.
+  importUksiHelper::updateCaches($connections['default'], $settings);
+}
 echo 'Total time: ' . round(microtime(TRUE) - $startAll, 1) . "s\n";

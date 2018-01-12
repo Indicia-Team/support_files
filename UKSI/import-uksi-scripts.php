@@ -164,7 +164,8 @@ $scripts = [
   [
     'file' => '29 - apply common names.sql',
     'description' => 'Apply common name mappings',
-    'result' => 'Names which had a common name change',
+    'output' => "select 'Names which had a common name change' as type, count(*) from uksi.prepared_taxa_taxon_lists " .
+      'where changed=true and coalesce(common_taxon_id, 0)<>coalesce(orig_common_taxon_id, 0)'
   ],
   [
     'file' => '30 - insert new taxa taxon lists.sql',
