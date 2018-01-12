@@ -8,4 +8,5 @@ JOIN taxa_taxon_lists ttlpref
 WHERE ttl.id=av.taxa_taxon_list_id
 AND ttl.preferred=false
 AND ttl.deleted=false
-AND av.deleted=false;
+AND av.deleted=false
+AND av.taxa_taxon_list_id<>ttlpref.id;
