@@ -183,11 +183,15 @@ $scripts = [
     'description' => 'Update the taxon designations data',
   ],
   [
-    'file' => '34 - cleanup.sql',
+    'file' => '34 - expired names correct preferred name',
+    'description' => 'Correct preferred name for expired names',
+  ],
+  [
+    'file' => '35 - cleanup.sql',
     'description' => 'Tidy up orphaned records',
   ],
   [
-    'file' => '35 - ensure cache update is thorough.sql',
+    'file' => '36 - ensure cache update is thorough.sql',
     'description' => 'Ensure updated common and preferred names are applied to all names in concept',
   ],
 ];

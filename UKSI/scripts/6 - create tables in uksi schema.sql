@@ -49,9 +49,9 @@ WITH (
 
 -- Table: uksi.taxon_groups
 
-DROP TABLE IF EXISTS uksi.taxon_groups;
+DROP TABLE IF EXISTS taxon_groups;
 
-CREATE TABLE uksi.taxon_groups
+CREATE TABLE taxon_groups
 (
   taxon_group_key character(16),
   taxon_group_name character varying,
@@ -64,9 +64,9 @@ WITH (
 
 -- Table: uksi.tcn_duplicates
 
-DROP TABLE IF EXISTS uksi.tcn_duplicates;
+DROP TABLE IF EXISTS tcn_duplicates;
 
-CREATE TABLE uksi.tcn_duplicates
+CREATE TABLE tcn_duplicates
 (
   organism_key character(16),
   taxon_version_key character(16)
@@ -77,9 +77,9 @@ WITH (
 
 -- Table: uksi.all_designation_kinds
 
-DROP TABLE IF EXISTS uksi.all_designation_kinds;
+DROP TABLE IF EXISTS all_designation_kinds;
 
-CREATE TABLE uksi.all_designation_kinds
+CREATE TABLE all_designation_kinds
 (
   taxon_designation_type_kind_key character(16),
   kind character varying
@@ -90,9 +90,9 @@ WITH (
 
 -- Table: uksi.taxon_designations
 
-DROP TABLE IF EXISTS uksi.taxon_designations;
+DROP TABLE IF EXISTS taxon_designations;
 
-CREATE TABLE uksi.taxon_designations
+CREATE TABLE taxon_designations
 (
   taxon_designation_type_key character(16),
   short_name character varying,
@@ -107,9 +107,9 @@ WITH (
 
 -- Table: uksi.taxa_taxon_designations
 
-DROP TABLE IF EXISTS uksi.taxa_taxon_designations;
+DROP TABLE IF EXISTS taxa_taxon_designations;
 
-CREATE TABLE uksi.taxa_taxon_designations
+CREATE TABLE taxa_taxon_designations
 (
   short_name character varying,
   date_from date,
@@ -124,14 +124,27 @@ WITH (
 
 -- Table: uksi.taxon_ranks
 
-DROP TABLE IF EXISTS uksi.taxon_ranks;
+DROP TABLE IF EXISTS taxon_ranks;
 
-CREATE TABLE uksi.taxon_ranks
+CREATE TABLE taxon_ranks
 (
   sort_order integer,
   short_name character varying,
   long_name character varying,
   list_font_italic integer -- capture 0 or 1 and convert to bool later
+)
+WITH (
+  OIDS=FALSE
+);
+
+-- Table: uksi.all_taxon_version_keys
+
+DROP TABLE IF EXISTS all_taxon_version_keys;
+
+CREATE TABLE all_taxon_version_keys
+(
+  input_taxon_version_key character(16),
+  recommended_taxon_version_key character(16)
 )
 WITH (
   OIDS=FALSE
