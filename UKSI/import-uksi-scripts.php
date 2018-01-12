@@ -127,7 +127,10 @@ $scripts = [
   [
     'file' => '23 - prepare taxa taxon lists.sql',
     'description' => 'Prepare the taxa taxon lists table UKSI version',
-    'result' => 'Number of records in taxa taxon lists',
+    'output' => "SELECT 'total taxa_taxon_lists' as type, count(*) FROM uksi.prepared_taxa_taxon_lists " .
+      "UNION " .
+      "SELECT 'child list taxa_taxon_lists' as type, count(*) FROM uksi.prepared_taxa_taxon_lists " .
+      "WHERE taxon_list_id<>(select uksi_taxon_list_id from uksi.uksi_settings)",
   ],
   [
     'file' => '24 - match to existing taxa taxon lists.sql',
@@ -183,7 +186,7 @@ $scripts = [
     'description' => 'Update the taxon designations data',
   ],
   [
-    'file' => '34 - expired names correct preferred name',
+    'file' => '34 - expired names correct preferred name.sql',
     'description' => 'Correct preferred name for expired names',
   ],
   [

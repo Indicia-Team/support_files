@@ -15,10 +15,12 @@ INSERT INTO to_process
   LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code
   LEFT JOIN occurrences o on o.taxa_taxon_list_id=ttl.id
   LEFT JOIN determinations d ON d.taxa_taxon_list_id=ttl.id
-  WHERE ttl.taxon_list_id=(select uksi_taxon_list_id from uksi.uksi_settings)
+  WHERE ttl.taxon_list_id in (select id from uksi.all_uksi_taxon_lists)
   AND an.recommended_taxon_version_key IS NULL
   AND o.id IS NULL
   AND d.id IS NULL
+  -- Ensure any custom names are not deleted from child lists.
+  AND t.search_code IS NOT NULL
   AND ttl.deleted=false;
 
 DELETE FROM cache_taxa_taxon_lists WHERE id IN (SELECT id FROM to_process);

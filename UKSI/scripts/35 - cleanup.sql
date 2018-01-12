@@ -32,6 +32,8 @@ DELETE FROM taxon_groups WHERE id IN (
   AND tg.title NOT IN (SELECT taxon_group_name FROM uksi.taxon_groups)
 );
 
+DROP TABLE IF EXISTS uksi.preferred_name_changes;
+
 -- Tidy up where there have been preferred name changes.
 -- Grab a table of the changes.
 SELECT ttl1.id AS old_taxa_taxon_list_id,
