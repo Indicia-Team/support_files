@@ -11,7 +11,7 @@ DELETE FROM taxon_codes WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM taxon_media WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM species_alerts WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 -- Correct mistakes in cache table which would otherwise block us from tidying.
-UPDATE cache_taxon_searchterms
+UPDATE cache_taxon_searchterms cts
 SET taxon_meaning_id=ttl.taxon_meaning_id
 FROM taxa_taxon_lists ttl
 WHERE ttl.id=cts.taxa_taxon_list_id
