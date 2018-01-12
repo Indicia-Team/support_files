@@ -12,7 +12,7 @@ INSERT INTO to_process
   FROM taxa_taxon_lists ttl
   JOIN taxa t ON t.id=ttl.taxon_id and t.deleted=false
   LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code
-  WHERE ttl.taxon_list_id=(select id from uksi.all_uksi_taxon_lists)
+  WHERE ttl.taxon_list_id in (select id from uksi.all_uksi_taxon_lists)
   AND an.recommended_taxon_version_key IS NULL
   AND ttl.deleted=false
   AND ttl.allow_data_entry=true
