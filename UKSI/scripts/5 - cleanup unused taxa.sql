@@ -1,13 +1,17 @@
+/**
+ * @file
+ * Data cleaning operations.
+ *
+ * This script runs cleanup operations that would not be required if the
+ * former state of the UKSI data on the warehouse was absolutely clean - i.e.
+ * these queries fix fomer UKSI import bugs which can get in the way later.
+ */
 SET search_path=indicia, public;
 
--- This script runs cleanup operations that would not be required if the
--- former state of the UKSI data on the warehouse was absolutely clean - i.e.
--- these queries fix fomer UKSI import bugs which can get in the way later.
-
 -- Find all the cache table entries which have not got an up to date taxon
--- meaning ID due to previous bugs. As the cache table is often looked up
--- against when entering or importing data, we need to use this info to
--- undo mistakes in foreign keys.
+-- meaning ID due to previous failures to update the cache. As the cache table
+-- is often looked up against when entering or importing data, we need to use
+-- this info to undo mistakes in foreign keys.
 DROP TABLE IF EXISTS broke_meanings_by_id;
 SELECT ttl.id, ttl.preferred, cttl.taxon_meaning_id AS old_taxon_meaning_id, ttl.taxon_meaning_id AS new_taxon_meaning_id
 INTO TEMPORARY broke_meanings_by_id
@@ -85,7 +89,8 @@ DELETE FROM cache_taxon_searchterms WHERE taxon_meaning_id IN (SELECT id FROM to
 DELETE FROM taxon_meanings WHERE id IN (SELECT id FROM to_delete);
 DROP TABLE to_delete;
 
--- Just in case, remove any taxa which don't have a taxa_taxon_list record.
+-- Remove any orphaned taxa which don't have a taxa_taxon_list record. There
+-- hopefully won't be any.
 DELETE FROM taxa tdel
 USING taxa t
 LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id
