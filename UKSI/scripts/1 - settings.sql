@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS uksi.uksi_settings;
 SELECT id
 INTO uksi.all_uksi_taxon_lists
 FROM taxon_lists
-WHERE parent_id={{ taxon_list_id }};
+WHERE parent_id={{ taxon_list_id }} or id={{ taxon_list_id }};
 
 SELECT {{ taxon_list_id }} as uksi_taxon_list_id, {{ user_id }} as updated_by_user_id
 INTO uksi.uksi_settings;
