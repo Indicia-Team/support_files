@@ -53,4 +53,6 @@ JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key
 -- Find names already on each child list
 JOIN taxa t ON t.search_code=pt.search_code
 JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false
-JOIN uksi.all_uksi_taxon_lists child_lists on child_lists.id=ttl.taxon_list_id;
+JOIN uksi.all_uksi_taxon_lists child_lists
+  ON child_lists.id=ttl.taxon_list_id
+  AND child_lists.id<>(select uksi_taxon_list_id from uksi.uksi_settings);
