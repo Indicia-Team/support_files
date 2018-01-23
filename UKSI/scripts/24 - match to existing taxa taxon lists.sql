@@ -6,7 +6,11 @@ SET search_path=indicia, public;
 -- later - grabbing the here just makes it easier to detect changes.
 UPDATE uksi.prepared_taxa_taxon_lists pttl
 SET id=ttl.id,
-  taxon_meaning_id=CASE WHEN t.search_code=t.external_key THEN ttl.taxon_meaning_id ELSE NULL END,
+  taxon_meaning_id=CASE
+    -- keep the taxon meaning if it's a preferred name both before and after the update.
+    WHEN t.search_code=t.external_key AND orig_preferred=true THEN ttl.taxon_meaning_id
+    ELSE NULL
+  END,
   orig_preferred=ttl.preferred,
   orig_taxon_meaning_id=ttl.taxon_meaning_id,
   orig_parent_id=ttl.parent_id,
