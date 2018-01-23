@@ -26,6 +26,8 @@ ORDER BY
   -- Sort order puts the best candidate first, so DISTINCT ON picks the correct common name.
   -- Explicitly mentioned in tcn_duplicates = 1st priority.
   an.input_taxon_version_key=td.taxon_version_key DESC,
+  -- Well formed names priority
+  an.taxon_version_form='W' DESC,
   -- Recommended name in taxon version status = 2nd priority.
   an.taxon_version_status='R' DESC,
   -- Ensure result is deterministic
