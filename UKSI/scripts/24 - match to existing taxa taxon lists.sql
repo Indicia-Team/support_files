@@ -23,3 +23,14 @@ JOIN taxa_taxon_lists ttl
   AND ttl.allow_data_entry=true
 WHERE t.search_code=pttl.input_taxon_version_key
 AND t.deleted=false;
+
+-- Because there might be mistakes in the old data, we need to make sure any cases where a taxon meaning ID is shared
+-- across names which are pointing to different concepts do end up with different taxon meanings IDs. This particularly
+-- applies to the agrigultural breed names. So, we clear all but the last taxon meaning ID in groups of names which
+-- share the meaning ID but not the recommended TVK. Any cleared will get a new one in a moment.
+UPDATE uksi.prepared_taxa_taxon_lists to_clear
+SET taxon_meaning_id=NULL
+FROM uksi.prepared_taxa_taxon_lists to_keep
+ON to_keep.taxon_meaning_id=to_clear.taxon_meaning_id
+AND to_keep.recommended_taxon_version_key <> to_clear.recommended_taxon_version_key
+AND to_keep.id<to_clear.id;
