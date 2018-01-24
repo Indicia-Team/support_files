@@ -31,6 +31,6 @@ AND t.deleted=false;
 UPDATE uksi.prepared_taxa_taxon_lists to_clear
 SET taxon_meaning_id=NULL
 FROM uksi.prepared_taxa_taxon_lists to_keep
-ON to_keep.taxon_meaning_id=to_clear.taxon_meaning_id
+WHERE to_keep.taxon_meaning_id=to_clear.taxon_meaning_id
 AND to_keep.recommended_taxon_version_key <> to_clear.recommended_taxon_version_key
 AND to_keep.id<to_clear.id;
