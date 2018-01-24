@@ -30,7 +30,7 @@ WITH RECURSIVE q AS (
       ttlpref.id AS rank_ttl_id, t.taxon AS rank_taxon, tr.rank, tr.id AS taxon_rank_id, tr.sort_order AS taxon_rank_sort_order
   FROM taxa_taxon_lists ttl1
   JOIN taxa t1 ON t1.id=ttl1.taxon_id AND t1.deleted=false
-  JOIN taxa t1pref ON t1pref.search_code=t1.external_key and tlpref.deleted=false
+  JOIN taxa t1pref ON t1pref.search_code=t1.external_key and t1pref.deleted=false
   JOIN taxa_taxon_lists ttlpref ON ttlpref.taxon_id=t1.id AND ttlpref.deleted=false
     AND ttlpref.taxon_list_id=ttl1.taxon_list_id AND ttlpref.preferred=true AND ttlpref.allow_data_entry=true
   JOIN taxa_taxon_lists ttlprefraw ON ttlprefraw.id=ttlpref.id AND ttlprefraw.deleted=false

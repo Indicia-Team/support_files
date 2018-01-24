@@ -135,7 +135,7 @@ $scripts = [
   [
     'file' => '24 - match to existing taxa taxon lists.sql',
     'description' => 'Link UKSI taxa to existing warehouse taxa taxon lists',
-    'result' => 'Number of pre-existing taxa taxon lists found',
+    'output' => "SELECT 'existing taxa_taxon_lists linked, count(*) FROM uksi.prepared_taxa_taxon_lists WHERE id IS NOT NULL",
   ],
   [
     'file' => '25 - populate preferred name taxon meanings.sql',
