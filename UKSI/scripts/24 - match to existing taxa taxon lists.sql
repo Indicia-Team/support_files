@@ -8,7 +8,7 @@ UPDATE uksi.prepared_taxa_taxon_lists pttl
 SET id=ttl.id,
   taxon_meaning_id=CASE
     -- keep the taxon meaning if it's a preferred name both before and after the update.
-    WHEN t.search_code=t.external_key AND orig_preferred=true THEN ttl.taxon_meaning_id
+    WHEN t.search_code=t.external_key AND ttl.preferred=true THEN ttl.taxon_meaning_id
     ELSE NULL
   END,
   orig_preferred=ttl.preferred,
