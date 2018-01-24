@@ -4,7 +4,7 @@ SET search_path=indicia, public;
 INSERT INTO uksi.changed_taxa_taxon_list_ids(
   SELECT ttl.id
   FROM taxa_taxon_lists ttl
-  JOIN taxa_taxon_lists ttlpref ON ttlpref.taxon_meaning_id=ttl.taxon_meaning_id
+  JOIN taxa_taxon_lists ttlpref ON ttlpref.gitttl.taxon_meaning_id
     AND ttlpref.taxon_list_id=ttl.taxon_list_id
     AND ttlpref.preferred=true
   JOIN uksi.changed_taxa_taxon_list_ids ttlchanged ON ttlchanged.id=ttlpref.id
@@ -129,7 +129,6 @@ AND (coalesce(u.taxon_rank_id, 0) <> ru.taxon_rank_id
 
 UPDATE cache_taxon_searchterms u
 SET taxon_rank_sort_order=ru.taxon_rank_sort_order
-FROM rankupdate ru
 FROM taxa_taxon_lists ttl
 JOIN taxa_taxon_lists ttlpref ON ttlpref.taxon_meaning_id=ttl.taxon_meaning_id
   AND ttlpref.preferred=true
@@ -142,7 +141,7 @@ LEFT JOIN rankupdate ru ON ru.child_id=ttlpref.id
 WHERE ttl.id=u.taxa_taxon_list_id
 AND coalesce(u.taxon_rank_sort_order, 0)<>COALESCE(ru.taxon_rank_sort_order, 0);
 
-UPDATE cache_occurrences_nonfunctional u
+UPDATE cache_occurrences_functional u
 SET taxon_rank_sort_order=ru.taxon_rank_sort_order
 FROM occurrences o
 JOIN taxa_taxon_lists ttl ON ttl.id=o.taxa_taxon_list_id
