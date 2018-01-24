@@ -66,13 +66,13 @@ UPDATE taxon_associations ta
 SET from_taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
 WHERE nc.old_taxon_meaning_id=ta.from_taxon_meaning_id
-AND tc.from_taxon_meaning_id<>nc.new_taxon_meaning_id;
+AND ta.from_taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 UPDATE taxon_associations ta
 SET to_taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
 WHERE nc.old_taxon_meaning_id=ta.to_taxon_meaning_id
-AND tc.to_taxon_meaning_id<>nc.new_taxon_meaning_id;
+AND ta.to_taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 -- For tables that are linked to a taxa taxon list ID we can use that to get
 -- the updated taxon meaning ID.
