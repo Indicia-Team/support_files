@@ -45,29 +45,34 @@ FROM uksi.prepared_taxa_taxon_lists ttl1
 JOIN uksi.prepared_taxa_taxon_lists ttl2
   ON ttl2.taxon_meaning_id=ttl1.taxon_meaning_id
   AND ttl2.preferred=true
-WHERE ttl1.orig_preferred=true;
+WHERE ttl1.orig_preferred=true
+AND (ttl1.id<>ttl2.id OR ttl1.orig_taxon_meaning_id<>ttl2.taxon_meaning_id);
 
 -- Where there are related tables that link by taxon meaning ID, we need to
 -- map them to the new preferred names.
 UPDATE taxon_codes tc
 SET taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
-WHERE nc.old_taxon_meaning_id=tc.taxon_meaning_id;
+WHERE nc.old_taxon_meaning_id=tc.taxon_meaning_id
+AND tc.taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 UPDATE species_alerts sa
 SET taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
-WHERE nc.old_taxon_meaning_id=sa.taxon_meaning_id;
+WHERE nc.old_taxon_meaning_id=sa.taxon_meaning_id
+AND sa.taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 UPDATE taxon_associations ta
 SET from_taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
-WHERE nc.old_taxon_meaning_id=ta.from_taxon_meaning_id;
+WHERE nc.old_taxon_meaning_id=ta.from_taxon_meaning_id
+AND tc.from_taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 UPDATE taxon_associations ta
 SET to_taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
-WHERE nc.old_taxon_meaning_id=ta.to_taxon_meaning_id;
+WHERE nc.old_taxon_meaning_id=ta.to_taxon_meaning_id
+AND tc.to_taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 -- For tables that are linked to a taxa taxon list ID we can use that to get
 -- the updated taxon meaning ID.
