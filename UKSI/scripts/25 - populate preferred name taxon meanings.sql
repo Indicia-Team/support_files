@@ -19,6 +19,7 @@ SELECT taxon_meaning_id FROM new_taxon_meanings;
 
 -- And attach them to the new preferred names which need them.
 UPDATE uksi.prepared_taxa_taxon_lists pttl
-SET taxon_meaning_id=ntm.taxon_meaning_id
+SET taxon_meaning_id=ntm.taxon_meaning_id,
+  changed=true
 FROM new_taxon_meanings ntm
 WHERE ntm.taxa_taxon_list_id=pttl.id;
