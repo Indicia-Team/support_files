@@ -4,7 +4,7 @@ SET search_path=indicia, public;
 INSERT INTO uksi.changed_taxa_taxon_list_ids(
   SELECT ttl.id
   FROM taxa_taxon_lists ttl
-  JOIN taxa_taxon_lists ttlpref ON ttlpref.gitttl.taxon_meaning_id
+  JOIN taxa_taxon_lists ttlpref ON ttlpref.taxon_meaning_id=ttl.taxon_meaning_id
     AND ttlpref.taxon_list_id=ttl.taxon_list_id
     AND ttlpref.preferred=true
   JOIN uksi.changed_taxa_taxon_list_ids ttlchanged ON ttlchanged.id=ttlpref.id
