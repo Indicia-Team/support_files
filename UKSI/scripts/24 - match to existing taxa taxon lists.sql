@@ -33,8 +33,8 @@ AND t.deleted=false;
 UPDATE uksi.prepared_taxa_taxon_lists to_update
 SET changed=true
 FROM uksi.prepared_taxa_taxon_lists to_keep
-WHERE to_keep.taxon_meaning_id=to_clear.taxon_meaning_id
-AND to_keep.recommended_taxon_version_key <> to_clear.recommended_taxon_version_key;
+WHERE to_keep.taxon_meaning_id=to_update.taxon_meaning_id
+AND to_keep.recommended_taxon_version_key <> to_update.recommended_taxon_version_key;
 
 -- Now clear out the unwanted meaning IDs.
 UPDATE uksi.prepared_taxa_taxon_lists to_clear
