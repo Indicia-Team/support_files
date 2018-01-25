@@ -46,8 +46,8 @@ WITH RECURSIVE q AS (
   FROM q
   JOIN taxa_taxon_lists ttl ON ttl.id=q.parent_id AND ttl.deleted=false
   JOIN taxa t ON t.id=ttl.taxon_id AND t.deleted=false AND t.deleted=false
-  JOIN taxa tpref ON tpref.search_code=t.external_key
-  JOIN taxa_taxon_lists ttlpref ON ttlpref.external_key=t.external_key
+  JOIN taxa tpref ON tpref.search_code=t.external_key and tpref.deleted=false
+  JOIN taxa_taxon_lists ttlpref ON ttlpref.taxon_id=t.id and ttlpref.deleted=false
     AND ttlpref.taxon_list_id=(SELECT uksi_taxon_list_id FROM uksi.uksi_settings)
     AND ttlpref.preferred=true AND ttlpref.allow_data_entry=true
   JOIN taxon_ranks tr ON tr.id=t.taxon_rank_id AND tr.deleted=false AND tr.deleted=false
