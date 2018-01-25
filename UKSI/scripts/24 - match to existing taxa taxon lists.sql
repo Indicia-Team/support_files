@@ -28,6 +28,15 @@ AND t.deleted=false;
 -- across names which are pointing to different concepts do end up with different taxon meanings IDs. This particularly
 -- applies to the agrigultural breed names. So, we clear all but the last taxon meaning ID in groups of names which
 -- share the meaning ID but not the recommended TVK. Any cleared will get a new one in a moment.
+
+-- First, all names in all affected groups are going to potentially need a cache refresh
+UPDATE uksi.prepared_taxa_taxon_lists to_update
+SET changed=true
+FROM uksi.prepared_taxa_taxon_lists to_keep
+WHERE to_keep.taxon_meaning_id=to_clear.taxon_meaning_id
+AND to_keep.recommended_taxon_version_key <> to_clear.recommended_taxon_version_key;
+
+-- Now clear out the unwanted meaning IDs.
 UPDATE uksi.prepared_taxa_taxon_lists to_clear
 SET taxon_meaning_id=NULL,
   changed=true
