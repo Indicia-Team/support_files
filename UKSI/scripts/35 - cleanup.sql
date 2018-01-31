@@ -106,4 +106,16 @@ DELETE FROM taxon_meanings WHERE id IN (
   WHERE ttl.id IS NULL
 );
 
+-- Verification rules may also link by TVKs which are no-longer preferred.
+UPDATE verification_rule_metadata vrm
+SET value=t.external_key
+FROM taxa t
+JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id
+  AND ttl.taxon_list_id=(select uksi_taxon_list_id from uksi.uksi_settings)
+  AND ttl.deleted=false AND ttl.allow_data_entry=true
+WHERE vrm.key ilike 'Tvk'
+AND t.search_code=vrm.value
+AND t.external_key<>vrm.value
+AND t.deleted=false;
+
 
