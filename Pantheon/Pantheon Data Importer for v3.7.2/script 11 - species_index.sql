@@ -63,7 +63,10 @@ left join cache_termlists_terms isissatcode on isissatcode.meaning_id=t_sat.mean
 left join taxa_taxon_list_attribute_values av_r on av_r.taxa_taxon_list_id=ttl.id and av_r.deleted=false
 and av_r.taxa_taxon_list_attribute_id=17
 left join cache_termlists_terms t_r on t_r.id=av_r.int_value
-left join cache_termlists_terms t_r_child on t_r_child.parent_id=t_r.id
+left join (cache_termlists_terms t_r_child 
+  join taxa_taxon_list_attribute_values av_r_child on av_r_child.deleted=false
+  and av_r_child.int_value=t_r_child.id
+) on t_r_child.parent_id=t_r.id and av_r_child.taxa_taxon_list_id=ttl.id
 left join cache_termlists_terms t_r_parent on t_r_parent.id=t_r.parent_id
 left join cache_termlists_terms t_r_grandparent on t_r_grandparent.id=t_r_parent.parent_id
 left join taxa_taxon_list_attribute_values lguildv on lguildv.taxa_taxon_list_id=ttl.id and lguildv.deleted=false
