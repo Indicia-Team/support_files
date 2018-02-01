@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS pantheon.species_index;
 
-select cttl.preferred_taxon as "species",
+select cttl.preferred_taxa_taxon_list_id, 
+cttl.preferred_taxon as "species",
 cttl.family_taxon as "family",
 cttl.order_taxon as "order",
 rscv.int_value as "rarity_score",
@@ -85,6 +86,6 @@ left join cache_taxa_taxon_lists cttlto on cttlto.taxon_meaning_id=ta.to_taxon_m
 where cttl.preferred=true
 AND (av_bb.id is not null or av_sb.id is not null or av_r.id is not null or av_sat.id is not null
         or lguildv.id is not null or aguildv.id is not null or horusv.id is not null or rscv.id is not null)
-GROUP BY cttl.preferred_taxon, cttl.family_taxon, cttl.order_taxon, rscv.int_value, cttl.taxon_meaning_id, cttl.taxon_list_id;
+GROUP BY cttl.preferred_taxa_taxon_list_id, cttl.preferred_taxon, cttl.family_taxon, cttl.order_taxon, rscv.int_value, cttl.taxon_meaning_id, cttl.taxon_list_id;
 
 GRANT SELECT ON pantheon.species_index TO indicia_report_user;
