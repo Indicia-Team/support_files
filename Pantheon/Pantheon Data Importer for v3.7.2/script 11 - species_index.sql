@@ -43,6 +43,11 @@ from cache_taxa_taxon_lists cttl
 join taxa_taxon_lists ttl on ttl.id=cttl.preferred_taxa_taxon_list_id
 left join (taxa_taxon_designations ttd
   join taxon_designations td on td.id=ttd.taxon_designation_id and td.deleted=false
+    join cache_termlists_terms cat on cat.id=td.category_id and (
+       (cat.term='GB Red List' and coalesce(td.code, td.abbreviation) not in ('LC', 'NA', 'pLC', 'pNA', 'NE'))
+    or (cat.term='GB Status' and coalesce(td.code, td.abbreviation) not in ('None', 'Not reviewed', 'Not native'))
+    or (cat.term not in ('GB Red List', 'GB Status'))
+  )
 ) on ttd.taxon_id=ttl.taxon_id and ttd.deleted=false
 left join taxa_taxon_list_attribute_values av_bb on av_bb.taxa_taxon_list_id=ttl.id and av_bb.deleted=false
 and av_bb.taxa_taxon_list_attribute_id=15
@@ -83,5 +88,3 @@ AND (av_bb.id is not null or av_sb.id is not null or av_r.id is not null or av_s
 GROUP BY cttl.preferred_taxon, cttl.family_taxon, cttl.order_taxon, rscv.int_value, cttl.taxon_meaning_id, cttl.taxon_list_id;
 
 GRANT SELECT ON pantheon.species_index TO indicia_report_user;
-
-select * from pantheon.species_index
