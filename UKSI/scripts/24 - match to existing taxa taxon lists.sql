@@ -20,7 +20,6 @@ JOIN taxa_taxon_lists ttl
   ON ttl.taxon_id=t.id
   AND ttl.taxon_list_id=(SELECT uksi_taxon_list_id FROM uksi.uksi_settings)
   AND ttl.deleted=false
-  AND ttl.allow_data_entry=true
 WHERE t.search_code=pttl.input_taxon_version_key
 AND t.deleted=false;
 
