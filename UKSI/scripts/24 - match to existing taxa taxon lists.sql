@@ -14,7 +14,8 @@ SET id=ttl.id,
   orig_preferred=ttl.preferred,
   orig_taxon_meaning_id=ttl.taxon_meaning_id,
   orig_parent_id=ttl.parent_id,
-  orig_common_taxon_id=ttl.common_taxon_id
+  orig_common_taxon_id=ttl.common_taxon_id,
+  changed=changed OR allow_data_entry=false
 FROM taxa t
 JOIN taxa_taxon_lists ttl
   ON ttl.taxon_id=t.id
