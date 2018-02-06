@@ -28,15 +28,23 @@ function allocate_square_to_user(features) {
     alert('The page has not been setup correctly. Please contact an administrator (the supply_indicia_data_to_map_square_allocator extension is not setup correctly).');
     return false;
   }
-  if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
-    var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
-  }
-  //Only perform if user confirms.
-  if (r == true) {
-    var locationId, userId;
-    locationId = features[0].attributes.id;    
-    userId = indiciaData.indiciaUserId;
-    duplicateCheck(locationId,userId,features);
+  if (features.length<2) {
+    if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
+      var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
+    }
+    //Only perform if user confirms.
+    if (r == true) {
+      var locationId, userId;
+      locationId = features[0].attributes.id;    
+      userId = indiciaData.indiciaUserId;
+      duplicateCheck(locationId,userId,features);
+    }
+  } else {
+    alert("You are currently zoomed out too far to get an accurate reading on the square you have clicked on.\n\
+\n\
+If you use the distance box and Get Squares button, the system will automatically zoom the map (located next to the Return All Squares button above the map).\n\
+\n\
+Alternatively use the zoombar, or click on the navigation crosshair icon in the top-right and then double-click on the map.");    
   }
 }
 
