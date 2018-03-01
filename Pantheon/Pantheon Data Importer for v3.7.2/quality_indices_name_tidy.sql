@@ -10,7 +10,7 @@ insert into score_name_tidy values
 ('coarse woody debris fidelity score', 'coarse woody debris'),
 ('exposed riverine sediments fidelity score (DGHP)', 'ERS (Diptera)'),
 ('exposed riverine sediments fidelity score (B)', 'ERS (Coleoptera)'),
-('revised index of ecology continuity score', 'IEC (Revised)'),
+('revised index of ecology continuity score', 'IEC'),
 ('seepage habitats fidelity score - acid-neutral', 'seepage (acid-neutral)'),
 ('seepage habitats fidelity score - calcareous', 'seepage (calcareous)'),
 ('seepage habitats fidelity score - slumping cliff', 'seepage (soft rock cliff)'),
@@ -18,7 +18,7 @@ insert into score_name_tidy values
 ('seepage habitats fidelity score – woodland', 'seepage (woodland)'),
 ('soft rock cliff fidelity score', 'soft rock cliff'),
 ('spider indicator species for peat bogs', 'peat bog spiders'),
-('index of ecology continuity score', 'IEC (Original)'),
+('index of ecology continuity score', 'IEC (older version)'),
 ('grazing coastal marsh score - species score', 'grazing marsh - status'),
 ('grazing coastal marsh score - salinity score', 'grazing marsh - salinity');
 
