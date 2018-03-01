@@ -232,12 +232,18 @@ HELP;
           echo "  - $queryName (EXTRAS)";
           $startScript = microtime(TRUE);
           $singularTable = preg_replace('/s$/', '', $table);
+          // Ensure that the hierarchical data is fully populated. Easier just
+          // to redo the whole lot rather than scan up and down the hierarchy
+          // to ensure changes are properly applied. So for the ranks query,
+          // remove the needs update join.
+          if ($table === 'taxa_taxon_lists' && $queryName === 'ranks') {
+            $qry = str_replace('JOIN needs_update_taxa_taxon_lists nu ON nu.id=ttl1.id', '', $qry);
+          }
           $qry = str_replace(
             ["needs_update_$table", '#master_list_id#'],
             ["uksi.changed_{$singularTable}_ids", $settings['taxon_list_id']],
             $qry
           );
-
           $result = @pg_query($conn, $qry);
           if ($result === FALSE) {
             echo "\nQuery failed:\n";
