@@ -3,7 +3,7 @@ set search_path TO indicia, public;
 select id 
 into temporary taxa_taxon_list_attributes_removal_rows
 from taxa_taxon_list_attributes
-where id between 158 and 183;
+where id between <minimum id> and <maximum id>;
 
 delete from taxa_taxon_list_attribute_values where taxa_taxon_list_attribute_id in (
   select id from taxa_taxon_list_attributes_removal_rows

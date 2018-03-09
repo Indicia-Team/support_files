@@ -1,4 +1,6 @@
-Data version: 3.3
+Data version: 3.7.2
 
 Further notes:
 - This version of the importer is designed for running on a clean Warehouse.
+
+- A Warehouse clean-out script is provided but it is unknown how reliable this is with different data versions and different warehouses. Use with caution.
