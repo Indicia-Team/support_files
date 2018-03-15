@@ -56,4 +56,6 @@ insert into pantheon.isis_thresholds values
 ('M211', 7),
 ('M3', 200),
 ('M311', 9),
-('M312', 2)
+('M312', 2);
+
+GRANT SELECT ON pantheon.isis_thresholds TO indicia_report_user;
