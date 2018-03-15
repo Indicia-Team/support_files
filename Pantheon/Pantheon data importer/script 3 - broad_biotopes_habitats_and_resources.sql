@@ -181,9 +181,6 @@ END
 $do$;
 
 
-
-
-
 --Broad biotopes, habitats and traits need this bit after the import unlike other traits because there are multiple terms with same description, therefore we need to use trait id and parent trait for comparison also
 -- Reset the term names, as they have all been given names of format "<trait_id> <term> <parent_trait_id>". Remove the trait and parent trait IDs.
 update terms
@@ -197,4 +194,9 @@ from termlists_terms tt
 join termlists tl on tl.id = tt.termlist_id AND tl.title = 'broad biotope/habitat/resource' AND tl.deleted=false
 join websites w on w.id = tl.website_id AND w.title='Pantheon' and w.deleted=false
 where tt.deleted=false and tt.deleted=false
-);
+)
+--If the istruction has already been processed then the terms will match the trait description (rather than
+--being <trait_id> <term> <parent_trait_id>). So we only what to process the hierarchy when this isn't the case.
+AND term not in 
+(select trait_description 
+from pantheon.tbl_traits);

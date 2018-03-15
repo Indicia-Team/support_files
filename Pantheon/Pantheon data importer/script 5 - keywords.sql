@@ -13,9 +13,7 @@ from pantheon.tbl_species_traits pst
 join pantheon.tbl_species ps on ps.species_id=pst.species_id
 join indicia.taxa it on it.external_key=ps.preferred_tvk AND it.deleted=false
 join indicia.taxa_taxon_lists ittl on ittl.taxon_id=it.id AND ittl.taxon_list_id=<pantheon_taxon_list_id> AND ittl.preferred=true AND ittl.deleted=false
-join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND pt.trait_description in 
-('extinct','parasite','synanthropic','ubiquitous','unknown','vagrant/introduced','in buildings','compost/manure heaps','flour mills/bone works','museum collections','wood products'
-,'stored food products','bats','birds','all habitats','animal/plant remains')
+join pantheon.tbl_traits pt on pt.trait_id=pst.trait_id AND trait_type = 'label'
 join indicia.terms iTerm on iTerm.term=pt.trait_description AND iterm.deleted=false
 join indicia.termlists_terms itt on itt.term_id=iTerm.id AND itt.deleted=false
 join termlists itl on itl.id = itt.termlist_id AND itl.title='keywords' AND itl.deleted=false

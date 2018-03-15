@@ -21,7 +21,7 @@ Also treat this output for UTF-8 without BOM as above
 
 -- NOW, import the species
 
-drop schema pantheon cascade;
+drop schema if exists pantheon cascade;
 
 create schema pantheon;
 set search_path TO pantheon, public;
