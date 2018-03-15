@@ -73,16 +73,19 @@ CONSTRAINT fk_tbl_species_traits_trait_id FOREIGN KEY (trait_id)
 COPY tbl_traits
 FROM <csv_traits_file_path>
 WITH DELIMITER ','
+ENCODING 'ISO-8859-1'
 CSV HEADER;
 
 COPY tbl_species
 FROM <csv_species_file_path>
 WITH DELIMITER ','
+ENCODING 'ISO-8859-1'
 CSV HEADER;
 
 COPY tbl_species_traits
 FROM <csv_species_traits_file_path>
 WITH DELIMITER ','
+ENCODING 'ISO-8859-1'
 CSV HEADER;
 
 
