@@ -44,4 +44,6 @@ insert into pantheon.score_details(category, key, value) values
 ('grazing marsh - salinity', '1', 'Species tolerant of mildly brackish conditions'),
 ('grazing marsh - salinity', '2', 'Species that are obligately dependent upon mild to moderately brackish conditions'),
 ('ERS (Coleoptera)', '1', 'ERS dependent'),
-('ERS (Coleoptera)', '2', 'ERS associated')
+('ERS (Coleoptera)', '2', 'ERS associated');
+
+GRANT SELECT ON pantheon.score_details TO indicia_report_user;
