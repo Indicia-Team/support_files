@@ -21,10 +21,12 @@ Also treat this output for UTF-8 without BOM as above
 
 -- NOW, import the species
 
-drop schema if exists pantheon cascade;
-
-create schema pantheon;
+create schema if not exists pantheon;
 set search_path TO pantheon, public;
+
+DROP TABLE IF EXISTS tbl_species;
+DROP TABLE IF EXISTS tbl_traits;
+DROP TABLE IF EXISTS tbl_species_traits;
 
 CREATE TABLE tbl_species (
 species_id integer, -- JVB Added to first col, made integer as it is to pick up actual value not create them serially
