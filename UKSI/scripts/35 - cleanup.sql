@@ -113,9 +113,18 @@ FROM taxa t
 JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id
   AND ttl.taxon_list_id=(select uksi_taxon_list_id from uksi.uksi_settings)
   AND ttl.deleted=false AND ttl.allow_data_entry=true
-WHERE vrm.key ilike 'Tvk'
+WHERE (vrm.key ilike 'Tvk' OR vrm.key ilike 'DataRecordId')
 AND t.search_code=vrm.value
 AND t.external_key<>vrm.value
+AND t.deleted=false;
+
+UPDATE verification_rule_data vrd
+SET key=t.external_key
+FROM taxa t
+JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.taxon_list_id=15 AND ttl.deleted=false
+WHERE vrd.header_name ilike 'Data'
+AND t.search_code=vrd.key
+AND t.external_key<>t.search_code
 AND t.deleted=false;
 
 
