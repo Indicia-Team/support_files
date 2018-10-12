@@ -24,7 +24,9 @@ install the following components:
 * Kibana
 
 The Elasticsearch documentation online describes installation in various
-scenarios so only brief notes are provided below.
+scenarios so only brief notes are provided below covering 2 scenarios,
+installing on Windows 10 using Elastic's zip downloads and installing on a Mac
+using the Homebrew package manager (https://brew.sh).
 
 ### Install Java
 
@@ -168,6 +170,7 @@ PUT occurrence
     }
   }
 }
+```
 
 Note that we store both a centre point and geometry (e.g. a grid square) for
 each record. This is because many of the tools provided with Elasticsearch and
@@ -176,17 +179,27 @@ visualisation.
 
 ## Set up the data pipeline
 
-```
 ### Logstash configuration
 
 Logstash acts as a data conduit. We’ll use it to pipe data arriving in Indicia into an Elastic Search index.
 
 #### Grab the files from Git
 
-Download the support files repository (or clone it) from Git. You need just the
-Elasticsearch folder which we will refer to as our working folder from now on.
+Download the support files repository (or clone it) from Git. To do this open
+a command prompt/terminal window in a temporary location then:
+
+```shell
+$ git clone https://github.com/Indicia-Team/support_files.git
+```
+
+You need just the Elasticsearch folder which we will refer to as our working
+folder from now on.
 
 #### Prepare the lookups for taxon data
+
+Normally it will be acceptable to use the taxa.csv and taxon-paths.csv files
+provided in the repository. Use the following instructions to regenerate them
+if there are taxonomic changes that need to be applied to your imports.
 
 Rather than expect all data sources to provide all the taxonomic information
 related to a record in a single consistent format, we will use the UKSI dataset
@@ -212,7 +225,7 @@ To update the taxa.csv file with a fresh copy of the data:
 * On the options dialog, uncheck the Column names option. Set the output file
   to Elasticsearch/data/taxa.csv in the working folder.
 
-To update the taxa.csv file with a fresh copy of the data:
+To update the taxon-paths.csv file with a fresh copy of the data:
 
 * Open the queries/prepare-taxon-paths-lookup.sql file in pgAdmin, connecting
   to an Indicia database that has the UKSI dataset loaded.
@@ -252,6 +265,8 @@ Search and replace the following values:
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
 
+Copy the resulting *.conf file to your logstash/bin folder.
+
 #### Prepare the Logstash configuration file (RESTful access)
 
 This approach uses the Indicia RESTful API to access the records. To do this,
@@ -282,18 +297,20 @@ Search and replace the following values:
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
 
+Copy the resulting *.conf file to your logstash/bin folder.
+
 ### Running Logstash to import the data
 
-Run logstash as follows:
+Run logstash as follows, replacing <filename> with your config file:
 
 #### Windows
 
 ```shell
-$ d:\elastic\logstash\bin\logstash
+$ d:\elastic\logstash\bin\logstash -f <filename>
 ```
 
 #### Mac
 
 ```shell
-$ logstash
+$ logstash -f <filename>
 ```

@@ -11,6 +11,8 @@ input {
         query => {
           proj_id => "{{ Project ID }}"
           from_update_date => "1900-01-01"
+          # This enables tracking of downloaded records on the server-side since the
+          # http_poller input plugin has no logic for importing changes.
           autofeed => 't'
         }
       }
@@ -76,9 +78,9 @@ filter {
   }
   mutate {
     rename => {
-      "point_x" => "point[lon]"
-      "point_y" => "point[lat]"
-      "taxon_key" => "taxon[key]"
+      "point_x" => "[point][lon]"
+      "point_y" => "[point][lat]"
+      "taxon_key" => "[taxon][key]"
       "accepted_taxon_key" => "[taxon][accepted_key]"
       "taxon_name" => "[taxon][name]"
       "authority" => "[taxon][authority]"

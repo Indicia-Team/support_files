@@ -128,9 +128,9 @@ filter {
   }
   mutate {
     rename => {
-      "point_x" => "point[lon]"
-      "point_y" => "point[lat]"
-      "taxon_key" => "taxon[key]"
+      "point_x" => "[point][lon]"
+      "point_y" => "[point][lat]"
+      "taxon_key" => "[taxon][key]"
       "accepted_taxon_key" => "[taxon][accepted_key]"
       "taxon_name" => "[taxon][name]"
       "authority" => "[taxon][authority]"
@@ -179,5 +179,5 @@ output {
     document_id => "{{ Indicia warehouse unique name }}|%{id}"
   }
   # Uncomment the following to see the data output to the terminal.
-  stdout { codec => json }
+  # stdout { codec => json }
 }
