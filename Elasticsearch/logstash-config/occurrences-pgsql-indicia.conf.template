@@ -1,0 +1,183 @@
+input {
+    jdbc {
+        # Postgres jdbc connection string to our database, mydb
+        jdbc_connection_string => "jdbc:postgresql://{{ DB path }}"
+        # The user we wish to execute our statement as
+        jdbc_user => "{{ DB user }}"
+        jdbc_password => "{{ DB password }}"
+        # The path to our downloaded jdbc driver
+        jdbc_driver_library => "{{ JDBC jar file path }}"
+        # The name of the driver class for Postgresql
+        jdbc_driver_class => "org.postgresql.Driver"
+        # Uncomment the following to rebuild from scratch
+        # clean_run => true
+        # our query
+        statement => "
+        select o.id,
+          o.created_by_id,
+          o.survey_id,
+          o.website_id,
+          o.group_id,
+          snf.website_title,
+          snf.survey_title,
+          snf.group_title,
+          snf.recorders,
+          o.taxa_taxon_list_external_key as taxon_key,
+          o.date_start,
+          o.date_end,
+          case date_type when 'D' then extract(doy from date_start) else null end as day_of_year,
+          case
+            when coalesce(date_part('year', date_start), 0)=coalesce(date_part('year', date_end), 0)
+              and coalesce(floor(extract(doy from date_start)/7+1), 0)=coalesce(floor(extract(doy from date_end)/7+1), 0) then coalesce(floor(extract(doy from date_start)/7+1), 0)
+            else null
+          end as week_of_year,
+          case
+            when coalesce(date_part('year', date_start), 0)=coalesce(date_part('year', date_end), 0)
+              and coalesce(date_part('month', date_start), 0)=coalesce(date_part('month', date_end), 0) then coalesce(date_part('month', date_start), 0)
+            else null
+          end as month_of_year,
+          st_astext(st_transform(o.public_geom, 4326)) as geom,
+          st_x(st_transform(st_centroid(o.public_geom), 4326)) as point_x,
+          st_y(st_transform(st_centroid(o.public_geom), 4326)) as point_y,
+          onf.output_sref,
+          onf.output_sref_system,
+          o.location_name,
+          o.record_status,
+          o.record_substatus,
+          o.query,
+          o.sensitive,
+          onf.data_cleaner_info,
+          onf.comment,
+          snf.comment as sample_comment,
+          onf.licence_code,
+          onf.attr_sex_stage,
+          onf.attr_stage,
+          onf.attr_sex,
+          onf.attr_sex_stage_count,
+          onf.attr_certainty,
+          coalesce(onf.attr_det_full_name, coalesce(onf.attr_det_first_name, '') || ' ' || onf.attr_det_last_name) as attr_det_name,
+          snf.attr_biotope,
+          snf.attr_sample_method,
+          snf.media,
+          greatest(o.updated_on, cttl.cache_updated_on) as updated_on
+        from cache_occurrences_functional o
+        join cache_occurrences_nonfunctional onf on onf.id=o.id
+        join cache_samples_nonfunctional snf on snf.id=o.sample_id
+        join cache_taxa_taxon_lists cttl on cttl.id=o.taxa_taxon_list_id
+        where o.updated_on > :sql_last_value
+        and o.training=false
+        and o.confidential=false
+        and o.zero_abundance=false"
+        tracking_column => "updated_on"
+        tracking_column_type => "timestamp"
+    }
+}
+filter {
+  # Lookup taxon information from our CSV File and store in the
+  # taxon_data_csv field. Translation can only read one field from the
+  # CSV so we store all the data in a single field separated by ~.
+  translate {
+    dictionary_path => "{{ Working folder path }}/data/taxa.csv"
+    field => "taxon_key"
+    destination => "taxon_data_csv"
+  }
+  # Split all the taxon data csv field content into separate fields.
+  csv {
+    source => "taxon_data_csv"
+    separator => "~"
+    skip_empty_columns => true
+    columns => [
+      "accepted_taxon_key",
+      "taxon_name",
+      "authority",
+      "taxon_group",
+      "common_name",
+      "taxon_rank",
+      "taxon_rank_sort_order",
+      "marine_flag",
+      "taxon_kingdom",
+      "taxon_kingdom_key",
+      "taxon_phylum",
+      "taxon_phylum_key",
+      "taxon_class",
+      "taxon_class_key",
+      "taxon_order",
+      "taxon_order_key",
+      "taxon_family",
+      "taxon_family_key",
+      "taxon_subfamily",
+      "taxon_subfamily_key",
+      "taxon_genus",
+      "taxon_genus_key"
+    ]
+    remove_field => "taxon_data_csv"
+  }
+  translate {
+    dictionary_path => "{{ Working folder path }}/data/taxon-paths.csv"
+    field => "taxon_key"
+    destination => "taxon_path_keys"
+  }
+  mutate {
+    convert => {
+      "geom" => "geo_shape"
+      "point" => "geo_point"
+    }
+    split => {
+      "taxon_path_keys" => ","
+    }
+  }
+  mutate {
+    rename => {
+      "point_x" => "point[lon]"
+      "point_y" => "point[lat]"
+      "taxon_key" => "taxon[key]"
+      "accepted_taxon_key" => "[taxon][accepted_key]"
+      "taxon_name" => "[taxon][name]"
+      "authority" => "[taxon][authority]"
+      "taxon_group" => "[taxon][group]"
+      "common_name" => "[taxon][common_name]"
+      "taxon_rank" => "[taxon][rank]"
+      "taxon_rank_sort_order" => "[taxon][rank_sort_order]"
+      "marine_flag" => "[taxon][marine]"
+      "taxon_kingdom" => "[taxon][kingdom][name]"
+      "taxon_kingdom_key" => "[taxon][kingdom][key]"
+      "taxon_phylum" => "[taxon][phylum][name]"
+      "taxon_phylum_key" => "[taxon][phylum][key]"
+      "taxon_class" => "[taxon][class][name]"
+      "taxon_class_key" => "[taxon][class][key]"
+      "taxon_order" => "[taxon][order][name]"
+      "taxon_order_key" => "[taxon][order][key]"
+      "taxon_family" => "[taxon][family][name]"
+      "taxon_family_key" => "[taxon][family][key]"
+      "taxon_subfamily" => "[taxon][subfamily][name]"
+      "taxon_subfamily_key" => "[taxon][subfamily][key]"
+      "taxon_genus" => "[taxon][genus][name]"
+      "taxon_genus_key" => "[taxon][genus][key]"
+      "taxon_path_keys" => "[taxon][path_keys]"
+      "comment" => "[comments][record_comment]"
+      "sample_comment" => "[comments][sample_comment]"
+      "attr_sex" => "[record_attributes][sex]"
+      "attr_stage" => "[record_attributes][stage]"
+      "attr_sex_stage" => "[record_attributes][sex_stage]"
+      "attr_sex_stage_count" => "[record_attributes][sex_stage_count]"
+      "attr_certainty" => "[record_attributes][recorder_certainty]"
+      "attr_det_name" => "[record_attributes][determiner_name]"
+      "attr_biotope" => "[sample_attributes][biotope]"
+      "attr_sample_method" => "[sample_attributes][method]"
+    }
+  }
+  ruby {
+    # Script to clean up nulls and empty values.
+    path => "{{ Working folder path }}/logstash-rb/compact_event.rb"
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["{{ Elasticsearch address }}"]
+    index => "occurrence"
+    # Our records need a unique ID in the index for updates.
+    document_id => "{{ Indicia warehouse unique name }}|%{id}"
+  }
+  # Uncomment the following to see the data output to the terminal.
+  stdout { codec => json }
+}
