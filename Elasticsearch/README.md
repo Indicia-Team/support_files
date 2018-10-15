@@ -301,16 +301,18 @@ Copy the resulting *.conf file to your logstash/bin folder.
 
 ### Running Logstash to import the data
 
-Run logstash as follows, replacing <filename> with your config file:
+Because the configuration file contains a cron schedule, Logstash will run the
+pipeline every minute. To initiate this run the following command from the
+terminal/command prompt:
 
 #### Windows
 
 ```shell
-$ d:\elastic\logstash\bin\logstash -f <filename>
+$ d:\elastic\logstash\bin\logstash -f occurrences-http-indicia.conf
 ```
 
 #### Mac
 
 ```shell
-$ logstash -f <filename>
+$ logstash -f occurrences-http-indicia.conf
 ```
