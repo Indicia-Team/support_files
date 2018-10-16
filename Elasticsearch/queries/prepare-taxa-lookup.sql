@@ -1,18 +1,19 @@
-select t.search_code as key,
+select distinct t.search_code as key,
   cttl.external_key || '~' || cttl.preferred_taxon || '~' || coalesce(cttl.preferred_authority, '') || '~' || cttl.taxon_group
-  || '~' || coalesce(cttl.default_common_name, '') || '~' ||  coalesce(cttl.taxon_rank, '') || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
+  || '~"' || coalesce(replace(cttl.default_common_name, '"', '""'), '') || '"~' ||  coalesce(cttl.taxon_rank, '') || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
   || '~' || cttl.marine_flag::text
-  || '~' || coalesce(tkingdom.taxon, '') || '~' || coalesce(tkingdom.external_key, '')
-  || '~' || coalesce(tphylum.taxon, '') || '~' || coalesce(tphylum.external_key, '')
-  || '~' || coalesce(tclass.taxon, '') || '~' || coalesce(tclass.external_key, '')
-  || '~' || coalesce(torder.taxon, '') || '~' || coalesce(torder.external_key, '')
-  || '~' || coalesce(tfamily.taxon, '') || '~' || coalesce(tfamily.external_key, '')
-  || '~' || coalesce(tsubfamily.taxon, '') || '~' || coalesce(tsubfamily.external_key, '')
-  || '~' || coalesce(tgenus.taxon, '') || '~' || coalesce(tgenus.external_key, '')
+  || '~' || coalesce(replace(tkingdom.taxon, '"', '""'), '') || '~' || coalesce(tkingdom.external_key, '')
+  || '~' || coalesce(replace(tphylum.taxon, '"', '""'), '') || '~' || coalesce(tphylum.external_key, '')
+  || '~' || coalesce(replace(tclass.taxon, '"', '""'), '') || '~' || coalesce(tclass.external_key, '')
+  || '~' || coalesce(replace(torder.taxon, '"', '""'), '') || '~' || coalesce(torder.external_key, '')
+  || '~' || coalesce(replace(tfamily.taxon, '"', '""'), '') || '~' || coalesce(tfamily.external_key, '')
+  || '~' || coalesce(replace(tsubfamily.taxon, '"', '""'), '') || '~' || coalesce(tsubfamily.external_key, '')
+  || '~' || coalesce(replace(tgenus.taxon, '"', '""'), '') || '~' || coalesce(tgenus.external_key, '')
+  || '~' || coalesce(replace(tspecies.taxon, '"', '""'), '') || '~' || coalesce(tspecies.external_key, '')
 from cache_taxa_taxon_lists cttl
 join taxa_taxon_lists ttl on ttl.id=cttl.id and ttl.deleted=false
 join taxa t on t.id=ttl.taxon_id and t.deleted=false
-join cache_taxon_paths tp on tp.external_key=cttl.external_key
+join cache_taxon_paths tp on tp.external_key=cttl.external_key and tp.taxon_list_id=<taxon_list_id>
 left join cache_taxa_taxon_lists tkingdom on tkingdom.taxon_meaning_id = ANY(tp.path)
   and tkingdom.taxon_rank='Kingdom' and tkingdom.preferred=true and tkingdom.taxon_list_id=<taxon_list_id>
 left join cache_taxa_taxon_lists tphylum on tphylum.taxon_meaning_id = ANY(tp.path)
@@ -27,5 +28,7 @@ left join cache_taxa_taxon_lists tsubfamily on tsubfamily.taxon_meaning_id = ANY
   and tsubfamily.taxon_rank='Subfamily' and tkingdom.preferred=true and tsubfamily.taxon_list_id=<taxon_list_id>
 left join cache_taxa_taxon_lists tgenus on tgenus.taxon_meaning_id = ANY(tp.path)
   and tgenus.taxon_rank='Genus' and tgenus.preferred=true and tgenus.taxon_list_id=<taxon_list_id>
+left join cache_taxa_taxon_lists tspecies on tspecies.taxon_meaning_id = ANY(tp.path)
+  and tspecies.taxon_rank='Species' and tspecies.preferred=true and tspecies.taxon_list_id=<taxon_list_id>
 where cttl.taxon_list_id=<taxon_list_id>
 and cttl.external_key is not null
