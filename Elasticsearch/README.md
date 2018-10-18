@@ -161,11 +161,14 @@ PUT occurrence
         "website_id": { "type": "integer" },
         "survey_id": { "type": "integer" },
         "group_id": { "type": "integer" },
-        "geom":    { "type": "geo_shape"  },
-        "point":    { "type": "geo_point"  },
-        "day_of_year": { "type": "short" },
-        "week_of_year": { "type": "byte" },
-        "month_of_year": { "type": "byte" }
+        "quality.verified_by_id": { "type": "integer" },
+        "locality.geom":    { "type": "geo_shape" },
+        "locality.point":    { "type": "geo_point" },
+        "date.date_start": { "type": "date" },
+        "date.date_end": { "type": "date" },
+        "date.day_of_year": { "type": "short" },
+        "date.week_of_year": { "type": "byte" },
+        "date.month_of_year": { "type": "byte" }
       }
     }
   }
@@ -221,18 +224,29 @@ To update the taxa.csv file with a fresh copy of the data:
 * Open the queries/prepare-taxa-lookup.sql file in pgAdmin, connecting to an
   Indicia database that has the UKSI dataset loaded.
 * Search and replace <taxon_list_id> with the ID of the UKSI list.
-* Select the “Execute query, write result to file” toolbutton.
-* On the options dialog, uncheck the Column names option. Set the output file
-  to Elasticsearch/data/taxa.csv in the working folder.
+* In pgAdmin 3:
+  * Ensure that your search_path is set to indicia, public, e.g. by running the
+    query below, or ensuring it is your logged in user's default search path:
+    ```
+    set search_path=indicia, public;
+    ```
 
-To update the taxon-paths.csv file with a fresh copy of the data:
+  * Select the “Execute query, write result to file” toolbutton.
+  * On the options dialog, uncheck the Column names option. Set the output file
+    to Elasticsearch/data/taxa.csv in the working folder.
+* In pgAdminn 4:
+  * If indicia, public is not your logged in users default search path, then
+    edit the query to add "indicia." in front of all the table names (use a
+    different prefix if your schema is different).
+  * Click the Download as CSV button. Note that I had problems using this under
+    Internet Explorer with Enhanced Security Configuration enabled so ending up
+    using Chrome instead.
+  * Rename the downloaded file to taxa.csv and replace the file in
+    Elasticsearch/data in your working folder.
 
-* Open the queries/prepare-taxon-paths-lookup.sql file in pgAdmin, connecting
-  to an Indicia database that has the UKSI dataset loaded.
-* Search and replace <taxon_list_id> with the ID of the UKSI list.
-* Select the “Execute query, write result to file” toolbutton.
-* On the options dialog, uncheck the Column names option. Set the output file
-  to Elasticsearch/data/taxon-paths.csv in the working folder.
+To update the taxon-paths.csv file with a fresh copy of the data, repeat the
+steps above for the prepare-taxon-paths.sql file, saving the results as
+taxon-paths.csv.
 
 #### Prepare the Logstash configuration file (JDBC access)
 
@@ -301,16 +315,18 @@ Copy the resulting *.conf file to your logstash/bin folder.
 
 ### Running Logstash to import the data
 
-Run logstash as follows, replacing <filename> with your config file:
+Because the configuration file contains a cron schedule, Logstash will run the
+pipeline every minute. To initiate this run the following command from the
+terminal/command prompt:
 
 #### Windows
 
 ```shell
-$ d:\elastic\logstash\bin\logstash -f <filename>
+$ d:\elastic\logstash\bin\logstash -f occurrences-http-indicia.conf
 ```
 
 #### Mac
 
 ```shell
-$ logstash -f <filename>
+$ logstash -f occurrences-http-indicia.conf
 ```
