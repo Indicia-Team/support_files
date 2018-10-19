@@ -289,10 +289,11 @@ and project ID for the appropriate set of records. Either request this from the
 administrator of your warehouse, or if you are the administrator then the
 information needed is documented at https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html?highlight=rest.
 
-A template is provided for you in your working directory's logstash-config
-folder. Copy the occurrences-http-indicia.conf.template file to a new file called
-occurrences-http-indicia.conf and edit it in your preferred text editor.
-Search and replace the following values:
+Two templates are provided for you in your working directory's logstash-config
+folder, one for record inserts and updates and another for deletions. Copy the occurrences-http-indicia.conf.template file to a new file called
+occurrences-http-indicia.conf. Copy the occurrences-http-indicia-deletions.conf.template
+file to a new file called occurrences-http-indicia-deletions.conf and edit them
+in your preferred text editor. Search and replace the following values:
 
 * {{ Warehouse URL }} - the web address of the warehouse, e.g.
   https://warehouse1.indicia.org.uk.
@@ -311,22 +312,74 @@ Search and replace the following values:
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
 
-Copy the resulting *.conf file to your logstash/bin folder.
+### Configuring your pipelines
 
-### Running Logstash to import the data
-
-Because the configuration file contains a cron schedule, Logstash will run the
-pipeline every minute. To initiate this run the following command from the
-terminal/command prompt:
+You can run logstash from the command line by specifying a config file as a
+parameter, e.g using the following command, replacing <path> with the path to
+your working directory's logstash-config folder .
 
 #### Windows
 
 ```shell
-$ d:\elastic\logstash\bin\logstash -f occurrences-http-indicia.conf
+$ d:\elastic\logstash\bin\logstash -f <path>\occurrences-http-indicia.conf
 ```
 
 #### Mac
 
 ```shell
-$ logstash -f occurrences-http-indicia.conf
+$ logstash -f <path>/occurrences-http-indicia.conf
 ```
+
+Because the configuration files contains a cron schedule, Logstash will run
+the pipeline in each configuration file every minute. Press Ctrl-C to stop it
+from running, which will wait until Logstash is idle before actually stopping.
+
+We need both our configuration files to run permanently in the background, not
+just one or the other, so that all inserts, updates and deletes can be
+syncronised. This can be done by editing the pipelines.yml file in your
+Logstash installation's config folder. This will be d:\elastic\logstash\bin on
+Windows or /usr/local/Cellar/logstash/x.x.x/libexec/config on Mac if following
+these instructions, where x.x.x is the specific version number.
+
+Edit the pipelines.yml file in a text editor. Add the following to the end of
+the file:
+
+```
+- pipeline.id: indicia_records
+  path.config: "<path>/occurrences-http-indicia.config"
+- pipeline.id: indicia_records_deletions
+  path.config: "<path>/occurrences-http-indicia-deletions.config"
+  pipeline.workers: 1
+```
+
+Replace <path> with your working directory's logstash-config folder to make a
+valid path search string then save the pipelines.yml file. Specifying a single
+pipeline worker for the deletions means it won't hog all the cores for the
+deletion pipeline, giving it a slightly lower resource usage than the main
+inserts/updates pipeline. **Note** - the path must use forward slashes rather
+than backslashes as a directory separator (Unxix style) and will need to be on
+the same drive letter as Logstash on Windows. Use a relative path if easier, or
+'/' to denote the root of the drive Logstash is running from.
+
+### Running Logstash to import the data
+
+To initiate Logstahs run the following command from the terminal/command
+prompt:
+
+#### Windows
+
+```shell
+$ d:\elastic\logstash\bin\logstash
+```
+
+#### Mac
+
+```shell
+$ logstash
+```
+
+If all is well, Logstash will prepare itself as a process which will
+continually restart each of the pipelines according to the schedule. Once all
+the records have been transferred the Indicia REST API will switch mode from
+initial population to updates, so rather than sequentially loading batches of
+records by ID it will detect changes using the updated_on field.
