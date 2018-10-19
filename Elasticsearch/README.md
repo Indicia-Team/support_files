@@ -383,3 +383,68 @@ continually restart each of the pipelines according to the schedule. Once all
 the records have been transferred the Indicia REST API will switch mode from
 initial population to updates, so rather than sequentially loading batches of
 records by ID it will detect changes using the updated_on field.
+
+## Using Elasticsearch from within Drupal
+
+Elasticsearch provides a rich and well documented API which allows you to
+extract the data and produce report outputs in a very flexible way. The Kibana
+tool provides an excellent interface for browsing the data but in our opinion
+it is perhaps too flexible and powerful to unleash on end-users. It may be
+better to pre-built queries and appropriate outputs then embedd them in your
+Indicia website.
+
+So far a simple demo of this approach has been created for Drupal 7. You need
+to ensure that you have the latest develop branch of the indicia_features
+repository which contains an Elasticsearch proxy module. This module provides
+a simple layer of authentication and authorisation, mapping requests to simple
+templates describing predefined Elasticsearch queries. This ensures that users
+don't get free and unfettered access to the entire dataset in Elasticsearch.
+
+* Enable the Elasticsearch proxy module.
+* Go to Configuration > IForm > Settings. Enter your Elasticsearch URL (which
+  must be visible from the Drupal server but does not have to be visible from
+  the client), e.g. http://example.com:9200 and save the settings.
+* Visit the URL path on your Drupal site elasticsearch_proxy/user-summary to
+  check it works.
+* Optionally, create an empty Indicia report page (customisable) with no
+  content in the user interface section. Create a node.nid.js file in
+  sites/default/files/indicia/js to declare a script for this page and copy
+  the following content in:
+
+  ```js
+  jQuery(document).ready(function($) {
+    $.ajax({
+    url: '/irecord_dev/elasticsearch_proxy/user-summary',
+    dataType: 'json',
+    success: function(response) {
+
+      function stat(key, type = 'records') {
+        var r = '-';
+        $.each(response.aggregations.records.buckets, function() {
+          if (this.key === key) {
+            r = type === 'records' ? this.doc_count : this.species_count.value;
+          }
+        });
+        return r;
+      }
+
+      var html = '<table style="font-size: 20px">';
+      html += '<thead>';
+      html += '<tr><th></th><th>This year</th><th>Total</th></tr>';
+      html += '</thead>';
+      html += '<tbody>';
+      html += '<tr><th scope="row">Total records</th><td>' + stat('yr') + '</td><td>' + stat('total') + '</td></tr>';
+      html += '<tr><th scope="row">Total species</th><td>' + stat('yr', 'species') + '</td><td>' + stat('total', 'species') + '</td></tr>';
+      html += '<tr><th scope="row">Accepted records</th><td>' + stat('V&yr') + '</td><td>' + stat('V') + '</td></tr>'
+      html += '<tr><th scope="row">Accepted species</th><td>' + stat('V&yr', 'species') + '</td><td>' + stat('V', 'species') + '</td></tr>';;
+      if (stat('verified_by') !== '-') {
+        html += '<tr><th scope="row">Verified by me</th><td>' + stat('verified_by&yr') + '</td><td>' + stat('verified_by') + '</td></tr>';
+      }
+      html += '<tbody>';
+      html += '</table>';
+      $('.node-content').append(html);
+    }
+    });
+
+  });
+  ```
