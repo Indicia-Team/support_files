@@ -448,3 +448,7 @@ don't get free and unfettered access to the entire dataset in Elasticsearch.
 
   });
   ```
+
+  * Save the JS file and reload your Indicia report page. This is just a very
+    simple demo designed to show that the data loading work as well as the
+    performance of a complex aggregation that PostgreSQL would struggle with.
