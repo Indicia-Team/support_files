@@ -1,4 +1,8 @@
 jQuery(document).ready(function($) {
+  //Hide redlist fields as these won't be edited
+  $('#ctrl-wrap-taxAttr-1076').hide();
+  $('#ctrl-wrap-taxAttr-1077').hide();
+
   $('#ctrl-wrap-taxAttr-218').insertBefore('#ctrl-wrap-taxAttr-205');
   $('#ctrl-wrap-taxAttr-861').insertAfter('#ctrl-wrap-taxAttr-218');
   $('#ctrl-wrap-taxAttr-1075').insertAfter('#ctrl-wrap-taxAttr-37');
