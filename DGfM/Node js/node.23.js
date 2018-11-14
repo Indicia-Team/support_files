@@ -3,9 +3,6 @@ jQuery(document).ready(function($) {
   $('#ctrl-wrap-taxAttr-1076').hide();
   $('#ctrl-wrap-taxAttr-1077').hide();
 
-  $('#ctrl-wrap-taxAttr-218').insertBefore('#ctrl-wrap-taxAttr-205');
-  $('#ctrl-wrap-taxAttr-861').insertAfter('#ctrl-wrap-taxAttr-218');
-  $('#ctrl-wrap-taxAttr-1075').insertAfter('#ctrl-wrap-taxAttr-37');
   //Position Journal/book at top of sub-areas
   $('#ctrl-wrap-taxAttr-942').insertBefore('#ctrl-wrap-taxAttr-898');
   $('#ctrl-wrap-taxAttr-945').insertBefore('#ctrl-wrap-taxAttr-901');
@@ -21,34 +18,34 @@ jQuery(document).ready(function($) {
   $('#ctrl-wrap-taxAttr-835').insertAfter('#ctrl-wrap-taxAttr-836');
   
   //Place Length and Width at top of sub-areas for English
-  $('#ctrl-wrap-taxAttr-908').insertAfter("legend:contains('Basidium'),legend:contains('Basidien'),legend:contains('bazidie')");
-  $('#ctrl-wrap-taxAttr-951').insertAfter('#ctrl-wrap-taxAttr-908');
-  $('#ctrl-wrap-taxAttr-369').insertAfter("legend:contains('chlamydospores'),legend:contains('Chlamydosporen'),legend:contains('chlamydospóry')");
-  $('#ctrl-wrap-taxAttr-978').insertAfter('#ctrl-wrap-taxAttr-369');
-  $('#ctrl-wrap-taxAttr-411').insertAfter("legend:contains('cystidioles'),legend:contains('Cystidiolen'),legend:contains('cystidioly')");
-  $('#ctrl-wrap-taxAttr-410').insertAfter('#ctrl-wrap-taxAttr-411');
-  $('#ctrl-wrap-taxAttr-454').insertAfter("legend:contains('gloeocystidium'),legend:contains('Gloeocystiden'),legend:contains('gloeocystidy')");
-  $('#ctrl-wrap-taxAttr-990').insertAfter('#ctrl-wrap-taxAttr-454');
-  $('#ctrl-wrap-taxAttr-477').insertAfter("legend:contains('hairs/setae'),legend:contains('Haare/Setae'),legend:contains('chlupy/sety')");
-  $('#ctrl-wrap-taxAttr-458').insertAfter('#ctrl-wrap-taxAttr-477');
-  $('#ctrl-wrap-taxAttr-1001').insertAfter("legend:contains('hymenial cystidium'),legend:contains('Hymenialzystiden'),legend:contains('hymeniální cystidy')");
-  $('#ctrl-wrap-taxAttr-1000').insertAfter('#ctrl-wrap-taxAttr-1001');
-  $('#ctrl-wrap-taxAttr-1005').insertAfter("legend:contains('lagenocystidia'),legend:contains('Lagenozystiden'),legend:contains('lagenocystidy')");
-  $('#ctrl-wrap-taxAttr-1004').insertAfter('#ctrl-wrap-taxAttr-1005');
-  $('#ctrl-wrap-taxAttr-1011').insertAfter("legend:contains('Lamprocystidia'),legend:contains('Lamprocystiden'),legend:contains('lamprocystidy')");
-  $('#ctrl-wrap-taxAttr-1010').insertAfter('#ctrl-wrap-taxAttr-1011');
-  $('#ctrl-wrap-taxAttr-29').insertAfter("legend:contains('Leptocystidia'),legend:contains('Leptocystiden'),legend:contains('leptocystidy')");
-  $('#ctrl-wrap-taxAttr-1013').insertAfter('#ctrl-wrap-taxAttr-29');
-  $('#ctrl-wrap-taxAttr-1016').insertAfter("legend:contains('lyocystidy'),legend:contains('Lyocystiden'),legend:contains('leptocystidy')");
-  $('#ctrl-wrap-taxAttr-538').insertAfter('#ctrl-wrap-taxAttr-1016');
-  $('#ctrl-wrap-taxAttr-1020').insertAfter("legend:contains('metuloid cystidia'),legend:contains('Metuloide Cystiden'),legend:contains('metuloidní cystidy')");
-  $('#ctrl-wrap-taxAttr-1019').insertAfter('#ctrl-wrap-taxAttr-1020');
-  $('#ctrl-wrap-taxAttr-1042').insertAfter("legend:contains('septocystidia'),legend:contains('Septocystiden'),legend:contains('septocystidy')");
-  $('#ctrl-wrap-taxAttr-1041').insertAfter('#ctrl-wrap-taxAttr-1042');
-  $('#ctrl-wrap-taxAttr-1031').insertAfter("legend:contains('Pleurocystidia'),legend:contains('Pleurocystiden'),legend:contains('pleurocystidy')");
-  $('#ctrl-wrap-taxAttr-1030').insertAfter('#ctrl-wrap-taxAttr-1031');
-  $('#ctrl-wrap-taxAttr-1062').insertAfter("legend:contains('trama cystidia'),legend:contains('Tramacystiden'),legend:contains('tramální cystidy')");
-  $('#ctrl-wrap-taxAttr-1061').insertAfter('#ctrl-wrap-taxAttr-1062');
+  $('#range-wrap-taxAttr-908').insertAfter("legend:contains('Basidium'),legend:contains('Basidien'),legend:contains('bazidie')");
+  $('#range-wrap-taxAttr-951').insertAfter('#range-wrap-taxAttr-908');
+  $('#range-wrap-taxAttr-369').insertAfter("legend:contains('chlamydospores'),legend:contains('Chlamydosporen'),legend:contains('chlamydospóry')");
+  $('#range-wrap-taxAttr-978').insertAfter('#range-wrap-taxAttr-369');
+  $('#range-wrap-taxAttr-411').insertAfter("legend:contains('cystidioles'),legend:contains('Cystidiolen'),legend:contains('cystidioly')");
+  $('#range-wrap-taxAttr-410').insertAfter('#range-wrap-taxAttr-411');
+  $('#range-wrap-taxAttr-454').insertAfter("legend:contains('gloeocystidium'),legend:contains('Gloeocystiden'),legend:contains('gloeocystidy')");
+  $('#range-wrap-taxAttr-990').insertAfter('#range-wrap-taxAttr-454');
+  $('#range-wrap-taxAttr-477').insertAfter("legend:contains('hairs/setae'),legend:contains('Haare/Setae'),legend:contains('chlupy/sety')");
+  $('#range-wrap-taxAttr-458').insertAfter('#range-wrap-taxAttr-477');
+  $('#range-wrap-taxAttr-1001').insertAfter("legend:contains('hymenial cystidium'),legend:contains('Hymenialzystiden'),legend:contains('hymeniální cystidy')");
+  $('#range-wrap-taxAttr-1000').insertAfter('#range-wrap-taxAttr-1001');
+  $('#range-wrap-taxAttr-1005').insertAfter("legend:contains('lagenocystidia'),legend:contains('Lagenozystiden'),legend:contains('lagenocystidy')");
+  $('#range-wrap-taxAttr-1004').insertAfter('#range-wrap-taxAttr-1005');
+  $('#range-wrap-taxAttr-1011').insertAfter("legend:contains('Lamprocystidia'),legend:contains('Lamprocystiden'),legend:contains('lamprocystidy')");
+  $('#range-wrap-taxAttr-1010').insertAfter('#range-wrap-taxAttr-1011');
+  $('#range-wrap-taxAttr-29').insertAfter("legend:contains('Leptocystidia'),legend:contains('Leptocystiden'),legend:contains('leptocystidy')");
+  $('#range-wrap-taxAttr-1013').insertAfter('#range-wrap-taxAttr-29');
+  $('#range-wrap-taxAttr-1016').insertAfter("legend:contains('lyocystidy'),legend:contains('Lyocystiden'),legend:contains('leptocystidy')");
+  $('#range-wrap-taxAttr-538').insertAfter('#range-wrap-taxAttr-1016');
+  $('#range-wrap-taxAttr-1020').insertAfter("legend:contains('metuloid cystidia'),legend:contains('Metuloide Cystiden'),legend:contains('metuloidní cystidy')");
+  $('#range-wrap-taxAttr-1019').insertAfter('#range-wrap-taxAttr-1020');
+  $('#range-wrap-taxAttr-1042').insertAfter("legend:contains('septocystidia'),legend:contains('Septocystiden'),legend:contains('septocystidy')");
+  $('#range-wrap-taxAttr-1041').insertAfter('#range-wrap-taxAttr-1042');
+  $('#range-wrap-taxAttr-1031').insertAfter("legend:contains('Pleurocystidia'),legend:contains('Pleurocystiden'),legend:contains('pleurocystidy')");
+  $('#range-wrap-taxAttr-1030').insertAfter('#range-wrap-taxAttr-1031');
+  $('#range-wrap-taxAttr-1062').insertAfter("legend:contains('trama cystidia'),legend:contains('Tramacystiden'),legend:contains('tramální cystidy')");
+  $('#range-wrap-taxAttr-1061').insertAfter('#range-wrap-taxAttr-1062');
   //$('#ctrl-wrap-taxAttr-999').insertAfter("legend:contains('Trama of cap')");
   //$('#ctrl-wrap-taxAttr-998').insertAfter('#ctrl-wrap-taxAttr-999');
 
