@@ -101,8 +101,19 @@ jQuery(document).ready(function($) {
     type: 'text/css',
     href: spectrumPath + 'spectrum.css'
   }).appendTo('head');
-  jQuery.getScript(spectrumPath + 'spectrum.js', function() {
-    $(selectors.join(',')).spectrum({
+  $.getScript(spectrumPath + 'spectrum.js', function() {
+    $.each($(selectors.join(',')), function() {
+      $(this).hide();
+      var values = $(this).val().split(';');
+      var value1 = values.length > 0 ? values[0] : '';
+      var value2 = values.length > 1 ? values[1] : '';
+      $(this).after(
+        '<br/> ' +
+        '<label>1: <input type="text" class="spectrum-input" value="' + value1 + '" data-for="' + this.id + '" data-idx="1"/></label> ' +
+        '<label>2: <input type="text" class="spectrum-input" value="' + value2 + '" data-for="' + this.id + '" data-idx="2"/></label>'
+      );
+    });
+    $('.spectrum-input').spectrum({
       showPaletteOnly: true,
       showSelectionPalette: true,
       showInput: true,
@@ -125,6 +136,14 @@ jQuery(document).ready(function($) {
           ["#900","#b45f06","#bf9000","#38761d","#134f5c","#0b5394","#351c75","#741b47"],
           ["#600","#783f04","#7f6000","#274e13","#0c343d","#073763","#20124d","#4c1130"]
       ]
+    });
+    $('.spectrum-input').change(function() {
+      var idSafe = $(this).attr('data-for').replace(':', '\\:');
+      var input = $('#' + idSafe);
+      $(input).val(
+        $('input[data-for="' + idSafe + '"][data-idx="1"]').val() + ';' +
+        $('input[data-for="' + idSafe + '"][data-idx="2"]').val()
+      );
     });
   });
 });
