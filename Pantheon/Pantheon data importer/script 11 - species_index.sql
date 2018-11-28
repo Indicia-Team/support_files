@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS pantheon.species_index;
+DROP TABLE IF EXISTS pantheon.species_index2;
 
 select cttl.preferred_taxa_taxon_list_id, 
 cttl.preferred_taxon as "species",
@@ -39,7 +39,7 @@ array_to_string(array_agg(distinct coalesce(horusa.caption || ': ' || coalesce(h
 cttl.taxon_meaning_id as "taxon_meaning_id",
 cttl.taxon_list_id as "taxon_list_id",
 (select string_agg(distinct cttlto.taxon, ', ')             from taxon_associations ta     left join cache_taxa_taxon_lists cttlto on cttlto.taxon_meaning_id=ta.to_taxon_meaning_id       and cttlto.taxon_list_id=cttl.taxon_list_id       and cttlto.preferred=true     where ta.from_taxon_meaning_id=cttl.taxon_meaning_id) as "associations"
-into pantheon.species_index
+into pantheon.species_index2
 from cache_taxa_taxon_lists cttl
 join taxa_taxon_lists ttl on ttl.id=cttl.preferred_taxa_taxon_list_id
 left join (taxa_taxon_designations ttd
@@ -91,4 +91,6 @@ AND (av_bb.id is not null or av_sb.id is not null or av_r.id is not null or av_s
         or lguildv.id is not null or aguildv.id is not null or horusv.id is not null or rscv.id is not null)
 GROUP BY cttl.preferred_taxa_taxon_list_id, cttl.preferred_taxon, cttl.family_taxon, cttl.order_taxon, rscv.int_value, cttl.taxon_meaning_id, cttl.taxon_list_id;
 
+DROP TABLE IF EXISTS pantheon.species_index;
+ALTER TABLE pantheon.species_index2 RENAME TO species_index;
 GRANT SELECT ON pantheon.species_index TO indicia_report_user;
