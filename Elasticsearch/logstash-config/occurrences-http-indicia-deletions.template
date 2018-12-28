@@ -1,0 +1,35 @@
+input {
+  http_poller {
+    urls => {
+      indicia => {
+        method => get
+        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/occurrences/list_occurrence_deletions.xml"
+        headers => {
+          Accept => "application/json"
+          Authorization => "USER:{{ User }}:SECRET:{{ Secret }}"
+        }
+        query => {
+          proj_id => "{{ Project ID }}"
+          from_update_date => "1900-01-01"
+          # This enables tracking of downloaded records on the server-side since the
+          # http_poller input plugin has no logic for importing changes.
+          autofeed => "t"
+        }
+      }
+    }
+    request_timeout => 400
+    schedule => { cron => "*/15 * * * * UTC"}
+    codec => "json"
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["{{ Elasticsearch address }}"]
+    index => "occurrence"
+    # Our records need a unique ID in the index for deletions.
+    document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    action => "delete"
+  }
+  # Uncomment the following to see the data output to the terminal.
+  # stdout { codec => json }
+}
