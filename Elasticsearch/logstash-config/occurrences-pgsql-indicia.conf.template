@@ -126,6 +126,31 @@ filter {
     }
   }
   mutate {
+    split => {
+      "indexed_location_ids" => ","
+    }
+  }
+  translate {
+    dictionary_path => "/Users/john/Documents/Git repos/indicia_support_files/Elasticsearch/data/locations.yml"
+    field => "indexed_location_ids"
+    iterate_on => "indexed_location_ids"
+    destination => "locations_blob"
+  }
+  ruby {
+    code => "
+      if !event.get('locations_blob')
+        event.set('locations', event.get('locations_blob').collect { |t|
+          c = t.split '~'
+          {
+            'name' =>  c[0],
+            'code' => c[1],
+            'type' => c[2]
+          }
+        })
+      end
+    "
+  }
+  mutate {
     rename => {
       "point_x" => "[locality][point][lon]"
       "point_y" => "[locality][point][lat]"
@@ -133,7 +158,8 @@ filter {
       "output_sref" => "[locality][output_sref]"
       "output_sref_system" => "[locality][output_sref_system]"
       "location_name" => "[locality][location_name]"
-      "location_ids" => "[locality][location_ids]"
+      "indexed_location_ids" => "[locality][location_ids]"
+      "locations" => "[locality][locations]"
       "date_start" => "[date][date_start]"
       "date_end" => "[date][date_end]"
       "day_of_year" => "[date][day_of_year]"
