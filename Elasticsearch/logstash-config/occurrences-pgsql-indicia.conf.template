@@ -42,6 +42,7 @@ input {
           onf.output_sref,
           onf.output_sref_system,
           o.location_name,
+          o.location_ids,
           o.record_status,
           o.record_substatus,
           o.query,
@@ -132,6 +133,7 @@ filter {
       "output_sref" => "[locality][output_sref]"
       "output_sref_system" => "[locality][output_sref_system]"
       "location_name" => "[locality][location_name]"
+      "location_ids" => "[locality][location_ids]"
       "date_start" => "[date][date_start]"
       "date_end" => "[date][date_end]"
       "day_of_year" => "[date][day_of_year]"

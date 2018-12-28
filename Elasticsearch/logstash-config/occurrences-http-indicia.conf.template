@@ -23,17 +23,17 @@ input {
   }
 }
 filter {
-  # Lookup taxon information from our CSV File and store in the
-  # taxon_data_csv field. Translation can only read one field from the
-  # CSV so we store all the data in a single field separated by ~.
+  # Lookup taxon information from our YAML File and store in the
+  # taxon_data_blob field. Translation can only read one field from the
+  # YAML so we store all the data in a single field separated by ~.
   translate {
-    dictionary_path => "{{ Working folder path }}/data/taxa.csv"
+    dictionary_path => "{{ Working folder path }}/data/taxa.yml"
     field => "taxon_key"
-    destination => "taxon_data_csv"
+    destination => "taxon_data_blob"
   }
-  # Split all the taxon data csv field content into separate fields.
+  # Split all the taxon data blob field content into separate fields.
   csv {
-    source => "taxon_data_csv"
+    source => "taxon_data_blob"
     separator => "~"
     skip_empty_columns => true
     columns => [
@@ -62,10 +62,10 @@ filter {
       "taxon_species",
       "taxon_species_key"
     ]
-    remove_field => "taxon_data_csv"
+    remove_field => "taxon_data_blob"
   }
   translate {
-    dictionary_path => "{{ Working folder path }}/data/taxon-paths.csv"
+    dictionary_path => "{{ Working folder path }}/data/taxon-paths.yml"
     field => "accepted_taxon_key"
     destination => "taxon_path_keys"
   }
@@ -82,6 +82,7 @@ filter {
       "output_sref" => "[locality][output_sref]"
       "output_sref_system" => "[locality][output_sref_system]"
       "location_name" => "[locality][location_name]"
+      "location_ids" => "[locality][location_ids]"
       "date_start" => "[date][date_start]"
       "date_end" => "[date][date_end]"
       "day_of_year" => "[date][day_of_year]"

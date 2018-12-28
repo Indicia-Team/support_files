@@ -232,9 +232,12 @@ To update the taxa.csv file with a fresh copy of the data:
     ```
 
   * Select the “Execute query, write result to file” toolbutton.
-  * On the options dialog, uncheck the Column names option. Set the output file
-    to Elasticsearch/data/taxa.csv in the working folder.
-* In pgAdminn 4:
+  * On the options dialog, uncheck the Column names option. Set the column
+    separator to a colon followed by a space (": ") and the quote char to a
+    double quote. Set the output file to Elasticsearch/data/taxa.yml in the
+    working folder.
+* In pgAdmin 4:
+  * TODO: update following to convert to YAML.
   * If indicia, public is not your logged in users default search path, then
     edit the query to add "indicia." in front of all the table names (use a
     different prefix if your schema is different).
@@ -244,9 +247,18 @@ To update the taxa.csv file with a fresh copy of the data:
   * Rename the downloaded file to taxa.csv and replace the file in
     Elasticsearch/data in your working folder.
 
-To update the taxon-paths.csv file with a fresh copy of the data, repeat the
+To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above for the prepare-taxon-paths.sql file, saving the results as
-taxon-paths.csv.
+taxon-paths.yml.
+
+#### Prepare the lookup for location data
+
+* Open the queries/prepare-locations-lookup.sql file in pgAdmin, connecting to an
+  Indicia database that has the UKSI dataset loaded.
+* Search and replace <indexed_location_type_ids> with a comma separated list of
+  location type IDs that are indexed.
+* Repeat the steps described above to save a file called locations.yml in your
+  working folder's Elasticsearch/data folder.
 
 #### Prepare the Logstash configuration file (JDBC access)
 
