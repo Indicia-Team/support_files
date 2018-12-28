@@ -164,6 +164,7 @@ PUT occurrence
         "quality.verified_by_id": { "type": "integer" },
         "locality.geom":    { "type": "geo_shape" },
         "locality.point":    { "type": "geo_point" },
+        "locality.location_ids": { "type": "integer" },
         "date.date_start": { "type": "date" },
         "date.date_end": { "type": "date" },
         "date.day_of_year": { "type": "short" },
