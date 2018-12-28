@@ -2,9 +2,28 @@ jQuery(document).ready(function($) {
   //Hide redlist fields as these won't be edited
   $('#ctrl-wrap-taxAttr-1076').hide();
   $('#ctrl-wrap-taxAttr-1077').hide();
+  $('#ctrl-wrap-taxAttr-1920').hide();
+  $('#ctrl-wrap-taxAttr-1921').hide();
+  
+  //These ones are hidden for now but should be read-only
+  $('#ctrl-wrap-metaFields-commonNames').hide();
+  $('#ctrl-wrap-metaFields-synonyms').hide();
+  $('#ctrl-wrap-taxon-authority').hide();
+  $('#ctrl-wrap-taxa_taxon_list-parent_id').hide();
+  //$('#ctrl-wrap-taxon-taxon_group_id').hide();
+  //$('#ctrl-wrap-taxon-taxon_rank_id').hide();
+
+  
+  //These fields shouldn't be seen by the user
+  $('#ctrl-wrap-taxon-attribute').hide();
+  $('#ctrl-wrap-taxa_taxon_list-description').hide();
+  $('#ctrl-wrap-taxon-external_key').hide();
+  $('#ctrl-wrap-taxon-search_code').hide();
+  $('#ctrl-wrap-taxa_taxon_list-taxonomic_sort_order').hide();
+
 
   //Position Journal/book at top of sub-areas
-  $('#ctrl-wrap-taxAttr-942').insertBefore('#ctrl-wrap-taxAttr-898');
+  /* $('#ctrl-wrap-taxAttr-942').insertBefore('#ctrl-wrap-taxAttr-898');
   $('#ctrl-wrap-taxAttr-945').insertBefore('#ctrl-wrap-taxAttr-901');
   $('#ctrl-wrap-taxAttr-23').insertBefore('#ctrl-wrap-taxAttr-25');
   $('#ctrl-wrap-taxAttr-833').insertBefore('#ctrl-wrap-taxAttr-904');
@@ -52,7 +71,7 @@ jQuery(document).ready(function($) {
 
   //Position comment fields
   //Note for each array element, the first item is the main attribute id, the second id is the comment field
-  
+  //AVB these shouldn't be needed anymore
   var comment_field_selectors = [
   	[1082,1326],[1083,1382], [1084,39],[1085,40],[1086,41],[1087,47],[1088,48],[1089,55],[1090,57],
   	[1091,58],[1092,59],[1093,62],
@@ -78,7 +97,7 @@ jQuery(document).ready(function($) {
     [1278,626],[1279,628],[1280,630],[1281,632],[1282,634],[1283,639],[1284,641],[1285,642],[1286,644],
     [1287,646],[1288,648],[1289,650],[1290,652],[1291,656],[1292,658],[1293,670],[1294,676],[1295,693],
     [1297,701],[1298,703],[1299,704],[1300,712],[1301,713],[1303,717],[1304,728],[1305,750],[1306,751],[1307,756],
-    [1308,758],[1309,759],[1310,760],[1311,763],[1312,767],[1313,768]/*,[1316,1315]*/,[1564,1326],[1565,1329],
+    [1308,758],[1309,759],[1310,760],[1311,763],[1312,767],[1313,768]/*,[1316,1315]*//*,[1564,1326],[1565,1329],
     [1566,1330],[1567,1332],[1568,1073],[1569,1074],[1570,1335],[1571,1341],[1572,731],[1573,1344],[1574,71],[1575,72],
     [1576,79],[1577,1349],[1578,1350],[1579,75],[1580,76],[1581,1066],[1582,91],[1583,738],[1584,349],[1585,1353],
     [1586,18],[1587,1355],[1588,1356],[1589,775],[1590,145],[1591,558],[1592,146],[1593,1360],[1594,1361],[1595,805],
@@ -99,16 +118,146 @@ jQuery(document).ready(function($) {
 
   $.each(comment_field_selectors, function() {
     $('#ctrl-wrap-taxAttr-'+this[0]).insertAfter('#ctrl-wrap-taxAttr-'+this[1]);
-  });
+  });*/
   
   var sitePath = '/';
   var spectrumPath = sitePath + 'sites/default/files/indicia/js/spectrum/';
-  var attrs = [
+  var attrs = [35,
+   50,
+   51,
+   79,
+   80,
+   91,
+  125,
+  145,
+  146,
+  147,
+  178,
+  179,
+  180,
+  181,
+  182,
+  183,
+  219,
+  220,
+  242,
+  243,
+  244,
+  245,
+  265,
+  266,
+  267,
+  268,
+  286,
+  287,
+  288,
+  289,
+  313,
+  314,
+  336,
+349,
+  350,
+  396,
+  397,
+  436,
+  437,
+  438,
+  439,
+  500,
+  501,
+  539,
+  540,
+  558,
+  559,
+  596,
+  597,
+  615,
+  616,
+  617,
+  682,
+  726,
+731,
+  735,
+  736,
+  737,
+  738,
+  775,
+  780,
+  781,
+  782,
+  783,
+  784,
+  785,
+  804,
+  805,
+  806,
+  807,
+  808,
+  809,
+  810,
+  811,
+  814,
+  815,
+  816,
+  817,
+ 818,
+  819,
+  820,
+  821,
+  823,
+  826,
+  827,
+  828,
+  872,
+  873,
+  874,
+  875,
+  877,
+  878,
+  879,
+  881,
+  882,
+  883,
+  884,
+  885,
+  890,
+  891,
+ 1066,
+ 1067,
+ 1068,
+1069,
+ 1070,
+ 1071,
+ 1072,
+ 1073,
+ 1074,
+ 1759,
+ 1760,
+ 1766,
+ 1796,
+ 1797,
+ 1798,
+ 1799,
+ 1803,
+ 1804,
+ 1841,
+ 1842,
+ 1843,
+ 1925,
+ 1938,
+ 1939,
+ 1940,
+ 1967,
+ 1968,
+ 2132,
+ 2133];
+  //JVB's original attrs
+  /*var attrs = [
     35,50,51,79,80,91,125,145,146,147,178,179,180,181,182,183,219,220,242,243,244,245,265,266,267,268,285,286,
     287,288,289,313,314,336,349,350,396,397,436,500,501,539,540,558,559,596,597,615,616,617,682,726,731,735,736,
     737,738,775,780,781,782,783,784,785,804,805,806,807,808,809,810,811,814,815,816,817,818,819,820,821,823,826,
     827,828,872,873,874,875,877,878,879,881,882,883,884,885,890,891,1066,1067,1068,1069,1070,1071,1072,1073,1074
-  ];
+  ];*/
   var selectors = [];
   $.each(attrs, function() {
     selectors.push('#taxAttr\\:' + this);
@@ -119,11 +268,7 @@ jQuery(document).ready(function($) {
     type: 'text/css',
     href: spectrumPath + 'spectrum.css'
   }).appendTo('head');
-<<<<<<< HEAD
-  $.getScript(spectrumPath + 'spectrum.js', function() {
-=======
   jQuery.getScript(spectrumPath + 'spectrum.js', function() {
->>>>>>> 305b16d79b8c48aeea3285a574b8271c7840ba99
     $.each($(selectors.join(',')), function() {
       $(this).hide();
       var values = $(this).val().split(';');
