@@ -1,15 +1,15 @@
 select distinct t.search_code as key,
   cttl.external_key || '~' || cttl.preferred_taxon || '~' || coalesce(cttl.preferred_authority, '') || '~' || cttl.taxon_group
-  || '~"' || coalesce(replace(cttl.default_common_name, '"', '\"'), '') || '"~' ||  coalesce(cttl.taxon_rank, '') || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
+  || '~' || coalesce(cttl.default_common_name, '') || '~' ||  coalesce(cttl.taxon_rank, '') || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
   || '~' || cttl.marine_flag::text
-  || '~' || coalesce(replace(tkingdom.taxon, '"', '\"'), '') || '~' || coalesce(tkingdom.external_key, '')
-  || '~' || coalesce(replace(tphylum.taxon, '"', '\"'), '') || '~' || coalesce(tphylum.external_key, '')
-  || '~' || coalesce(replace(tclass.taxon, '"', '\"'), '') || '~' || coalesce(tclass.external_key, '')
-  || '~' || coalesce(replace(torder.taxon, '"', '\"'), '') || '~' || coalesce(torder.external_key, '')
-  || '~' || coalesce(replace(tfamily.taxon, '"', '\"'), '') || '~' || coalesce(tfamily.external_key, '')
-  || '~' || coalesce(replace(tsubfamily.taxon, '"', '\"'), '') || '~' || coalesce(tsubfamily.external_key, '')
-  || '~' || coalesce(replace(tgenus.taxon, '"', '\"'), '') || '~' || coalesce(tgenus.external_key, '')
-  || '~' || coalesce(replace(tspecies.taxon, '"', '\"'), '') || '~' || coalesce(tspecies.external_key, '')
+  || '~' || coalesce(tkingdom.taxon, '') || '~' || coalesce(tkingdom.external_key, '')
+  || '~' || coalesce(tphylum.taxon, '') || '~' || coalesce(tphylum.external_key, '')
+  || '~' || coalesce(tclass.taxon, '') || '~' || coalesce(tclass.external_key, '')
+  || '~' || coalesce(torder.taxon, '') || '~' || coalesce(torder.external_key, '')
+  || '~' || coalesce(tfamily.taxon, '') || '~' || coalesce(tfamily.external_key, '')
+  || '~' || coalesce(tsubfamily.taxon, '') || '~' || coalesce(tsubfamily.external_key, '')
+  || '~' || coalesce(tgenus.taxon, '') || '~' || coalesce(tgenus.external_key, '')
+  || '~' || coalesce(tspecies.taxon, '') || '~' || coalesce(tspecies.external_key, '')
 from cache_taxa_taxon_lists cttl
 join taxa_taxon_lists ttl on ttl.id=cttl.id and ttl.deleted=false
 join taxa t on t.id=ttl.taxon_id and t.deleted=false
