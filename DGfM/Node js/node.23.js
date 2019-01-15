@@ -1,4 +1,17 @@
 jQuery(document).ready(function($) {
+$('<p><a href="#invisible_macro_tag_id" style="color:blue"><em><small>Click here to go straight to Macro Description section</small></em></a></p>').insertBefore("#ctrl-wrap-taxon-taxon");
+$('<p><a href="#invisible_micro_tag_id" style="color:blue"><em><small>Click here to go straight to Micro Description section</small></em></a></p>').insertBefore("#ctrl-wrap-taxon-taxon");
+
+
+$('<a id="invisible_macro_tag_id" style="visibility: hidden">invisible macro description tag</a>').insertBefore("legend:contains('macro description')");
+$('<a id="invisible_macro_tag_id" style="visibility: hidden">invisible macro description tag</a>').insertBefore("legend:contains('Makromerkmale')");
+$('<a id="invisible_macro_tag_id" style="visibility: hidden">invisible macro description tag</a>').insertBefore("legend:contains('makroskopické znaky')");
+
+
+$('<a id="invisible_micro_tag_id" style="visibility: hidden">invisible micro description tag</a>').insertBefore("legend:contains('Micro description')");
+$('<a id="invisible_micro_tag_id" style="visibility: hidden">invisible micro description tag</a>').insertBefore("legend:contains('Mikromerkmale')");
+$('<a id="invisible_micro_tag_id" style="visibility: hidden">invisible micro description tag</a>').insertBefore("legend:contains('mikroskopické znaky')");
+  
   //Hide redlist fields as these won't be edited
   $('#ctrl-wrap-taxAttr-1076').hide();
   $('#ctrl-wrap-taxAttr-1077').hide();
