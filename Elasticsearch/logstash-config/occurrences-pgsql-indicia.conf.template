@@ -36,18 +36,21 @@ input {
               and coalesce(date_part('month', date_start), 0)=coalesce(date_part('month', date_end), 0) then coalesce(date_part('month', date_start), 0)
             else null
           end as month_of_year,
-          st_astext(st_transform(o.public_geom, 4326)) as geom,
+          case
+            when coalesce(date_part('year', o.date_start), 0)=coalesce(date_part('year', o.date_end), 0) then coalesce(date_part('year', o.date_start), null)
+            else null
+          end as year,
+          st_astext(st_removerepeatedpoints(st_transform(o.public_geom, 4326))) as geom,
           st_x(st_transform(st_centroid(o.public_geom), 4326)) as point_x,
           st_y(st_transform(st_centroid(o.public_geom), 4326)) as point_y,
           onf.output_sref,
           onf.output_sref_system,
-          o.location_name,
+          o.location_name as given_locality_name,
+          l.id as recorded_location_id,
+          l.name as recorded_location_name,
+          lp.id as recorded_parent_location_id,
+          lp.name as recorded_parent_location_name
           o.location_ids,
-          o.record_status,
-          o.record_substatus,
-          o.query,
-          o.sensitive,
-          onf.data_cleaner_info,
           onf.comment,
           snf.comment as sample_comment,
           onf.licence_code,
@@ -60,14 +63,33 @@ input {
           snf.attr_biotope,
           snf.attr_sample_method,
           snf.media,
-          greatest(o.updated_on, cttl.cache_updated_on) as updated_on
+          cttl.created_on,
+          greatest(o.updated_on, cttl.cache_updated_on) as updated_on,
+          o.record_status,
+          o.record_substatus,
+          occ.verified_by_id,
+          onf.verifier,
+          o.verified_on,
+          onf.data_cleaner_info,
+          o.query,
+          o.sensitive,
+          onf.sensitivity_precision,
+          CASE o.sensitive WHEN true THEN 'B' ELSE 'null' END AS sensitivity_blur,
+          o.confidential,
+          o.release_status
         from cache_occurrences_functional o
         join cache_occurrences_nonfunctional onf on onf.id=o.id
         join cache_samples_nonfunctional snf on snf.id=o.sample_id
         join cache_taxa_taxon_lists cttl on cttl.id=o.taxa_taxon_list_id
+        left join locations l on l.id=o.location_id and l.deleted=false
+        left join samples sp on sp.id=o.parent_sample_id and sp.deleted=false
+        left join locations lp on lp.id=sp.location_id and lp.deleted=false
         where o.updated_on > :sql_last_value
         and o.training=false
+        -- comment out the following line to include confidential records in the index
         and o.confidential=false
+        -- comment out the following line to include unreleased records in the index
+        and o.release_status='R'
         and o.zero_abundance=false"
         tracking_column => "updated_on"
         tracking_column_type => "timestamp"
@@ -87,6 +109,7 @@ filter {
     source => "taxon_data_csv"
     separator => "~"
     skip_empty_columns => true
+    quote_char => "`"
     columns => [
       "accepted_taxon_key",
       "taxon_name",
@@ -138,7 +161,7 @@ filter {
   }
   ruby {
     code => "
-      if !event.get('locations_blob')
+      if event.get('locations_blob')
         event.set('locations', event.get('locations_blob').collect { |t|
           c = t.split '~'
           {
@@ -149,6 +172,7 @@ filter {
         })
       end
     "
+    remove_field => "locations_blob"
   }
   mutate {
     rename => {
@@ -157,7 +181,11 @@ filter {
       "geom" => "[locality][geom]"
       "output_sref" => "[locality][output_sref]"
       "output_sref_system" => "[locality][output_sref_system]"
-      "location_name" => "[locality][location_name]"
+      "given_locality_name" => "[locality][given_name]"
+      "recorded_location_id" => "[locality][recorded][id]"
+      "recorded_location_name" => "[locality][recorded][name]"
+      "recorded_parent_location_id" => "[locality][recorded][parent][id]"
+      "recorded_parent_location_name" => "[locality][recorded][parent][name]"
       "indexed_location_ids" => "[locality][location_ids]"
       "locations" => "[locality][locations]"
       "date_start" => "[date][date_start]"
@@ -165,6 +193,7 @@ filter {
       "day_of_year" => "[date][day_of_year]"
       "week_of_year" => "[date][week_of_year]"
       "month_of_year" => "[date][month_of_year]"
+      "year" => "[date][year]"
       "taxon_key" => "[taxon][key]"
       "accepted_taxon_key" => "[taxon][accepted_key]"
       "taxon_name" => "[taxon][name]"
@@ -201,13 +230,20 @@ filter {
       "attr_det_name" => "[record_attributes][determiner_name]"
       "attr_biotope" => "[sample_attributes][biotope]"
       "attr_sample_method" => "[sample_attributes][method]"
-      "record_status" => "[quality][record_status]"
-      "record_substatus" => "[quality][record_substatus]"
-      "verified_by_id" => "[quality][verified_by_id]"
-      "verifier" => "[quality][verifier]"
-      "verified_on" => "[quality][verified_on]"
-      "data_cleaner_info" => "[quality][data_cleaner_info]"
-      "query" => "[quality][query]"
+      "created_on" => "[metadata][created_on]"
+      "updated_on" => "[metadata][updated_on]"
+      "record_status" => "[metadata][record_status]"
+      "record_substatus" => "[metadata][record_substatus]"
+      "verified_by_id" => "[metadata][verified_by_id]"
+      "verifier" => "[metadata][verifier]"
+      "verified_on" => "[metadata][verified_on]"
+      "data_cleaner_info" => "[metadata][data_cleaner_info]"
+      "query" => "[metadata][query]"
+      "sensitive" => "[metadata][sensitive]"
+      "sensitivity_precision" => "[metadata][sensitivity_precision]"
+      "sensitivity_blur" => "[metadata][sensitivity_blur]"
+      "confidential" => "[metadata][confidential]"
+      "release_status" => "[metadata][release_status]"
     }
   }
   ruby {
@@ -218,7 +254,7 @@ filter {
 output {
   elasticsearch {
     hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence"
+    index => "occurrence_{{ Indicia warehouse unique name }}_index"
     # Our records need a unique ID in the index for updates.
     document_id => "{{ Indicia warehouse unique name }}|%{id}"
   }

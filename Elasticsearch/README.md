@@ -149,21 +149,39 @@ is working at http://localhost:5601.
 In Kibana, open the Dev Tools tab then run the following request to ensure that
 the various fields in the Elasticsearch document index are configured with the
 correct data types, for example the geom field in our index is recognised as a
-geometric shape, not simply some generic text field:
+geometric shape, not simply some generic text field. This request also includes
+some default settings for the index you are creating, namely that it will have
+2 primary shards and 1 replica shard. This setting allows for a small amount of
+scalability, with up to 2 nodes in your Elasticsearch cluster supported should
+they be required in future. Read the documentation provided on scaling
+Elasticsearch to decide the best settings for your situaion
+(https://www.elastic.co/guide/en/elasticsearch/guide/current/scale.html). Also,
+note that the index name has a short unique identifier appended to it which
+for the individual Indicia warehouse it indexes records from. This approach
+allows us to scale an Elasticsearch cluster to support multiple warehouses
+easily.
 
 ```json
-PUT occurrence
+PUT occurrence_brc1
 {
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  },
   "mappings": {
     "doc": {
       "properties": {
+        "id": { "type": "integer" },
         "created_by_id": { "type": "integer" },
         "website_id": { "type": "integer" },
         "survey_id": { "type": "integer" },
         "group_id": { "type": "integer" },
-        "quality.verified_by_id": { "type": "integer" },
-        "locality.geom":    { "type": "geo_shape" },
-        "locality.point":    { "type": "geo_point" },
+        "metadata.verified_by_id": { "type": "integer" },
+        "metadata.sensitive": { "type": "boolean" },
+        "metadata.sensitivity_precision": { "type": "integer" },
+        "metadata.confidential": { "type": "boolean" },
+        "locality.geom": { "type": "geo_shape" },
+        "locality.point": { "type": "geo_point" },
         "locality.location_ids": { "type": "integer" },
         "date.date_start": { "type": "date" },
         "date.date_end": { "type": "date" },
@@ -173,6 +191,79 @@ PUT occurrence
       }
     }
   }
+}
+```
+
+Elasticsearch has an option to create aliases for index names. We can use this
+for 2 purposes:
+* Allows us to dynamically change the index an incoming query is routed to
+  without downtime, making scaling up much simpler. In effect, by adding the
+  alias we are giving ourselves an additional option during any future upgrade
+  path.
+* Allow us to provide pre-filtered aliases, e.g. to access the data in a
+  particular website or group using a filter on the alias.
+
+The following request creates 2 aliases, one for a global search and one for
+indexing documents into the brc1 index. Note that the search alias has a filter
+applied to make it "safe", i.e. don't show the blurred version of records,
+confidential or unreleased data.
+
+```json
+POST /_aliases
+{
+  "actions" : [
+    { "add" : {
+      "index" : "occurrence_brc1",
+      "alias" : "occurrence_search",
+      "filter" : {
+        "bool" : {
+          "must" : [
+            { "term" : { "confidential" : false } },
+            { "term" : { "release_status" : "R" } }
+          ],
+          "should" : [
+            { "terms" : { "sensitivity_blur" : ["B"] } },
+            { "bool": { "must_not" : {
+              "exists": { "field": "sensitivity_blur" }
+            }}}
+          ]
+        }
+      }
+    } },
+    { "add" : {
+      "index" : "occurrence_brc1",
+      "alias" : "occurrence_brc1_index"
+    } }
+  ]
+}
+```
+
+Now, if we later add a second warehouse to our Elasticsearch cluster with a
+second index called brc2, we can run the same request but replace brc1 with
+brc2.
+
+Now, we can index documents from warehouse brc1 into occurrence_brc1_index,
+documents from warehouse brc2 into occurrence_brc2_index and search across
+both indexes using occurrence_search. We could also then provide a filtered
+index for use by a client website, for example:
+
+```json
+POST /_aliases
+{
+  "actions" : [
+    { "add" : {
+      "index" : "occurrence_brc1",
+      "alias" : "occurrence_search_irecord",
+      "filter": {
+        "query_string": {
+          "query": "website_id:23",
+          "analyze_wildcard": false,
+          "default_field": "*"
+          /* Other filters here - see above. */
+        }
+      }
+    } }
+  ]
 }
 ```
 
@@ -237,6 +328,7 @@ To update the taxa.csv file with a fresh copy of the data:
     separator to a colon followed by a space (": ") and the quote char to a
     double quote. Set the output file to Elasticsearch/data/taxa.yml in the
     working folder.
+  * Open the resulting file in a text editor and search and replace "" for \".
 * In pgAdmin 4:
   * TODO: update following to convert to YAML.
   * If indicia, public is not your logged in users default search path, then
@@ -247,6 +339,12 @@ To update the taxa.csv file with a fresh copy of the data:
     using Chrome instead.
   * Rename the downloaded file to taxa.csv and replace the file in
     Elasticsearch/data in your working folder.
+  * Edit the file in a text editor. Remove the first row (column titles) and
+    perform the following replacements where <space> must be changed to a real
+    space:
+    * """," replace with ":<space>
+    * """ with "
+    * "\n replace with \n
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above for the prepare-taxon-paths.sql file, saving the results as
@@ -290,7 +388,14 @@ Search and replace the following values:
 * {{ Indicia warehouse unique name }} - allocate a simple identifier for the
   warehouse you are extracting the data from, e.g. BRC1. This will be prefixed
   to document IDs generated in Elasticsearch to ensure that if you pull data
-  from other sources in future the IDs will not clash.
+  from other sources in future the IDs will not clash. It should match the
+  abbreviation you gave for your warehouse when setting up the indexes and
+  aliases earlier.
+
+If you are intending to include confidential and/or unreleased records in your
+dataset then you will need to review the statement section near the beginning of
+your configuration file containing the SQL statement and uncomment the 2
+suggested lines as appropriate.
 
 Copy the resulting *.conf file to your logstash/bin folder.
 
@@ -303,7 +408,8 @@ administrator of your warehouse, or if you are the administrator then the
 information needed is documented at https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html?highlight=rest.
 
 Two templates are provided for you in your working directory's logstash-config
-folder, one for record inserts and updates and another for deletions. Copy the occurrences-http-indicia.conf.template file to a new file called
+folder, one for record inserts and updates and another for deletions. Copy the
+occurrences-http-indicia.conf.template file to a new file called
 occurrences-http-indicia.conf. Copy the occurrences-http-indicia-deletions.conf.template
 file to a new file called occurrences-http-indicia-deletions.conf and edit them
 in your preferred text editor. Search and replace the following values:
@@ -324,6 +430,36 @@ in your preferred text editor. Search and replace the following values:
   warehouse you are extracting the data from, e.g. BRC1. This will be prefixed
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
+
+You also need to create a new project in the REST API on the warehouse which
+has the same configuration as your existing project, but a different ID so that
+deleted record syncing can be tracked. Replace this project name in your
+deletions config file.
+
+If you are intending to include confidential and/or unreleased records in your
+dataset then you will need to review the query section near the beginning of
+your configuration file and uncomment the 2 suggested lines as appropriate.
+
+If you are planning to hold sensitive records in your dataset then the
+suggested approach is to contain 2 copies of each record, one blurred and one
+at full precision. Then we can use a filter on an index alias to limit the
+searched records appropriately. To achieve this, copy your occurrences-http-indicia.conf
+configuration file to a file called occurrences-http-indicia-sensitive.conf.
+You also need to create a new project in the REST API on the warehouse which
+has the same configuration as your existing project, but a different ID so that
+sensitive record syncing can be tracked. Now, edit your new configuration file
+in a text editor and make the following edits:
+
+* Search for your REST API project name and replace it with the new one created
+  for sensitive record tracking.
+* Change the report requested (in the http_poller url section of the
+  configuration) from list_for_elastic.xml to list_for_elastic_sensitive.xml.
+* Near the bottom of the config file, find the setting which denotes the
+  document_id and add ! to the setting to denote that these records are full
+  precision versions of sensitive records, for exammple:
+  ```
+  document_id => "myindex|%{id}!"
+  ```
 
 ### Configuring your pipelines
 
@@ -355,11 +491,14 @@ Windows or /usr/local/Cellar/logstash/x.x.x/libexec/config on Mac if following
 these instructions, where x.x.x is the specific version number.
 
 Edit the pipelines.yml file in a text editor. Add the following to the end of
-the file:
+the file. Skip the 2 lines for sensitive config if you are not including
+sensitive records in the dataset:
 
 ```
 - pipeline.id: indicia_records
   path.config: "<path>/occurrences-http-indicia.config"
+- pipeline.id: indicia_records_sensitive
+  path.config: "<path>/occurrences-http-indicia-sensitive.config"
 - pipeline.id: indicia_records_deletions
   path.config: "<path>/occurrences-http-indicia-deletions.config"
   pipeline.workers: 1
@@ -465,3 +604,12 @@ don't get free and unfettered access to the entire dataset in Elasticsearch.
   * Save the JS file and reload your Indicia report page. This is just a very
     simple demo designed to show that the data loading work as well as the
     performance of a complex aggregation that PostgreSQL would struggle with.
+
+## Index structure notes
+
+* Sensitive records are stored in the index twice, once for the blurred (metadata.sensitivity_blur:B) and once for the
+  full precision record (metadata.sensitivity_precision:F). Non-sensitive records have no value for
+  metadata.sensitivity_precision.
+* Generally, the search index alias you use should always pre-filter confidential, unreleased and sensitive full
+  precision records out as explained in this document. Override these defaults ONLY when you understand the
+  implications.

@@ -1,4 +1,8 @@
 input {
+  # Query => utofeed mode enables tracking of downloaded records on the server-side since the
+  # http_poller input plugin has no logic for importing changes.
+  # Uncomment the query => confidential line to include confidential records.
+  # Uncomment the query => release_status line to include unreleased records.
   http_poller {
     urls => {
       indicia => {
@@ -11,14 +15,17 @@ input {
         query => {
           proj_id => "{{ Project ID }}"
           from_update_date => "1900-01-01"
-          # This enables tracking of downloaded records on the server-side since the
-          # http_poller input plugin has no logic for importing changes.
           autofeed => "t"
+          # confidential => "all"
+          # release_status => "A"
         }
       }
     }
-    request_timeout => 400
-    schedule => { cron => "* * * * * UTC"}
+    request_timeout => 120
+    connect_timeout => 30
+    socket_timeout => 60
+    schedule => { cron => "*/2 * * * * UTC" }
+    keepalive => false
     codec => "json"
   }
 }
@@ -36,6 +43,7 @@ filter {
     source => "taxon_data_blob"
     separator => "~"
     skip_empty_columns => true
+    quote_char => "`"
     columns => [
       "accepted_taxon_key",
       "taxon_name",
@@ -87,7 +95,7 @@ filter {
   }
   ruby {
     code => "
-      if !event.get('locations_blob')
+      if event.get('locations_blob')
         event.set('locations', event.get('locations_blob').collect { |t|
           c = t.split '~'
           {
@@ -98,6 +106,7 @@ filter {
         })
       end
     "
+    remove_field => "locations_blob"
   }
   mutate {
     rename => {
@@ -106,7 +115,11 @@ filter {
       "geom" => "[locality][geom]"
       "output_sref" => "[locality][output_sref]"
       "output_sref_system" => "[locality][output_sref_system]"
-      "location_name" => "[locality][location_name]"
+      "given_locality_name" => "[locality][given_name]"
+      "recorded_location_id" => "[locality][recorded][id]"
+      "recorded_location_name" => "[locality][recorded][name]"
+      "recorded_parent_location_id" => "[locality][recorded][parent][id]"
+      "recorded_parent_location_name" => "[locality][recorded][parent][name]"
       "indexed_location_ids" => "[locality][location_ids]"
       "locations" => "[locality][locations]"
       "date_start" => "[date][date_start]"
@@ -114,6 +127,7 @@ filter {
       "day_of_year" => "[date][day_of_year]"
       "week_of_year" => "[date][week_of_year]"
       "month_of_year" => "[date][month_of_year]"
+      "year" => "[date][year]"
       "taxon_key" => "[taxon][key]"
       "accepted_taxon_key" => "[taxon][accepted_key]"
       "taxon_name" => "[taxon][name]"
@@ -150,13 +164,20 @@ filter {
       "attr_det_name" => "[record_attributes][determiner_name]"
       "attr_biotope" => "[sample_attributes][biotope]"
       "attr_sample_method" => "[sample_attributes][method]"
-      "record_status" => "[quality][record_status]"
-      "record_substatus" => "[quality][record_substatus]"
-      "verified_by_id" => "[quality][verified_by_id]"
-      "verifier" => "[quality][verifier]"
-      "verified_on" => "[quality][verified_on]"
-      "data_cleaner_info" => "[quality][data_cleaner_info]"
-      "query" => "[quality][query]"
+      "created_on" => "[metadata][created_on]"
+      "updated_on" => "[metadata][updated_on]"
+      "record_status" => "[metadata][record_status]"
+      "record_substatus" => "[metadata][record_substatus]"
+      "verified_by_id" => "[metadata][verified_by_id]"
+      "verifier" => "[metadata][verifier]"
+      "verified_on" => "[metadata][verified_on]"
+      "data_cleaner_info" => "[metadata][data_cleaner_info]"
+      "query" => "[metadata][query]"
+      "sensitive" => "[metadata][sensitive]"
+      "sensitivity_precision" => "[metadata][sensitivity_precision]"
+      "sensitivity_blur" => "[metadata][sensitivity_blur]"
+      "confidential" => "[metadata][confidential]"
+      "release_status" => "[metadata][release_status]"
     }
   }
   ruby {
@@ -167,7 +188,7 @@ filter {
 output {
   elasticsearch {
     hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence"
+    index => "occurrence_{{ Indicia warehouse unique name }}_index"
     # Our records need a unique ID in the index for updates.
     document_id => "{{ Indicia warehouse unique name }}|%{id}"
   }

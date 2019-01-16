@@ -17,15 +17,18 @@ input {
         }
       }
     }
-    request_timeout => 400
-    schedule => { cron => "*/15 * * * * UTC"}
+    request_timeout => 120
+    connect_timeout => 30
+    socket_timeout => 60
+    schedule => { cron => "*/2 * * * * UTC"}
+    keepalive => false
     codec => "json"
   }
 }
 output {
   elasticsearch {
     hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence"
+    index => "occurrence_{{ Indicia warehouse unique name }}_index"
     # Our records need a unique ID in the index for deletions.
     document_id => "{{ Indicia warehouse unique name }}|%{id}"
     action => "delete"
