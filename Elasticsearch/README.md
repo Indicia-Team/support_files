@@ -172,22 +172,29 @@ PUT occurrence_brc1
     "doc": {
       "properties": {
         "id": { "type": "integer" },
-        "created_by_id": { "type": "integer" },
-        "website_id": { "type": "integer" },
-        "survey_id": { "type": "integer" },
-        "group_id": { "type": "integer" },
-        "metadata.verified_by_id": { "type": "integer" },
+        "metadata.created_by_id": { "type": "integer" },
+        "metadata.updated_by_id": { "type": "integer" },
+        "metadata.group.id": { "type": "integer" },
+        "metadata.survey.id": { "type": "integer" },
+        "metadata.website.id": { "type": "integer" },
         "metadata.sensitive": { "type": "boolean" },
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
-        "locality.geom": { "type": "geo_shape" },
-        "locality.point": { "type": "geo_point" },
-        "locality.location_ids": { "type": "integer" },
-        "date.date_start": { "type": "date" },
-        "date.date_end": { "type": "date" },
-        "date.day_of_year": { "type": "short" },
-        "date.week_of_year": { "type": "byte" },
-        "date.month_of_year": { "type": "byte" }
+        "identification.verified_by_id": { "type": "integer" },
+        "location.geom": { "type": "geo_shape" },
+        "location.point": { "type": "geo_point" },
+        "location.higher_geography_ids": { "type": "integer" },
+        "location.location_id": { "type": "integer" },
+        "location.parent.location_id": { "type": "integer" },
+        "location.coordinate_uncertainty_in_meters": { "type": "integer" },
+        "event.date_start": { "type": "date" },
+        "event.date_end": { "type": "date" },
+        "event.day_of_year": { "type": "short" },
+        "event.week": { "type": "byte" },
+        "event.ukbms_week": { "type": "byte" },
+        "event.month": { "type": "byte" },
+        "event.year": { "type": "short" },
+        "occurrence.individual_count": { "type": "integer" }
       }
     }
   }
@@ -218,13 +225,13 @@ POST /_aliases
       "filter" : {
         "bool" : {
           "must" : [
-            { "term" : { "confidential" : false } },
-            { "term" : { "release_status" : "R" } }
+            { "term" : { "metadata.confidential" : false } },
+            { "term" : { "metadata.release_status" : "R" } }
           ],
           "should" : [
-            { "terms" : { "sensitivity_blur" : ["B"] } },
+            { "terms" : { "metadata.ensitivity_blur" : ["B"] } },
             { "bool": { "must_not" : {
-              "exists": { "field": "sensitivity_blur" }
+              "exists": { "field": "metadata.sensitivity_blur" }
             }}}
           ]
         }
@@ -256,7 +263,7 @@ POST /_aliases
       "alias" : "occurrence_search_irecord",
       "filter": {
         "query_string": {
-          "query": "website_id:23",
+          "query": "metadata.website.id:23",
           "analyze_wildcard": false,
           "default_field": "*"
           /* Other filters here - see above. */
@@ -330,7 +337,6 @@ To update the taxa.csv file with a fresh copy of the data:
     working folder.
   * Open the resulting file in a text editor and search and replace "" for \".
 * In pgAdmin 4:
-  * TODO: update following to convert to YAML.
   * If indicia, public is not your logged in users default search path, then
     edit the query to add "indicia." in front of all the table names (use a
     different prefix if your schema is different).
@@ -340,11 +346,9 @@ To update the taxa.csv file with a fresh copy of the data:
   * Rename the downloaded file to taxa.csv and replace the file in
     Elasticsearch/data in your working folder.
   * Edit the file in a text editor. Remove the first row (column titles) and
-    perform the following replacements where <space> must be changed to a real
-    space:
-    * """," replace with ":<space>
-    * """ with "
-    * "\n replace with \n
+    perform the following replacements:
+    * "," with ": "
+    * "" with "\
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above for the prepare-taxon-paths.sql file, saving the results as
