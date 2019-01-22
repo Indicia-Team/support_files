@@ -1,15 +1,21 @@
 select distinct t.search_code as key,
-  cttl.external_key || '~' || cttl.preferred_taxon || '~' || coalesce(cttl.preferred_authority, '') || '~' || cttl.taxon_group
-  || '~' || coalesce(cttl.default_common_name, '') || '~' ||  coalesce(cttl.taxon_rank, '') || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
+  t.taxon || '~' || coalesce(t.authority, '')
+  || '~' || cttl.external_key
+  || '~' || cttl.preferred_taxon || '~' || coalesce(cttl.preferred_authority, '')
+  || '~' || cttl.taxon_group
+  || '~' || coalesce(cttl.default_common_name, '')
+  || '~' || coalesce(cttl.taxon_rank, '')
+  || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
   || '~' || cttl.marine_flag::text
-  || '~' || coalesce(tkingdom.taxon, '') || '~' || coalesce(tkingdom.external_key, '')
-  || '~' || coalesce(tphylum.taxon, '') || '~' || coalesce(tphylum.external_key, '')
-  || '~' || coalesce(tclass.taxon, '') || '~' || coalesce(tclass.external_key, '')
-  || '~' || coalesce(torder.taxon, '') || '~' || coalesce(torder.external_key, '')
-  || '~' || coalesce(tfamily.taxon, '') || '~' || coalesce(tfamily.external_key, '')
-  || '~' || coalesce(tsubfamily.taxon, '') || '~' || coalesce(tsubfamily.external_key, '')
-  || '~' || coalesce(tgenus.taxon, '') || '~' || coalesce(tgenus.external_key, '')
-  || '~' || coalesce(tspecies.taxon, '') || '~' || coalesce(tspecies.external_key, '')
+  || '~' || coalesce(tkingdom.taxon, '')
+  || '~' || coalesce(tphylum.taxon, '')
+  || '~' || coalesce(tclass.taxon, '')
+  || '~' || coalesce(torder.taxon, '')
+  || '~' || coalesce(tfamily.taxon, '')
+  || '~' || coalesce(tsubfamily.taxon, '')
+  || '~' || coalesce(tgenus.taxon, '')
+  || '~' || coalesce(tspecies.taxon, '')
+  || '~' || coalesce(tspecies.external_key, '')
 from cache_taxa_taxon_lists cttl
 join taxa_taxon_lists ttl on ttl.id=cttl.id and ttl.deleted=false
 join taxa t on t.id=ttl.taxon_id and t.deleted=false
@@ -32,3 +38,4 @@ left join cache_taxa_taxon_lists tspecies on tspecies.taxon_meaning_id = ANY(tp.
   and tspecies.taxon_rank='Species' and tspecies.preferred=true and tspecies.taxon_list_id=<taxon_list_id>
 where cttl.taxon_list_id=<taxon_list_id>
 and cttl.external_key is not null
+and t.search_code is not null;
