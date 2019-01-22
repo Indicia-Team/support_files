@@ -350,6 +350,14 @@ To update the taxa.csv file with a fresh copy of the data:
     * "," with ": "
     * "" with "\
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
+    * Regexp \u0093 with empty string
+    * Regexp \u008A with Š
+    * Regexp \u009A with š
+    * Regexp \u0082 with ,
+    * Regexp \u009c with œ and also remove the stray hyphen in the affected
+      name.
+    * The name for BMSSYS0000533859 should have standard double quotes around
+      mauroides with escape \ preceding them, i.e. \"mauroides\".
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above for the prepare-taxon-paths.sql file, saving the results as
