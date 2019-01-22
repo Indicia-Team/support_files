@@ -349,6 +349,7 @@ To update the taxa.csv file with a fresh copy of the data:
     perform the following replacements:
     * "," with ": "
     * "" with "\
+    * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above for the prepare-taxon-paths.sql file, saving the results as
