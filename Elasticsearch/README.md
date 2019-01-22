@@ -349,11 +349,15 @@ To update the taxa.csv file with a fresh copy of the data:
     perform the following replacements:
     * "," with ": "
     * "" with "\
+    * Regexp \u0084 with ,,
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
+    * Regexp \u0092 with '
     * Regexp \u0093 with empty string
+    * Regexp \u0094 with "
     * Regexp \u008A with Š
     * Regexp \u009A with š
     * Regexp \u0082 with ,
+    * Regexp \u0090 with empty string
     * Regexp \u009c with œ and also remove the stray hyphen in the affected
       name.
     * The name for BMSSYS0000533859 should have standard double quotes around
