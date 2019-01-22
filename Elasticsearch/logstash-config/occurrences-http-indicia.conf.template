@@ -45,28 +45,23 @@ filter {
     skip_empty_columns => true
     quote_char => "`"
     columns => [
-      "accepted_taxon_key",
       "taxon_name",
-      "authority",
+      "taxon_authority",
+      "accepted_taxon_key",
+      "accepted_taxon_name",
+      "accepted_taxon_authority",
       "taxon_group",
       "common_name",
       "taxon_rank",
       "taxon_rank_sort_order",
       "marine_flag",
       "taxon_kingdom",
-      "taxon_kingdom_key",
       "taxon_phylum",
-      "taxon_phylum_key",
       "taxon_class",
-      "taxon_class_key",
       "taxon_order",
-      "taxon_order_key",
       "taxon_family",
-      "taxon_family_key",
       "taxon_subfamily",
-      "taxon_subfamily_key",
       "taxon_genus",
-      "taxon_genus_key",
       "taxon_species",
       "taxon_species_key"
     ]
@@ -110,74 +105,79 @@ filter {
   }
   mutate {
     rename => {
-      "point_x" => "[locality][point][lon]"
-      "point_y" => "[locality][point][lat]"
-      "geom" => "[locality][geom]"
-      "output_sref" => "[locality][output_sref]"
-      "output_sref_system" => "[locality][output_sref_system]"
-      "given_locality_name" => "[locality][given_name]"
-      "recorded_location_id" => "[locality][recorded][id]"
-      "recorded_location_name" => "[locality][recorded][name]"
-      "recorded_parent_location_id" => "[locality][recorded][parent][id]"
-      "recorded_parent_location_name" => "[locality][recorded][parent][name]"
-      "indexed_location_ids" => "[locality][location_ids]"
-      "locations" => "[locality][locations]"
-      "date_start" => "[date][date_start]"
-      "date_end" => "[date][date_end]"
-      "day_of_year" => "[date][day_of_year]"
-      "week_of_year" => "[date][week_of_year]"
-      "month_of_year" => "[date][month_of_year]"
-      "year" => "[date][year]"
-      "taxon_key" => "[taxon][key]"
-      "accepted_taxon_key" => "[taxon][accepted_key]"
-      "taxon_name" => "[taxon][name]"
-      "authority" => "[taxon][authority]"
-      "taxon_group" => "[taxon][group]"
-      "common_name" => "[taxon][common_name]"
-      "taxon_rank" => "[taxon][rank]"
-      "taxon_rank_sort_order" => "[taxon][rank_sort_order]"
-      "marine_flag" => "[taxon][marine]"
-      "taxon_kingdom" => "[taxon][kingdom][name]"
-      "taxon_kingdom_key" => "[taxon][kingdom][key]"
-      "taxon_phylum" => "[taxon][phylum][name]"
-      "taxon_phylum_key" => "[taxon][phylum][key]"
-      "taxon_class" => "[taxon][class][name]"
-      "taxon_class_key" => "[taxon][class][key]"
-      "taxon_order" => "[taxon][order][name]"
-      "taxon_order_key" => "[taxon][order][key]"
-      "taxon_family" => "[taxon][family][name]"
-      "taxon_family_key" => "[taxon][family][key]"
-      "taxon_subfamily" => "[taxon][subfamily][name]"
-      "taxon_subfamily_key" => "[taxon][subfamily][key]"
-      "taxon_genus" => "[taxon][genus][name]"
-      "taxon_genus_key" => "[taxon][genus][key]"
-      "taxon_species" => "[taxon][species][name]"
-      "taxon_species_key" => "[taxon][species][key]"
-      "taxon_path_keys" => "[taxon][path_keys]"
-      "comment" => "[comments][record_comment]"
-      "sample_comment" => "[comments][sample_comment]"
-      "attr_sex" => "[record_attributes][sex]"
-      "attr_stage" => "[record_attributes][stage]"
-      "attr_sex_stage" => "[record_attributes][sex_stage]"
-      "attr_sex_stage_count" => "[record_attributes][sex_stage_count]"
-      "attr_certainty" => "[record_attributes][recorder_certainty]"
-      "attr_det_name" => "[record_attributes][determiner_name]"
-      "attr_biotope" => "[sample_attributes][biotope]"
-      "attr_sample_method" => "[sample_attributes][method]"
-      "created_on" => "[metadata][created_on]"
+      "created_on" => "[metadata][created]"
       "updated_on" => "[metadata][updated_on]"
-      "record_status" => "[metadata][record_status]"
-      "record_substatus" => "[metadata][record_substatus]"
-      "verified_by_id" => "[metadata][verified_by_id]"
-      "verifier" => "[metadata][verifier]"
-      "verified_on" => "[metadata][verified_on]"
-      "data_cleaner_info" => "[metadata][data_cleaner_info]"
-      "query" => "[metadata][query]"
+      "created_by_id" => "[metadata][created_by_id]"
+      "updated_by_id" => "[metadata][updated_by_id]"
+      "licence_code" => "[metadata][licence_code]"
+      "group_id" => "[metadata][group][id]"
+      "group_title" => "[metadata][group][title]"
+      "survey_id" => "[metadata][survey][id]"
+      "survey_title" => "[metadata][survey][title]"
+      "website_id" => "[metadata][website][id]"
+      "website_title" => "[metadata][website][title]"
       "sensitive" => "[metadata][sensitive]"
-      "sensitivity_precision" => "[metadata][sensitivity_precision]"
+      "sensitivity_precision" => "[metadata][sensitivity_blur]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
+      "attr_det_name" => "[identification][identified_by]"
+      "verifier" => "[identification][verifier]"
+      "verified_on" => "[identification][verified_on]"
+      "record_status" => "[metadata][identification_verification_status]"
+      "verified_by_id" => "[metadata][verified_by_id]"
+      "data_cleaner_info" => "[identification][auto_rule_violations]"
+      "query" => "[identification][query]"
+      "attr_certainty" => "[identification][recorder_certainty]"
+      "point" => "[location][point]"
+      "geom" => "[location][geom]"
+      "output_sref" => "[location][output_sref]"
+      "output_sref_system" => "[location][output_sref_system]"
+      "coordinate_uncertainty_in_meters" => "[location][coordinate_uncertainty_in_meters]"
+      "given_locality_name" => "[location][verbatim_locality]"
+      "recorded_location_id" => "[location][location_id]"
+      "recorded_location_name" => "[location][name]"
+      "recorded_parent_location_id" => "[location][parent][location_id]"
+      "recorded_parent_location_name" => "[location][parent][name]"
+      "indexed_location_ids" => "[location][higher_geography_ids]"
+      "locations" => "[location][higher_geography]"
+      "date_start" => "[event][date_start]"
+      "date_end" => "[event][date_end]"
+      "day_of_year" => "[event][day_of_year]"
+      "week" => "[event][week]"
+      "ukbms_week" => "[event][ukbms_week]"
+      "month" => "[event][month]"
+      "year" => "[event][year]"
+      "recorders" => "[event][recorded_by]"
+      "sample_comment" => "[event][event_remarks]"
+      "attr_biotope" => "[event][habitat]"
+      "attr_sample_method" => "[event][sampling_protocol]"
+      "taxon_key" => "[taxon][taxon_id]"
+      "taxon_name" => "[taxon][taxon_name]"
+      "taxon_authority" => "[taxon][taxon_name_authorship]"
+      "accepted_taxon_key" => "[taxon][accepted_taxon_id]"
+      "accepted_taxon_name" => "[taxon][accepted_name]"
+      "accepted_taxon_authority" => "[taxon][accepted_name_authorship]"
+      "taxon_group" => "[taxon][group]"
+      "common_name" => "[taxon][vernacular_name]"
+      "taxon_rank" => "[taxon][taxon_rank]"
+      "taxon_rank_sort_order" => "[taxon][taxon_rank_sort_order]"
+      "marine_flag" => "[taxon][marine]"
+      "taxon_kingdom" => "[taxon][kingdom]"
+      "taxon_phylum" => "[taxon][phylum]"
+      "taxon_class" => "[taxon][class]"
+      "taxon_order" => "[taxon][order]"
+      "taxon_family" => "[taxon][family]"
+      "taxon_subfamily" => "[taxon][subfamily]"
+      "taxon_genus" => "[taxon][genus]"
+      "taxon_species" => "[taxon][species]"
+      "taxon_species_key" => "[taxon][species_taxon_id]"
+      "taxon_path_keys" => "[taxon][higher_taxon_ids]"
+      "attr_sex" => "[occurrence][sex]"
+      "attr_stage" => "[occurrence][life_stage]"
+      "attr_sex_stage_count" => "[occurrence][organism_quantity]"
+      "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
+      "comment" => "[occurrence][occurrence_remarks]"
     }
   }
   ruby {
