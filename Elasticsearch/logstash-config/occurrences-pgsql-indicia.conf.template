@@ -170,6 +170,7 @@ filter {
     field => "indexed_location_ids"
     iterate_on => "indexed_location_ids"
     destination => "locations_blob"
+    remove_field => "indexed_location_ids"
   }
   # Split the indexed locations blob into a list of structured location objects.
   ruby {
@@ -178,9 +179,10 @@ filter {
         event.set('locations', event.get('locations_blob').collect { |t|
           c = t.split '~'
           {
-            'name' =>  c[0],
-            'code' => c[1],
-            'type' => c[2]
+            'id' => c[0],
+            'name' =>  c[1],
+            'code' => c[2],
+            'type' => c[3]
           }
         })
       end
@@ -220,6 +222,7 @@ filter {
       end
     "
     remove_field => "data_cleaner_info"
+    add_field => { "warehouse" => "{{ Indicia warehouse unique name }}" }
   }
   mutate {
     rename => {
@@ -240,10 +243,10 @@ filter {
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
       "attr_det_name" => "[identification][identified_by]"
-      "verifier" => "[identification][verifier]"
+      "verifier" => "[identification][verifier][name]"
+      "verified_by_id" => "[identification][verifier][id]"
       "verified_on" => "[identification][verified_on]"
       "record_status" => "[identification][identification_verification_status]"
-      "verified_by_id" => "[identification][verified_by_id]"
       "data_cleaner_list" => "[identification][auto_checks][output]"
       "verification_checks_enabled" => "[identification][auto_checks][enabled]"
       "query" => "[identification][query]"
@@ -259,7 +262,6 @@ filter {
       "recorded_parent_location_id" => "[location][parent][location_id]"
       "recorded_parent_location_name" => "[location][parent][name]"
       "indexed_location_ids" => "[location][higher_geography_ids]"
-      "locations" => "[location][higher_geography]"
       "sample_id" => "[event][event_id]"
       "parent_sample_id" => "[event][parent_event_id]"
       "date_start" => "[event][date_start]"
