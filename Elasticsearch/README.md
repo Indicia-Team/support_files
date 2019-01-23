@@ -197,7 +197,7 @@ PUT occurrence_brc1
         "metadata.sensitive": { "type": "boolean" },
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
-        "identification.verified_by_id": { "type": "integer" },
+        "identification.verifier.id": { "type": "integer" },
         "identification.verified_on": {
           "type": "date",
           "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
@@ -206,11 +206,13 @@ PUT occurrence_brc1
         "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
-        "location.higher_geography_ids": { "type": "integer" },
+        "location.higher_geography.id": { "type": "integer" },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
-        "occurrence.individual_count": { "type": "integer" }
+        "occurrence.individual_count": { "type": "integer" },
+        "taxon.marine": { "type": "boolean" },
+        "taxon.taxon_rank_sort_order": { "type": "short" }
       }
     }
   }
