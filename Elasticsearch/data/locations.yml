@@ -1,301 +1,301 @@
-"1097": Leitrim~H29~Vice County
-"1099": Monaghan~H32~Vice County
-"1101": Cavan~H30~Vice County
-"1102": East Mayo~H26~Vice County
-"1103": Roscommon~H25~Vice County
-"1104": Louth~H31~Vice County
-"1105": Longford~H24~Vice County
-"1106": Meath~H22~Vice County
-"1107": Westmeath~H23~Vice County
-"1108": East Galway~H17~Vice County
-"1111": Kildare~H19~Vice County
-"1112": Offaly~H18~Vice County
-"1114": Wicklow~H20~Vice County
-"1115": Laois~H14~Vice County
-"1116": North Tipperary~H10~Vice County
-"1117": Carlow~H13~Vice County
-"1118": Kilkenny~H11~Vice County
-"1119": South Tipperary~H7~Vice County
-"1123": Mid Cork~H4~Vice County
-"1129": Armagh~H37~Vice County
-"1130": Londonderry~H40~Vice County
-"1132": Fermanagh~H33~Vice County
-"1133": Tyrone~H36~Vice County
-"700": Staffordshire~39~Vice County
-"667": Midlothian~83~Vice County
-"1136": Linlithgow~84~Vice County
-"1095": East Donegal~H34~Vice County
-"1096": West Donegal~H35~Vice County
-"1098": Sligo~H28~Vice County
-"1100": West Mayo~H27~Vice County
-"1109": Dublin~H21~Vice County
-"1110": West Galway~H16~Vice County
-"1113": South Galway~H15~Vice County
-"1120": Wexford~H12~Vice County
-"1121": Limerick~H8~Vice County
-"1122": North Kerry~H2~Vice County
-"1124": Waterford~H6~Vice County
-"1125": East Cork~H5~Vice County
-"1126": West Cork~H3~Vice County
-"1127": South Kerry~H1~Vice County
-"1128": Antrim~H39~Vice County
-"1131": Down~H38~Vice County
-"1134": Clare~H9~Vice County
-"661": Clyde Isles~100~Vice County
-"701": Shropshire~40~Vice County
-"675": Dumfriesshire~72~Vice County
-"669": Selkirkshire~79~Vice County
-"668": Peebleshire~78~Vice County
-"677": Wigtownshire~74~Vice County
-"726": West Cornwall with Scilly~1~Vice County
-"719": Monmouthshire~35~Vice County
-"720": West Gloucestershire~34~Vice County
-"725": East Cornwall~2~Vice County
-"727": Dorset~9~Vice County
-"671": North Northumberland~68~Vice County
-"670": Berwickshire~81~Vice County
-"676": Kirkudbrightshire~73~Vice County
-"704": Cambridgeshire~29~Vice County
-"705": Huntingdonshire~31~Vice County
-"706": Northamptonshire~32~Vice County
-"707": Bedfordshire~30~Vice County
-"708": Buckinghamshire~24~Vice County
-"709": East Gloucestershire~33~Vice County
-"711": Warwickshire~38~Vice County
-"713": Radnorshire~43~Vice County
-"714": Cardiganshire~46~Vice County
-"716": Carmarthenshire~44~Vice County
-"710": Worcestershire~37~Vice County
-"723": North Devon~4~Vice County
-"721": North Somerset~6~Vice County
-"722": South Somerset~5~Vice County
-"724": South Devon~3~Vice County
-"718": Glamorganshire~41~Vice County
-"715": Breconshire~42~Vice County
-"712": Herefordshire~36~Vice County
-"717": Pembrokeshire~45~Vice County
-"658": Stirlingshire~86~Vice County
-"659": Renfrewshire~76~Vice County
-"650": Angus~90~Vice County
-"649": Kincardineshire~91~Vice County
-"648": South Aberdeenshire~92~Vice County
-"647": North Aberdeenshire~93~Vice County
-"646": Banffshire~94~Vice County
-"645": Moray~95~Vice County
-"644": East Inverness-shire~96~Vice County
-"643": West Inverness-shire~97~Vice County
-"653": Argyllshire~98~Vice County
-"657": Dunbartonshire~99~Vice County
-"635": Shetland~112~Vice County
-"641": Outer Hebrides~110~Vice County
-"636": Orkney~111~Vice County
-"637": Caithness~109~Vice County
-"638": West Sutherland~108~Vice County
-"639": East Sutherland~107~Vice County
-"642": North Ebudes~104~Vice County
-"651": South Ebudes~102~Vice County
-"652": Mid Ebudes~103~Vice County
-"660": Kintyre~101~Vice County
-"656": West Perthshire~87~Vice County
-"654": Mid Perthshire~88~Vice County
-"655": East Perthshire~89~Vice County
-"664": East Ross & Cromarty~106~Vice County
-"666": East Lothian~82~Vice County
-"662": Ayrshire~75~Vice County
-"663": Lanarkshire~77~Vice County
-"665": Fifeshire~85~Vice County
-"640": West Ross & Cromarty~105~Vice County
-"690": Leicestershire (with Rutland)~55~Vice County
-"685": South Lancashire~59~Vice County
-"683": West Lancashire~60~Vice County
-"679": County Durham~66~Vice County
-"680": Westmorland (with Furness)~69~Vice County
-"681": North-west Yorkshire~65~Vice County
-"682": North-east Yorkshire~62~Vice County
-"684": Mid-west Yorkshire~64~Vice County
-"686": South-west Yorkshire~63~Vice County
-"687": South-east Yorkshire~61~Vice County
-"688": North Lincolnshire~54~Vice County
-"689": Nottinghamshire~56~Vice County
-"691": South Lincolnshire~53~Vice County
-"692": Derbyshire~57~Vice County
-"693": Cheshire~58~Vice County
-"694": Flintshire~51~Vice County
-"695": Denbighshire~50~Vice County
-"696": Caernarvonshire~49~Vice County
-"673": South Northumberland~67~Vice County
-"729": South Hampshire~11~Vice County
-"674": Cumberland~70~Vice County
-"672": Roxburghshire~80~Vice County
-"678": Isle of Man~71~Vice County
-"697": Anglesey~52~Vice County
-"698": Merionethshire~48~Vice County
-"702": West Norfolk~28~Vice County
-"703": East Norfolk~27~Vice County
-"699": Montgomeryshire~47~Vice County
-"728": Isle of Wight~10~Vice County
-"730": South Wiltshire~8~Vice County
-"731": North Wiltshire~7~Vice County
-"732": Oxfordshire~23~Vice County
-"733": Berkshire~22~Vice County
-"734": North Hampshire~12~Vice County
-"735": West Sussex~13~Vice County
-"736": East Sussex~14~Vice County
-"737": East Kent~15~Vice County
-"738": West Kent~16~Vice County
-"739": Surrey~17~Vice County
-"740": Hertfordshire~20~Vice County
-"741": Middlesex~21~Vice County
-"742": North Essex~19~Vice County
-"743": South Essex~18~Vice County
-"744": West Suffolk~26~Vice County
-"745": East Suffolk~25~Vice County
-"16217": Sussex~13+14~Vice County
-"16218": Yorkshire~61+62+63+63+65~Vice County
-"1135": Channel Isles~113~Vice County
-"1945": Beds and Northants~~Butterfly Conservation Branch
-"1965": Northern Ireland~~Butterfly Conservation Branch
-"1948": Cornwall~~Butterfly Conservation Branch
-"1969": Upper Thames~~Butterfly Conservation Branch
-"1970": Warwickshire~~Butterfly Conservation Branch
-"1971": West Midlands~~Butterfly Conservation Branch
-"1972": Wiltshire~~Butterfly Conservation Branch
-"1973": Yorkshire~~Butterfly Conservation Branch
-"182962": Suffolk~223~Butterfly Conservation Branch
-"182963": Surrey and South West London~~Butterfly Conservation Branch
-"1956": Hampshire and Isle of Wight~~Butterfly Conservation Branch
-"1967": South Wales~~Butterfly Conservation Branch
-"1949": Cumbria~~Butterfly Conservation Branch
-"1947": Cheshire and Peak~~Butterfly Conservation Branch
-"1951": Dorset~~Butterfly Conservation Branch
-"1955": Gloucestershire~~Butterfly Conservation Branch
-"1957": Herts and Middlesex~~Butterfly Conservation Branch
-"1959": Kent~~Butterfly Conservation Branch
-"1960": Lancashire~~Butterfly Conservation Branch
-"1962": Norfolk~~Butterfly Conservation Branch
-"1966": Somerset and Bristol~~Butterfly Conservation Branch
-"1950": Devon~~Butterfly Conservation Branch
-"1952": East Midlands~~Butterfly Conservation Branch
-"1954": Glasgow and South West Scotland~~Butterfly Conservation Branch
-"1963": North East England~~Butterfly Conservation Branch
-"1968": Sussex~~Butterfly Conservation Branch
-"1946": Cambridgeshire and Essex~~Butterfly Conservation Branch
-"1953": East Scotland~~Butterfly Conservation Branch
-"1958": Highland~~Butterfly Conservation Branch
-"1961": Lincolnshire~~Butterfly Conservation Branch
-"1964": North Wales~~Butterfly Conservation Branch
-"1408": Greenspace Information for Greater London~~LRC Boundary
-"1409": Orkney Biological Records Centre~~LRC Boundary
-"1410": Skye Environmental Centre~~LRC Boundary
-"1398": Staffordshire Ecological Record~~LRC Boundary
-"1399": Shropshire Wildlife Trust~~LRC Boundary
-"1400": West Yorkshire Ecology~~LRC Boundary
-"1401": Sheffield Biological Records Centre~~LRC Boundary
-"1402": Barnsley Biological Records Centre~~LRC Boundary
-"1403": Rotherham Biological Records Centre~~LRC Boundary
-"1404": Doncaster Biological Records Centre~~LRC Boundary
-"1405": Northamptonshire Biodiversity Records Centre~~LRC Boundary
-"1406": EcoRecord~~LRC Boundary
-"1407": Buckinghamshire and Milton Keynes ERC~~LRC Boundary
-"1416": Kent and Medway Biological Records Centre~~LRC Boundary
-"1447": Gloucestershire Centre for Environmental Records~~LRC Boundary
-"1411": Shetland Biological Records Centre~~LRC Boundary
-"1412": North East Environmental Records Information Centre~~LRC Boundary
-"1413": Norfolk Biological Records Centre~~LRC Boundary
-"1414": Suffolk Biological Records Centre~~LRC Boundary
-"1417": Isle of Wight Local Records Centre~~LRC Boundary
-"1418": Cofnod - North Wales Environmental Information Service~~LRC Boundary
-"1419": Bristol Regional Environmental Records Centre~~LRC Boundary
-"1420": Arran Biological Records Centre~~LRC Boundary
-"1425": Ayrshire Biological Records Centre~~LRC Boundary
-"1426": Biodiversity Information Centre for Cheshire, Halton, Warrington & Wirral~~LRC Boundary
-"1427": Greater Manchester Ecology Unit~~LRC Boundary
-"1428": Falkirk Museum~~LRC Boundary
-"1430": Highland Biological Recording Group~~LRC Boundary
-"1431": South Lanarkshire Council~~LRC Boundary
-"1432": North Lanarkshire Biological Records Centre~~LRC Boundary
-"1433": Fife Nature Records Centre~~LRC Boundary
-"1434": Perth Museum Biological Records Centre~~LRC Boundary
-"1435": Worcestershire Biological Records Centre~~LRC Boundary
-"1436": South East Wales Biodiversity Records Centre~~LRC Boundary
-"1448": Herefordshire Biological Records Centre~~LRC Boundary
-"1449": Thames Valley Environmental Records Centre~~LRC Boundary
-"1450": Surrey Biological Records Centre~~LRC Boundary
-"1451": Hertfordshire Biological Records Centre~~LRC Boundary
-"1429": The Wildlife Information Centre for the Lothians and the Borders~~LRC Boundary
-"1421": Islay Natural History Trust Wildlife Information Centre~~LRC Boundary
-"1453": Bedfordshire and Luton Biodiversity Recording and Monitoring Centre~~LRC Boundary
-"1454": Leicestershire and Rutland Environmental Records Centre~~LRC Boundary
-"1455": Warwickshire BRC~~LRC Boundary
-"1456": Derbyshire Biological Records Centre~~LRC Boundary
-"1457": Sussex Biodiversity Record Centre~~LRC Boundary
-"1458": Hampshire Biodiversity Information Centre~~LRC Boundary
-"1459": Dorset Environmental Records Centre~~LRC Boundary
-"1460": Environmental Records Centre for Cornwall and the Isles of Scilly~~LRC Boundary
-"1461": Devon Biodiversity Records Centre~~LRC Boundary
-"1462": Somerset Environmental Records Centre~~LRC Boundary
-"1463": Lancashire Biological Records Centre~~LRC Boundary
-"1464": Merseyside BioBank~~LRC Boundary
-"1444": Central Scotland Wildlife Information Service~~LRC Boundary
-"1465": West Wales Biodiversity Information Centre~~LRC Boundary
-"1422": Centre for Environmental Data and Recording~~LRC Boundary
-"1423": Isle of Man Biological Records Centre~~LRC Boundary
-"1466": Biodiversity Information Service for Powys and Brecon Beacons National Park~~LRC Boundary
-"1424": Not covered by an LRC~~LRC Boundary
-"1437": Dumfries and Galloway Environmental Resources Centre~~LRC Boundary
-"1438": Cumbria Biodiversity Data Centre~~LRC Boundary
-"1439": North East Scotland Biological Records Centre~~LRC Boundary
-"1440": Naturebase (Dundee Museum)~~LRC Boundary
-"1441": North & East Yorkshire Ecological Data Centre~~LRC Boundary
-"1442": Lincolnshire Environmental Records Centre~~LRC Boundary
-"1443": Nottinghamshire Biological and Geological Records Centre~~LRC Boundary
-"1445": Glasgow Museum Biological Records Centre~~LRC Boundary
-"1446": Wiltshire & Swindon Biological Records Centre~~LRC Boundary
-"1415": Essex Wildlife Trust biological records centre~~LRC Boundary
-"1452": Cambridgeshire and Peterborough Environmental Records Centre~~LRC Boundary
-"202728": Jersey Biodiversity Centre~JBC~LRC Boundary
-"1606": Wales~W92000004~Country
-"1605": England~E92000001~Country
-"1613": Eire~10~Country
-"1612": Northern Ireland~40~Country
-"1614": Scotland~50~Country
-"203169": Guernsey (Bailwick of)~~Country
-"203170": Jersey (Bailwick of)~~Country
-"36733": Muir Of Dinnet~5054~Cairngorms NP NNR
-"36725": Abernethy~10099~Cairngorms NP NNR
-"36728": Creag Meagaidh~5021~Cairngorms NP NNR
-"36729": Glenmore~10098~Cairngorms NP NNR
-"36730": Glen Tanar~5032~Cairngorms NP NNR
-"36732": Invereshie And Inshriach~10097~Cairngorms NP NNR
-"36726": Corrie Fee~8670~Cairngorms NP NNR
-"36742": Insh Marshes~8628~Cairngorms NP NNR
-"36727": Craigellachie~5020~Cairngorms NP NNR
-"32937": Cairngorms NP~8623~Miscellaneous indexed boundaries
-"40229": Ireland buffered to 15km~~Miscellaneous indexed boundaries
-"190290": Avalon Marshes Recording Area~AM01~Miscellaneous indexed boundaries
-"39749": Godrevy~~NT Bioblitz 2015 site
-"39739": Sandscale Haws~~NT Bioblitz 2015 site
-"39750": Souter The Leas~~NT Bioblitz 2015 site
-"39751": Birling Gap~~NT Bioblitz 2015 site
-"39752": Mwnt~~NT Bioblitz 2015 site
-"39753": St Helen's Duver & Priory Wood~~NT Bioblitz 2015 site
-"39754": Brownsea Island~~NT Bioblitz 2015 site
-"39755": White Park Bay~~NT Bioblitz 2015 site
-"39756": Murlough Nature Reserve~~NT Bioblitz 2015 site
-"39757": Freshwater West~~NT Bioblitz 2015 site
-"39732": Kinver Edge~~NT Bioblitz 2015 site
-"39733": Sandymouth~~NT Bioblitz 2015 site
-"39734": Cwm Tydu~~NT Bioblitz 2015 site
-"39735": Brancaster & Scolt Head~~NT Bioblitz 2015 site
-"39736": Charlecote Park~~NT Bioblitz 2015 site
-"39737": Cwm Ivy~~NT Bioblitz 2015 site
-"39738": Formby~~NT Bioblitz 2015 site
-"39748": Low Newton~~NT Bioblitz 2015 site
-"39747": Blakeney~~NT Bioblitz 2015 site
-"39740": Ravenscar~~NT Bioblitz 2015 site
-"39743": Dunwich~~NT Bioblitz 2015 site
-"39744": Cemlyn Estate~~NT Bioblitz 2015 site
-"39746": Durham Coast~~NT Bioblitz 2015 site
-"39741": East Head West Wittering~~NT Bioblitz 2015 site
-"39742": White Cliffs~~NT Bioblitz 2015 site
-"39745": Copt Hall Marshes~~NT Bioblitz 2015 site
+"1097": "1097~Leitrim~H29~Vice County"
+"1099": "1099~Monaghan~H32~Vice County"
+"1101": "1101~Cavan~H30~Vice County"
+"1102": "1102~East Mayo~H26~Vice County"
+"1103": "1103~Roscommon~H25~Vice County"
+"1104": "1104~Louth~H31~Vice County"
+"1105": "1105~Longford~H24~Vice County"
+"1106": "1106~Meath~H22~Vice County"
+"1107": "1107~Westmeath~H23~Vice County"
+"1108": "1108~East Galway~H17~Vice County"
+"1111": "1111~Kildare~H19~Vice County"
+"1112": "1112~Offaly~H18~Vice County"
+"1114": "1114~Wicklow~H20~Vice County"
+"1115": "1115~Laois~H14~Vice County"
+"1116": "1116~North Tipperary~H10~Vice County"
+"1117": "1117~Carlow~H13~Vice County"
+"1118": "1118~Kilkenny~H11~Vice County"
+"1119": "1119~South Tipperary~H7~Vice County"
+"1123": "1123~Mid Cork~H4~Vice County"
+"1129": "1129~Armagh~H37~Vice County"
+"1130": "1130~Londonderry~H40~Vice County"
+"1132": "1132~Fermanagh~H33~Vice County"
+"1133": "1133~Tyrone~H36~Vice County"
+"700": "700~Staffordshire~39~Vice County"
+"667": "667~Midlothian~83~Vice County"
+"1136": "1136~Linlithgow~84~Vice County"
+"1095": "1095~East Donegal~H34~Vice County"
+"1096": "1096~West Donegal~H35~Vice County"
+"1098": "1098~Sligo~H28~Vice County"
+"1100": "1100~West Mayo~H27~Vice County"
+"1109": "1109~Dublin~H21~Vice County"
+"1110": "1110~West Galway~H16~Vice County"
+"1113": "1113~South Galway~H15~Vice County"
+"1120": "1120~Wexford~H12~Vice County"
+"1121": "1121~Limerick~H8~Vice County"
+"1122": "1122~North Kerry~H2~Vice County"
+"1124": "1124~Waterford~H6~Vice County"
+"1125": "1125~East Cork~H5~Vice County"
+"1126": "1126~West Cork~H3~Vice County"
+"1127": "1127~South Kerry~H1~Vice County"
+"1128": "1128~Antrim~H39~Vice County"
+"1131": "1131~Down~H38~Vice County"
+"1134": "1134~Clare~H9~Vice County"
+"661": "661~Clyde Isles~100~Vice County"
+"701": "701~Shropshire~40~Vice County"
+"675": "675~Dumfriesshire~72~Vice County"
+"669": "669~Selkirkshire~79~Vice County"
+"668": "668~Peebleshire~78~Vice County"
+"677": "677~Wigtownshire~74~Vice County"
+"726": "726~West Cornwall with Scilly~1~Vice County"
+"719": "719~Monmouthshire~35~Vice County"
+"720": "720~West Gloucestershire~34~Vice County"
+"725": "725~East Cornwall~2~Vice County"
+"727": "727~Dorset~9~Vice County"
+"671": "671~North Northumberland~68~Vice County"
+"670": "670~Berwickshire~81~Vice County"
+"676": "676~Kirkudbrightshire~73~Vice County"
+"704": "704~Cambridgeshire~29~Vice County"
+"705": "705~Huntingdonshire~31~Vice County"
+"706": "706~Northamptonshire~32~Vice County"
+"707": "707~Bedfordshire~30~Vice County"
+"708": "708~Buckinghamshire~24~Vice County"
+"709": "709~East Gloucestershire~33~Vice County"
+"711": "711~Warwickshire~38~Vice County"
+"713": "713~Radnorshire~43~Vice County"
+"714": "714~Cardiganshire~46~Vice County"
+"716": "716~Carmarthenshire~44~Vice County"
+"710": "710~Worcestershire~37~Vice County"
+"723": "723~North Devon~4~Vice County"
+"721": "721~North Somerset~6~Vice County"
+"722": "722~South Somerset~5~Vice County"
+"724": "724~South Devon~3~Vice County"
+"718": "718~Glamorganshire~41~Vice County"
+"715": "715~Breconshire~42~Vice County"
+"712": "712~Herefordshire~36~Vice County"
+"717": "717~Pembrokeshire~45~Vice County"
+"658": "658~Stirlingshire~86~Vice County"
+"659": "659~Renfrewshire~76~Vice County"
+"650": "650~Angus~90~Vice County"
+"649": "649~Kincardineshire~91~Vice County"
+"648": "648~South Aberdeenshire~92~Vice County"
+"647": "647~North Aberdeenshire~93~Vice County"
+"646": "646~Banffshire~94~Vice County"
+"645": "645~Moray~95~Vice County"
+"644": "644~East Inverness-shire~96~Vice County"
+"643": "643~West Inverness-shire~97~Vice County"
+"653": "653~Argyllshire~98~Vice County"
+"657": "657~Dunbartonshire~99~Vice County"
+"635": "635~Shetland~112~Vice County"
+"641": "641~Outer Hebrides~110~Vice County"
+"636": "636~Orkney~111~Vice County"
+"637": "637~Caithness~109~Vice County"
+"638": "638~West Sutherland~108~Vice County"
+"639": "639~East Sutherland~107~Vice County"
+"642": "642~North Ebudes~104~Vice County"
+"651": "651~South Ebudes~102~Vice County"
+"652": "652~Mid Ebudes~103~Vice County"
+"660": "660~Kintyre~101~Vice County"
+"656": "656~West Perthshire~87~Vice County"
+"654": "654~Mid Perthshire~88~Vice County"
+"655": "655~East Perthshire~89~Vice County"
+"664": "664~East Ross & Cromarty~106~Vice County"
+"666": "666~East Lothian~82~Vice County"
+"662": "662~Ayrshire~75~Vice County"
+"663": "663~Lanarkshire~77~Vice County"
+"665": "665~Fifeshire~85~Vice County"
+"640": "640~West Ross & Cromarty~105~Vice County"
+"690": "690~Leicestershire (with Rutland)~55~Vice County"
+"685": "685~South Lancashire~59~Vice County"
+"683": "683~West Lancashire~60~Vice County"
+"679": "679~County Durham~66~Vice County"
+"680": "680~Westmorland (with Furness)~69~Vice County"
+"681": "681~North-west Yorkshire~65~Vice County"
+"682": "682~North-east Yorkshire~62~Vice County"
+"684": "684~Mid-west Yorkshire~64~Vice County"
+"686": "686~South-west Yorkshire~63~Vice County"
+"687": "687~South-east Yorkshire~61~Vice County"
+"688": "688~North Lincolnshire~54~Vice County"
+"689": "689~Nottinghamshire~56~Vice County"
+"691": "691~South Lincolnshire~53~Vice County"
+"692": "692~Derbyshire~57~Vice County"
+"693": "693~Cheshire~58~Vice County"
+"694": "694~Flintshire~51~Vice County"
+"695": "695~Denbighshire~50~Vice County"
+"696": "696~Caernarvonshire~49~Vice County"
+"673": "673~South Northumberland~67~Vice County"
+"729": "729~South Hampshire~11~Vice County"
+"674": "674~Cumberland~70~Vice County"
+"672": "672~Roxburghshire~80~Vice County"
+"678": "678~Isle of Man~71~Vice County"
+"697": "697~Anglesey~52~Vice County"
+"698": "698~Merionethshire~48~Vice County"
+"702": "702~West Norfolk~28~Vice County"
+"703": "703~East Norfolk~27~Vice County"
+"699": "699~Montgomeryshire~47~Vice County"
+"728": "728~Isle of Wight~10~Vice County"
+"730": "730~South Wiltshire~8~Vice County"
+"731": "731~North Wiltshire~7~Vice County"
+"732": "732~Oxfordshire~23~Vice County"
+"733": "733~Berkshire~22~Vice County"
+"734": "734~North Hampshire~12~Vice County"
+"735": "735~West Sussex~13~Vice County"
+"736": "736~East Sussex~14~Vice County"
+"737": "737~East Kent~15~Vice County"
+"738": "738~West Kent~16~Vice County"
+"739": "739~Surrey~17~Vice County"
+"740": "740~Hertfordshire~20~Vice County"
+"741": "741~Middlesex~21~Vice County"
+"742": "742~North Essex~19~Vice County"
+"743": "743~South Essex~18~Vice County"
+"744": "744~West Suffolk~26~Vice County"
+"745": "745~East Suffolk~25~Vice County"
+"16217": "16217~Sussex~13+14~Vice County"
+"16218": "16218~Yorkshire~61+62+63+63+65~Vice County"
+"1135": "1135~Channel Isles~113~Vice County"
+"1945": "1945~Beds and Northants~~Butterfly Conservation Branch"
+"1965": "1965~Northern Ireland~~Butterfly Conservation Branch"
+"1948": "1948~Cornwall~~Butterfly Conservation Branch"
+"1969": "1969~Upper Thames~~Butterfly Conservation Branch"
+"1970": "1970~Warwickshire~~Butterfly Conservation Branch"
+"1971": "1971~West Midlands~~Butterfly Conservation Branch"
+"1972": "1972~Wiltshire~~Butterfly Conservation Branch"
+"1973": "1973~Yorkshire~~Butterfly Conservation Branch"
+"182962": "182962~Suffolk~223~Butterfly Conservation Branch"
+"182963": "182963~Surrey and South West London~~Butterfly Conservation Branch"
+"1956": "1956~Hampshire and Isle of Wight~~Butterfly Conservation Branch"
+"1967": "1967~South Wales~~Butterfly Conservation Branch"
+"1949": "1949~Cumbria~~Butterfly Conservation Branch"
+"1947": "1947~Cheshire and Peak~~Butterfly Conservation Branch"
+"1951": "1951~Dorset~~Butterfly Conservation Branch"
+"1955": "1955~Gloucestershire~~Butterfly Conservation Branch"
+"1957": "1957~Herts and Middlesex~~Butterfly Conservation Branch"
+"1959": "1959~Kent~~Butterfly Conservation Branch"
+"1960": "1960~Lancashire~~Butterfly Conservation Branch"
+"1962": "1962~Norfolk~~Butterfly Conservation Branch"
+"1966": "1966~Somerset and Bristol~~Butterfly Conservation Branch"
+"1950": "1950~Devon~~Butterfly Conservation Branch"
+"1952": "1952~East Midlands~~Butterfly Conservation Branch"
+"1954": "1954~Glasgow and South West Scotland~~Butterfly Conservation Branch"
+"1963": "1963~North East England~~Butterfly Conservation Branch"
+"1968": "1968~Sussex~~Butterfly Conservation Branch"
+"1946": "1946~Cambridgeshire and Essex~~Butterfly Conservation Branch"
+"1953": "1953~East Scotland~~Butterfly Conservation Branch"
+"1958": "1958~Highland~~Butterfly Conservation Branch"
+"1961": "1961~Lincolnshire~~Butterfly Conservation Branch"
+"1964": "1964~North Wales~~Butterfly Conservation Branch"
+"1408": "1408~Greenspace Information for Greater London~~LRC Boundary"
+"1409": "1409~Orkney Biological Records Centre~~LRC Boundary"
+"1410": "1410~Skye Environmental Centre~~LRC Boundary"
+"1398": "1398~Staffordshire Ecological Record~~LRC Boundary"
+"1399": "1399~Shropshire Wildlife Trust~~LRC Boundary"
+"1400": "1400~West Yorkshire Ecology~~LRC Boundary"
+"1401": "1401~Sheffield Biological Records Centre~~LRC Boundary"
+"1402": "1402~Barnsley Biological Records Centre~~LRC Boundary"
+"1403": "1403~Rotherham Biological Records Centre~~LRC Boundary"
+"1404": "1404~Doncaster Biological Records Centre~~LRC Boundary"
+"1405": "1405~Northamptonshire Biodiversity Records Centre~~LRC Boundary"
+"1406": "1406~EcoRecord~~LRC Boundary"
+"1407": "1407~Buckinghamshire and Milton Keynes ERC~~LRC Boundary"
+"1416": "1416~Kent and Medway Biological Records Centre~~LRC Boundary"
+"1447": "1447~Gloucestershire Centre for Environmental Records~~LRC Boundary"
+"1411": "1411~Shetland Biological Records Centre~~LRC Boundary"
+"1412": "1412~North East Environmental Records Information Centre~~LRC Boundary"
+"1413": "1413~Norfolk Biological Records Centre~~LRC Boundary"
+"1414": "1414~Suffolk Biological Records Centre~~LRC Boundary"
+"1417": "1417~Isle of Wight Local Records Centre~~LRC Boundary"
+"1418": "1418~Cofnod - North Wales Environmental Information Service~~LRC Boundary"
+"1419": "1419~Bristol Regional Environmental Records Centre~~LRC Boundary"
+"1420": "1420~Arran Biological Records Centre~~LRC Boundary"
+"1425": "1425~Ayrshire Biological Records Centre~~LRC Boundary"
+"1426": "1426~Biodiversity Information Centre for Cheshire, Halton, Warrington & Wirral~~LRC Boundary"
+"1427": "1427~Greater Manchester Ecology Unit~~LRC Boundary"
+"1428": "1428~Falkirk Museum~~LRC Boundary"
+"1430": "1430~Highland Biological Recording Group~~LRC Boundary"
+"1431": "1431~South Lanarkshire Council~~LRC Boundary"
+"1432": "1432~North Lanarkshire Biological Records Centre~~LRC Boundary"
+"1433": "1433~Fife Nature Records Centre~~LRC Boundary"
+"1434": "1434~Perth Museum Biological Records Centre~~LRC Boundary"
+"1435": "1435~Worcestershire Biological Records Centre~~LRC Boundary"
+"1436": "1436~South East Wales Biodiversity Records Centre~~LRC Boundary"
+"1448": "1448~Herefordshire Biological Records Centre~~LRC Boundary"
+"1449": "1449~Thames Valley Environmental Records Centre~~LRC Boundary"
+"1450": "1450~Surrey Biological Records Centre~~LRC Boundary"
+"1451": "1451~Hertfordshire Biological Records Centre~~LRC Boundary"
+"1429": "1429~The Wildlife Information Centre for the Lothians and the Borders~~LRC Boundary"
+"1421": "1421~Islay Natural History Trust Wildlife Information Centre~~LRC Boundary"
+"1453": "1453~Bedfordshire and Luton Biodiversity Recording and Monitoring Centre~~LRC Boundary"
+"1454": "1454~Leicestershire and Rutland Environmental Records Centre~~LRC Boundary"
+"1455": "1455~Warwickshire BRC~~LRC Boundary"
+"1456": "1456~Derbyshire Biological Records Centre~~LRC Boundary"
+"1457": "1457~Sussex Biodiversity Record Centre~~LRC Boundary"
+"1458": "1458~Hampshire Biodiversity Information Centre~~LRC Boundary"
+"1459": "1459~Dorset Environmental Records Centre~~LRC Boundary"
+"1460": "1460~Environmental Records Centre for Cornwall and the Isles of Scilly~~LRC Boundary"
+"1461": "1461~Devon Biodiversity Records Centre~~LRC Boundary"
+"1462": "1462~Somerset Environmental Records Centre~~LRC Boundary"
+"1463": "1463~Lancashire Biological Records Centre~~LRC Boundary"
+"1464": "1464~Merseyside BioBank~~LRC Boundary"
+"1444": "1444~Central Scotland Wildlife Information Service~~LRC Boundary"
+"1465": "1465~West Wales Biodiversity Information Centre~~LRC Boundary"
+"1422": "1422~Centre for Environmental Data and Recording~~LRC Boundary"
+"1423": "1423~Isle of Man Biological Records Centre~~LRC Boundary"
+"1466": "1466~Biodiversity Information Service for Powys and Brecon Beacons National Park~~LRC Boundary"
+"1424": "1424~Not covered by an LRC~~LRC Boundary"
+"1437": "1437~Dumfries and Galloway Environmental Resources Centre~~LRC Boundary"
+"1438": "1438~Cumbria Biodiversity Data Centre~~LRC Boundary"
+"1439": "1439~North East Scotland Biological Records Centre~~LRC Boundary"
+"1440": "1440~Naturebase (Dundee Museum)~~LRC Boundary"
+"1441": "1441~North & East Yorkshire Ecological Data Centre~~LRC Boundary"
+"1442": "1442~Lincolnshire Environmental Records Centre~~LRC Boundary"
+"1443": "1443~Nottinghamshire Biological and Geological Records Centre~~LRC Boundary"
+"1445": "1445~Glasgow Museum Biological Records Centre~~LRC Boundary"
+"1446": "1446~Wiltshire & Swindon Biological Records Centre~~LRC Boundary"
+"1415": "1415~Essex Wildlife Trust biological records centre~~LRC Boundary"
+"1452": "1452~Cambridgeshire and Peterborough Environmental Records Centre~~LRC Boundary"
+"202728": "202728~Jersey Biodiversity Centre~JBC~LRC Boundary"
+"1606": "1606~Wales~W92000004~Country"
+"1605": "1605~England~E92000001~Country"
+"1613": "1613~Eire~10~Country"
+"1612": "1612~Northern Ireland~40~Country"
+"1614": "1614~Scotland~50~Country"
+"203169": "203169~Guernsey (Bailwick of)~~Country"
+"203170": "203170~Jersey (Bailwick of)~~Country"
+"36733": "36733~Muir Of Dinnet~5054~Cairngorms NP NNR"
+"36725": "36725~Abernethy~10099~Cairngorms NP NNR"
+"36728": "36728~Creag Meagaidh~5021~Cairngorms NP NNR"
+"36729": "36729~Glenmore~10098~Cairngorms NP NNR"
+"36730": "36730~Glen Tanar~5032~Cairngorms NP NNR"
+"36732": "36732~Invereshie And Inshriach~10097~Cairngorms NP NNR"
+"36726": "36726~Corrie Fee~8670~Cairngorms NP NNR"
+"36742": "36742~Insh Marshes~8628~Cairngorms NP NNR"
+"36727": "36727~Craigellachie~5020~Cairngorms NP NNR"
+"32937": "32937~Cairngorms NP~8623~Miscellaneous indexed boundaries"
+"40229": "40229~Ireland buffered to 15km~~Miscellaneous indexed boundaries"
+"190290": "190290~Avalon Marshes Recording Area~AM01~Miscellaneous indexed boundaries"
+"39749": "39749~Godrevy~~NT Bioblitz 2015 site"
+"39739": "39739~Sandscale Haws~~NT Bioblitz 2015 site"
+"39750": "39750~Souter The Leas~~NT Bioblitz 2015 site"
+"39751": "39751~Birling Gap~~NT Bioblitz 2015 site"
+"39752": "39752~Mwnt~~NT Bioblitz 2015 site"
+"39753": "39753~St Helen's Duver & Priory Wood~~NT Bioblitz 2015 site"
+"39754": "39754~Brownsea Island~~NT Bioblitz 2015 site"
+"39755": "39755~White Park Bay~~NT Bioblitz 2015 site"
+"39756": "39756~Murlough Nature Reserve~~NT Bioblitz 2015 site"
+"39757": "39757~Freshwater West~~NT Bioblitz 2015 site"
+"39732": "39732~Kinver Edge~~NT Bioblitz 2015 site"
+"39733": "39733~Sandymouth~~NT Bioblitz 2015 site"
+"39734": "39734~Cwm Tydu~~NT Bioblitz 2015 site"
+"39735": "39735~Brancaster & Scolt Head~~NT Bioblitz 2015 site"
+"39736": "39736~Charlecote Park~~NT Bioblitz 2015 site"
+"39737": "39737~Cwm Ivy~~NT Bioblitz 2015 site"
+"39738": "39738~Formby~~NT Bioblitz 2015 site"
+"39748": "39748~Low Newton~~NT Bioblitz 2015 site"
+"39747": "39747~Blakeney~~NT Bioblitz 2015 site"
+"39740": "39740~Ravenscar~~NT Bioblitz 2015 site"
+"39743": "39743~Dunwich~~NT Bioblitz 2015 site"
+"39744": "39744~Cemlyn Estate~~NT Bioblitz 2015 site"
+"39746": "39746~Durham Coast~~NT Bioblitz 2015 site"
+"39741": "39741~East Head West Wittering~~NT Bioblitz 2015 site"
+"39742": "39742~White Cliffs~~NT Bioblitz 2015 site"
+"39745": "39745~Copt Hall Marshes~~NT Bioblitz 2015 site"
