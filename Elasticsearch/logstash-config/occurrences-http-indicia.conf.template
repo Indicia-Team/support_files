@@ -67,27 +67,32 @@ filter {
     ]
     remove_field => "taxon_data_blob"
   }
+  # Lookup the taxon path data and attach to the document.
   translate {
     dictionary_path => "{{ Working folder path }}/data/taxon-paths.yml"
     field => "accepted_taxon_key"
     destination => "taxon_path_keys"
   }
+  # Split the taxon path keys into separate items.
   mutate {
     split => {
       "taxon_path_keys" => ","
     }
   }
+  # Split the indexed location IDs into separate items.
   mutate {
     split => {
       "indexed_location_ids" => ","
     }
   }
+  # Map the indexed locations keys list into a blob of location information.
   translate {
     dictionary_path => "/Users/john/Documents/Git repos/indicia_support_files/Elasticsearch/data/locations.yml"
     field => "indexed_location_ids"
     iterate_on => "indexed_location_ids"
     destination => "locations_blob"
   }
+  # Split the indexed locations blob into a list of structured location objects.
   ruby {
     code => "
       if event.get('locations_blob')
@@ -103,6 +108,41 @@ filter {
     "
     remove_field => "locations_blob"
   }
+  # Split the media into separate items.
+  mutate {
+    split => {
+      "media" => ","
+    }
+  }
+  # Tidy data cleaner info. First, add a pipe character between items in the
+  # text so it can be split easily.
+  mutate {
+    gsub => [
+      "data_cleaner_info", "\} \[", "}|["
+    ]
+  }
+  # Now, split the data cleaner info into separate items.
+  mutate {
+    split => {
+      "data_cleaner_info" => "|"
+    }
+  }
+  ruby {
+    code => "
+      if event.get('data_cleaner_info')
+        event.set('data_cleaner_list', event.get('data_cleaner_info').reject{|t| t == 'pass'}.collect { |t|
+          t.tr!('[}', '')
+          c = t.split ']{'
+          {
+            'rule_type' =>  c[0].sub('data_cleaner_', '').split('_').collect(&:capitalize).join,
+            'message' => c[1]
+          }
+        })
+      end
+    "
+    remove_field => "data_cleaner_info"
+  }
+  # Convert our list of fields into a nicely structured occurrence document.
   mutate {
     rename => {
       "created_on" => "[metadata][created_on]"
@@ -124,9 +164,11 @@ filter {
       "attr_det_name" => "[identification][identified_by]"
       "verifier" => "[identification][verifier]"
       "verified_on" => "[identification][verified_on]"
-      "record_status" => "[metadata][identification_verification_status]"
-      "verified_by_id" => "[metadata][verified_by_id]"
-      "data_cleaner_info" => "[identification][auto_rule_violations]"
+      "record_status" => "[identification][identification_verification_status]"
+      "verified_by_id" => "[identification][verified_by_id]"
+      "data_cleaner_list" => "[identification][auto_checks][output]"
+      "data_cleaner_result" => "[identification][auto_checks][result]"
+      "verification_checks_enabled" => "[identification][auto_checks][enabled]"
       "query" => "[identification][query]"
       "attr_certainty" => "[identification][recorder_certainty]"
       "point" => "[location][point]"
@@ -141,6 +183,8 @@ filter {
       "recorded_parent_location_name" => "[location][parent][name]"
       "indexed_location_ids" => "[location][higher_geography_ids]"
       "locations" => "[location][higher_geography]"
+      "sample_id" => "[event][event_id]"
+      "parent_sample_id" => "[event][parent_event_id]"
       "date_start" => "[event][date_start]"
       "date_end" => "[event][date_end]"
       "day_of_year" => "[event][day_of_year]"
@@ -178,6 +222,7 @@ filter {
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
       "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
       "comment" => "[occurrence][occurrence_remarks]"
+      "media" => "[occurrence][associated_media]"
     }
   }
   ruby {

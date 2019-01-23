@@ -172,8 +172,25 @@ PUT occurrence_brc1
     "doc": {
       "properties": {
         "id": { "type": "integer" },
+        "event.date_start": { "type": "date" },
+        "event.date_end": { "type": "date" },
+        "event.day_of_year": { "type": "short" },
+        "event.event_id": { "type": "integer" },
+        "event.parent_event_id": { "type": "integer" },
+        "event.week": { "type": "byte" },
+        "event.ukbms_week": { "type": "byte" },
+        "event.month": { "type": "byte" },
+        "event.year": { "type": "short" },
         "metadata.created_by_id": { "type": "integer" },
         "metadata.updated_by_id": { "type": "integer" },
+        "metadata.created_on": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
+        },
+        "metadata.updated_on": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
+        },
         "metadata.group.id": { "type": "integer" },
         "metadata.survey.id": { "type": "integer" },
         "metadata.website.id": { "type": "integer" },
@@ -181,19 +198,18 @@ PUT occurrence_brc1
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
         "identification.verified_by_id": { "type": "integer" },
+        "identification.verified_on": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
+        },
+        "identification.auto_checks.enabled": { "type": "boolean" },
+        "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
         "location.higher_geography_ids": { "type": "integer" },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
-        "event.date_start": { "type": "date" },
-        "event.date_end": { "type": "date" },
-        "event.day_of_year": { "type": "short" },
-        "event.week": { "type": "byte" },
-        "event.ukbms_week": { "type": "byte" },
-        "event.month": { "type": "byte" },
-        "event.year": { "type": "short" },
         "occurrence.individual_count": { "type": "integer" }
       }
     }
