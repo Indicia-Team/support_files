@@ -99,6 +99,15 @@ path):
 $ logstash-plugin install logstash-input-jdbc
 ```
 
+###Install Logstash UUID filter plugin
+
+For both connection methods, the UUID plugin is used to generate unique IDs for error
+events. To install it, run the following from your logstash installation's bin folder:
+
+```shell
+$ logstash-plugin install logstash-filter-uuid
+```
+
 ### Start Elasticsearch and Kibana
 
 Review your installation instructions for how to start both Elasticsearch and
@@ -197,6 +206,7 @@ PUT occurrence_brc1
         "metadata.sensitive": { "type": "boolean" },
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
+        "metadata.trial": { "type": "boolean" },
         "identification.verifier.id": { "type": "integer" },
         "identification.verified_on": {
           "type": "date",
@@ -211,6 +221,7 @@ PUT occurrence_brc1
         "location.parent.location_id": { "type": "integer" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
         "occurrence.individual_count": { "type": "integer" },
+        "occurrence.zero_abundance": { "type": "boolean" },
         "taxon.marine": { "type": "boolean" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
@@ -242,15 +253,14 @@ POST /_aliases
       "alias" : "occurrence_search",
       "filter" : {
         "bool" : {
-          "must" : [
-            { "term" : { "metadata.confidential" : false } },
-            { "term" : { "metadata.release_status" : "R" } }
-          ],
-          "should" : [
-            { "terms" : { "metadata.ensitivity_blur" : ["B"] } },
-            { "bool": { "must_not" : {
-              "exists": { "field": "metadata.sensitivity_blur" }
-            }}}
+          "must": [
+            {
+              "query_string": {
+                "query": "metadata.confidential:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "analyze_wildcard": true,
+                "default_field": "*"
+              }
+            }
           ]
         }
       }
@@ -278,13 +288,18 @@ POST /_aliases
   "actions" : [
     { "add" : {
       "index" : "occurrence_brc1",
-      "alias" : "occurrence_search_irecord",
-      "filter": {
-        "query_string": {
-          "query": "metadata.website.id:23",
-          "analyze_wildcard": false,
-          "default_field": "*"
-          /* Other filters here - see above. */
+      "alias" : "occurrence_search_ukbms",
+      "filter" : {
+        "bool" : {
+          "must": [
+            {
+              "query_string": {
+                "query": "metadata.website.id:27 AND metadata.confidential:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "analyze_wildcard": true,
+                "default_field": "*"
+              }
+            }
+          ]
         }
       }
     } }
@@ -466,6 +481,14 @@ in your preferred text editor. Search and replace the following values:
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
 
+The default behaviour is for zero abundance records to be included in your
+search index. This means you will need to take care not to inadvertantly
+include zero abundance records in your reports and analyses if not appropriate.
+You can do this by configuring your Elasticsearch aliases to automatically
+exclude zero abundance records (described below) or if you prefer, review your
+Logstash configuration files which contain comments on the changes required to
+exclude zero abundance records from the index completely.
+
 You also need to create a new project in the REST API on the warehouse which
 has the same configuration as your existing project, but a different ID so that
 deleted record syncing can be tracked. Replace this project name in your
@@ -475,7 +498,7 @@ If you are intending to include confidential and/or unreleased records in your
 dataset then you will need to review the query section near the beginning of
 your configuration file and uncomment the 2 suggested lines as appropriate.
 
-If you are planning to hold sensitive records in your dataset then the
+If you are planning to hold sensitive records in your index then the
 suggested approach is to contain 2 copies of each record, one blurred and one
 at full precision. Then we can use a filter on an index alias to limit the
 searched records appropriately. To achieve this, copy your occurrences-http-indicia.conf
@@ -495,6 +518,12 @@ in a text editor and make the following edits:
   ```
   document_id => "myindex|%{id}!"
   ```
+
+If you are planning on holding training or trial records in your index then the
+suggested approach is to create a duplicate of your configuration, plus an
+additional project in the REST API, then configure the Logstash file to link to
+this REST API project and pass an extra parameter called "training" to the
+report parameters, with value "true".
 
 ### Configuring your pipelines
 
@@ -642,9 +671,4 @@ don't get free and unfettered access to the entire dataset in Elasticsearch.
 
 ## Index structure notes
 
-* Sensitive records are stored in the index twice, once for the blurred (metadata.sensitivity_blur:B) and once for the
-  full precision record (metadata.sensitivity_precision:F). Non-sensitive records have no value for
-  metadata.sensitivity_precision.
-* Generally, the search index alias you use should always pre-filter confidential, unreleased and sensitive full
-  precision records out as explained in this document. Override these defaults ONLY when you understand the
-  implications.
+See [Document Structure](document-structure.md).

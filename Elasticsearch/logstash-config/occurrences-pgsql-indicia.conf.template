@@ -87,7 +87,7 @@ input {
           o.query,
           o.sensitive,
           onf.sensitivity_precision,
-          CASE o.sensitive WHEN true THEN 'B' ELSE 'null' END AS sensitivity_blur,
+          CASE o.sensitive WHEN true THEN 'B' ELSE null END AS sensitivity_blur,
           o.confidential,
           o.release_status
         from cache_occurrences_functional o
@@ -240,6 +240,7 @@ filter {
       "sensitive" => "[metadata][sensitive]"
       "sensitivity_precision" => "[metadata][sensitivity_blur]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
+      "trial" => "[metadata][trial]"
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
       "attr_det_name" => "[identification][identified_by]"
@@ -300,6 +301,7 @@ filter {
       "attr_stage" => "[occurrence][life_stage]"
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
       "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
+      "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
       "media" => "[occurrence][associated_media]"
     }
@@ -307,6 +309,13 @@ filter {
   ruby {
     # Script to clean up nulls and empty values.
     path => "{{ Working folder path }}/logstash-rb/compact_event.rb"
+  }
+  # An http error or similar will not have a document ID, so create a uuid to
+  # keep the document ID unique. Otherwise we only log 1 error event.
+  if "" in [id] {
+    uuid {
+      target => "id"
+    }
   }
 }
 output {

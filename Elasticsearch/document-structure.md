@@ -1,7 +1,18 @@
 # Document structure for the default Indicia Elasticsearch configuration.
 
-If the standard instructions for configuring Elasticsearch and Indicia are followed, then the index will contain
-documents structured as described below.
+If the standard instructions for configuring Elasticsearch and Indicia are followed, then
+the index will contain documents structured as described below. Note:
+
+* sensitive records are represented by 2 copies of the record, one which is full
+  precision (metadata.sensitivity_blur=F) and one which is blurred accordingly
+  (metadata.sensitivity_blur=B). Non-sensitive records have no value for
+  metadata.sensitivity_precision.
+* confidential records may be included (depending on the configuration of Logstash) but
+  should be filtered out by your index alias. The confidential status is indicated by
+  metadata.confidential.
+* training records may be included (depending on the configuration of Logstash) but
+  should be filtered out by your index alias. The training status is indicated by
+  metadata.training.
 
 ## Document fields
 
@@ -57,6 +68,7 @@ documents structured as described below.
 `metadata.sensitivity_precision`|number|For records that are sensitive, indicates the size of the grid square to blur to.|`occurrences.sensitivity_precision`
 `metadata.survey.id`|number|ID of the Indicia survey dataset on the warehouse.|`surveys.id`
 `metadata.survey.title`|string|Title of the Indicia survey dataset on the warehouse.|`surveys.title`
+`metadata.training`|boolean|True if this is a training record (so should be excluded unleess analysing training data).
 `metadata.updated_by_id`|number|ID of the user who last updated the record.|`occurrences.updated_by_id`
 `metadata.updated_on`|date|Date and time the record was last updated.|`occurrences.updated_on`
 `metadata.website.id`|number|ID of the Indicia website registration on the warehouse.|`websites.id`
@@ -67,6 +79,7 @@ documents structured as described below.
 `occurrence.occurrence_remarks`|string|Comment given when the record was input.|`occurrences.comment`
 `occurrence.organism_quantity`|string|Abundance information (text or numeric).|Occurrence custom attribute
 `occurrence.sex`|string|Label indicating the sex of the recorded organism.|Occurrence custom attribute
+
 `taxon.accepted_name`|string|Accepted name of the organism’s taxon (normally a scientific name).|`taxa.taxon`
 `taxon.accepted_name_authorship`|string|Author and date associated with the accepted name.|`taxa.authority`
 `taxon.accepted_taxon_id`|string|Key given for the taxon accepted name (e.g. a taxon version key).|`taxa.external_key`

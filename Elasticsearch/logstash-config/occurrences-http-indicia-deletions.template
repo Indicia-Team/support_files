@@ -14,6 +14,8 @@ input {
           # This enables tracking of downloaded records on the server-side since the
           # http_poller input plugin has no logic for importing changes.
           autofeed => "t"
+          # Uncomment the following line if your index excludes zero abundance records.
+          # zeros => "1"
         }
       }
     }
