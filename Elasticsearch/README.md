@@ -216,6 +216,12 @@ PUT occurrence_brc1
         "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
+        "location.higher_geography": {
+          "type": "nested",
+          "properties": {
+            "id": { "type": "integer" }
+          }
+        },
         "location.higher_geography.id": { "type": "integer" },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
@@ -294,7 +300,7 @@ POST /_aliases
           "must": [
             {
               "query_string": {
-                "query": "metadata.website.id:27 AND metadata.confidential:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "query": "metadata.website.id:27 AND metadata.confidential:false AND metadata.zero_abundance:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
                 "analyze_wildcard": true,
                 "default_field": "*"
               }
@@ -481,32 +487,64 @@ in your preferred text editor. Search and replace the following values:
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
 
-The default behaviour is for zero abundance records to be included in your
-search index. This means you will need to take care not to inadvertantly
-include zero abundance records in your reports and analyses if not appropriate.
-You can do this by configuring your Elasticsearch aliases to automatically
-exclude zero abundance records (described below) or if you prefer, review your
-Logstash configuration files which contain comments on the changes required to
-exclude zero abundance records from the index completely.
-
 You also need to create a new project in the REST API on the warehouse which
 has the same configuration as your existing project, but a different ID so that
 deleted record syncing can be tracked. Replace this project name in your
 deletions config file.
 
-If you are intending to include confidential and/or unreleased records in your
-dataset then you will need to review the query section near the beginning of
-your configuration file and uncomment the 2 suggested lines as appropriate.
+### RESTful access - controlling which records are included
 
-If you are planning to hold sensitive records in your index then the
-suggested approach is to contain 2 copies of each record, one blurred and one
-at full precision. Then we can use a filter on an index alias to limit the
-searched records appropriately. To achieve this, copy your occurrences-http-indicia.conf
-configuration file to a file called occurrences-http-indicia-sensitive.conf.
-You also need to create a new project in the REST API on the warehouse which
-has the same configuration as your existing project, but a different ID so that
-sensitive record syncing can be tracked. Now, edit your new configuration file
-in a text editor and make the following edits:
+#### Zero abundance records
+
+The default behaviour is for zero abundance records to be included in your search index.
+This means you will need to take care not to inadvertantly include zero abundance records
+in your reports and analyses if not appropriate. You can do this by configuring your
+Elasticsearch aliases to automatically exclude zero abundance records (described below)
+or if you prefer, you can change the query sent to the Indicia RESTful API to remove
+zero_abundance records from those returned. Find the section in the config file **input**
+> **http_poller** > **urls** > **indicia** > **query** and remove the # from the start of
+the following line:
+
+```
+zero_abundance => "0"
+```
+
+#### Confidential records
+
+If you are intending to include confidential records in your dataset then you can change
+the query sent to the Indicia RESTful API to include confidential records in those
+returned. Find the section in the config file **input** > **http_poller** > **urls** >
+**indicia** > **query** and remove the # from the start of the following line:
+
+```
+# confidential => "all"
+```
+
+**Note that if you do this then please ensure you either filter out confidential records
+in your search index aliases or you carefully control who has access to the Elasticsearch
+index APIs.**
+
+#### Unreleased records
+
+If you are intending to include unreleased records in your dataset then you can change
+the query sent to the Indicia RESTful API to include unreleased records in those
+returned. Find the section in the config file **input** > **http_poller** > **urls** >
+**indicia** > **query** and remove the # from the start of the following line:
+
+```
+# release_status => "A"
+```
+
+#### Sensitive records
+
+If you are planning to hold sensitive records in your index then the suggested approach
+is to contain 2 copies of each record, one blurred and one at full precision. Then we can
+use a filter on an index alias to limit the searched records appropriately. To achieve
+this, copy your occurrences-http-indicia.conf configuration file to a file called
+occurrences-http-indicia-sensitive.conf. You also need to create a new project in the
+REST API on the warehouse which has the same configuration as your existing project, but
+a different ID so that sensitive record syncing can be tracked. Now, edit your new
+configuration file in a text editor and make the following edits:
 
 * Search for your REST API project name and replace it with the new one created
   for sensitive record tracking.
@@ -519,11 +557,46 @@ in a text editor and make the following edits:
   document_id => "myindex|%{id}!"
   ```
 
+#### Training records
+
 If you are planning on holding training or trial records in your index then the
 suggested approach is to create a duplicate of your configuration, plus an
 additional project in the REST API, then configure the Logstash file to link to
 this REST API project and pass an extra parameter called "training" to the
 report parameters, with value "true".
+
+#### Including all records from any website
+
+Your default RESTful client configuration on the warehouse will limit the records to
+those available for reporting from a particular website registration. This website
+registration is defined in the config file in the REST APIs module on the warehouse. It
+is also possible to configure a situation where the index is populated with all records
+from all website registrations, in which case index aliases should be used carefully to
+ensure that access to the records in the index is limited appropriately. To do this you
+need to enable access to reports which are normally restricted as they don't obey the
+normal restrictions on website record access:
+
+1. Edit the configuration in the modules/rest_api/config/rest.php file for your client's
+   project. In the `resource_options` section, set the following configuration, removing
+   the line for the sensitive records report if you are not including sensitive records
+   in the index:
+
+   ```php
+   'resource_options' => array(
+      // Featured reports but allow raw data access.
+      'reports' => array(
+        'authorise' => [
+          'library/occurrences/list_for_elastic_all.xml',
+          'library/occurrences/list_for_elastic_sensitive_all.xml',
+        ],
+      ),
+    ),
+    ```
+
+    This exposes these reports to just your REST API client.
+2. Edit your Logstash configuration file(s) to change the report called in the section
+   **input** > **http_poller** > **urls** > **indicia** > **url**, adding `_all` to the
+   report file name.
 
 ### Configuring your pipelines
 

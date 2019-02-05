@@ -16,8 +16,13 @@ input {
           proj_id => "{{ Project ID }}"
           from_update_date => "1900-01-01"
           autofeed => "t"
+          # Uncomment the following line if your index excludes zero abundance records.
+          # zero_abundance => "0"
+          # Uncomment the following line to include confidential records in the index.
           # confidential => "all"
+          # Uncomment the following line to include unreleased records in the index.
           # release_status => "A"
+
         }
       }
     }
@@ -235,7 +240,7 @@ filter {
   }
   # An http error or similar will not have a document ID, so create a uuid to
   # keep the document ID unique. Otherwise we only log 1 error event.
-  if "" in [id] {
+  if ![id] {
     uuid {
       target => "id"
     }

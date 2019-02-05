@@ -312,7 +312,7 @@ filter {
   }
   # An http error or similar will not have a document ID, so create a uuid to
   # keep the document ID unique. Otherwise we only log 1 error event.
-  if "" in [id] {
+  if ![id] {
     uuid {
       target => "id"
     }
