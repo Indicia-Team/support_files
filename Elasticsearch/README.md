@@ -387,6 +387,7 @@ To update the taxa.csv file with a fresh copy of the data:
   * Edit the file in a text editor. Remove the first row (column titles) and
     perform the following replacements:
     * "," with ": "
+    * """ with "
     * "" with "\
     * Regexp \u0084 with ,,
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
@@ -543,7 +544,24 @@ use a filter on an index alias to limit the searched records appropriately. To a
 this, copy your occurrences-http-indicia.conf configuration file to a file called
 occurrences-http-indicia-sensitive.conf. You also need to create a new project in the
 REST API on the warehouse which has the same configuration as your existing project, but
-a different ID so that sensitive record syncing can be tracked. Now, edit your new
+a different ID so that sensitive record syncing can be tracked. This project's
+configuration needs to be amended to enable access to the sensitive records report since
+the report is normally restricted as follows. Edit the configuration in the
+modules/rest_api/config/rest.php file for your client's project. In the
+`resource_options` section, set the following configuration, removing the line for the
+sensitive records report if you are not including sensitive records in the index:
+
+  ```php
+  'resource_options' => array(
+    'reports' => array(
+      'authorise' => [
+        'library/occurrences/list_for_elastic_sensitive.xml',
+      ],
+    ),
+  ),
+  ```
+
+Now, edit your new
 configuration file in a text editor and make the following edits:
 
 * Search for your REST API project name and replace it with the new one created
@@ -583,7 +601,6 @@ normal restrictions on website record access:
 
    ```php
    'resource_options' => array(
-      // Featured reports but allow raw data access.
       'reports' => array(
         'authorise' => [
           'library/occurrences/list_for_elastic_all.xml',
@@ -672,6 +689,35 @@ continually restart each of the pipelines according to the schedule. Once all
 the records have been transferred the Indicia REST API will switch mode from
 initial population to updates, so rather than sequentially loading batches of
 records by ID it will detect changes using the updated_on field.
+
+## Errors
+
+If there is an error in one of the requests such as a timeout, then this results in an
+event which contains the error response from Indicia. The document has no id field, so
+the configuration provided here is designed to store that event in a 2nd index called
+occurrence_<warehouse id>_errors. You can use Kibana to inspect the contents of this
+index if it exists.
+
+If errors occur, it is worth inspecting the occurrences on the warehouse that should have
+been passed to Elasticsearch around the time of the error to ensure that everything has
+been passed through. An error which occurs before the REST API concludes the request will
+normally not update the tracking information (stored in the Indicia variables table) so
+the next request from Logstash should pick up the missing changes. However if an error
+occurs after the REST API has processed the tracking information, then the batch of
+records may be skipped. You can modify the variables table on the warehouse to re-submit
+a batch. E.g. for a project called BRC5, the following script illustrates this:
+
+```sql
+select value from variables where name='rest-autofeed-BRC5';
+/*
+Response "[{"mode":"initialLoad","last_date":"2019-02-06T10:50:00+00:00","last_id":"6685302"}]"
+As we are in initialLoad mode, we can change the last_id in this json object to wind back before
+a suspect period.
+*/
+update variables
+set value='[{"mode":"initialLoad","last_date":"2019-02-06T10:50:00+00:00","last_id":"6450000"}]'
+where name='rest-autofeed-BRC5';
+```
 
 ## Using Elasticsearch from within Drupal
 

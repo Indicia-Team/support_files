@@ -27,8 +27,8 @@ input {
       }
     }
     request_timeout => 120
-    connect_timeout => 30
-    socket_timeout => 60
+    connect_timeout => 20
+    socket_timeout => 100
     schedule => { cron => "*/2 * * * * UTC" }
     keepalive => false
     codec => "json"
@@ -102,7 +102,7 @@ filter {
   ruby {
     code => "
       if event.get('locations_blob')
-        event.set('locations', event.get('locations_blob').collect { |t|
+        event.set('locations', event.get('locations_blob').compact.collect { |t|
           c = t.split '~'
           {
             'id' => c[0],
@@ -238,21 +238,24 @@ filter {
     # Script to clean up nulls and empty values.
     path => "{{ Working folder path }}/logstash-rb/compact_event.rb"
   }
-  # An http error or similar will not have a document ID, so create a uuid to
-  # keep the document ID unique. Otherwise we only log 1 error event.
-  if ![id] {
-    uuid {
-      target => "id"
-    }
-  }
 }
 output {
-  elasticsearch {
-    hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence_{{ Indicia warehouse unique name }}_index"
-    # Our records need a unique ID in the index for updates.
-    document_id => "{{ Indicia warehouse unique name }}|%{id}"
+  if [id] {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_index"
+      # Our records need a unique ID in the index for updates.
+      document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    }
+    # Uncomment the following to see the normal events output to the terminal.
+    # stdout { codec => json }
   }
-  # Uncomment the following to see the data output to the terminal.
-  # stdout { codec => json }
+  else {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_errors"
+    }
+    # Uncomment the following to see the error events output to the terminal.
+    # stdout { codec => json }
+  }
 }
