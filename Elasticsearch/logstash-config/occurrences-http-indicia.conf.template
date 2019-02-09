@@ -16,14 +16,19 @@ input {
           proj_id => "{{ Project ID }}"
           from_update_date => "1900-01-01"
           autofeed => "t"
+          # Uncomment the following line if your index excludes zero abundance records.
+          # zero_abundance => "0"
+          # Uncomment the following line to include confidential records in the index.
           # confidential => "all"
+          # Uncomment the following line to include unreleased records in the index.
           # release_status => "A"
+
         }
       }
     }
     request_timeout => 120
-    connect_timeout => 30
-    socket_timeout => 60
+    connect_timeout => 20
+    socket_timeout => 100
     schedule => { cron => "*/2 * * * * UTC" }
     keepalive => false
     codec => "json"
@@ -97,7 +102,7 @@ filter {
   ruby {
     code => "
       if event.get('locations_blob')
-        event.set('locations', event.get('locations_blob').collect { |t|
+        event.set('locations', event.get('locations_blob').compact.collect { |t|
           c = t.split '~'
           {
             'id' => c[0],
@@ -162,6 +167,7 @@ filter {
       "sensitive" => "[metadata][sensitive]"
       "sensitivity_precision" => "[metadata][sensitivity_blur]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
+      "trial" => "[metadata][trial]"
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
       "attr_det_name" => "[identification][identified_by]"
@@ -223,6 +229,7 @@ filter {
       "attr_stage" => "[occurrence][life_stage]"
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
       "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
+      "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
       "media" => "[occurrence][associated_media]"
     }
@@ -233,12 +240,22 @@ filter {
   }
 }
 output {
-  elasticsearch {
-    hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence_{{ Indicia warehouse unique name }}_index"
-    # Our records need a unique ID in the index for updates.
-    document_id => "{{ Indicia warehouse unique name }}|%{id}"
+  if [id] {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_index"
+      # Our records need a unique ID in the index for updates.
+      document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    }
+    # Uncomment the following to see the normal events output to the terminal.
+    # stdout { codec => json }
   }
-  # Uncomment the following to see the data output to the terminal.
-  # stdout { codec => json }
+  else {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_errors"
+    }
+    # Uncomment the following to see the error events output to the terminal.
+    # stdout { codec => json }
+  }
 }

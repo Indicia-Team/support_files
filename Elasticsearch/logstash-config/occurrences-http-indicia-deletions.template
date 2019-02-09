@@ -14,25 +14,43 @@ input {
           # This enables tracking of downloaded records on the server-side since the
           # http_poller input plugin has no logic for importing changes.
           autofeed => "t"
+          # Uncomment the following line if your index excludes zero abundance records.
+          # zeros => "1"
         }
       }
     }
     request_timeout => 120
-    connect_timeout => 30
-    socket_timeout => 60
+    connect_timeout => 20
+    socket_timeout => 100
     schedule => { cron => "*/2 * * * * UTC"}
     keepalive => false
     codec => "json"
   }
+  # An http error or similar will not have a document ID, so create a uuid to
+  # keep the document ID unique. Otherwise we only log 1 error event.
+  if ![id] {
+    uuid {
+      target => "error_uuid"
+    }
+  }
 }
 output {
-  elasticsearch {
-    hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence_{{ Indicia warehouse unique name }}_index"
-    # Our records need a unique ID in the index for deletions.
-    document_id => "{{ Indicia warehouse unique name }}|%{id}"
-    action => "delete"
+  if [id] {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_index"
+      # Our records need a unique ID in the index for updates.
+      document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    }
+    # Uncomment the following to see the normal events output to the terminal.
+    # stdout { codec => json }
   }
-  # Uncomment the following to see the data output to the terminal.
-  # stdout { codec => json }
+  else {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_errors"
+    }
+    # Uncomment the following to see the error events output to the terminal.
+    # stdout { codec => json }
+  }
 }

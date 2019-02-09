@@ -87,7 +87,7 @@ input {
           o.query,
           o.sensitive,
           onf.sensitivity_precision,
-          CASE o.sensitive WHEN true THEN 'B' ELSE 'null' END AS sensitivity_blur,
+          CASE o.sensitive WHEN true THEN 'B' ELSE null END AS sensitivity_blur,
           o.confidential,
           o.release_status
         from cache_occurrences_functional o
@@ -176,7 +176,7 @@ filter {
   ruby {
     code => "
       if event.get('locations_blob')
-        event.set('locations', event.get('locations_blob').collect { |t|
+        event.set('locations', event.get('locations_blob').compact.collect { |t|
           c = t.split '~'
           {
             'id' => c[0],
@@ -240,6 +240,7 @@ filter {
       "sensitive" => "[metadata][sensitive]"
       "sensitivity_precision" => "[metadata][sensitivity_blur]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
+      "trial" => "[metadata][trial]"
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
       "attr_det_name" => "[identification][identified_by]"
@@ -300,6 +301,7 @@ filter {
       "attr_stage" => "[occurrence][life_stage]"
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
       "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
+      "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
       "media" => "[occurrence][associated_media]"
     }
@@ -310,12 +312,22 @@ filter {
   }
 }
 output {
-  elasticsearch {
-    hosts => ["{{ Elasticsearch address }}"]
-    index => "occurrence_{{ Indicia warehouse unique name }}_index"
-    # Our records need a unique ID in the index for updates.
-    document_id => "{{ Indicia warehouse unique name }}|%{id}"
+  if [id] {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_index"
+      # Our records need a unique ID in the index for updates.
+      document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    }
+    # Uncomment the following to see the normal events output to the terminal.
+    # stdout { codec => json }
   }
-  # Uncomment the following to see the data output to the terminal.
-  # stdout { codec => json }
+  else {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "occurrence_{{ Indicia warehouse unique name }}_errors"
+    }
+    # Uncomment the following to see the error events output to the terminal.
+    # stdout { codec => json }
+  }
 }

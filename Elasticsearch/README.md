@@ -99,6 +99,15 @@ path):
 $ logstash-plugin install logstash-input-jdbc
 ```
 
+###Install Logstash UUID filter plugin
+
+For both connection methods, the UUID plugin is used to generate unique IDs for error
+events. To install it, run the following from your logstash installation's bin folder:
+
+```shell
+$ logstash-plugin install logstash-filter-uuid
+```
+
 ### Start Elasticsearch and Kibana
 
 Review your installation instructions for how to start both Elasticsearch and
@@ -197,6 +206,7 @@ PUT occurrence_brc1
         "metadata.sensitive": { "type": "boolean" },
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
+        "metadata.trial": { "type": "boolean" },
         "identification.verifier.id": { "type": "integer" },
         "identification.verified_on": {
           "type": "date",
@@ -206,11 +216,18 @@ PUT occurrence_brc1
         "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
+        "location.higher_geography": {
+          "type": "nested",
+          "properties": {
+            "id": { "type": "integer" }
+          }
+        },
         "location.higher_geography.id": { "type": "integer" },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
         "occurrence.individual_count": { "type": "integer" },
+        "occurrence.zero_abundance": { "type": "boolean" },
         "taxon.marine": { "type": "boolean" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
@@ -242,15 +259,14 @@ POST /_aliases
       "alias" : "occurrence_search",
       "filter" : {
         "bool" : {
-          "must" : [
-            { "term" : { "metadata.confidential" : false } },
-            { "term" : { "metadata.release_status" : "R" } }
-          ],
-          "should" : [
-            { "terms" : { "metadata.ensitivity_blur" : ["B"] } },
-            { "bool": { "must_not" : {
-              "exists": { "field": "metadata.sensitivity_blur" }
-            }}}
+          "must": [
+            {
+              "query_string": {
+                "query": "metadata.confidential:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "analyze_wildcard": true,
+                "default_field": "*"
+              }
+            }
           ]
         }
       }
@@ -278,13 +294,18 @@ POST /_aliases
   "actions" : [
     { "add" : {
       "index" : "occurrence_brc1",
-      "alias" : "occurrence_search_irecord",
-      "filter": {
-        "query_string": {
-          "query": "metadata.website.id:23",
-          "analyze_wildcard": false,
-          "default_field": "*"
-          /* Other filters here - see above. */
+      "alias" : "occurrence_search_ukbms",
+      "filter" : {
+        "bool" : {
+          "must": [
+            {
+              "query_string": {
+                "query": "metadata.website.id:27 AND metadata.confidential:false AND metadata.zero_abundance:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "analyze_wildcard": true,
+                "default_field": "*"
+              }
+            }
+          ]
         }
       }
     } }
@@ -366,6 +387,7 @@ To update the taxa.csv file with a fresh copy of the data:
   * Edit the file in a text editor. Remove the first row (column titles) and
     perform the following replacements:
     * "," with ": "
+    * """ with "
     * "" with "\
     * Regexp \u0084 with ,,
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
@@ -471,19 +493,76 @@ has the same configuration as your existing project, but a different ID so that
 deleted record syncing can be tracked. Replace this project name in your
 deletions config file.
 
-If you are intending to include confidential and/or unreleased records in your
-dataset then you will need to review the query section near the beginning of
-your configuration file and uncomment the 2 suggested lines as appropriate.
+### RESTful access - controlling which records are included
 
-If you are planning to hold sensitive records in your dataset then the
-suggested approach is to contain 2 copies of each record, one blurred and one
-at full precision. Then we can use a filter on an index alias to limit the
-searched records appropriately. To achieve this, copy your occurrences-http-indicia.conf
-configuration file to a file called occurrences-http-indicia-sensitive.conf.
-You also need to create a new project in the REST API on the warehouse which
-has the same configuration as your existing project, but a different ID so that
-sensitive record syncing can be tracked. Now, edit your new configuration file
-in a text editor and make the following edits:
+#### Zero abundance records
+
+The default behaviour is for zero abundance records to be included in your search index.
+This means you will need to take care not to inadvertantly include zero abundance records
+in your reports and analyses if not appropriate. You can do this by configuring your
+Elasticsearch aliases to automatically exclude zero abundance records (described below)
+or if you prefer, you can change the query sent to the Indicia RESTful API to remove
+zero_abundance records from those returned. Find the section in the config file **input**
+> **http_poller** > **urls** > **indicia** > **query** and remove the # from the start of
+the following line:
+
+```
+zero_abundance => "0"
+```
+
+#### Confidential records
+
+If you are intending to include confidential records in your dataset then you can change
+the query sent to the Indicia RESTful API to include confidential records in those
+returned. Find the section in the config file **input** > **http_poller** > **urls** >
+**indicia** > **query** and remove the # from the start of the following line:
+
+```
+# confidential => "all"
+```
+
+**Note that if you do this then please ensure you either filter out confidential records
+in your search index aliases or you carefully control who has access to the Elasticsearch
+index APIs.**
+
+#### Unreleased records
+
+If you are intending to include unreleased records in your dataset then you can change
+the query sent to the Indicia RESTful API to include unreleased records in those
+returned. Find the section in the config file **input** > **http_poller** > **urls** >
+**indicia** > **query** and remove the # from the start of the following line:
+
+```
+# release_status => "A"
+```
+
+#### Sensitive records
+
+If you are planning to hold sensitive records in your index then the suggested approach
+is to contain 2 copies of each record, one blurred and one at full precision. Then we can
+use a filter on an index alias to limit the searched records appropriately. To achieve
+this, copy your occurrences-http-indicia.conf configuration file to a file called
+occurrences-http-indicia-sensitive.conf. You also need to create a new project in the
+REST API on the warehouse which has the same configuration as your existing project, but
+a different ID so that sensitive record syncing can be tracked. This project's
+configuration needs to be amended to enable access to the sensitive records report since
+the report is normally restricted as follows. Edit the configuration in the
+modules/rest_api/config/rest.php file for your client's project. In the
+`resource_options` section, set the following configuration, removing the line for the
+sensitive records report if you are not including sensitive records in the index:
+
+  ```php
+  'resource_options' => array(
+    'reports' => array(
+      'authorise' => [
+        'library/occurrences/list_for_elastic_sensitive.xml',
+      ],
+    ),
+  ),
+  ```
+
+Now, edit your new
+configuration file in a text editor and make the following edits:
 
 * Search for your REST API project name and replace it with the new one created
   for sensitive record tracking.
@@ -495,6 +574,46 @@ in a text editor and make the following edits:
   ```
   document_id => "myindex|%{id}!"
   ```
+
+#### Training records
+
+If you are planning on holding training or trial records in your index then the
+suggested approach is to create a duplicate of your configuration, plus an
+additional project in the REST API, then configure the Logstash file to link to
+this REST API project and pass an extra parameter called "training" to the
+report parameters, with value "true".
+
+#### Including all records from any website
+
+Your default RESTful client configuration on the warehouse will limit the records to
+those available for reporting from a particular website registration. This website
+registration is defined in the config file in the REST APIs module on the warehouse. It
+is also possible to configure a situation where the index is populated with all records
+from all website registrations, in which case index aliases should be used carefully to
+ensure that access to the records in the index is limited appropriately. To do this you
+need to enable access to reports which are normally restricted as they don't obey the
+normal restrictions on website record access:
+
+1. Edit the configuration in the modules/rest_api/config/rest.php file for your client's
+   project. In the `resource_options` section, set the following configuration, removing
+   the line for the sensitive records report if you are not including sensitive records
+   in the index:
+
+   ```php
+   'resource_options' => array(
+      'reports' => array(
+        'authorise' => [
+          'library/occurrences/list_for_elastic_all.xml',
+          'library/occurrences/list_for_elastic_sensitive_all.xml',
+        ],
+      ),
+    ),
+    ```
+
+    This exposes these reports to just your REST API client.
+2. Edit your Logstash configuration file(s) to change the report called in the section
+   **input** > **http_poller** > **urls** > **indicia** > **url**, adding `_all` to the
+   report file name.
 
 ### Configuring your pipelines
 
@@ -571,6 +690,35 @@ the records have been transferred the Indicia REST API will switch mode from
 initial population to updates, so rather than sequentially loading batches of
 records by ID it will detect changes using the updated_on field.
 
+## Errors
+
+If there is an error in one of the requests such as a timeout, then this results in an
+event which contains the error response from Indicia. The document has no id field, so
+the configuration provided here is designed to store that event in a 2nd index called
+occurrence_<warehouse id>_errors. You can use Kibana to inspect the contents of this
+index if it exists.
+
+If errors occur, it is worth inspecting the occurrences on the warehouse that should have
+been passed to Elasticsearch around the time of the error to ensure that everything has
+been passed through. An error which occurs before the REST API concludes the request will
+normally not update the tracking information (stored in the Indicia variables table) so
+the next request from Logstash should pick up the missing changes. However if an error
+occurs after the REST API has processed the tracking information, then the batch of
+records may be skipped. You can modify the variables table on the warehouse to re-submit
+a batch. E.g. for a project called BRC5, the following script illustrates this:
+
+```sql
+select value from variables where name='rest-autofeed-BRC5';
+/*
+Response "[{"mode":"initialLoad","last_date":"2019-02-06T10:50:00+00:00","last_id":"6685302"}]"
+As we are in initialLoad mode, we can change the last_id in this json object to wind back before
+a suspect period.
+*/
+update variables
+set value='[{"mode":"initialLoad","last_date":"2019-02-06T10:50:00+00:00","last_id":"6450000"}]'
+where name='rest-autofeed-BRC5';
+```
+
 ## Using Elasticsearch from within Drupal
 
 Elasticsearch provides a rich and well documented API which allows you to
@@ -642,9 +790,4 @@ don't get free and unfettered access to the entire dataset in Elasticsearch.
 
 ## Index structure notes
 
-* Sensitive records are stored in the index twice, once for the blurred (metadata.sensitivity_blur:B) and once for the
-  full precision record (metadata.sensitivity_precision:F). Non-sensitive records have no value for
-  metadata.sensitivity_precision.
-* Generally, the search index alias you use should always pre-filter confidential, unreleased and sensitive full
-  precision records out as explained in this document. Override these defaults ONLY when you understand the
-  implications.
+See [Document Structure](document-structure.md).
