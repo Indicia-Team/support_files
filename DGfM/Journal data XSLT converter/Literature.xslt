@@ -9,11 +9,16 @@
     <xsl:variable name="double_quote" select="'&#34;'" />
     <xsl:variable name="space" select="'&#32;'" />
     <xsl:variable name="newline" select="'&#10;'" />
-
     <xsl:template match="/">
-        <xsl:text>Reference_term</xsl:text>
+        <xsl:text>data_type</xsl:text>
+        <xsl:value-of select="$comma" />
+        <xsl:text>value</xsl:text>
         <xsl:value-of select="$newline" />
         <xsl:for-each select="Sources/Source">
+            <xsl:value-of select="$double_quote" />
+            <xsl:text>journal_reference</xsl:text>
+            <xsl:value-of select="$double_quote" />
+            <xsl:value-of select="$comma" />
             <xsl:value-of select="$double_quote" />
             <xsl:for-each select="Author/Author/NameList/Person">
                <xsl:choose>
@@ -131,6 +136,71 @@
             </xsl:if>     
             <xsl:value-of select="$double_quote" />
             <xsl:value-of select="$newline" />
+            <!--Now put the attributes as rows under its related Journal row (e.g. Authors, pages, titles). Type first, then the value-->
+            <xsl:for-each select="*">
+              <xsl:choose>
+              <xsl:when test="local-name() != 'Author'">
+                <xsl:value-of select="$double_quote" />
+                  <xsl:value-of select ="local-name()"/>
+                <xsl:value-of select="$double_quote" />
+                <xsl:value-of select="$comma" />
+                 <xsl:value-of select="$double_quote" />
+                  <xsl:value-of select="." />
+                <xsl:value-of select="$double_quote" />
+              </xsl:when>
+              </xsl:choose>
+              <xsl:choose>
+              <xsl:when test="local-name() = 'Author'">
+                <xsl:value-of select="$double_quote" />
+                  <xsl:value-of select ="local-name()"/>
+                <xsl:value-of select="$double_quote" />
+                <xsl:value-of select="$comma" />
+                <xsl:value-of select="$double_quote" />
+                <xsl:for-each select="Author/NameList/Person">
+                  <xsl:value-of select="Last" />
+                  <xsl:if test="First or Middle">
+                    <xsl:value-of select="$comma" />
+                  </xsl:if>
+                  <xsl:if test="First">
+                    <xsl:value-of select="$space" />
+                    <xsl:value-of select="First" />
+                  </xsl:if>
+                  <xsl:if test="Middle">
+                    <xsl:value-of select="$space" />
+                    <xsl:value-of select="Middle" />
+                  </xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="position() != last()">
+                      <xsl:value-of select="$comma" />
+                      <xsl:value-of select="$space" />
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:for-each>
+                <xsl:for-each select="Editor/NameList/Person">
+                  <xsl:value-of select="Last" />
+                  <xsl:if test="First or Middle">
+                    <xsl:value-of select="$comma" />
+                  </xsl:if>
+                  <xsl:if test="First">
+                    <xsl:value-of select="$space" />
+                    <xsl:value-of select="First" />
+                  </xsl:if>
+                  <xsl:if test="Middle">
+                    <xsl:value-of select="$space" />
+                    <xsl:value-of select="Middle" />
+                  </xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="position() != last()">
+                      <xsl:value-of select="$comma" />
+                      <xsl:value-of select="$space" />
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:for-each>
+                <xsl:value-of select="$double_quote" />
+              </xsl:when>
+              </xsl:choose>
+              <xsl:value-of select="$newline" />
+            </xsl:for-each>
         </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
