@@ -150,15 +150,37 @@ filter {
     remove_field => "data_cleaner_info"
     add_field => { "warehouse" => "{{ Indicia warehouse unique name }}" }
   }
+  # Convert JSON text to JSON
   json {
     source => "sample_attrs_json"
-    target => "sample_attrs"
+    target => "sample_attrs_orig"
     remove_field => "sample_attrs_json"
   }
   json {
     source => "occurrence_attrs_json"
-    target => "occurrence_attrs"
+    target => "occurrence_attrs_orig"
     remove_field => "occurrence_attrs_json"
+  }
+  ruby {
+    code => "
+    require 'uri'
+    ['sample', 'occurrence'].each do |source|
+      if event.get(source + '_attrs_orig')
+        attrs = []
+        event.get(source + '_attrs_orig').to_hash.each do |key,value|
+          if not value =~ URI::MailTo::EMAIL_REGEXP
+            attrObj = {}
+            attrObj['id'] = key
+            attrObj['value'] = value
+            attrs.push(attrObj)
+          end
+        end
+        event.set(source + '_attrs', attrs)
+      end
+    end
+    "
+    remove_field => "sample_attrs_orig"
+    remove_field => "occurrence_attrs_orig"
   }
   # Convert our list of fields into a nicely structured occurrence document.
   mutate {

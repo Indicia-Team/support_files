@@ -194,6 +194,9 @@ PUT occurrence_brc1_v1
         "event.ukbms_week": { "type": "byte" },
         "event.month": { "type": "byte" },
         "event.year": { "type": "short" },
+        "event.attributes": {
+          "type": "nested"
+        },
         "metadata.created_by_id": { "type": "integer" },
         "metadata.updated_by_id": { "type": "integer" },
         "metadata.created_on": {
@@ -233,6 +236,9 @@ PUT occurrence_brc1_v1
         "occurrence.individual_count": { "type": "integer" },
         "occurrence.zero_abundance": { "type": "boolean" },
         "occurrence.occurrence_remarks": { "type": "text" },
+        "occurrence.attributes": {
+          "type": "nested"
+        },
         "taxon.marine": { "type": "boolean" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
