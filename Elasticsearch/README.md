@@ -168,10 +168,12 @@ Elasticsearch to decide the best settings for your situaion
 note that the index name has a short unique identifier appended to it which
 for the individual Indicia warehouse it indexes records from. This approach
 allows us to scale an Elasticsearch cluster to support multiple warehouses
-easily.
+easily. Finally, we include a version identifier in the index name, so that we
+can use the Elasticsearch REINDEX API to copy the index to a new version if
+we need to change mappings.
 
 ```json
-PUT occurrence_brc1
+PUT occurrence_brc1_v1
 {
   "settings": {
     "number_of_shards": 2,
@@ -179,12 +181,14 @@ PUT occurrence_brc1
   },
   "mappings": {
     "doc": {
+      "date_detection": false,
       "properties": {
         "id": { "type": "integer" },
         "event.date_start": { "type": "date" },
         "event.date_end": { "type": "date" },
         "event.day_of_year": { "type": "short" },
         "event.event_id": { "type": "integer" },
+        "event.event_remarks": { "type": "text" },
         "event.parent_event_id": { "type": "integer" },
         "event.week": { "type": "byte" },
         "event.ukbms_week": { "type": "byte" },
@@ -207,6 +211,7 @@ PUT occurrence_brc1
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
         "metadata.trial": { "type": "boolean" },
+        "metadata.tracking": { "type": "integer" },
         "identification.verifier.id": { "type": "integer" },
         "identification.verified_on": {
           "type": "date",
@@ -222,12 +227,12 @@ PUT occurrence_brc1
             "id": { "type": "integer" }
           }
         },
-        "location.higher_geography.id": { "type": "integer" },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
         "occurrence.individual_count": { "type": "integer" },
         "occurrence.zero_abundance": { "type": "boolean" },
+        "occurrence.occurrence_remarks": { "type": "text" },
         "taxon.marine": { "type": "boolean" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
@@ -255,7 +260,7 @@ POST /_aliases
 {
   "actions" : [
     { "add" : {
-      "index" : "occurrence_brc1",
+      "index" : "occurrence_brc1_v1",
       "alias" : "occurrence_search",
       "filter" : {
         "bool" : {
@@ -272,7 +277,7 @@ POST /_aliases
       }
     } },
     { "add" : {
-      "index" : "occurrence_brc1",
+      "index" : "occurrence_brc1_v1",
       "alias" : "occurrence_brc1_index"
     } }
   ]
@@ -322,7 +327,8 @@ visualisation.
 
 ### Logstash configuration
 
-Logstash acts as a data conduit. We’ll use it to pipe data arriving in Indicia into an Elastic Search index.
+Logstash acts as a data conduit. We’ll use it to pipe data arriving in Indicia
+into an Elastic Search index.
 
 #### Grab the files from Git
 
@@ -458,11 +464,17 @@ Copy the resulting *.conf file to your logstash/bin folder.
 
 #### Prepare the Logstash configuration file (RESTful access)
 
-This approach uses the Indicia RESTful API to access the records. To do this,
-access must be granted on the warehouse by configuring a client user ID, secret
-and project ID for the appropriate set of records. Either request this from the
-administrator of your warehouse, or if you are the administrator then the
-information needed is documented at https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html?highlight=rest.
+This approach uses the Indicia RESTful API to access the records. To do this, access must
+be granted on the warehouse by configuring a client user ID, secret and project ID for
+the appropriate set of records. Either request this from the administrator of your
+warehouse, or if you are the administrator then the information needed is documented at
+https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html.
+Note that the client project configuration must have the autofeed flag set which causes
+Indicia to manage the batches of data being returned from the API to ensure that
+initially all records are passed through and subsequently all changes are passed through.
+This is required because Logstash's http_poller plugin is a dumb client which is not
+capable of tracking the record IDs or timestamps of previous requests in order to filter
+the next data response appropriately so Indicia must take on this task.
 
 Two templates are provided for you in your working directory's logstash-config
 folder, one for record inserts and updates and another for deletions. Copy the
@@ -702,10 +714,12 @@ If errors occur, it is worth inspecting the occurrences on the warehouse that sh
 been passed to Elasticsearch around the time of the error to ensure that everything has
 been passed through. An error which occurs before the REST API concludes the request will
 normally not update the tracking information (stored in the Indicia variables table) so
-the next request from Logstash should pick up the missing changes. However if an error
-occurs after the REST API has processed the tracking information, then the batch of
-records may be skipped. You can modify the variables table on the warehouse to re-submit
-a batch. E.g. for a project called BRC5, the following script illustrates this:
+the next request from Logstash should pick up the missing changes. Indicia's REST API
+should also recognise timeouts and will block further autofeed responses to avoid
+duplicating query effort causing logjams on the server. However if an error occurs after
+the REST API has processed the tracking information, then the batch of records may be
+skipped in rare cases. You can modify the variables table on the warehouse to re-submit a
+batch. E.g. for a project called BRC5, the following script illustrates this:
 
 ```sql
 select value from variables where name='rest-autofeed-BRC5';

@@ -16,6 +16,7 @@ input {
           autofeed => "t"
           # Uncomment the following line if your index excludes zero abundance records.
           # zeros => "1"
+          max_time => 80
         }
       }
     }

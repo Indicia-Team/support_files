@@ -89,7 +89,9 @@ input {
           onf.sensitivity_precision,
           CASE o.sensitive WHEN true THEN 'B' ELSE null END AS sensitivity_blur,
           o.confidential,
-          o.release_status
+          o.release_status,
+          onf.attrs_json,
+          snf.attrs_json
         from cache_occurrences_functional o
         join cache_occurrences_nonfunctional onf on onf.id=o.id
         join cache_samples_nonfunctional snf on snf.id=o.sample_id
@@ -224,6 +226,16 @@ filter {
     remove_field => "data_cleaner_info"
     add_field => { "warehouse" => "{{ Indicia warehouse unique name }}" }
   }
+  json {
+    source => "sample_attrs_json"
+    target => "sample_attrs"
+    remove_field => "sample_attrs_json"
+  }
+  json {
+    source => "occurrence_attrs_json"
+    target => "occurrence_attrs"
+    remove_field => "occurrence_attrs_json"
+  }
   mutate {
     rename => {
       "created_on" => "[metadata][created_on]"
@@ -276,6 +288,7 @@ filter {
       "sample_comment" => "[event][event_remarks]"
       "attr_biotope" => "[event][habitat]"
       "attr_sample_method" => "[event][sampling_protocol]"
+      "sample_attrs" => "[event][attributes]"
       "taxon_key" => "[taxon][taxon_id]"
       "taxon_name" => "[taxon][taxon_name]"
       "taxon_authority" => "[taxon][taxon_name_authorship]"
@@ -304,6 +317,7 @@ filter {
       "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
       "media" => "[occurrence][associated_media]"
+      "occurrence_attrs" => "[occurrence][attributes]"
     }
   }
   ruby {

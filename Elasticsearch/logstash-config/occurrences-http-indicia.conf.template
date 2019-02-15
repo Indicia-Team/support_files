@@ -1,5 +1,5 @@
 input {
-  # Query => utofeed mode enables tracking of downloaded records on the server-side since the
+  # Query => autofeed mode enables tracking of downloaded records on the server-side since the
   # http_poller input plugin has no logic for importing changes.
   # Uncomment the query => confidential line to include confidential records.
   # Uncomment the query => release_status line to include unreleased records.
@@ -22,7 +22,7 @@ input {
           # confidential => "all"
           # Uncomment the following line to include unreleased records in the index.
           # release_status => "A"
-
+          max_time => 80
         }
       }
     }
@@ -150,6 +150,16 @@ filter {
     remove_field => "data_cleaner_info"
     add_field => { "warehouse" => "{{ Indicia warehouse unique name }}" }
   }
+  json {
+    source => "sample_attrs_json"
+    target => "sample_attrs"
+    remove_field => "sample_attrs_json"
+  }
+  json {
+    source => "occurrence_attrs_json"
+    target => "occurrence_attrs"
+    remove_field => "occurrence_attrs_json"
+  }
   # Convert our list of fields into a nicely structured occurrence document.
   mutate {
     rename => {
@@ -204,6 +214,7 @@ filter {
       "sample_comment" => "[event][event_remarks]"
       "attr_biotope" => "[event][habitat]"
       "attr_sample_method" => "[event][sampling_protocol]"
+      "sample_attrs" => "[event][attributes]"
       "taxon_key" => "[taxon][taxon_id]"
       "taxon_name" => "[taxon][taxon_name]"
       "taxon_authority" => "[taxon][taxon_name_authorship]"
@@ -232,6 +243,7 @@ filter {
       "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
       "media" => "[occurrence][associated_media]"
+      "occurrence_attrs" => "[occurrence][attributes]"
     }
   }
   ruby {
