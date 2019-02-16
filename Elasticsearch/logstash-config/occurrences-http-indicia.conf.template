@@ -1,8 +1,12 @@
 input {
   # Query => autofeed mode enables tracking of downloaded records on the server-side since the
   # http_poller input plugin has no logic for importing changes.
-  # Uncomment the query => confidential line to include confidential records.
-  # Uncomment the query => release_status line to include unreleased records.
+  # Add the following to the query section to exclude zero abundance records:
+  #   zero_abundance => "0"
+  # Add the following to the query section to include confidential records:
+  #   confidential => "all"
+  # Add the following to the query section to include unreleased records:
+  #   release_status => "A"
   http_poller {
     urls => {
       indicia => {
@@ -16,12 +20,6 @@ input {
           proj_id => "{{ Project ID }}"
           from_update_date => "1900-01-01"
           autofeed => "t"
-          # Uncomment the following line if your index excludes zero abundance records.
-          # zero_abundance => "0"
-          # Uncomment the following line to include confidential records in the index.
-          # confidential => "all"
-          # Uncomment the following line to include unreleased records in the index.
-          # release_status => "A"
           max_time => 80
         }
       }
@@ -92,7 +90,7 @@ filter {
   }
   # Map the indexed locations keys list into a blob of location information.
   translate {
-    dictionary_path => "/Users/john/Documents/Git repos/indicia_support_files/Elasticsearch/data/locations.yml"
+    dictionary_path => "{{ Working folder path }}/data/locations.yml"
     field => "indexed_location_ids"
     iterate_on => "indexed_location_ids"
     destination => "locations_blob"
