@@ -176,7 +176,7 @@ we need to change mappings.
 PUT occurrence_brc1_v1
 {
   "settings": {
-    "number_of_shards": 2,
+    "number_of_shards": 4,
     "number_of_replicas": 1
   },
   "mappings": {
@@ -184,6 +184,7 @@ PUT occurrence_brc1_v1
       "date_detection": false,
       "properties": {
         "id": { "type": "integer" },
+        "@timestamp": { "type": "date"},
         "event.date_start": { "type": "date" },
         "event.date_end": { "type": "date" },
         "event.day_of_year": { "type": "short" },
@@ -233,12 +234,17 @@ PUT occurrence_brc1_v1
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
+        "occurrence.source_system_key": { "type": "keyword" },
         "occurrence.individual_count": { "type": "integer" },
         "occurrence.zero_abundance": { "type": "boolean" },
         "occurrence.occurrence_remarks": { "type": "text" },
         "occurrence.attributes": {
           "type": "nested"
         },
+        "taxon.accepted_taxon_id": { "type": "keyword" },
+        "taxon.higher_taxon_ids": { "type": "keyword" },
+        "taxon.species_taxon_id": { "type": "keyword" },
+        "taxon.taxon_id": { "type": "keyword" },
         "taxon.marine": { "type": "boolean" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
@@ -311,7 +317,7 @@ POST /_aliases
           "must": [
             {
               "query_string": {
-                "query": "metadata.website.id:27 AND metadata.confidential:false AND metadata.zero_abundance:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "query": "metadata.website.id:27 AND metadata.confidential:false AND occurrence.zero_abundance:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
                 "analyze_wildcard": true,
                 "default_field": "*"
               }
