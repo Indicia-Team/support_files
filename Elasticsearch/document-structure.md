@@ -39,7 +39,8 @@ the index will contain documents structured as described below. Note:
 `identification.auto_checks.enabled`|boolean|True if from a dataset that has automated rule checking enabled (warehouse Data Cleaner module). |`websites.verification_checks_enabled`
 `identification.auto_checks.output`|object[]|List of objects describing automated rule check violations. Each object contains a value for message and rule type.|
 `identification.auto_checks.result`|boolean|True if passes automated rule checks, false if fails, omitted if not checked.|
-`identification.identification_verification_status`|string|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br>V2 = accepted as considered correct<br>C = not reviewed, pending verification<br>C3 = not reviewed, plausible<br>R = not accepted<br>R4 = not accepted as unable to verify<br>R5 = not accepted as incorrect"|`occurrences.record_status`, `occurrences.record_substatus`
+`identification.verification_status`|string|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br/>C = not reviewed<br>R = not accepted|`occurrences.record_status`
+`identification.verification_substatus`|string|Detail for verification status of the record. Possible values are:<br>1 = accepted as correct<br>2 = accepted as considered correct<br>3 = not reviewed, plausible<br>4 = not accepted as unable to verify<br>5 = not accepted as incorrect"|`occurrences.record_substatus`
 `identification.identified_by`|string|Name of the identifier of the record.|Sample custom attribute
 `identification.query`|string|Query status of the record. Q = queried, A = answered.|Calculated from `occurrence_comments`.
 `identification.recorder_certainty`|string|Certainty assigned to the identification given by the recorder at the time of data entry. Possible values are Certain, Likely or Maybe.|Occurrence custom attribute

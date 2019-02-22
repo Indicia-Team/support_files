@@ -80,7 +80,8 @@ input {
           snf.media,
           cttl.created_on,
           greatest(o.updated_on, cttl.cache_updated_on) as updated_on,
-          o.record_status || coalesce(o.record_substatus::text, '') as record_status,
+          o.record_status
+          o.record_substatus,
           occ.verified_by_id,
           onf.verifier,
           o.verified_on,
@@ -285,7 +286,8 @@ filter {
       "verifier" => "[identification][verifier][name]"
       "verified_by_id" => "[identification][verifier][id]"
       "verified_on" => "[identification][verified_on]"
-      "record_status" => "[identification][identification_verification_status]"
+      "record_status" => "[identification][verification_status]"
+      "record_substatus" => "[identification][verification_substatus]"
       "data_cleaner_list" => "[identification][auto_checks][output]"
       "verification_checks_enabled" => "[identification][auto_checks][enabled]"
       "query" => "[identification][query]"

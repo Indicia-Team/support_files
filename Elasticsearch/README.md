@@ -214,6 +214,7 @@ PUT occurrence_brc1_v1
         "metadata.sensitive": { "type": "boolean" },
         "metadata.sensitivity_precision": { "type": "integer" },
         "metadata.confidential": { "type": "boolean" },
+        "metadata.release_status": { "type": "keyword" },
         "metadata.trial": { "type": "boolean" },
         "metadata.tracking": { "type": "integer" },
         "identification.verifier.id": { "type": "integer" },
@@ -221,6 +222,8 @@ PUT occurrence_brc1_v1
           "type": "date",
           "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
         },
+        "identification.verification_status": { "type": "keyword" },
+        "identification.verification_substatus": { "type": "integer" },
         "identification.auto_checks.enabled": { "type": "boolean" },
         "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
@@ -228,7 +231,8 @@ PUT occurrence_brc1_v1
         "location.higher_geography": {
           "type": "nested",
           "properties": {
-            "id": { "type": "integer" }
+            "id": { "type": "integer" },
+            "code": { "type": "keyword" }
           }
         },
         "location.location_id": { "type": "integer" },
