@@ -12,7 +12,7 @@ the index will contain documents structured as described below. Note:
   metadata.confidential.
 * training records may be included (depending on the configuration of Logstash) but
   should be filtered out by your index alias. The training status is indicated by
-  metadata.training.
+  metadata.trial.
 
 ## Document fields
 
@@ -22,6 +22,7 @@ the index will contain documents structured as described below. Note:
 `id`|number|The ID assigned to the occurrence record on the warehouse. May not be unique|`occurrences.id`
 `warehouse`|string|Indicia warehouse identifier. Useful if a single Elasticsearch index contains data from multiple Indicia warehouses.|
 `@timestamp`|date|Timestamp that this occurrence was indexed in Elasticsearch.|
+`event.attributes`|nested|List of custom attribute values for the sampling event. Each item has an `id` and `value` and should be read in conjuction with the sample_attributes table|`sample_attribute_values`
 `event.date_end`|date|End of the date range that covers the field record. For a record on an exact date this will be the same as `event.start_date`.|`samples.date_end`
 `event.date_start`|date|Start of the date range that covers the field record.|`samples.date_start`
 `event.day_of_year`|number|Day within the year, 1-366. Null if not an exact date.|derived from `samples.date_start`
@@ -68,18 +69,21 @@ the index will contain documents structured as described below. Note:
 `metadata.sensitivity_precision`|number|For records that are sensitive, indicates the size of the grid square to blur to.|`occurrences.sensitivity_precision`
 `metadata.survey.id`|number|ID of the Indicia survey dataset on the warehouse.|`surveys.id`
 `metadata.survey.title`|string|Title of the Indicia survey dataset on the warehouse.|`surveys.title`
-`metadata.training`|boolean|True if this is a training record (so should be excluded unleess analysing training data).
+`metadata.tracking`|number|Unique sequential identifier for the last update event which affected
+the cached entry of this record.|`cache_occurrences_functional.tracking`
+`metadata.trial`|boolean|True if this is a trial record (so should be excluded unleess analysing trial data).|`occurrences.training`
 `metadata.updated_by_id`|number|ID of the user who last updated the record.|`occurrences.updated_by_id`
 `metadata.updated_on`|date|Date and time the record was last updated.|`occurrences.updated_on`
 `metadata.website.id`|number|ID of the Indicia website registration on the warehouse.|`websites.id`
 `metadata.website.title`|string|Title of the Indicia website registration on the warehouse.|`websites.title`
 `occurrence.associated_media`|string[]|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.|`occurrence_media.path`
+`occurrence.attributes`|nested|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table|`occurrence_attribute_values`
 `occurrence.individual_count`|number|If a count of individuals is available in numeric form for the record, then the value is indicated here.|Occurrence custom attribute
 `occurrence.life_stage`|string|Life stage of the recorded organism.|Occurrence custom attribute
 `occurrence.occurrence_remarks`|string|Comment given when the record was input.|`occurrences.comment`
 `occurrence.organism_quantity`|string|Abundance information (text or numeric).|Occurrence custom attribute
+`occurrence.source_system_key`|string|Unique key given to record by the system the record was sourced from.|`occurrence.external_key`
 `occurrence.sex`|string|Label indicating the sex of the recorded organism.|Occurrence custom attribute
-
 `taxon.accepted_name`|string|Accepted name of the organism’s taxon (normally a scientific name).|`taxa.taxon`
 `taxon.accepted_name_authorship`|string|Author and date associated with the accepted name.|`taxa.authority`
 `taxon.accepted_taxon_id`|string|Key given for the taxon accepted name (e.g. a taxon version key).|`taxa.external_key`
