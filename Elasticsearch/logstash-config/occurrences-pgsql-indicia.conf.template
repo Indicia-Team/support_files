@@ -14,6 +14,7 @@ input {
         # our query
         statement => "
         select o.id,
+          o.external_key,
           o.created_by_id,
           o.survey_id,
           o.website_id,
@@ -91,7 +92,9 @@ input {
           o.confidential,
           o.release_status,
           onf.attrs_json,
-          snf.attrs_json
+          snf.attrs_json,
+          o.training,
+          o.tracking
         from cache_occurrences_functional o
         join cache_occurrences_nonfunctional onf on onf.id=o.id
         join cache_samples_nonfunctional snf on snf.id=o.sample_id
@@ -99,15 +102,15 @@ input {
         left join locations l on l.id=o.location_id and l.deleted=false
         left join samples sp on sp.id=o.parent_sample_id and sp.deleted=false
         left join locations lp on lp.id=sp.location_id and lp.deleted=false
-        where o.updated_on > :sql_last_value
+        where o.tracking > :sql_last_value
         and o.training=false
         -- comment out the following line to include confidential records in the index
         and o.confidential=false
         -- comment out the following line to include unreleased records in the index
         and o.release_status='R'
         and o.zero_abundance=false"
-        tracking_column => "updated_on"
-        tracking_column_type => "timestamp"
+        tracking_column => "tracking"
+        tracking_column_type => "integer"
     }
 }
 filter {
@@ -168,7 +171,7 @@ filter {
   }
   # Map the indexed locations keys list into a blob of location information.
   translate {
-    dictionary_path => "/Users/john/Documents/Git repos/indicia_support_files/Elasticsearch/data/locations.yml"
+    dictionary_path => "{{ Working folder path }}/data/locations.yml"
     field => "indexed_location_ids"
     iterate_on => "indexed_location_ids"
     destination => "locations_blob"
@@ -277,6 +280,7 @@ filter {
       "trial" => "[metadata][trial]"
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
+      "tracking" => "[metadata][tracking]"
       "attr_det_name" => "[identification][identified_by]"
       "verifier" => "[identification][verifier][name]"
       "verified_by_id" => "[identification][verifier][id]"
@@ -332,6 +336,7 @@ filter {
       "taxon_species" => "[taxon][species]"
       "taxon_species_key" => "[taxon][species_taxon_id]"
       "taxon_path_keys" => "[taxon][higher_taxon_ids]"
+      "external_key" => "[occurrence][source_system_key]"
       "attr_sex" => "[occurrence][sex]"
       "attr_stage" => "[occurrence][life_stage]"
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
