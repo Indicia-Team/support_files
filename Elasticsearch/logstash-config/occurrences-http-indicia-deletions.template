@@ -42,6 +42,7 @@ output {
       index => "occurrence_{{ Indicia warehouse unique name }}_index"
       # Our records need a unique ID in the index for updates.
       document_id => "{{ Indicia warehouse unique name }}|%{id}"
+      action => "delete"
     }
     # Uncomment the following to see the normal events output to the terminal.
     # stdout { codec => json }
