@@ -246,6 +246,7 @@ PUT occurrence_brc1_v1
           "type": "nested"
         },
         "taxon.accepted_taxon_id": { "type": "keyword" },
+        "taxon.group_id": { "type": "integer" },
         "taxon.higher_taxon_ids": { "type": "keyword" },
         "taxon.species_taxon_id": { "type": "keyword" },
         "taxon.taxon_id": { "type": "keyword" },
@@ -409,19 +410,18 @@ To update the taxa.csv file with a fresh copy of the data:
   * Edit the file in a text editor. Remove the first row (column titles) and
     perform the following replacements:
     * "," with ": "
-    * """ with "
-    * "" with "\
+    * """ with "\"
+    * "" with \"
     * Regexp \u0084 with ,,
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
     * Regexp \u0092 with '
-    * Regexp \u0093 with empty string
+    * Regexp \u0093 with "
     * Regexp \u0094 with "
     * Regexp \u008A with Š
     * Regexp \u009A with š
     * Regexp \u0082 with ,
     * Regexp \u0090 with empty string
-    * Regexp \u009c with œ and also remove the stray hyphen in the affected
-      name.
+    * Regexp \u009c with œ
     * The name for BMSSYS0000533859 should have standard double quotes around
       mauroides with escape \ preceding them, i.e. \"mauroides\".
 
@@ -481,16 +481,11 @@ Copy the resulting *.conf file to your logstash/bin folder.
 #### Prepare the Logstash configuration file (RESTful access)
 
 This approach uses the Indicia RESTful API to access the records. To do this, access must
-be granted on the warehouse by configuring a client user ID, secret and project ID for
+be granted on the warehouse by configuring a client user ID, secret and at least 2 project IDs (one
+for records and one for deletions) for
 the appropriate set of records. Either request this from the administrator of your
 warehouse, or if you are the administrator then the information needed is documented at
 https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html.
-Note that the client project configuration must have the autofeed flag set which causes
-Indicia to manage the batches of data being returned from the API to ensure that
-initially all records are passed through and subsequently all changes are passed through.
-This is required because Logstash's http_poller plugin is a dumb client which is not
-capable of tracking the record IDs or timestamps of previous requests in order to filter
-the next data response appropriately so Indicia must take on this task.
 
 Two templates are provided for you in your working directory's logstash-config
 folder, one for record inserts and updates and another for deletions. Copy the
@@ -503,7 +498,9 @@ in your preferred text editor. Search and replace the following values:
   https://warehouse1.indicia.org.uk.
 * {{ User }} - your client user ID.
 * {{ Secret }} - your client secret.
-* {{ Project ID }} - your client project identifier configured on the warehouse.
+* {{ Project ID }} - your client project identifier configured on the warehouse. Make
+  sure you set this correctly for the deletion project configuration to the alternative
+  project ID.
 * {{ Working folder path }} - full path to the elasticsearch folder where you
   have the checked out files. When replacing this in the configuration, check
   that the edits result in valid file paths.
@@ -686,14 +683,20 @@ sensitive records in the dataset:
   pipeline.workers: 1
 ```
 
-Replace <path> with your working directory's logstash-config folder to make a
-valid path search string then save the pipelines.yml file. Specifying a single
-pipeline worker for the deletions means it won't hog all the cores for the
-deletion pipeline, giving it a slightly lower resource usage than the main
-inserts/updates pipeline. **Note** - the path must use forward slashes rather
-than backslashes as a directory separator (Unxix style) and will need to be on
-the same drive letter as Logstash on Windows. Use a relative path if easier, or
-'/' to denote the root of the drive Logstash is running from.
+Replace <path> with the path to your working directory's logstash-config folder to make a
+valid path search string then save the pipelines.yml file. Specifying a single pipeline
+worker for the deletions means it won't hog all the cores for the deletion pipeline,
+giving it a slightly lower resource usage than the main inserts/updates pipeline.
+
+**Note** - the path must use forward
+slashes rather than backslashes as a directory separator (Unix style) and will need to
+be on the same drive letter as Logstash on Windows. Use a relative path if easier, or '/'
+to denote the root of the drive Logstash is running from.
+
+**Note 2** - there seems to be a bug in the current Logstash version on Windows where it only
+finds the config file if using a relative path from the current working directory where you run
+Logstash from. I found it works if I cd to the folder containing indicia_support_files then
+run it from their with a relative path.
 
 ### Running Logstash to import the data
 
