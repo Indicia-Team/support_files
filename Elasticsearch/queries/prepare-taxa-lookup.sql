@@ -2,6 +2,7 @@ select distinct t.search_code as key,
   t.taxon || '~' || coalesce(t.authority, '')
   || '~' || cttl.external_key
   || '~' || cttl.preferred_taxon || '~' || coalesce(cttl.preferred_authority, '')
+  || '~' || cttl.taxon_group_id::text
   || '~' || cttl.taxon_group
   || '~' || coalesce(cttl.default_common_name, '')
   || '~' || coalesce(cttl.taxon_rank, '')
