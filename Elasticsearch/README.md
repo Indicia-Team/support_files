@@ -415,8 +415,8 @@ To update the taxa.csv file with a fresh copy of the data:
     * Regexp \u0084 with ,,
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
     * Regexp \u0092 with '
-    * Regexp \u0093 with "
-    * Regexp \u0094 with "
+    * Regexp \u0093 with \"
+    * Regexp \u0094 with \"
     * Regexp \u008A with Š
     * Regexp \u009A with š
     * Regexp \u0082 with ,
