@@ -137,11 +137,11 @@ HELP;
    * mean), or an output (a query that summarises the results of the query).
    * Outputs these bits of information when available.
    *
-   * @param obj $conn
+   * @param object $conn
    *   Database connection.
    * @param array $script
    *   Script configuration.
-   * @param obj $result
+   * @param object $result
    *   Database resource returned from the script.
    */
   public static function echoScriptOutputs($conn, array $script, $result) {
@@ -177,12 +177,12 @@ HELP;
    * config file and run those. There is no need to process deletions as these
    * are done as the sync scripts go along.
    *
-   * @param obj $conn
-   *   Database connection
+   * @param object $conn
+   *   Database connection.
    * @param array $settings
    *   Script settings.
    */
-  public static function updateCaches($conn, $settings) {
+  public static function updateCaches($conn, array $settings) {
     require_once $settings['warehouse-path'] . 'modules/cache_builder/config/cache_builder.php';
     $tables = [
       'termlists_terms',
@@ -205,7 +205,11 @@ HELP;
       foreach ($updates as $queryName => $qry) {
         echo "  - $queryName (UPDATE)";
         $startScript = microtime(TRUE);
-        $qry = str_replace('#join_needs_update#', $needsUpdateJoins[$table], $qry);
+        $qry = str_replace(
+          ['#join_needs_update#', '#master_list_id#'],
+          [$needsUpdateJoins[$table], $settings['taxon_list_id']],
+          $qry
+        );
         pg_query($conn, $qry);
         $time = round(microtime(TRUE) - $startScript, 1);
         echo " - OK ({$time}s)\n";
