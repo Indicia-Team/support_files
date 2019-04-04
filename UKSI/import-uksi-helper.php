@@ -221,7 +221,11 @@ HELP;
       foreach ($inserts as $queryName => $qry) {
         echo "  - $queryName (INSERT)";
         $startScript = microtime(TRUE);
-        $qry = str_replace('#join_needs_update#', $needsUpdateJoins[$table], $qry);
+        $qry = str_replace(
+          ['#join_needs_update#', '#master_list_id#'],
+          [$needsUpdateJoins[$table], $settings['taxon_list_id']],
+          $qry
+        );
         $result = @pg_query($conn, $qry);
         if ($result === FALSE) {
           echo "\nQuery failed:\n";

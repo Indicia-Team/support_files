@@ -92,6 +92,7 @@ the cached entry of this record.|`cache_occurrences_functional.tracking`
 `taxon.family`|string|Family of the taxon.|`taxa.taxon`
 `taxon.genus`|string|Genus of the taxon.|`taxa.taxon`
 `taxon.group`|string|Output group label for the taxon (e.g. terrestrial mammal).|`taxon_group.title`
+`taxon.group_id`|string|Output group ID for the taxon.|`taxon_group.id`
 `taxon.higher_taxon_ids`|string[]|List of taxon external keys associated with the higher taxa.|`taxa.external_key`
 `taxon.kingdom`|string|Kingdom of the taxon.|`taxa.taxon`
 `taxon.marine`|boolean|True if the taxon is associated with marine environments.|`taxa.marine_flag`
