@@ -12,6 +12,9 @@ $('<a id="invisible_micro_tag_id" style="visibility: hidden">invisible micro des
 $('<a id="invisible_micro_tag_id" style="visibility: hidden">invisible micro description tag</a>').insertBefore("legend:contains('Mikromerkmale')");
 $('<a id="invisible_micro_tag_id" style="visibility: hidden">invisible micro description tag</a>').insertBefore("legend:contains('mikroskopické znaky')");
   
+  //Hide the delete button, so contributors can't delete taxa
+  $('#delete-button').hide();
+  
   //Hide redlist fields as these won't be edited
   $('#ctrl-wrap-taxAttr-1076').hide();
   $('#ctrl-wrap-taxAttr-1077').hide();
