@@ -136,7 +136,7 @@
       // Keep track of what all the termlists term IDs means e.g. everything that is for value 1 goes in the idsForZero array
       var idsForZero = [youngThinTreesTtId,brambleIvyThroughoutTtId,hardlyAnyMossTtId,noLichenTtId];
       var idsForOne = [matureBiggerTreesTtId,treesVeryCloseTtId,brambleIvyBigPatchesTtId,smallBranchesLyingOnGroundTtId,fewPatchesMossTtId];
-      var idsForTwo = [mixtureSizesTtId,treesQuiteCloseTtId,brambleIvySomePatchesTtId,gladeTtId,veryWideTreeTtI,oldTreeDeadBranchesTtId,
+      var idsForTwo = [mixtureSizesTtId,treesQuiteCloseTtId,brambleIvySomePatchesTtId,gladeTtId,veryWideTreeTtId,oldTreeDeadBranchesTtId,
           oldTreeholeInTrunkTtId,oldTreeBigBranchesTtId,oldPollardTreeTtId,deadTreeStillStandingTtId,bigBranchesLyingOnGroundTtId,
           rottingTreeStumpsTtId,smallRocksTtId,largeRocksTtId,rockFaceCliffTtId,rockFaceWaterTtId,areaBoggyGroundTtId,
           streamsRiversTtId,waterfallTtId,bigPatchesMossTtId,notManyLichenTtId];
