@@ -1,0 +1,8 @@
+COPY (select t.taxon, count(distinct ttla.caption) as count_of_attributes_filled_in, count(distinct ttlav.id) as count_of_attribute_values_filled_in
+from indicia.taxa_taxon_lists ttl
+join indicia.taxa t on t.id = ttl.taxon_id and t.taxon_rank_id = 3 and t.deleted=false
+left join indicia.taxa_taxon_list_attribute_values ttlav on ttlav.taxa_taxon_list_id=ttl.id and ttlav.deleted=false
+left join indicia.taxa_taxon_list_attributes ttla on ttla.id=ttlav.taxa_taxon_list_attribute_id and ttla.deleted=false
+where ttl.deleted=false and taxon_list_id = 1 and ttl.preferred=true
+group by t.id
+order by t.taxon asc) TO '/tmp/counts.csv' (format csv, delimiter ',');
