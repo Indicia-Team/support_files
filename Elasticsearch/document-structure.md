@@ -75,7 +75,7 @@ the cached entry of this record.|`cache_occurrences_functional.tracking`
 `metadata.trial`|boolean|True if this is a trial record (so should be excluded unleess analysing trial data).|`occurrences.training`
 `metadata.updated_by_id`|number|ID of the user who last updated the record.|`occurrences.updated_by_id`
 `metadata.updated_on`|date|Date and time the record was last updated.|`occurrences.updated_on`
-`metadata.website.id`|number|ID of the Indicia website registration on the warehouse.|`websites.id`
+`metadata.website.id`|number|ID of the Indicia website registration on the warehouse. Currently the special value 0 is used to imply a "dirty" record which requires an update in ES, so should not display in any filtered searches.|`websites.id`
 `metadata.website.title`|string|Title of the Indicia website registration on the warehouse.|`websites.title`
 `occurrence.associated_media`|string[]|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.|`occurrence_media.path`
 `occurrence.attributes`|nested|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table|`occurrence_attribute_values`
