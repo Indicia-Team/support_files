@@ -7,7 +7,7 @@ jQuery(document).ready(function($) {
     $('.read-only-capable').find('input, textarea, text, button, select').prop('disabled', true);
     $('.page-notice').hide();
     $('.delete-file').hide();
-    $('#finish-button-help').hide();
+    $('.finish-button-help').hide();
     $('#finish-button').hide();
     $('#save-button').hide();
     $('#taxAttr\\:2197').prop('disabled', true);
@@ -33,6 +33,13 @@ jQuery(document).ready(function($) {
       $('#taxAttr\\:2197').prop('checked', true);
       $('#taxAttr\\:2197').val('1');
     }
+  });
+  
+  //Disabled fields won't submit, so remove these before submission
+  $('#entry_form').submit(function(e) {
+    $(':disabled').each(function(e) {
+        $(this).removeAttr('disabled');
+    })
   });
 
   $('<p><a href="#invisible_macro_tag_id" style="color:blue"><em><small>Click here to go straight to Macro Description section</small></em></a></p>').insertBefore("#ctrl-wrap-taxon-taxon");
