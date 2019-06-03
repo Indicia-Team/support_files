@@ -28,29 +28,37 @@
     var treeGroundCoveringConverted;
 
     //Variables for second total
-    var habitatsAttrId = 1311;
+    var habitatsLiveTreesAttrId = 1311;
+    var habitatsDeadTreesAttrId = 1333
+    var openSpaceAttrId = 1334;
+    var rockFeaturesAttrId = 1335;
+    var waterFeaturesAttrId = 1336;
     var habitatsTotalAttrId = 1189;
 
-    var gladeTtId = 14727;
     var veryWideTreeTtId = 14728;
     var oldTreeDeadBranchesTtId = 14729;
     var oldTreeholeInTrunkTtId = 14730;
     var oldTreeBigBranchesTtId = 14731;
     var oldPollardTreeTtId = 14732;
-    var deadTreeStillStandingTtId = 14733;
-    var smallBranchesLyingOnGroundTtId = 14734;
-    var bigBranchesLyingOnGroundTtId = 14735;
-    var rottingTreeStumpsTtId = 14736;
-    var smallRocksTtId = 14737;
-    var largeRocksTtId = 14738;
-    var rockFaceCliffTtId = 14739;
-    var rockFaceWaterTtId = 14740;
-    var areaBoggyGroundTtId = 14741;
-    var streamsRiversTtId = 14742;
-    var waterfallTtId = 14743;
+    var deadTreeStillStandingTtId = 16439;
+    var smallBranchesLyingOnGroundTtId = 16440;
+    var bigBranchesLyingOnGroundTtId = 16441;
+    var rottingTreeStumpsTtId = 16442;
+    var gladeTtId = 16443;
+    var smallRocksTtId = 16444;
+    var largeRocksTtId = 16445;
+    var rockFaceCliffTtId = 16446;
+    var rockFaceWaterTtId = 16447;
+    var areaBoggyGroundTtId = 16448;
+    var streamsRiversTtId = 16449;
+    var waterfallTtId = 16450;
 
     var habitatsTotal;
-    var habitatsConverted;
+    var habitatsLiveTreesConverted;
+    var habitatsDeadTreesConverted;
+    var openSpaceConverted;
+    var rockFeaturesConverted;
+    var waterFeaturesConverted;
 
     //Variables for third total
     var mossesAttrId = 1312;
@@ -98,17 +106,63 @@
     });
     
     //Slightly different as control is multi-select checkbox group
-    $('#smpAttr\\:' + habitatsAttrId).change(function() {
-      habitatsTotal = 0;
-      habitatsConverted = 0;
-
-      $.each($("input[name^='smpAttr\\:" + habitatsAttrId + "']:checked"), function() {
-        habitatsConverted  = convertIdToRealValue($(this).val());
-        habitatsTotal = habitatsTotal + habitatsConverted ;  
-      });
-      
-      $('#smpAttr\\:' + habitatsTotalAttrId).val(habitatsTotal);
+    $('#smpAttr\\:' + habitatsLiveTreesAttrId).change(function() {
+      countAndSetHabitatFeaturesTotal();
     });
+
+    $('#smpAttr\\:' + habitatsDeadTreesAttrId).change(function() {
+      countAndSetHabitatFeaturesTotal();
+    });
+
+    $('#smpAttr\\:' + openSpaceAttrId).change(function() {
+      countAndSetHabitatFeaturesTotal();
+    });
+
+    $('#smpAttr\\:' + rockFeaturesAttrId ).change(function() {
+      countAndSetHabitatFeaturesTotal();
+    });
+
+    $('#smpAttr\\:' + waterFeaturesAttrId).change(function() {
+      countAndSetHabitatFeaturesTotal();
+    });
+
+    $('#smpAttr\\:' + habitatsTotalAttrId).change(function() {
+      countAndSetHabitatFeaturesTotal();
+    });
+
+    function countAndSetHabitatFeaturesTotal() {
+      habitatsTotal = 0;
+
+      habitatsLiveTreesConverted = 0;
+      habitatsDeadTreesConverted = 0;
+      openSpaceConverted = 0;
+      rockFeaturesConverted = 0;
+      waterFeaturesConverted = 0;
+
+      $.each($("input[name^='smpAttr\\:" + habitatsLiveTreesAttrId + "']:checked"), function() {
+        habitatsLiveTreesConverted  = convertIdToRealValue($(this).val());
+      });
+
+      $.each($("input[name^='smpAttr\\:" + habitatsDeadTreesAttrId + "']:checked"), function() {
+        habitatsDeadTreesConverted  = convertIdToRealValue($(this).val());
+      });
+
+      $.each($("input[name^='smpAttr\\:" + openSpaceAttrId + "']:checked"), function() {
+        openSpaceConverted  = convertIdToRealValue($(this).val());
+      });
+
+      $.each($("input[name^='smpAttr\\:" + rockFeaturesAttrId + "']:checked"), function() {
+        rockFeaturesConverted  = convertIdToRealValue($(this).val());
+      });
+
+      $.each($("input[name^='smpAttr\\:" + waterFeaturesAttrId + "']:checked"), function() {
+        waterFeaturesConverted  = convertIdToRealValue($(this).val());
+      });
+
+      habitatsTotal = habitatsTotal + habitatsLiveTreesConverted + habitatsDeadTreesConverted +
+          openSpaceConverted + rockFeaturesConverted + waterFeaturesConverted;  
+      $('#smpAttr\\:' + habitatsTotalAttrId).val(habitatsTotal);
+    }
 
     //Radio buttons again
     $('#smpAttr\\:' + mossesAttrId + ', #smpAttr\\:' + lichensAttrId).change(function() {
