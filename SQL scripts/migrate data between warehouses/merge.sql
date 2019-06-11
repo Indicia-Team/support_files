@@ -142,7 +142,7 @@ from import.taxon_meanings;
 insert into taxa_taxon_lists(id, taxon_list_id, taxon_id, created_on, created_by_id, parent_id, taxon_meaning_id,
   taxonomic_sort_order, preferred, updated_on, updated_by_id, deleted, description, common_taxon_id, allow_data_entry,
   verification_check_version)
-select id, taxon_list_id, taxon_id, created_on, created_by_id, 1, taxon_meaning_id,
+select id, taxon_list_id, taxon_id, created_on, created_by_id, null, taxon_meaning_id,
   taxonomic_sort_order, preferred, updated_on, updated_by_id, deleted, description, common_taxon_id, allow_data_entry,
   verification_check_version
 from import.taxa_taxon_lists i
