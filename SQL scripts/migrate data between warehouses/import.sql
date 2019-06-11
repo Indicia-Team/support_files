@@ -329,6 +329,10 @@ select *, id as old_id, null::boolean as new
   from export.taxon_groups;
 update import.taxon_groups set id=null;
 
+/** Fix any taxon groups to known IDs, e.g. 
+update import.taxon_groups set id=104 where title='Butterflies';
+*/
+
 update import.taxon_groups u1
 set id=u2.id, new=false
 from taxon_groups u2
