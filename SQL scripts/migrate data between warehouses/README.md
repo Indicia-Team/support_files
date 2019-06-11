@@ -13,8 +13,9 @@ The steps are:
    `set search_path` statement at the start of the script.
 3. Run this script on the warehouse that holds the website registration you are moving.
 4. This will create a schema called export. Use pgAdmin to backup just this schema.
-5. On the destination warehouse, use pgAdmin to restore the backup of the schema into the
-   database you are moving the website registration to.
+5. On the destination warehouse, use pgAdmin create a schema called export on the 
+   database you are moving the website registration to then restore the backup into this 
+   schema.
 6. If your main Indicia schema is not called indicia, change this in the
    `set search_path` statement at the start of the import.sql script.
 7. The import script allows you to use existing termlists, taxon lists and custom
