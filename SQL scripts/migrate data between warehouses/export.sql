@@ -68,7 +68,7 @@ select * into export.form_structure_blocks
 from form_structure_blocks
 where survey_id in (select id from export.surveys);
 
-select  a.* into export.survey_attributes
+select distinct a.* into export.survey_attributes
 from survey_attributes a
 join survey_attributes_websites aw on aw.survey_attribute_id=a.id and aw.deleted=false
 where aw.website_id in (select id from export.websites)
@@ -86,7 +86,7 @@ where website_id in (select id from export.websites)
 and survey_attribute_id in (select id from export.survey_attributes)
 and deleted=false;
 
-select a.* into export.sample_attributes
+select distinct a.* into export.sample_attributes
 from sample_attributes a
 join sample_attributes_websites aw on aw.sample_attribute_id=a.id and aw.deleted=false
 where aw.website_id in (select id from export.websites)
@@ -104,7 +104,7 @@ where website_id in (select id from export.websites)
 and sample_attribute_id in (select id from export.sample_attributes)
 and deleted=false;
 
-select a.* into export.occurrence_attributes
+select distinct a.* into export.occurrence_attributes
 from occurrence_attributes a
 join occurrence_attributes_websites aw on aw.occurrence_attribute_id=a.id and aw.deleted=false
 where aw.website_id in (select id from export.websites)
@@ -122,7 +122,7 @@ where website_id in (select id from export.websites)
 and occurrence_attribute_id in (select id from export.occurrence_attributes)
 and deleted=false;
 
-select a.* into export.location_attributes
+select distinct a.* into export.location_attributes
 from location_attributes a
 join location_attributes_websites aw on aw.location_attribute_id=a.id and aw.deleted=false
 where aw.website_id in (select id from export.websites)
@@ -140,7 +140,7 @@ where website_id in (select id from export.websites)
 and location_attribute_id in (select id from export.location_attributes)
 and deleted=false;
 
-select a.* into export.person_attributes
+select distinct a.* into export.person_attributes
 from person_attributes a
 join person_attributes_websites aw on aw.person_attribute_id=a.id and aw.deleted=false
 where aw.website_id in (select id from export.websites)
@@ -189,7 +189,7 @@ from taxon_ranks
 where id in (select taxon_rank_id from export.taxa)
 and deleted=false;
 
-select a.* into export.taxa_taxon_list_attributes
+select distinct a.* into export.taxa_taxon_list_attributes
 from taxa_taxon_list_attributes a
 join taxon_lists_taxa_taxon_list_attributes tla on tla.taxa_taxon_list_attribute_id=a.id and tla.deleted=false
 where tla.taxon_list_id in (select id from export.taxon_lists)
