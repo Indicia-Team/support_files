@@ -1,4 +1,3 @@
-﻿SELECT setval('indicia.taxon_meanings_id_seq', 10002, true);
 /*
  * Script which processes exported data from another warehouse (in a schema called
  * export) by reworking all the foreign keys to fit into the destination warehouse.
@@ -338,7 +337,8 @@ set id=u2.id, new=false
 from taxon_groups u2
 where u2.title=u1.title
 and coalesce(u2.external_key, '')=coalesce(u1.external_key, '')
-and u2.deleted=false;
+and u2.deleted=false
+and u1.id is null;
 
 update import.taxon_groups set id=nextval('taxon_groups_id_seq'::regclass), new=true where id is null;
 
