@@ -1144,7 +1144,7 @@ update import.taxa_taxon_list_attribute_values set id=nextval('taxa_taxon_list_a
 
 update import.survey_attribute_values u1
   set int_value=u2.id
-  from import.termlist_terms u2, import.survey_attributes a
+  from import.termlists_terms u2, import.survey_attributes a
   where u1.int_value=u2.old_id
   and u1.int_value<>u2.id
   and a.old_id=u1.survey_attribute_id
@@ -1164,7 +1164,7 @@ update import.survey_attribute_values u1
 
 update import.sample_attribute_values u1
   set int_value=u2.id
-  from import.termlist_terms u2, import.sample_attributes a
+  from import.termlists_terms u2, import.sample_attributes a
   where u1.int_value=u2.old_id
   and u1.int_value<>u2.id
   and a.old_id=u1.sample_attribute_id
@@ -1184,7 +1184,7 @@ update import.sample_attribute_values u1
 
 update import.occurrence_attribute_values u1
   set int_value=u2.id
-  from import.termlist_terms u2, import.occurrence_attributes a
+  from import.termlists_terms u2, import.occurrence_attributes a
   where u1.int_value=u2.old_id
   and u1.int_value<>u2.id
   and a.old_id=u1.occurrence_attribute_id
@@ -1204,7 +1204,7 @@ update import.occurrence_attribute_values u1
 
 update import.location_attribute_values u1
   set int_value=u2.id
-  from import.termlist_terms u2, import.location_attributes a
+  from import.termlists_terms u2, import.location_attributes a
   where u1.int_value=u2.old_id
   and u1.int_value<>u2.id
   and a.old_id=u1.location_attribute_id
@@ -1224,7 +1224,7 @@ update import.location_attribute_values u1
 
 update import.person_attribute_values u1
   set int_value=u2.id
-  from import.termlist_terms u2, import.person_attributes a
+  from import.termlists_terms u2, import.person_attributes a
   where u1.int_value=u2.old_id
   and u1.int_value<>u2.id
   and a.old_id=u1.person_attribute_id
@@ -1244,7 +1244,7 @@ update import.person_attribute_values u1
 
 update import.taxa_taxon_list_attribute_values u1
   set int_value=u2.id
-  from import.termlist_terms u2, import.taxa_taxon_list_attributes a
+  from import.termlists_terms u2, import.taxa_taxon_list_attributes a
   where u1.int_value=u2.old_id
   and u1.int_value<>u2.id
   and a.old_id=u1.taxa_taxon_list_attribute_id
