@@ -130,8 +130,14 @@ update import.languages u1
 select *, id as old_id, true as new
   into import.websites
   from export.websites;
+  
+update import.websites set id=null;
 
-update import.websites set id=nextval('websites_id_seq'::regclass);
+/** If website entry exists, set it here, e.g.
+update import.websites set id=123 where title='my website';
+*/
+
+update import.websites set id=nextval('websites_id_seq'::regclass) where id is null;
 
 -- Metadata user FKs - created_by_id and updated_by_id
 update import.websites set created_by_id=1 where created_by_id not in (select old_id from import.users);
