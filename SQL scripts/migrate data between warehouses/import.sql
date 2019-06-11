@@ -133,7 +133,7 @@ select *, id as old_id, true as new
 update import.websites set id=null;
 
 /** If website entry exists, set it here, e.g.
-update import.websites set id=123 where title='my website';
+update import.websites set id=123, new=false where title='my website';
 */
 
 update import.websites set id=nextval('websites_id_seq'::regclass) where id is null;
@@ -329,7 +329,7 @@ select *, id as old_id, null::boolean as new
 update import.taxon_groups set id=null;
 
 /** Fix any taxon groups to known IDs, e.g. 
-update import.taxon_groups set id=104 where title='Butterflies';
+update import.taxon_groups set id=104, new=false where title='Butterflies';
 */
 
 update import.taxon_groups u1
