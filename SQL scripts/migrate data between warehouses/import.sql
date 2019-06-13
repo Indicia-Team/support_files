@@ -129,7 +129,7 @@ update import.languages u1
 select *, id as old_id, true as new
   into import.websites
   from export.websites;
-  
+
 update import.websites set id=null;
 
 /** If website entry exists, set it here, e.g.
@@ -191,10 +191,11 @@ update import.termlists_terms set id=null, meaning_id=null;
 
 -- Work out the links to existing terms
 drop table if exists term_updates;
-select distinct on(it.old_id)
+select distinct on(it.old_id, itlt.old_id)
   it.old_id as old_term_id, t.id as new_term_id,
   itlt.old_id as old_termlists_term_id, tlt.id as new_termlists_term_id,
-  itlt.old_meaning_id, tlt.meaning_id as new_meaning_id
+  itlt.old_meaning_id, tlt.meaning_id as new_meaning_id,
+  itlt.termlist_id as old_termlist_id
 into temporary term_updates
 from import.termlists_terms itlt
 join import.termlists itl on itl.old_id=itlt.termlist_id and itl.new=false
@@ -206,8 +207,10 @@ and coalesce(tlt.sort_order, 0)=coalesce(itlt.sort_order, 0);
 
 update import.terms t
 set id=new_term_id, new=false
-from term_updates tu
-where tu.old_term_id=t.old_id;
+from term_updates tu, import.termlists_terms tlt
+where tu.old_term_id=t.old_id
+and t.old_id=tlt.term_id
+and tu.old_termlist_id=tlt.termlist_id;
 
 update import.termlists_terms tlt
 set id=new_termlists_term_id, meaning_id=new_meaning_id, new=false
@@ -328,7 +331,7 @@ select *, id as old_id, null::boolean as new
   from export.taxon_groups;
 update import.taxon_groups set id=null;
 
-/** Fix any taxon groups to known IDs, e.g. 
+/** Fix any taxon groups to known IDs, e.g.
 update import.taxon_groups set id=104, new=false where title='Butterflies';
 */
 
