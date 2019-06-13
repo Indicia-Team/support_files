@@ -224,10 +224,15 @@ PUT occurrence_brc1_v1
         },
         "identification.verification_status": { "type": "keyword" },
         "identification.verification_substatus": { "type": "integer" },
+        "identification.verification_decision_source": { "type": "keyword" },
         "identification.auto_checks.enabled": { "type": "boolean" },
         "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
+        "location.grid_square.srid": { "type": "integer" },
+        "location.grid_square.1km.centre": { "type": "keyword" },
+        "location.grid_square.2km.centre": { "type": "keyword" },
+        "location.grid_square.10km.centre": { "type": "keyword" },
         "location.higher_geography": {
           "type": "nested",
           "properties": {
@@ -251,6 +256,8 @@ PUT occurrence_brc1_v1
         "taxon.species_taxon_id": { "type": "keyword" },
         "taxon.taxon_id": { "type": "keyword" },
         "taxon.marine": { "type": "boolean" },
+        "taxon.taxa_taxon_list_id": { "type": "integer" },
+        "taxon.taxon_meaning_id": { "type": "integer" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
     }

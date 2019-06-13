@@ -1060,6 +1060,12 @@ update import.sample_attributes_websites u1
   where u1.restrict_to_survey_id=u2.old_id
   and u1.restrict_to_survey_id<>u2.id;
 
+update import.sample_attributes_websites u1
+  set form_structure_block_id=u2.id
+  from import.form_structure_blocks u2
+  where u1.form_structure_block_id=u2.old_id
+  and u1.form_structure_block_id<>u2.id;
+
 update import.occurrence_attributes_websites u1
   set website_id=u2.id
   from import.websites u2
@@ -1077,6 +1083,12 @@ update import.occurrence_attributes_websites u1
   from import.surveys u2
   where u1.restrict_to_survey_id=u2.old_id
   and u1.restrict_to_survey_id<>u2.id;
+
+update import.occurrence_attributes_websites u1
+  set form_structure_block_id=u2.id
+  from import.form_structure_blocks u2
+  where u1.form_structure_block_id=u2.old_id
+  and u1.form_structure_block_id<>u2.id;
 
 update import.location_attributes_websites u1
   set website_id=u2.id
@@ -1096,6 +1108,12 @@ update import.location_attributes_websites u1
   where u1.restrict_to_survey_id=u2.old_id
   and u1.restrict_to_survey_id<>u2.id;
 
+update import.location_attributes_websites u1
+  set form_structure_block_id=u2.id
+  from import.form_structure_blocks u2
+  where u1.form_structure_block_id=u2.old_id
+  and u1.form_structure_block_id<>u2.id;
+
 update import.taxon_lists_taxa_taxon_list_attributes u1
   set taxon_list_id=u2.id
   from import.taxon_lists u2
@@ -1107,6 +1125,12 @@ update import.taxon_lists_taxa_taxon_list_attributes u1
   from import.taxa_taxon_list_attributes u2
   where u1.taxa_taxon_list_attribute_id=u2.old_id
   and u1.taxa_taxon_list_attribute_id<>u2.id;
+
+update import.taxon_lists_taxa_taxon_list_attributes u1
+  set form_structure_block_id=u2.id
+  from import.form_structure_blocks u2
+  where u1.form_structure_block_id=u2.old_id
+  and u1.form_structure_block_id<>u2.id;
 
 /* Attribute values */
 
