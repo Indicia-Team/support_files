@@ -100,7 +100,16 @@ input {
           onf.attrs_json,
           snf.attrs_json,
           o.training,
-          o.tracking
+          o.tracking,
+          CASE
+          WHEN o.media_count>0 AND o.sensitive=false AND snf.privacy_precision IS NULL THEN
+            (SELECT string_agg(om.path || '~~' || COALESCE(om.caption, '') || '~~' ||  COALESCE(l.code, '') || '~~' ||  COALESCE(t.term, ''), '@@')
+            FROM occurrence_media om
+            LEFT JOIN licences l ON l.id=om.licence_id
+            LEFT JOIN cache_termlists_terms t ON t.id=om.media_type_id
+            WHERE om.occurrence_id=o.id AND om.deleted=false)
+          ELSE null
+          END as media_data
         from cache_occurrences_functional o
         join cache_occurrences_nonfunctional onf on onf.id=o.id
         join occurrences occ on occ.id=o.id and occ.deleted=false
@@ -205,8 +214,25 @@ filter {
   # Split the media into separate items.
   mutate {
     split => {
-      "media" => ","
+      "media_data" => "@@"
     }
+  }
+  # Convert the media data for each item into an object.
+  ruby {
+    code => "
+      if event.get('media_data')
+        event.set('media_list', event.get('media_data').collect { |t|
+          c = t.split '~~'
+          {
+            'path' =>  c[0],
+            'caption' => c[1],
+            'licence' => c[2],
+            'type' => c[3]
+          }.delete_if { |k, v| v.blank? }
+        })
+      end
+    "
+    remove_field => "media_data"
   }
   # Tidy data cleaner info. First, add a pipe character between items in the
   # text so it can be split easily.
@@ -360,7 +386,7 @@ filter {
       "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
       "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
-      "media" => "[occurrence][associated_media]"
+      "media_list" => "[occurrence][media]"
       "occurrence_attrs" => "[occurrence][attributes]"
     }
   }

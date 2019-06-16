@@ -250,6 +250,9 @@ PUT occurrence_brc1_v1
         "occurrence.attributes": {
           "type": "nested"
         },
+        "occurrence.media": {
+          "type": "nested"
+        },
         "taxon.accepted_taxon_id": { "type": "keyword" },
         "taxon.group_id": { "type": "integer" },
         "taxon.higher_taxon_ids": { "type": "keyword" },
