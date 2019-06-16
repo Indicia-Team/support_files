@@ -224,10 +224,15 @@ PUT occurrence_brc1_v1
         },
         "identification.verification_status": { "type": "keyword" },
         "identification.verification_substatus": { "type": "integer" },
+        "identification.verification_decision_source": { "type": "keyword" },
         "identification.auto_checks.enabled": { "type": "boolean" },
         "identification.auto_checks.result": { "type": "boolean" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
+        "location.grid_square.srid": { "type": "integer" },
+        "location.grid_square.1km.centre": { "type": "keyword" },
+        "location.grid_square.2km.centre": { "type": "keyword" },
+        "location.grid_square.10km.centre": { "type": "keyword" },
         "location.higher_geography": {
           "type": "nested",
           "properties": {
@@ -251,6 +256,8 @@ PUT occurrence_brc1_v1
         "taxon.species_taxon_id": { "type": "keyword" },
         "taxon.taxon_id": { "type": "keyword" },
         "taxon.marine": { "type": "boolean" },
+        "taxon.taxa_taxon_list_id": { "type": "integer" },
+        "taxon.taxon_meaning_id": { "type": "integer" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
       }
     }
@@ -665,7 +672,7 @@ from running, which will wait until Logstash is idle before actually stopping.
 
 We need both our configuration files to run permanently in the background, not
 just one or the other, so that all inserts, updates and deletes can be
-syncronised. This can be done by editing the pipelines.yml file in your
+synchronised. This can be done by editing the pipelines.yml file in your
 Logstash installation's config folder. This will be d:\elastic\logstash\bin on
 Windows or /usr/local/Cellar/logstash/x.x.x/libexec/config on Mac if following
 these instructions, where x.x.x is the specific version number.
@@ -821,6 +828,28 @@ don't get free and unfettered access to the entire dataset in Elasticsearch.
   * Save the JS file and reload your Indicia report page. This is just a very
     simple demo designed to show that the data loading work as well as the
     performance of a complex aggregation that PostgreSQL would struggle with.
+
+## Forcing updates of the Elasticsearch index
+
+Under normal circumstances, any change to an occurrence results in an UPDATE of the `cache_occurrences_functional`
+table. This causes a trigger to fire - the `cache_functional_changed` function is triggered by updates on the table and
+the function then automatically updates the `tracking` field value to the next higher value using a database sequence.
+Therefore it is a simple task for Logstash to filter for all occurrences where the tracking value is higher than the
+last received tracking value to ensure that it has picked up the next batch of records. In some circumstances, however,
+the update of an occurrence in Elasticsearch needs to be manually triggered, for example if doing a manual database
+update on sample data which does not change the actual occurrence raw data. In these circumstances, write an update
+query which sets the `tracking` field value to `null` (the trigger will fire and update it to the next correct value)
+for all occurrences you need to update. For example the following forces through an update for all records where
+survey ID is 123:
+
+```sql
+UPDATE cache_occurrences_functional
+SET tracking=null
+WHERE survey_id=123;
+```
+
+An alternative method of re-indexing the whole dataset is to remove the records from the `variables` table which track
+the update status of the API feed to Elasticsearch.
 
 ## Index structure notes
 

@@ -39,18 +39,23 @@ the index will contain documents structured as described below. Note:
 `identification.auto_checks.enabled`|boolean|True if from a dataset that has automated rule checking enabled (warehouse Data Cleaner module). |`websites.verification_checks_enabled`
 `identification.auto_checks.output`|object[]|List of objects describing automated rule check violations. Each object contains a value for message and rule type.|
 `identification.auto_checks.result`|boolean|True if passes automated rule checks, false if fails, omitted if not checked.|
-`identification.verification_status`|string|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br/>C = not reviewed<br>R = not accepted|`occurrences.record_status`
-`identification.verification_substatus`|string|Detail for verification status of the record. Possible values are:<br>1 = accepted as correct<br>2 = accepted as considered correct<br>3 = not reviewed, plausible<br>4 = not accepted as unable to verify<br>5 = not accepted as incorrect"|`occurrences.record_substatus`
 `identification.identified_by`|string|Name of the identifier of the record.|Sample custom attribute
 `identification.query`|string|Query status of the record. Q = queried, A = answered.|Calculated from `occurrence_comments`.
 `identification.recorder_certainty`|string|Certainty assigned to the identification given by the recorder at the time of data entry. Possible values are Certain, Likely or Maybe.|Occurrence custom attribute
+`identification.verification_decision_source`|string|For verified records:<br/>H = human decision<br/>M = machine decision.|`occurrences.record_decision_source`
+`identification.verification_status`|string|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br/>C = not reviewed<br>R = not accepted|`occurrences.record_status`
+`identification.verification_substatus`|string|Detail for verification status of the record. Possible values are:<br>1 = accepted as correct<br>2 = accepted as considered correct<br>3 = not reviewed, plausible<br>4 = not accepted as unable to verify<br>5 = not accepted as incorrect"|`occurrences.record_substatus`
 `identification.verified_on`|date|If reviewed by a verifier, date of review.|`occurrences.verified_on`
 `identification.verifier.id`|number|If reviewed by a verifier, ID of verifier from the users table.|`occurrences.verified_by_id`
 `identification.verifier.name`|string|If reviewed by a verifier, name of verifier.|`people.first_name`, `people.surname`
 `location.coordinate_uncertainty_in_meters`|number|If a measure of imprecision of the sample’s map reference known, then number of metres. [sic - matches Darwin Core!]|Sample custom attribute
-`location.geom`|geo\_shape|Boundary of the occurrence’s sample.|`samples.geom`
+`location.geom`|geo\_shape|Boundary of the occurrence’s sample. Blurred if sensitive and not the full precision version of the record.|`samples.geom`
 `location.higher_geography`|object[]|List of objects that represent locations this sample has been identified as falling inside. Each object contains an ID (`locations.id`), name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).|locations table
 `location.location_id`|number|ID of the location if the recorder adding the record explicitly linked the record to a location in the locations table.|`locations.id`
+`location.grid_square.srid`|number|EPSG projection ID used for aligning the grid squares. Will be the preferred local projection.|Projection used to calculate `map_squares.geom`
+`location.grid_square.1km.centre`|keyword|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries). Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the mapped projection. Empty if sensitivity of the records means this precision should not be visible|`map_squares.geom`
+`location.grid_square.2km.centre`|keyword|As `location.grid_square.1km.centre` for 2km grid squares.|`map_squares.geom`
+`location.grid_square.10km.centre`|keyword|As `location.grid_square.10km.centre` for 10km grid squares.|`map_squares.geom`
 `location.name`|string|Name of the location if the recorder adding the record explicitly linked the record to a location in the locations table.|`locations.name`
 `location.output_sref`|string|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid Reference). If the record is sensitive, then blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive record, shows the original full precision reference.|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
 `location.output_sref_system`|string|Spatial reference system code, e.g. OSGB or an EPSG projection ID.|`cache_samples_functional.output_sref_system`, derived from `samples.entered_sref_system`
@@ -75,7 +80,7 @@ the cached entry of this record.|`cache_occurrences_functional.tracking`
 `metadata.trial`|boolean|True if this is a trial record (so should be excluded unleess analysing trial data).|`occurrences.training`
 `metadata.updated_by_id`|number|ID of the user who last updated the record.|`occurrences.updated_by_id`
 `metadata.updated_on`|date|Date and time the record was last updated.|`occurrences.updated_on`
-`metadata.website.id`|number|ID of the Indicia website registration on the warehouse.|`websites.id`
+`metadata.website.id`|number|ID of the Indicia website registration on the warehouse. Currently the special value 0 is used to imply a "dirty" record which requires an update in ES, so should not display in any filtered searches.|`websites.id`
 `metadata.website.title`|string|Title of the Indicia website registration on the warehouse.|`websites.title`
 `occurrence.associated_media`|string[]|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.|`occurrence_media.path`
 `occurrence.attributes`|nested|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table|`occurrence_attribute_values`
@@ -101,7 +106,9 @@ the cached entry of this record.|`cache_occurrences_functional.tracking`
 `taxon.species`|string|Species of the taxon. Allows sub-species to be aggregated to a single species name when counting species in a list and also allows higher taxa to be excluded from such counts.|`taxa.taxon`
 `taxon.species_taxon_id`|string|External key of the taxon given in the `taxon.species` field (allows disambiguation of name clashes).|`taxa.external_key`
 `taxon.subfamily`|string|Subfamily of the taxon.|`taxa.taxon`
+`taxon.taxa_taxon_list_id`|number|ID given to this taxon name in the taxa_taxon_lists table.|`taxa_taxon_lists.id`
 `taxon.taxon_id`|string|Key of the given taxon (e.g. a taxon version key).|`taxa.search_code`
+`taxon.taxa_taxon_list_id`|number|ID given to this taxon concept in the taxon_meaningsß table.|`taxon_meanings.id`
 `taxon.taxon_name`|string|Name given for the recorded organism by the recorder.|`taxa.taxon`
 `taxon.taxon_name_authorship`|string|Author and date associated with the taxon name.|`taxa.authority`
 `taxon.taxon_rank`|string|Rank label for the taxon (e.g. Species).|`taxon_ranks.rank`
