@@ -193,7 +193,7 @@
       var idsForTwo = [mixtureSizesTtId,treesQuiteCloseTtId,brambleIvySomePatchesTtId,gladeTtId,veryWideTreeTtId,oldTreeDeadBranchesTtId,
           oldTreeholeInTrunkTtId,oldTreeBigBranchesTtId,oldPollardTreeTtId,deadTreeStillStandingTtId,bigBranchesLyingOnGroundTtId,
           rottingTreeStumpsTtId,smallRocksTtId,largeRocksTtId,rockFaceCliffTtId,rockFaceWaterTtId,areaBoggyGroundTtId,
-          streamsRiversTtId,waterfallTtId,bigPatchesMossTtId,notManyLichenTtId];
+          streamsRiversTtId,waterfallTtId,bigPatchesMossTtId,someLichenTtId,notManyLichenTtId];
       var idsForThree = [oldBigTreesTtId,treesMoreSpacedTtId,brambleIvyNoneTtId,coveredMossTtId,lotsOfLichenTtId];
       
       var convertedValue;
