@@ -140,23 +140,23 @@
       waterFeaturesConverted = 0;
 
       $.each($("input[name^='smpAttr\\:" + habitatsLiveTreesAttrId + "']:checked"), function() {
-        habitatsLiveTreesConverted  = convertIdToRealValue($(this).val());
+        habitatsLiveTreesConverted  += convertIdToRealValue($(this).val());
       });
 
       $.each($("input[name^='smpAttr\\:" + habitatsDeadTreesAttrId + "']:checked"), function() {
-        habitatsDeadTreesConverted  = convertIdToRealValue($(this).val());
+        habitatsDeadTreesConverted  += convertIdToRealValue($(this).val());
       });
 
       $.each($("input[name^='smpAttr\\:" + openSpaceAttrId + "']:checked"), function() {
-        openSpaceConverted  = convertIdToRealValue($(this).val());
+        openSpaceConverted  += convertIdToRealValue($(this).val());
       });
 
       $.each($("input[name^='smpAttr\\:" + rockFeaturesAttrId + "']:checked"), function() {
-        rockFeaturesConverted  = convertIdToRealValue($(this).val());
+        rockFeaturesConverted  += convertIdToRealValue($(this).val());
       });
 
       $.each($("input[name^='smpAttr\\:" + waterFeaturesAttrId + "']:checked"), function() {
-        waterFeaturesConverted  = convertIdToRealValue($(this).val());
+        waterFeaturesConverted  += convertIdToRealValue($(this).val());
       });
 
       habitatsTotal = habitatsTotal + habitatsLiveTreesConverted + habitatsDeadTreesConverted +
