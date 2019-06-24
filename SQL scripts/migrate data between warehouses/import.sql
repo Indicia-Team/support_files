@@ -1064,6 +1064,12 @@ update import.sample_attributes_websites u1
   and u1.restrict_to_survey_id<>u2.id;
 
 update import.sample_attributes_websites u1
+  set restrict_to_sample_method_id=u2.id
+  from import.termlists_terms u2
+  where u1.restrict_to_sample_method_id=u2.old_id
+  and u1.restrict_to_sample_method_id<>u2.id;
+
+update import.sample_attributes_websites u1
   set form_structure_block_id=u2.id
   from import.form_structure_blocks u2
   where u1.form_structure_block_id=u2.old_id
@@ -1110,6 +1116,12 @@ update import.location_attributes_websites u1
   from import.surveys u2
   where u1.restrict_to_survey_id=u2.old_id
   and u1.restrict_to_survey_id<>u2.id;
+
+update import.location_attributes_websites u1
+  set restrict_to_location_type_id=u2.id
+  from import.termlists_terms u2
+  where u1.restrict_to_location_type_id=u2.old_id
+  and u1.restrict_to_location_type_id<>u2.id;
 
 update import.location_attributes_websites u1
   set form_structure_block_id=u2.id
