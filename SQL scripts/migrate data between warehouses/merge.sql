@@ -143,7 +143,7 @@ insert into taxa_taxon_lists(id, taxon_list_id, taxon_id, created_on, created_by
   taxonomic_sort_order, preferred, updated_on, updated_by_id, deleted, description, common_taxon_id, allow_data_entry,
   verification_check_version)
 select id, taxon_list_id, taxon_id, created_on, created_by_id, null, taxon_meaning_id,
-  taxonomic_sort_order, preferred, updated_on, updated_by_id, deleted, description, common_taxon_id, allow_data_entry,
+  taxonomic_sort_order, preferred, now(), updated_by_id, deleted, description, common_taxon_id, allow_data_entry,
   verification_check_version
 from import.taxa_taxon_lists i
 where i.new=true;
@@ -429,6 +429,10 @@ select id, taxa_taxon_list_id, taxa_taxon_list_attribute_id, text_value,
   updated_by_id, deleted, geom_value, upper_value
 from import.taxa_taxon_list_attribute_values i
 where i.new=true;
+
+insert into work_queue(task, entity, record_id, params, cost_estimate, priority, created_on)
+select 'task_cache_builder_update', 'taxa_taxon_list', id, null, 100, 1, now()
+from import.taxa_taxon_lists where new=true order by id;
 
 insert into work_queue(task, entity, record_id, params, cost_estimate, priority, created_on)
 select 'task_cache_builder_update', 'occurrence', id, null, 100, 2, now()
