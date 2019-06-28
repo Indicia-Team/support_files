@@ -156,10 +156,10 @@ where i.new=true
 and i.id=s.id
 and i.parent_id is not null;
 
--- Locations. Parent_id set to null initially to avoid FK violation.
-insert into locations(id, name, code, parent_id, centroid_sref, centroid_sref_system, created_on, created_by_id,
+-- Locations. Parent_id left as null initially to avoid FK violation.
+insert into locations(id, name, code, centroid_sref, centroid_sref_system, created_on, created_by_id,
   updated_on, updated_by_id, comment, external_key, deleted, centroid_geom, boundary_geom, location_type_id, public)
-select id, name, code, 1, centroid_sref, centroid_sref_system, created_on, created_by_id,
+select id, name, code, centroid_sref, centroid_sref_system, created_on, created_by_id,
   updated_on, updated_by_id, comment, external_key, deleted, centroid_geom, boundary_geom, location_type_id, public
 from import.locations i
 where i.new=true;
@@ -194,14 +194,14 @@ where i.new=true
 and i.id=s.id
 and i.parent_id is not null;
 
--- Samples. Leave out parent_id, location_id and sample_method_id FKs to fix up later.
+-- Samples. Leave out parent_id FK to fix up later to avoid violation.
 insert into samples(id, survey_id, location_id, date_start, date_end, date_type, entered_sref, entered_sref_system,
   location_name, created_on, created_by_id, updated_on, updated_by_id, comment, external_key, sample_method_id, deleted,
-  geom, recorder_names, parent_id, input_form, group_id, privacy_precision, record_status, verified_by_id, verified_on,
+  geom, recorder_names, input_form, group_id, privacy_precision, record_status, verified_by_id, verified_on,
   licence_id)
 select id, survey_id, location_id, date_start, date_end, date_type, entered_sref, entered_sref_system,
   location_name, created_on, created_by_id, updated_on, updated_by_id, comment, external_key, sample_method_id, deleted,
-  geom, recorder_names, 1, input_form, group_id, privacy_precision, record_status, verified_by_id, verified_on,
+  geom, recorder_names, input_form, group_id, privacy_precision, record_status, verified_by_id, verified_on,
   licence_id
 from import.samples i
 where i.new=true;
