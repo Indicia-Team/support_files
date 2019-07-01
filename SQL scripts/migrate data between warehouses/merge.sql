@@ -441,3 +441,7 @@ from import.occurrences where new=true order by id;
 insert into work_queue(task, entity, record_id, params, cost_estimate, priority, created_on)
 select 'task_cache_builder_update', 'sample', id, null, 100, 2, now()
 from import.samples where new=true order by id;
+
+insert into work_queue(task, entity, record_id, params, cost_estimate, priority, created_on)
+select 'task_spatial_index_builder_sample', 'sample', id, null, 70, 2, now()
+from import.samples where new=true order by id;
