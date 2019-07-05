@@ -1,5 +1,8 @@
+
 var setLegendState;
+var mapZoomEnd;
 mapInitialisationHooks.push(function(div) {
+
   div.map.events.register('changelayer', null, mapLayerChanged);
   
   function mapLayerChanged(event) {
@@ -8,6 +11,18 @@ mapInitialisationHooks.push(function(div) {
     // Cycle through each active layer and check it
     for (var i = 0; i < layers.length; i++) {
       setLegendState(layers[i].name);
+    }
+    // Workaround a problem where the default Openlayers switcher is not hiding/showing
+    // layers properly, we don't know why, so workaround this
+    var layers = div.map.layers; 
+    for (var i = 0; i < div.map.layers.length; i++) {
+      if (layers[i].isBaseLayer==true) {
+        if (layers[i].visibility == true) {
+          jQuery(div.map.layers[i].div).show();
+        } else {
+		  jQuery(div.map.layers[i].div).hide();
+        }
+      }
     }
   }
 
