@@ -442,8 +442,8 @@ taxon-paths.yml.
 
 #### Prepare the lookup for location data
 
-* Open the queries/prepare-locations-lookup.sql file in pgAdmin, connecting to an
-  Indicia database that has the UKSI dataset loaded.
+* Open the queries/prepare-locations-lookup.sql file in pgAdmin, connecting to
+  the database being imported into Elasticsearch.
 * Search and replace <indexed_location_type_ids> with a comma separated list of
   location type IDs that are indexed.
 * Repeat the steps described above to save a file called locations.yml in your
