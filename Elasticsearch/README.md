@@ -440,6 +440,12 @@ To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above for the prepare-taxon-paths.sql file, saving the results as
 taxon-paths.yml.
 
+Note that if multiple taxon lists are used to define the taxonomic hierarchy
+then you should repeat the extraction for both lists and append the YAML data
+together. For example in the BRC warehouse1 there is a list ID 15 for the UKSI
+and also list 251 for European Butterflies since not all taxa are on the UK
+list.
+
 #### Prepare the lookup for location data
 
 * Open the queries/prepare-locations-lookup.sql file in pgAdmin, connecting to
