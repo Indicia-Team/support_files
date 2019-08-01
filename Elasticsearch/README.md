@@ -209,6 +209,7 @@ PUT occurrence_brc1_v1
           "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
         },
         "metadata.group.id": { "type": "integer" },
+        "metadata.input_form": { "type": "keyword" },
         "metadata.survey.id": { "type": "integer" },
         "metadata.website.id": { "type": "integer" },
         "metadata.sensitive": { "type": "boolean" },

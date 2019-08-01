@@ -68,6 +68,7 @@ the index will contain documents structured as described below. Note:
 `metadata.created_on`|date|Date and time the record was input.|`occurrences.created_on`
 `metadata.group.id`|number|If the record is associated with a recording group (activity or project etc), then the ID of the group.|`groups.id`
 `metadata.group.title`|string|If the record is associated with a recording group (activity or project etc), then the title of the group.|`groups.title`
+`metadata.input_form`|string|Path to the form used to edit this record.|`sample.input_form`
 `metadata.licence_code`|string|If the record has a licence explicitly associated with it, then gives the licence code (e.g. CC0).|`licences.code`
 `metadata.release_status`|string|For records that are not ready for release into public reporting systems, gives the status. Values are R = released, U = unreleased, P = pending review. Values U and P should be filtered out in default index aliases.|`occurrences.release_status`
 `metadata.sensitive`|boolean|True if the record is flagged as sensitive.|derived from `occurrences.sensitivity_precision`

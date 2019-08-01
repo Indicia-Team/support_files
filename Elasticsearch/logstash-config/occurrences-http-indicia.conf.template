@@ -219,6 +219,7 @@ filter {
       "confidential" => "[metadata][confidential]"
       "release_status" => "[metadata][release_status]"
       "tracking" => "[metadata][tracking]"
+      "input_form" => "[metadata][input_form]"
       "attr_det_name" => "[identification][identified_by]"
       "verifier" => "[identification][verifier][name]"
       "verified_by_id" => "[identification][verifier][id]"
