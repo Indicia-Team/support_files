@@ -7,6 +7,9 @@ of the UKSI dataset.
 
 Preparation:
 
+The following modules must be enabled in your application/config/config.php
+warehouse file.
+* **enable the following modules in application/config/config.php:** taxon_designations, taxon_associations, species_alerts, data_cleaner_ancillary_species, data_cleaner_period_within_year, data_cleaner_period, data_cleaner_identification_difficulty, data_cleaner_without_polygon
 * **Before running the script, please ensure that your warehouse scheduled tasks
   have been run and then stopped to ensure everything is up to date.** See the
   [scheduled tasks documentation](http://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/scheduled-tasks.html?highlight=scheduled).
