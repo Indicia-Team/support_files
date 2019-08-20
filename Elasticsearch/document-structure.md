@@ -83,7 +83,7 @@ the cached entry of this record.|`cache_occurrences_functional.tracking`
 `metadata.updated_on`|date|Date and time the record was last updated.|`occurrences.updated_on`
 `metadata.website.id`|number|ID of the Indicia website registration on the warehouse. Currently the special value 0 is used to imply a "dirty" record which requires an update in ES, so should not display in any filtered searches.|`websites.id`
 `metadata.website.title`|string|Title of the Indicia website registration on the warehouse.|`websites.title`
-`occurrence.associated_media`|string[]|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.|`occurrence_media.path`
+`occurrence.media`|nested|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.|`occurrence_media`
 `occurrence.attributes`|nested|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table|`occurrence_attribute_values`
 `occurrence.individual_count`|number|If a count of individuals is available in numeric form for the record, then the value is indicated here.|Occurrence custom attribute
 `occurrence.life_stage`|string|Life stage of the recorded organism.|Occurrence custom attribute
