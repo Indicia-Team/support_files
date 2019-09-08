@@ -16,16 +16,18 @@ Preparation:
 ```
 Usage: php import-uksi.php [options]
 
- --warehouse-path  The path to the warehouse installation folder.
- --su              PostgreSQL superuser username required for some scripts.
- --supass          PostgreSQL superuser password required for some scripts.
- --taxon\_list\_id   The ID of the existing list in the warehouse which will be updated with UKSI data.
- --user\_id         The ID of the existing user in the warehouse which will be used in the record metadata
-                   for changes and new records.
+ --warehouse-path           The path to the warehouse installation folder.
+ --su                       PostgreSQL superuser username required for some scripts.
+ --supass                   PostgreSQL superuser password required for some scripts.
+ --taxon\_list\_id          The ID of the existing list in the warehouse which will be updated with UKSI data.
+ --user\_id                 The ID of the existing user in the warehouse which will be used in the record metadata
+                            for changes and new records.
 Optional
- --data-path       The path to the folder containing the 8 text files exported from the UKSI MS Access database.
-                   When not supplied, the files must be in the same folder as this PHP script.
- --start=n         Start at script numbered n.
+ --data-path                The path to the folder containing the 8 text files exported from the UKSI MS Access database.
+                            When not supplied, the files must be in the same folder as this PHP script.
+ --start=n                  Start at script numbered n.
+ --stop=n                   End at script numbered n.
+ --force_cache_rebuild=true Forces all taxa in import to be treated as changed taxa if set to 'true'.  
 ```
 
 Example:
