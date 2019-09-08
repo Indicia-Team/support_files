@@ -85,7 +85,9 @@ DELETE FROM species_alerts WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM taxon_associations WHERE from_taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM taxon_associations WHERE to_taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM cache_taxon_searchterms WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
--- Remove the taxon meanings.
+-- DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
+
+-- Remove the taxon meanings and 
 DELETE FROM taxon_meanings WHERE id IN (SELECT id FROM to_delete);
 DROP TABLE to_delete;
 

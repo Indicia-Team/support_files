@@ -26,7 +26,7 @@
 290,"SppGrp","Species group",1
 290,"Agg","Species aggregate",1
 300,"Spp","Species",1
-300,"SppHyb","Species hybrid",1
+304,"SppHyb","Species hybrid",1
 320,"SubSppHyb","Subspecies hybrid",1
 320,"SubSpp","Subspecies",1
 350,"Rac","Race",1
@@ -40,7 +40,7 @@
 220,"SubTrb","Subtribe",0
 260,"SubSec(b)","Subsection",1
 160,"SubSer(z)","Subseries",0
-300,"NoSpp","Nothospecies",1
+308,"NoSpp","Nothospecies",1
 310,"MicSpp","Microspecies",1
 320,"NoSubSpp","Nothosubspecies",1
 320,"MicGen","Microgene",1
@@ -77,3 +77,4 @@
 125,"ParOrd","Parvorder",0
 5,"Emp","Empire",0
 5,"Dom","Domain",0
+85,"SubtCls","Subterclass",0

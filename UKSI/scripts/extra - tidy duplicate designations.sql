@@ -5,7 +5,7 @@ where deleted=false
 group by taxon_id, taxon_designation_id, start_date,source, geographical_constraint
 having count(*) > 1;
 
-update taxa_taxon_designations set deleted=true, updated_by_id=3, updated_on=now() where id in (
+update taxa_taxon_designations set deleted=true, updated_by_id=(select updated_by_user_id from uksi.uksi_settings), updated_on=now() where id in (
 	select distinct ttd.id
 	from taxa_taxon_designations ttd
 	join duplicates d on d.taxon_id=ttd.taxon_id

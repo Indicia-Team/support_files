@@ -87,6 +87,13 @@ HELP;
     $settings = array_merge([
       'data-path' => dirname(__FILE__),
     ], $settings);
+    $settings = array_merge([
+      'force_cache_rebuild' => 'false',
+    ], $settings);
+    // Ensure valid value for force-cache-rebuild
+    if (strtolower($settings['force_cache_rebuild']) !== 'true') {
+      $settings['force_cache_rebuild'] = 'false';
+    }
     // Ensure paths have slash at end.
     if (substr($settings['data-path'], -1) !== DIRECTORY_SEPARATOR) {
       $settings['data-path'] .= DIRECTORY_SEPARATOR;
@@ -226,6 +233,7 @@ HELP;
           [$needsUpdateJoins[$table], $settings['taxon_list_id']],
           $qry
         );
+        //echo "$qry\n";
         $result = @pg_query($conn, $qry);
         if ($result === FALSE) {
           echo "\nQuery failed:\n";

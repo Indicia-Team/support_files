@@ -116,4 +116,6 @@
 "NHMSYS0020755475","vertebrates",,
 "NHMSYS0020936760","simple organisms - chromists","Brown algae, diatoms and fungoids",
 "NHMSYS0020936761","chromist",,
+"NHMSYS0021125834","cyanobacterium",,
 "NHMSYS0021158628","fungoid",,
+"NHMSYS0021233878","insect - web-spinner (Embioptera)",,"NHMSYS0020755473"

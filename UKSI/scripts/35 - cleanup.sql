@@ -62,6 +62,19 @@ FROM uksi.preferred_name_changes nc
 WHERE nc.old_taxon_meaning_id=sa.taxon_meaning_id
 AND sa.taxon_meaning_id<>nc.new_taxon_meaning_id;
 
+-- RJB
+DELETE FROM taxon_associations WHERE from_taxon_meaning_id IN (
+  SELECT tm.id FROM taxon_meanings tm
+  LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=tm.id
+  WHERE ttl.id IS NULL
+);
+DELETE FROM taxon_associations WHERE to_taxon_meaning_id IN (
+  SELECT tm.id FROM taxon_meanings tm
+  LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=tm.id
+  WHERE ttl.id IS NULL
+);
+--
+
 UPDATE taxon_associations ta
 SET from_taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
@@ -73,6 +86,23 @@ SET to_taxon_meaning_id=nc.new_taxon_meaning_id
 FROM uksi.preferred_name_changes nc
 WHERE nc.old_taxon_meaning_id=ta.to_taxon_meaning_id
 AND ta.to_taxon_meaning_id<>nc.new_taxon_meaning_id;
+
+
+DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (
+  SELECT old_taxon_meaning_id FROM uksi.preferred_name_changes
+);
+
+-- DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (
+--   SELECT old_taxon_meaning_id FROM uksi.preferred_name_changes
+-- ) AND taxon_meaning_id NOT IN (
+--   SELECT new_taxon_meaning_id FROM uksi.preferred_name_changes
+-- );
+
+-- UPDATE cache_taxon_paths ctp
+-- SET taxon_meaning_id=nc.new_taxon_meaning_id
+-- FROM uksi.preferred_name_changes nc
+-- WHERE nc.old_taxon_meaning_id=ctp.taxon_meaning_id
+-- AND ctp.taxon_meaning_id<>nc.new_taxon_meaning_id;
 
 -- For tables that are linked to a taxa taxon list ID we can use that to get
 -- the updated taxon meaning ID.
