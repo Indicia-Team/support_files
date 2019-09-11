@@ -85,7 +85,7 @@ FROM uksi.preferred_name_changes nc
 WHERE nc.old_taxon_meaning_id=ta.to_taxon_meaning_id
 AND ta.to_taxon_meaning_id<>nc.new_taxon_meaning_id;
 
-
+-- Reference https://github.com/BiologicalRecordsCentre/iRecord/issues/636#issuecomment-520751086 
 DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (
   SELECT old_taxon_meaning_id FROM uksi.preferred_name_changes
 );
@@ -162,7 +162,6 @@ truncate cache_verification_rules_without_polygon;
 insert into cache_verification_rules_without_polygon
   select * from cache_verification_rules_without_polygon2;
 drop table cache_verification_rules_without_polygon2;
-
 
 select vr.id as verification_rule_id,
   vr.reverse_rule,

@@ -27,7 +27,7 @@ Optional
                             When not supplied, the files must be in the same folder as this PHP script.
  --start=n                  Start at script numbered n.
  --stop=n                   End at script numbered n.
- --force_cache_rebuild=true Forces all taxa in import to be treated as changed taxa if set to 'true'.  
+ --force-cache-rebuild=true Forces all taxa in import to be treated as changed taxa if set to 'true'.  
 ```
 
 Example:
