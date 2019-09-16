@@ -439,6 +439,7 @@ To update the taxa.yml file with a fresh copy of the data:
     * Regexp \u008A with Š
     * Regexp \u009A with š
     * Regexp \u009c with œ
+    * Regexp characters around \u009E (ui) with ůži
     * The name for BMSSYS0000533859 should have standard double quotes around
       mauroides with escape \ preceding them, i.e. \"mauroides\".
 
