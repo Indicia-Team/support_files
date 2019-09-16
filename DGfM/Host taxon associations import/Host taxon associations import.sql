@@ -38,7 +38,7 @@ FOR association_to_import IN
   select replace(tfh.fungi_name_authority,'  ',' ') as fungi_name_authority, replace(tfh.name_of_host,'  ',' ') as name_of_host, tfh.row_num as row_num
   from dgfm.tbl_fungi_hosts tfh
 ) loop
-IF (association_to_import.row_num >= 0 and association_to_import.row_num < xxxxx) THEN
+IF (association_to_import.row_num >= 0 and association_to_import.row_num < 200000) THEN
   IF (NOT EXISTS (
     select ta.id
     from indicia.taxon_associations ta
