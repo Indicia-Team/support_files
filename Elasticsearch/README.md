@@ -424,6 +424,7 @@ To update the taxa.yml file with a fresh copy of the data:
   * Edit the file in a text editor. Remove the first row (column titles) and
     perform the following replacements:
     * "," with ": "
+    * \ with \\
     * """ with "\"
     * "" with \"
     * Regexp \u0081 with ü
