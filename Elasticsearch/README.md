@@ -378,24 +378,27 @@ if there are taxonomic changes that need to be applied to your imports.
 
 Rather than expect all data sources to provide all the taxonomic information
 related to a record in a single consistent format, we will use the UKSI dataset
-copied into a CSV file to create a lookup table containing the information,
+copied into a YML file to create a lookup table containing the information,
 keyed by external key (i.e. the NBN key of the taxon name). This file is
-provided in the Elasticsearch/data/taxa.csv file. Then, during import, sources
+provided in the Elasticsearch/data/taxa.yml file. Then, during import, sources
 can provide just a taxon NBN key and Logstash will be configured to use this
-CSV file to populate all the required taxon information to add to the search
+YML file to populate all the required taxon information to add to the search
 index.
 
-A second CSV file is constructed from the UKSI data to provide path information
+A second YML file is constructed from the UKSI data to provide path information
 from the taxon's root through the taxonomic levels down to the taxon itself.
 This makes queries based on higher taxa easy and performant. Normally you can
-just use the copies of the 2 CSV files provided in the repository, but
+just use the copies of the 2 YML files provided in the repository, but
 instructions for generating or updating them are provided below.
 
-To update the taxa.csv file with a fresh copy of the data:
+To update the taxa.yml file with a fresh copy of the data:
 
 * Open the queries/prepare-taxa-lookup.sql file in pgAdmin, connecting to an
   Indicia database that has the UKSI dataset loaded.
-* Search and replace <taxon_list_id> with the ID of the UKSI list.
+* Search and replace <taxon_list_id> with the ID of the UKSI list. If there are
+  multiple lists then change this filter to an `IN (...)` clause. For the BRC
+  warehouse1 for example, this filter is set to `IN (15, 251)` to support use
+  of the UK Species Inventory and the European butterflies list for ABLE.
 * In pgAdmin 3:
   * Ensure that your search_path is set to indicia, public, e.g. by running the
     query below, or ensuring it is your logged in user's default search path:
@@ -416,7 +419,7 @@ To update the taxa.csv file with a fresh copy of the data:
   * Click the Download as CSV button. Note that I had problems using this under
     Internet Explorer with Enhanced Security Configuration enabled so ending up
     using Chrome instead.
-  * Rename the downloaded file to taxa.csv and replace the file in
+  * Rename the downloaded file to taxa.yml and replace the file in
     Elasticsearch/data in your working folder.
   * Edit the file in a text editor. Remove the first row (column titles) and
     perform the following replacements:
@@ -427,12 +430,13 @@ To update the taxa.csv file with a fresh copy of the data:
     * Regexp \u0082 with ,
     * Regexp \u0084 with ,,
     * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
+    * Regexp \u0090 with empty string
     * Regexp \u0092 with '
     * Regexp \u0093 with \"
     * Regexp \u0094 with \"
+    * Regexp \u0096 with -
     * Regexp \u008A with Š
     * Regexp \u009A with š
-    * Regexp \u0090 with empty string
     * Regexp \u009c with œ
     * The name for BMSSYS0000533859 should have standard double quotes around
       mauroides with escape \ preceding them, i.e. \"mauroides\".
@@ -452,7 +456,10 @@ list.
 * Open the queries/prepare-locations-lookup.sql file in pgAdmin, connecting to
   the database being imported into Elasticsearch.
 * Search and replace <indexed_location_type_ids> with a comma separated list of
-  location type IDs that are indexed.
+  location type IDs that are indexed. This should include all the types which
+  are directly indexed by the spatial index builder
+  (`modules/spatial_index_builders/config/spatial_index_builder.php`) as well
+  as additional types implied by the `hierarchical_location_types` setting.
 * Repeat the steps described above to save a file called locations.yml in your
   working folder's Elasticsearch/data folder.
 
