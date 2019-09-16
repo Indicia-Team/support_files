@@ -86,7 +86,12 @@ HELP;
     // Apply defaults.
     $settings = array_merge([
       'data-path' => dirname(__FILE__),
+      'force-cache-rebuild' => 'false',
     ], $settings);
+    // Ensure valid value for force-cache-rebuild.
+    if (strtolower($settings['force-cache-rebuild']) !== 'true') {
+      $settings['force-cache-rebuild'] = 'false';
+    }
     // Ensure paths have slash at end.
     if (substr($settings['data-path'], -1) !== DIRECTORY_SEPARATOR) {
       $settings['data-path'] .= DIRECTORY_SEPARATOR;
