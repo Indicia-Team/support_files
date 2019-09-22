@@ -16,102 +16,578 @@ the index will contain documents structured as described below. Note:
 
 ## Document fields
 
-**Field**|**Data type**|**Description**|**Indicia field info**
------|-----|-----|-----
-`_id`|string|Elasticsearch index unique ID. This is the Indicia warehouse ID, with a prefix that denotes the warehouse the record was sourced from, ensuring that \_id is always unique. E.g. BRC1&#124;123456. Where a record is sensitive, the index stores 2 copies of the record with a default blurred view and a full precision view - in the latter case ! is appended to the \_id value, e.g. BRC1&#124;123456!.|Derived from `occurrences.id`
-`id`|number|The ID assigned to the occurrence record on the warehouse. May not be unique|`occurrences.id`
-`warehouse`|string|Indicia warehouse identifier. Useful if a single Elasticsearch index contains data from multiple Indicia warehouses.|
-`@timestamp`|date|Timestamp that this occurrence was indexed in Elasticsearch.|
-`event.attributes`|nested|List of custom attribute values for the sampling event. Each item has an `id` and `value` and should be read in conjuction with the sample_attributes table|`sample_attribute_values`
-`event.date_end`|date|End of the date range that covers the field record. For a record on an exact date this will be the same as `event.start_date`.|`samples.date_end`
-`event.date_start`|date|Start of the date range that covers the field record.|`samples.date_start`
-`event.day_of_year`|number|Day within the year, 1-366. Null if not an exact date.|derived from `samples.date_start`
-`event.event_id`|number|ID of the Indicia sample on the warehouse.|`samples.id`
-`event.event_remarks`|string|Comments for the sample.|`samples.comment`
-`event.habitat`|string|Habitat/biotope for the sample.|Sample custom attribute
-`event.month`|number|Month within the year, 1-12. Omitted if the date range does not fall inside a single month.|derived from `samples.date_start`
-`event.parent_event_id`|number|ID of the sample’s parent if set (e.g. points to the parent sample for transects).|`samples.parent_id`
-`event.recorded_by`|string|Name of the recorder(s).|Depends on configuration
-`event.sampling_protocol`|string|Method used for the sample.|Sample custom attribute
-`event.ukbms_week`|number|Week number according to the UKBS protocol, where week 1 starts on 1st April.|derived from `samples.date_start`
-`event.week`|number|Week number within the year, week 1 starts on 1st Jan. Omitted if the date range does not fall inside a single week.|derived from `samples.date_start`
-`event.year`|number|Year of the sample. Null if the date range does not fall inside a single year. Omitted if the date range does not fall inside a single week.|derived from `samples.date_start`
-`identification.auto_checks.enabled`|boolean|True if from a dataset that has automated rule checking enabled (warehouse Data Cleaner module). |`websites.verification_checks_enabled`
-`identification.auto_checks.output`|object[]|List of objects describing automated rule check violations. Each object contains a value for message and rule type.|
-`identification.auto_checks.result`|boolean|True if passes automated rule checks, false if fails, omitted if not checked.|
-`identification.identified_by`|string|Name of the identifier of the record.|Sample custom attribute
-`identification.query`|string|Query status of the record. Q = queried, A = answered.|Calculated from `occurrence_comments`.
-`identification.recorder_certainty`|string|Certainty assigned to the identification given by the recorder at the time of data entry. Possible values are Certain, Likely or Maybe.|Occurrence custom attribute
-`identification.verification_decision_source`|string|For verified records:<br/>H = human decision<br/>M = machine decision.|`occurrences.record_decision_source`
-`identification.verification_status`|string|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br/>C = not reviewed<br>R = not accepted|`occurrences.record_status`
-`identification.verification_substatus`|string|Detail for verification status of the record. Possible values are:<br>1 = accepted as correct<br>2 = accepted as considered correct<br>3 = not reviewed, plausible<br>4 = not accepted as unable to verify<br>5 = not accepted as incorrect"|`occurrences.record_substatus`
-`identification.verified_on`|date|If reviewed by a verifier, date of review.|`occurrences.verified_on`
-`identification.verifier.id`|number|If reviewed by a verifier, ID of verifier from the users table.|`occurrences.verified_by_id`
-`identification.verifier.name`|string|If reviewed by a verifier, name of verifier.|`people.first_name`, `people.surname`
-`location.coordinate_uncertainty_in_meters`|number|If a measure of imprecision of the sample’s map reference known, then number of metres. [sic - matches Darwin Core!]|Sample custom attribute
-`location.geom`|geo\_shape|Boundary of the occurrence’s sample. Blurred if sensitive and not the full precision version of the record.|`samples.geom`
-`location.higher_geography`|object[]|List of objects that represent locations this sample has been identified as falling inside. Each object contains an ID (`locations.id`), name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).|locations table
-`location.location_id`|number|ID of the location if the recorder adding the record explicitly linked the record to a location in the locations table.|`locations.id`
-`location.grid_square.srid`|number|EPSG projection ID used for aligning the grid squares. Will be the preferred local projection.|Projection used to calculate `map_squares.geom`
-`location.grid_square.1km.centre`|keyword|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries). Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the mapped projection. Empty if sensitivity of the records means this precision should not be visible|`map_squares.geom`
-`location.grid_square.2km.centre`|keyword|As `location.grid_square.1km.centre` for 2km grid squares.|`map_squares.geom`
-`location.grid_square.10km.centre`|keyword|As `location.grid_square.10km.centre` for 10km grid squares.|`map_squares.geom`
-`location.name`|string|Name of the location if the recorder adding the record explicitly linked the record to a location in the locations table.|`locations.name`
-`location.output_sref`|string|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid Reference). If the record is sensitive, then blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive record, shows the original full precision reference.|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
-`location.output_sref_system`|string|Spatial reference system code, e.g. OSGB or an EPSG projection ID.|`cache_samples_functional.output_sref_system`, derived from `samples.entered_sref_system`
-`location.parent.location_id`|number|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the ID of this location.|`locations.id`
-`location.parent.name`|string|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the name of this location.|`locations.name`
-`location.point`|geo\_point|Centroid point of the occurrence’s sample. Provided for mapping tools which do not make use of the `location.geom` geo_shape field (e.g. Kibana).|`samples.geom`
-`location.verbatim_locality`|string|Location name associated with the record, either the name of the explicitly linked location or the verbatim location description.|`samples.location_name` or `locations.name`
-`metadata.confidential`|boolean|If the record is flagged as confidential then set to true. Default index aliases should filter out documents where `metadata.confidential` = true.|`occurrences.confidential`
-`metadata.created_by_id`|number|ID of the user who input the record.|`occurrences.created_by_id`
-`metadata.created_on`|date|Date and time the record was input.|`occurrences.created_on`
-`metadata.group.id`|number|If the record is associated with a recording group (activity or project etc), then the ID of the group.|`groups.id`
-`metadata.group.title`|string|If the record is associated with a recording group (activity or project etc), then the title of the group.|`groups.title`
-`metadata.input_form`|string|Path to the form used to edit this record.|`sample.input_form`
-`metadata.licence_code`|string|If the record has a licence explicitly associated with it, then gives the licence code (e.g. CC0).|`licences.code`
-`metadata.release_status`|string|For records that are not ready for release into public reporting systems, gives the status. Values are R = released, U = unreleased, P = pending review. Values U and P should be filtered out in default index aliases.|`occurrences.release_status`
-`metadata.sensitive`|boolean|True if the record is flagged as sensitive.|derived from `occurrences.sensitivity_precision`
-`metadata.sensitivity_blur`|string|Where the index contains 2 copies of sensitive records, identifies which copy of the record this document relates to. F = full precision, B = blurred. Default index aliases should filter out documents where sensitivity\_blur = F.|derived from `occurrences.sensitivity_precision`
-`metadata.sensitivity_precision`|number|For records that are sensitive, indicates the size of the grid square to blur to.|`occurrences.sensitivity_precision`
-`metadata.survey.id`|number|ID of the Indicia survey dataset on the warehouse.|`surveys.id`
-`metadata.survey.title`|string|Title of the Indicia survey dataset on the warehouse.|`surveys.title`
-`metadata.tracking`|number|Unique sequential identifier for the last update event which affected
-the cached entry of this record.|`cache_occurrences_functional.tracking`
-`metadata.trial`|boolean|True if this is a trial record (so should be excluded unleess analysing trial data).|`occurrences.training`
-`metadata.updated_by_id`|number|ID of the user who last updated the record.|`occurrences.updated_by_id`
-`metadata.updated_on`|date|Date and time the record was last updated.|`occurrences.updated_on`
-`metadata.website.id`|number|ID of the Indicia website registration on the warehouse. Currently the special value 0 is used to imply a "dirty" record which requires an update in ES, so should not display in any filtered searches.|`websites.id`
-`metadata.website.title`|string|Title of the Indicia website registration on the warehouse.|`websites.title`
-`occurrence.media`|nested|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.|`occurrence_media`
-`occurrence.attributes`|nested|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table|`occurrence_attribute_values`
-`occurrence.individual_count`|number|If a count of individuals is available in numeric form for the record, then the value is indicated here.|Occurrence custom attribute
-`occurrence.life_stage`|string|Life stage of the recorded organism.|Occurrence custom attribute
-`occurrence.occurrence_remarks`|string|Comment given when the record was input.|`occurrences.comment`
-`occurrence.organism_quantity`|string|Abundance information (text or numeric).|Occurrence custom attribute
-`occurrence.source_system_key`|string|Unique key given to record by the system the record was sourced from.|`occurrence.external_key`
-`occurrence.sex`|string|Label indicating the sex of the recorded organism.|Occurrence custom attribute
-`taxon.accepted_name`|string|Accepted name of the organism’s taxon (normally a scientific name).|`taxa.taxon`
-`taxon.accepted_name_authorship`|string|Author and date associated with the accepted name.|`taxa.authority`
-`taxon.accepted_taxon_id`|string|Key given for the taxon accepted name (e.g. a taxon version key).|`taxa.external_key`
-`taxon.class`|string|Class of the taxon.|`taxa.taxon`
-`taxon.family`|string|Family of the taxon.|`taxa.taxon`
-`taxon.genus`|string|Genus of the taxon.|`taxa.taxon`
-`taxon.group`|string|Output group label for the taxon (e.g. terrestrial mammal).|`taxon_group.title`
-`taxon.group_id`|string|Output group ID for the taxon.|`taxon_group.id`
-`taxon.higher_taxon_ids`|string[]|List of taxon external keys associated with the higher taxa.|`taxa.external_key`
-`taxon.kingdom`|string|Kingdom of the taxon.|`taxa.taxon`
-`taxon.marine`|boolean|True if the taxon is associated with marine environments.|`taxa.marine_flag`
-`taxon.order`|string|Order of the taxon.|`taxa.taxon`
-`taxon.phylum`|string|Phylum of the taxon.|`taxa.taxon`
-`taxon.species`|string|Species of the taxon. Allows sub-species to be aggregated to a single species name when counting species in a list and also allows higher taxa to be excluded from such counts.|`taxa.taxon`
-`taxon.species_taxon_id`|string|External key of the taxon given in the `taxon.species` field (allows disambiguation of name clashes).|`taxa.external_key`
-`taxon.subfamily`|string|Subfamily of the taxon.|`taxa.taxon`
-`taxon.taxa_taxon_list_id`|number|ID given to this taxon name in the taxa_taxon_lists table.|`taxa_taxon_lists.id`
-`taxon.taxon_id`|string|Key of the given taxon (e.g. a taxon version key).|`taxa.search_code`
-`taxon.taxa_taxon_list_id`|number|ID given to this taxon concept in the taxon_meaningsß table.|`taxon_meanings.id`
-`taxon.taxon_name`|string|Name given for the recorded organism by the recorder.|`taxa.taxon`
-`taxon.taxon_name_authorship`|string|Author and date associated with the taxon name.|`taxa.authority`
-`taxon.taxon_rank`|string|Rank label for the taxon (e.g. Species).|`taxon_ranks.rank`
-`taxon.taxon_rank_sort_order`|number|Sort order of the taxon’s rank in order of higher to lower taxa.|`taxon_ranks.sort_order`
-`taxon.vernacular_name`|string|Preferred common name associated with this taxon.|`taxa.taxon`
+`_id`||
+-----|-----
+**Data type**|string
+**Warehouse field**|Derived from `occurrences.id`
+**Description**|Elasticsearch index unique ID. This is the Indicia warehouse ID, with a prefix that denotes the warehouse the record was sourced from, ensuring that \_id is always unique. E.g. BRC1&#124;123456. Where a record is sensitive, the index stores 2 copies of the record with a default blurred view and a full precision view - in the latter case ! is appended to the \_id value, e.g. BRC1&#124;123456!.
+
+`id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`occurrences.id`
+**Description**|The ID assigned to the occurrence record on the warehouse. May not be unique across the index if multiple warehouses are indexed.
+
+`warehouse`||
+-----|-----
+**Data type**|string
+**Warehouse field**|N/A
+**Description**|Indicia warehouse identifier. Useful if a single Elasticsearch index contains data from multiple Indicia warehouses.
+
+`@timestamp`||
+-----|-----
+**Data type**|date
+**Warehouse field**|N/A
+**Description**|Timestamp of the moment that this occurrence was indexed in Elasticsearch.
+
+`event.attributes`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`sample_attribute_values.*`
+**Description**|List of custom attribute values for the sampling event. Each item has an `id` and `value` and should be read in conjuction with the sample_attributes table
+
+`event.date_end`||
+-----|-----
+**Data type**|date
+**Warehouse field**|`samples.date_end`
+**Description**|End of the date range that covers the field record. For a record on an exact date this will be the same as `event.start_date`.
+
+`event.date_start`||
+-----|-----
+**Data type**|date
+**Warehouse field**|`samples.date_start`
+**Description**|Start of the date range that covers the field record.
+
+`event.day_of_year`||
+-----|-----
+**Data type**|number
+**Warehouse field**|derived from `samples.date_start`
+**Description**|Day within the year, 1-366. Null if not an exact date.
+
+`event.event_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|ID of the Indicia sample on the warehouse.
+**Description**|`samples.id`
+
+`event.event_remarks`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`samples.comment`
+**Description**|Comments for the sample.
+
+`event.habitat`||
+-----|-----
+**Data type**|string
+**Warehouse field**|Habitat/biotope for the sample.
+**Description**|`sample_attribute_values.*`
+
+`event.month`||
+-----|-----
+**Data type**|number
+**Warehouse field**|derived from `samples.date_start`
+**Description**|Month within the year, 1-12. Omitted if the date range does not fall inside a single month.
+
+`event.parent_event_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`sample.parent_id`
+**Description**|ID of the sample’s parent if set (e.g. points to the parent sample for transects).
+
+`event.recorded_by`||
+-----|-----
+**Data type**|string
+**Warehouse field**|Depends on configuration - `sample_attribute_values.*` or `samples.recorder_names`.
+**Description**|Name of the recorder(s).
+
+`event.sampling_protocol`||
+-----|-----
+**Data type**|string
+**Warehouse field**|Method used for the sample.
+**Description**|`sample_attribute_values.*`
+
+`event.ukbms_week`||
+-----|-----
+**Data type**|number
+**Warehouse field**|derived from `samples.date_start`
+**Description**|Week number according to the UKBS protocol, where week 1 starts on 1st April.
+
+`event.week`||
+-----|-----
+**Data type**|number
+**Warehouse field**|derived from `samples.date_start`
+**Description**|Week number within the year, week 1 starts on 1st Jan. Omitted if the date range does not fall inside a single week.
+
+`event.year`||
+-----|-----
+**Data type**|number
+**Warehouse field**|derived from `samples.date_start`
+**Description**|Year of the sample. Null if the date range does not fall inside a single year. Omitted if the date range does not fall inside a single week.
+
+`identification.auto_checks.enabled`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|websites.verification_checks_enabled`
+**Description**|True if from a dataset that has automated rule checking enabled (warehouse Data Cleaner module).
+
+`identification.auto_checks.output`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`occurrence_comment.*`
+**Description**|List of objects describing automated rule check violations. Each object contains a value for message and rule type.
+
+`identification.auto_checks.result`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`occurrence_comment.*`
+**Description**|True if passes automated rule checks, false if fails, omitted if not checked.
+
+`identification.identified_by`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`sample_attribute_values.*`
+**Description**|Name of the identifier of the record.
+
+`identification.query`||
+-----|-----
+**Data type**|string
+**Warehouse field**|derived from `occurrence_comments.*`
+**Description**|Query status of the record. Q = queried, A = answered.
+
+`identification.recorder_certainty`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_attribute_values.*`
+**Description**|Certainty assigned to the identification given by the recorder at the time of data entry. Possible values are Certain, Likely or Maybe.
+
+`identification.verification_decision_source`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrences.record_decision_source`
+**Description**|For verified records:<br/>H = human decision<br/>M = machine decision.
+
+`identification.verification_status`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence.record_status`
+**Description**|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br/>C = not reviewed<br>R = not accepted
+
+`identification.verification_substatus`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence.record_substatus`
+**Description**|Detail for verification status of the record. Possible values are:<br>1 = accepted as correct<br>2 = accepted as considered correct<br>3 = not reviewed, plausible<br>4 = not accepted as unable to verify<br>5 = not accepted as incorrect"
+
+`identification.verified_on`||
+-----|-----
+**Data type**|date
+**Warehouse field**|`occurrences.verified_on`
+**Description**|If reviewed by a verifier, date of review.
+
+`identification.verifier.id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`occurrence.verified_by_id`
+**Description**|If reviewed by a verifier, ID of verifier from the users table.
+
+`identification.verifier.name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`people.first_name`, `people.surname`
+**Description**|If reviewed by a verifier, name of verifier.
+
+`location.coordinate_uncertainty_in_meters`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`sample_attribute_values.*`
+**Description**|If a measure of imprecision of the sample’s map reference known, then number of metres. [sic - matches Darwin Core!]
+
+`location.geom`||
+-----|-----
+**Data type**|geo\_shape
+**Warehouse field**|`samples.geom`
+**Description**|Boundary of the occurrence’s sample. Blurred if sensitive and not the full precision version of the record.
+
+`location.higher_geography`||
+-----|-----
+**Data type**|object[]
+**Warehouse field**|List of objects that represent locations this sample has been identified as falling inside. Each object contains an ID (`locations.id`), name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).
+**Description**|`locations.*`
+
+`location.location_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`locations.id`
+**Description**|ID of the location if the recorder adding the record explicitly linked the record to a location in the locations table.
+
+`location.grid_square.srid`||
+-----|-----
+**Data type**|number
+**Warehouse field**|Projection used to calculate `map_squares.geom`
+**Description**|EPSG projection ID used for aligning the grid squares. Will be the preferred local projection.
+
+`location.grid_square.1km.centre`||
+-----|-----
+**Data type**|keyword
+**Warehouse field**|`map_squares.geom`
+**Description**|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries). Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the mapped projection. Empty if sensitivity of the records means this precision should not be visible
+
+`location.grid_square.2km.centre`||
+-----|-----
+**Data type**|keyword
+**Warehouse field**|`map_squares.geom`
+**Description**|As `location.grid_square.1km.centre` for 2km grid squares.
+
+`location.grid_square.10km.centre`||
+-----|-----
+**Data type**|keyword
+**Warehouse field**|`map_squares.geom`
+**Description**|As `location.grid_square.1km.centre` for 10km grid squares.
+
+`location.name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`locations.name`
+**Description**|Name of the location if the recorder adding the record explicitly linked the record to a location in the locations table.
+
+`location.output_sref`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
+**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid Reference). If the record is sensitive, then blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive record, shows the original full precision reference.
+
+`location.output_sref_system`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`locations.id`
+**Description**|Spatial reference system code, e.g. OSGB or an EPSG projection ID.
+
+`location.parent.location_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`locations.id`
+**Description**|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the ID of this location.
+
+`location.parent.name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`locations.name`
+**Description**|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the name of this location.
+
+`location.point`||
+-----|-----
+**Data type**|geo\_point
+**Warehouse field**|`samples.geom`
+**Description**|Centroid point of the occurrence’s sample. Provided for mapping tools which do not make use of the `location.geom` geo_shape field (e.g. Kibana).
+
+`location.verbatim_locality`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`samples.location_name` or `locations.name`
+**Description**|Location name associated with the record, either the name of the explicitly linked location or the verbatim location description.
+
+`metadata.confidential`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`occurrences.confidential`
+**Description**|If the record is flagged as confidential then set to true. Default index aliases should filter out documents where `metadata.confidential` = true.
+
+`metadata.created_by_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`occurrences.created_by_id`
+**Description**|ID of the user who input the record.
+
+`metadata.created_on`||
+-----|-----
+**Data type**|date
+**Warehouse field**|`occurrences.created_on`
+**Description**|Date and time the record was input.
+
+`metadata.group.id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`groups.id`
+**Description**|If the record is associated with a recording group (activity or project etc), then the ID of the group.
+
+`metadata.group.title`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`groups.title`
+**Description**|If the record is associated with a recording group (activity or project etc), then the title of the group.
+
+`metadata.input_form`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`sample.input_form`
+**Description**|Path to the form used to edit this record.
+
+`metadata.licence_code`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`licences.code`
+**Description**|If the record has a licence explicitly associated with it, then gives the licence code (e.g. CC0).
+
+`metadata.release_status`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrences.release_status`
+**Description**|For records that are not ready for release into public reporting systems, gives the status. Values are R = released, U = unreleased, P = pending review. Values U and P should be filtered out in default index aliases.
+
+`metadata.sensitive`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|derived from `occurrences.sensitivity_precision`
+**Description**|True if the record is flagged as sensitive.
+
+`metadata.sensitivity_blur`||
+-----|-----
+**Data type**|string
+**Warehouse field**|derived from `occurrences.sensitivity_precision`
+**Description**|Where the index contains 2 copies of sensitive records, identifies which copy of the record this document relates to. F = full precision, B = blurred. Default index aliases should filter out documents where sensitivity\_blur = F.
+
+`metadata.sensitivity_precision`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`occurrences.sensitivity_precision`
+**Description**|For records that are sensitive, indicates the size of the grid square to blur to.
+
+`metadata.survey.id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`surveys.id`
+**Description**|ID of the Indicia survey dataset on the warehouse.
+
+`metadata.survey.title`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`surveys.title`
+**Description**|Title of the Indicia survey dataset on the warehouse.
+
+`metadata.tracking`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`cache_occurrences_functional.tracking`
+**Description**|Unique sequential identifier for the last update event which affected the cached entry of this record.
+
+`metadata.trial`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`occurrences.training`
+**Description**|True if this is a trial record (so should be excluded unleess analysing trial data).
+
+`metadata.updated_by_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`occurrences.updated_by_id`
+**Description**|ID of the user who last updated the record.
+
+`metadata.updated_on`||
+-----|-----
+**Data type**|date
+**Warehouse field**|`occurrences.updated_on`
+**Description**|Date and time the record was last updated.
+
+`metadata.website.id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`websites.id`
+**Description**|ID of the Indicia website registration on the warehouse. Currently the special value 0 is used to imply a "dirty" record which requires an update in ES, so should not display in any filtered searches.
+
+`metadata.website.title`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`websites.title`
+**Description**|Title of the Indicia website registration on the warehouse.
+
+`occurrence.media`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`occurrence_media`
+**Description**|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.
+
+`occurrence.attributes`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`occurrence_attribute_values`
+**Description**|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table
+
+`occurrence.individual_count`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`occurrence_attribute_values.*`
+**Description**|If a count of individuals is available in numeric form for the record, then the value is indicated here.
+
+`occurrence.life_stage`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_attribute_values.*`
+**Description**|Life stage of the recorded organism.
+
+`occurrence.occurrence_remarks`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrences.comment`
+**Description**|Comment given when the record was input.
+
+`occurrence.organism_quantity`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_attribute_value.*`
+**Description**|Abundance information (text or numeric).
+
+`occurrence.source_system_key`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence.external_key`
+**Description**|Unique key given to record by the system the record was sourced from.
+
+`occurrence.sex`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_attribute_values.*`
+**Description**|Label indicating the sex of the recorded organism.
+
+`taxon.accepted_name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Accepted name of the organism’s taxon (normally a scientific name).
+
+`taxon.accepted_name_authorship`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.authority`
+**Description**|Author and date associated with the accepted name.
+
+`taxon.accepted_taxon_id`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.external_key`
+**Description**|Key given for the taxon accepted name (e.g. a taxon version key).
+
+`taxon.class`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Class of the taxon.
+
+`taxon.family`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Family of the taxon.
+
+`taxon.genus`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Genus of the taxon.
+
+`taxon.group`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxon_group.title`
+**Description**|Output group label for the taxon (e.g. terrestrial mammal).
+
+`taxon.group_id`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxon_group.id`
+**Description**|Output group ID for the taxon.
+
+`taxon.higher_taxon_ids`||
+-----|-----
+**Data type**|string[]
+**Warehouse field**|`taxa.external_key`
+**Description**|List of taxon external keys associated with the higher taxa.
+
+`taxon.kingdom`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Kingdom of the taxon.
+
+`taxon.marine`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`taxa.marine_flag`
+**Description**|True if the taxon is associated with marine environments.
+
+`taxon.order`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Order of the taxon.
+
+`taxon.phylum`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Phylum of the taxon.
+
+`taxon.species`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Species of the taxon. Allows sub-species to be aggregated to a single species name when counting species in a list and also allows higher taxa to be excluded from such counts.
+
+`taxon.species_taxon_id`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.external_key`
+**Description**|External key of the taxon given in the `taxon.species` field (allows disambiguation of name clashes).
+
+`taxon.subfamily`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Subfamily of the taxon.
+
+`taxon.taxa_taxon_list_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`taxa_taxon_lists.id`
+**Description**|ID given to this taxon name in the taxa_taxon_lists table.
+
+`taxon.taxon_id`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.search_code`
+**Description**|Key of the given taxon (e.g. a taxon version key).
+
+`taxon.taxa_taxon_list_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`taxon_meanings.id`
+**Description**|ID given to this taxon concept in the taxon_meaningsß table.
+
+`taxon.taxon_name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Name given for the recorded organism by the recorder.
+
+`taxon.taxon_name_authorship`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.authority`
+**Description**|Author and date associated with the taxon name.
+
+`taxon.taxon_rank`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxon_ranks.rank`
+**Description**|Rank label for the taxon (e.g. Species).
+
+`taxon.taxon_rank_sort_order`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`taxon_ranks.sort_order`
+**Description**|Sort order of the taxon’s rank in order of higher to lower taxa.
+
+`taxon.vernacular_name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Preferred common name associated with this taxon.
