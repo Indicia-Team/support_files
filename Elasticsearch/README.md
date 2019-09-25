@@ -214,6 +214,7 @@ PUT occurrence_brc1_v1
         "metadata.website.id": { "type": "integer" },
         "metadata.sensitive": { "type": "boolean" },
         "metadata.sensitivity_precision": { "type": "integer" },
+        "metadata.sensitivity_blur": { "type": "keyword" },
         "metadata.confidential": { "type": "boolean" },
         "metadata.release_status": { "type": "keyword" },
         "metadata.trial": { "type": "boolean" },
