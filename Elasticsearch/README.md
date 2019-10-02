@@ -631,11 +631,16 @@ configuration file in a text editor and make the following edits:
 
 #### Training records
 
-If you are planning on holding training or trial records in your index then the
-suggested approach is to create a duplicate of your configuration, plus an
-additional project in the REST API, then configure the Logstash file to link to
-this REST API project and pass an extra parameter called "training" to the
-report parameters, with value "true".
+The default behaviour is for training records to be included in the index and denoted by
+the field value `metadata.trial:true`. The Elasticsearch proxy code in Drupal is then
+responsible for applying an appropriate filter to the requests depending on the training
+field value in the current user's profile. Therefore any use of the Elasticsearch index
+which does not go via the Drupal proxy should filter for an appropriate value (normally
+`metadata.trial:false`). This includes:
+
+* Direct access via Kibana
+* Direct access to the Elasticsearch API
+* Access via the Warehouse Proxy.
 
 #### Including all records from any website
 
