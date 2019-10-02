@@ -213,7 +213,7 @@ filter {
       "website_id" => "[metadata][website][id]"
       "website_title" => "[metadata][website][title]"
       "sensitive" => "[metadata][sensitive]"
-      "sensitivity_precision" => "[metadata][sensitivity_blur]"
+      "sensitivity_precision" => "[metadata][sensitivity_precision]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
       "trial" => "[metadata][trial]"
       "confidential" => "[metadata][confidential]"
