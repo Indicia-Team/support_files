@@ -468,6 +468,9 @@ list.
 * Repeat the steps described above to save a file called locations.yml in your
   working folder's Elasticsearch/data folder.
 
+There is a real world example of a location data update in the
+[Locations Update Detail](locations-update-detail.md) file.
+
 #### Prepare the Logstash configuration file (JDBC access)
 
 If you are using JDBC to provide direct access to the Indicia PostgreSQL data,
