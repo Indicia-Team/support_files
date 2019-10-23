@@ -44,3 +44,6 @@ if (empty($settings['stop'])) {
   importUksiHelper::updateCaches($connections['default'], $settings);
 }
 echo 'Total time: ' . round(microtime(TRUE) - $startAll, 1) . "s\n";
+echo "For the BRC warehouse1 instance, please ensure that the scripts/Naturespot update.sql \n" .
+  "script is run on the warehouse, taking note that this script contains a query to download a " .
+  "set of changes that need to be passed to the naturespot.org.uk admin team."
