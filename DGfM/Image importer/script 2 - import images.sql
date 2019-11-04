@@ -49,6 +49,7 @@ FOR image_and_details_to_import IN
         join taxa_taxon_lists ttl on 
             ttl.taxon_meaning_id = tm.taxon_meaning_id
             AND ttl.taxon_list_id = <taxon_list_id>
+            AND ttl.preferred = true
             AND ttl.deleted = false
         join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
         AND t.taxon = image_and_details_to_import.taxRef_gattung || ' ' || image_and_details_to_import.art 
@@ -71,21 +72,34 @@ FOR image_and_details_to_import IN
               'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
                   to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
                   coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
-                  coalesce(image_and_details_to_import.landkreis, '') || '", ' || 
+                  coalesce(image_and_details_to_import.landkreis, '') || ', ' || 
                   coalesce(image_and_details_to_import.anmerkung, '')
-            ) < 101 THEN 
+            ) < 101 AND image_and_details_to_import.landkreis IS NOT NULL AND image_and_details_to_import.anmerkung IS NOT NULL THEN
               'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
                   to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
                   coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
-                  coalesce(image_and_details_to_import.landkreis, '') || '", ' || 
+                  coalesce(image_and_details_to_import.landkreis, '') || ', ' || 
                   coalesce(image_and_details_to_import.anmerkung, '')
           WHEN 
             length(
               'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
                   to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
                   coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
+                  coalesce(image_and_details_to_import.landkreis, '') || ', ' || 
+                  coalesce(image_and_details_to_import.anmerkung, '')
+            ) > 100 AND image_and_details_to_import.landkreis IS NOT NULL AND image_and_details_to_import.anmerkung IS NOT NULL THEN
+              LEFT('Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
+                  to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
+                  coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
+                  coalesce(image_and_details_to_import.landkreis, '') || ', ' || 
+                  coalesce(image_and_details_to_import.anmerkung, ''), 97) || '...'
+          WHEN 
+            length(
+              'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
+                  to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
+                  coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
                   coalesce(image_and_details_to_import.landkreis, '')
-            ) < 101 THEN 
+            ) < 101 AND image_and_details_to_import.landkreis IS NOT NULL THEN 
               'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
                   to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
                   coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
