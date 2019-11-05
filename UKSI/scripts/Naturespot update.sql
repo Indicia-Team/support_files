@@ -16,7 +16,7 @@ join cache_taxa_taxon_lists cttl15 on cttl15.taxon_list_id=15 and cttl15.taxon=c
 left join taxa t on t.search_code=cttl8.external_key
 where cttl8.taxon_list_id=8
 and cttl15.external_key<>cttl8.external_key
-and cttl8.preferred=true and cttl15.preferred=true
+and cttl8.preferred=true
 order by cttl8.taxon;
 
 /*
