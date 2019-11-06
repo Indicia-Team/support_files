@@ -3,6 +3,8 @@
 -- <min_row_to_process>
 -- <max_row_to_process>
 
+-- Note: This script assumes all the images provided are jpgs
+
 
 set search_path TO indicia, public;
 
@@ -65,7 +67,7 @@ FOR image_and_details_to_import IN
       insert into indicia.taxon_media(taxon_meaning_id,path,caption,created_on,created_by_id,updated_on,updated_by_id,external_details,media_type_id,exif)
       values (
           (select taxon_meaning_id from indicia.cache_taxa_taxon_lists where taxon_list_id = <taxon_list_id> and taxon = image_and_details_to_import.taxRef_gattung || ' ' || image_and_details_to_import.art),
-          'comp_' || image_and_details_to_import.bildnummer,
+          'comp_' || image_and_details_to_import.bildnummer || '.jpg',
           -- Caption must be 100 characters max 
           CASE WHEN 
             length(
