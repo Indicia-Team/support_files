@@ -47,3 +47,12 @@ mapInitialisationHooks.push(function(div) {
     }
   }
 });
+
+// Move the description author from the Details tab to the Descriptions tab.
+// The html for author-move-to is held in the Form Structure.
+jQuery(document).ready(function($) {
+    $('#author-move-from').insertBefore('#author-move-to');
+});
+
+
+ 
