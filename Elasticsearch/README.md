@@ -532,7 +532,7 @@ To update the taxa.yml file with a fresh copy of the data:
     * Regexp \u0081 with ü
     * Regexp \u0082 with ,
     * Regexp \u0084 with ,,
-    * Regexp \u0086 search and tidy up (invalid character in some UKSI names)
+    * Regexp \u0086 with †
     * Regexp \u0090 with empty string
     * Regexp \u0092 with '
     * Regexp \u0093 with \"
@@ -541,14 +541,14 @@ To update the taxa.yml file with a fresh copy of the data:
     * Regexp \u008A with Š
     * Regexp \u009A with š
     * Regexp \u009c with œ
-    * Regexp characters around \u009E (ui) with ůži
-    * Regexp remaining \u009E with ž
+    * Regexp characters around u\u009Ei with ůži
+    * Regexp \u009E with ž
     * The name for BMSSYS0000533859 should have standard double quotes around
       mauroides with escape \ preceding them, i.e. \"mauroides\".
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
-steps above for the prepare-taxon-paths.sql file, saving the results as
-taxon-paths.yml.
+steps above to download the output from the prepare-taxon-paths.sql file.
+Search and replace "," with ": " then save the results as taxon-paths.yml.
 
 Note that if multiple taxon lists are used to define the taxonomic hierarchy
 then you should repeat the extraction for both lists and append the YAML data
