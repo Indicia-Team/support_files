@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS master_list_paths;
+
+SELECT DISTINCT ON (tp.external_key, tp.taxon_list_id) tp.*
+INTO TEMPORARY master_list_paths
+FROM cache_taxon_paths tp
+JOIN cache_taxa_taxon_lists cttlcheck on cttlcheck.taxon_meaning_id=tp.taxon_meaning_id AND cttlcheck.taxon_list_id=tp.taxon_list_id
+WHERE tp.taxon_list_id=<taxon_list_id>
+ORDER BY tp.external_key, tp.taxon_list_id, cttlcheck.allow_data_entry DESC;
+
+CREATE INDEX ix_master_list_paths ON master_list_paths(external_key);
+
 select distinct t.search_code as key,
   t.taxon || '~' || coalesce(t.authority, '')
   || '~' || cttl.external_key
@@ -20,7 +31,7 @@ select distinct t.search_code as key,
 from cache_taxa_taxon_lists cttl
 join taxa_taxon_lists ttl on ttl.id=cttl.id and ttl.deleted=false
 join taxa t on t.id=ttl.taxon_id and t.deleted=false
-join cache_taxon_paths tp on tp.external_key=cttl.external_key and tp.taxon_list_id=<taxon_list_id>
+join master_list_paths tp on tp.external_key=cttl.external_key and tp.taxon_list_id=<taxon_list_id>
 left join cache_taxa_taxon_lists tkingdom on tkingdom.taxon_meaning_id = ANY(tp.path)
   and tkingdom.taxon_rank='Kingdom' and tkingdom.preferred=true and tkingdom.taxon_list_id=<taxon_list_id>
 left join cache_taxa_taxon_lists tphylum on tphylum.taxon_meaning_id = ANY(tp.path)

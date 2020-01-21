@@ -529,7 +529,6 @@ To update the taxa.yml file with a fresh copy of the data:
     * \ with \\
     * """ with "\"
     * "" with \"
-    * Regexp \u0081 with ü
     * Regexp \u0082 with ,
     * Regexp \u0084 with ,,
     * Regexp \u0086 with †
@@ -541,10 +540,8 @@ To update the taxa.yml file with a fresh copy of the data:
     * Regexp \u008A with Š
     * Regexp \u009A with š
     * Regexp \u009c with œ
-    * Regexp characters around u\u009Ei with ůži
+    * Regexp u\u009Ei with ůži
     * Regexp \u009E with ž
-    * The name for BMSSYS0000533859 should have standard double quotes around
-      mauroides with escape \ preceding them, i.e. \"mauroides\".
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above to download the output from the prepare-taxon-paths.sql file.
