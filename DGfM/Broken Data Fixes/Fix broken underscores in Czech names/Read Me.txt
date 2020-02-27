@@ -1,0 +1,10 @@
+If an import doesn't work correctly, you might find underscores in the Czech names instead of the special Czech characters.
+Use this script to fix that, although it is assumed that a previous import was done that worked, so there are existing names in the database to copy from.
+
+Any new rows that are broken in the import won't be fixed (as there is no old name to copy from), so you can check rows after the fix using the following query, then apply manual corrections (hopefully there won't be many)
+
+select taxon from indicia.taxa where taxon like '%\_%' and deleted=false;
+
+Once the copy is done, you will obviously have a lot of duplicate taxon rows, so you can optionally set ones not used by taxa_taxon_lists to deleted.
+
+
