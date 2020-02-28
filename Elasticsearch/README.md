@@ -498,8 +498,8 @@ To update the taxa.yml file with a fresh copy of the data:
   Indicia database that has the UKSI dataset loaded.
 * Search and replace <taxon_list_id> with the ID of the UKSI list. If there are
   multiple lists then change this filter to an `IN (...)` clause. For the BRC
-  warehouse1 for example, this filter is set to `IN (15, 251, 258)` to support
-  use of the UK Species Inventory and the European butterflies list for ABLE as
+  warehouse1 for example, this filter is set to `IN (15, 251, 258, 260, 261)`
+  to support use of the UK Species Inventory and the various lists for ABLE as
   well as the list for MammalNet-Europe.
 * In pgAdmin 3:
   * Ensure that your search_path is set to indicia, public, e.g. by running the

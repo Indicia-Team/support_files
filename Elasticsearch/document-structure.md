@@ -404,7 +404,7 @@ the index will contain documents structured as described below. Note:
 -----|-----
 **Data type**|nested
 **Warehouse field**|`occurrence_media`
-**Description**|List of media files associated with the occurrence. Prefix the file name with the path to the warehouse upload folder to locate the file.
+**Description**|List of media files associated with the occurrence. Each item contains the file name, caption, type and licence. Prefix the file name with the path to the warehouse upload folder to locate the file.
 
 `occurrence.attributes`||
 -----|-----
