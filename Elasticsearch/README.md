@@ -561,9 +561,39 @@ list.
   location type IDs that are indexed. This should include all the types which
   are directly indexed by the spatial index builder
   (`modules/spatial_index_builders/config/spatial_index_builder.php`) as well
-  as additional types implied by the `hierarchical_location_types` setting.
-* Repeat the steps described above to save a file called locations.yml in your
-  working folder's Elasticsearch/data folder.
+  as additional types implied because they hold parent locations for the types
+  identified by the `hierarchical_location_types` setting. The following query
+  shows how this can be done on the live BRC warehouse at the time of writing:
+  ```sql
+  select string_agg(id::text, ', ')
+  from cache_termlists_terms
+  where term in (
+    -- The following are directly referenced in the spatial_index_builder's config file.
+    'Vice County',
+    'LRC Boundary',
+    'Country',
+    'Cairngorms NP NNR',
+    'Miscellaneous indexed boundaries',
+    'Butterfly Conservation Branch',
+    'National Trust site',
+    'NUTS Level 2',
+    'RSPB Reserves',
+    'Country territorial waters',
+    'Woodland Trust site',
+    'AONB',
+    'National Park',
+    'National Nature Reserve',
+    -- The following are hold parents of NUTS Level 2 which is hierarchical so must be included.
+    'NUTS Level 1',
+    'Countries 2016')
+  and termlist_id=5
+  ```
+  * Click the Download as CSV button.
+  * Rename the downloaded file to locations.yml and replace the file in
+    Elasticsearch/data in your working folder.
+  * Edit the file in a text editor. Remove the first row (column titles) and
+    perform the following replacements:
+    * "," with ": "
 
 There is a real world example of a location data update in the
 [Locations Update Detail](locations-update-detail.md) file.

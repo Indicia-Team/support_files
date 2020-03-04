@@ -62,8 +62,8 @@ a new layer to the location indexing.
 6. Run this query in pgAdmin v4.x using the Download as CSV (F8) (rightmost toolbutton).
 7. Grab the output file and remove the first line containing the headings row.
 8. Replace the elasticsearch/data/locations.yml file with the output.
-9. Search and replace `","` with `": "` then save the file. Note the other replacements listed in the documentation
-   apply to the taxon data so are not necessary here.
+9. Search and replace `","` with `": "` then save the file. Note the other replacements
+   listed in the documentation apply to the taxon data so are not necessary here.
 10. Double check the git diff so you are sure only expected changes are in the locations.yml file.
 11. Commit and push locations.yml, then RDP to the Elasticsearch server and do a git pull on
     `D:\elastic\indicia_support_files\` (you probably need to do this from the command prompt run as administrator).
