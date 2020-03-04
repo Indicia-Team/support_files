@@ -57,7 +57,8 @@ a new layer to the location indexing.
     JOIN cache_termlists_terms t ON t.id=l.location_type_id
     WHERE l.deleted=false
     AND l.location_type_id in (15, 1370, 2188, 4839, 4980, 5702, 1103, 2187, 14587, 16516, 16517, 17484)
-    AND COALESCE(l.code, '') NOT LIKE '%+%';
+    AND COALESCE(l.code, '') NOT LIKE '%+%'
+    ORDER BY t.term, l.name;
    ```
 6. Run this query in pgAdmin v4.x using the Download as CSV (F8) (rightmost toolbutton).
 7. Grab the output file and remove the first line containing the headings row.
