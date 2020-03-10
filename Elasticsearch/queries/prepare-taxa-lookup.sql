@@ -50,4 +50,5 @@ left join cache_taxa_taxon_lists tspecies on tspecies.taxon_meaning_id = ANY(tp.
   and tspecies.taxon_rank='Species' and tspecies.preferred=true and tspecies.taxon_list_id=<taxon_list_id>
 where cttl.taxon_list_id=<taxon_list_id>
 and cttl.external_key is not null
-and t.search_code is not null;
+and t.search_code is not null
+order by t.search_code;
