@@ -49,8 +49,10 @@ mapInitialisationHooks.push(function(div) {
 });
 
 jQuery(document).ready(function($) {
-    // Move the description author from the Details tab to the Descriptions tab.
-    // The html for author-move-to is held in the Form Structure.
+	// Stop the Endangerness label in German cutting off by giving a bit more room to it
+	$("dt:contains(Bestand und Bedrohung)").css("width", "170px");
+	// Move the description author from the Details tab to the Descriptions tab.
+	// The html for author-move-to is held in the Form Structure.
     $('#author-move-from').insertBefore('#author-move-to');
     // Change the Drupal page title to be the same as the species name (which we have setup in a hidden field in species_details)
     $('.js-quickedit-page-title').each(function( index ) {
