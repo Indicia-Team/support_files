@@ -6,4 +6,5 @@ join cache_taxa_taxon_lists cttlp on cttlp.taxon_meaning_id=ANY(ctp.path)
   and cttlp.taxon_list_id=<taxon_list_id>
 where cttl.taxon_list_id=<taxon_list_id>
 and cttl.preferred=true
-group by cttl.external_key;
+group by cttl.external_key
+order by cttl.external_key;
