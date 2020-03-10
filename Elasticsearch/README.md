@@ -542,6 +542,7 @@ To update the taxa.yml file with a fresh copy of the data:
     * Regexp \u009c with œ
     * Regexp u\u009Ei with ůži
     * Regexp \u009E with ž
+    * â with '
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above to download the output from the prepare-taxon-paths.sql file.
