@@ -257,6 +257,15 @@ PUT occurrence_brc1_v1
         "occurrence.media": {
           "type": "nested"
         },
+        "occurrence.associations": {
+          "type": "nested",
+          "properties": {
+            "id": { "type": "integer" },
+            "association_type": { "type": "keyword" },
+            "accepted_name": { "type": "keyword" },
+            "vernacular_name": { "type": "keyword" }
+          }
+        },
         "taxon.accepted_taxon_id": { "type": "keyword" },
         "taxon.group_id": { "type": "integer" },
         "taxon.higher_taxon_ids": { "type": "keyword" },
@@ -355,6 +364,15 @@ PUT occurrence_brc1_v1
       },
       "occurrence.media": {
         "type": "nested"
+      },
+      "occurrence.associations": {
+        "type": "nested",
+        "properties": {
+          "id": { "type": "integer" },
+          "association_type": { "type": "keyword" },
+          "accepted_name": { "type": "keyword" },
+          "vernacular_name": { "type": "keyword" }
+        }
       },
       "taxon.accepted_taxon_id": { "type": "keyword" },
       "taxon.group_id": { "type": "integer" },
