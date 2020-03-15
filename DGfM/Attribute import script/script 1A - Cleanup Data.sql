@@ -14,7 +14,7 @@ where lower(TRIM(BOTH FROM deu_type)) in ('freitext', 'Freitext', 'null', '') or
 
 update dgfm.tbl_attributes
 set gb_type = 'F', deu_type = 'F', cz_type = 'F'
-where lower(TRIM(BOTH FROM deu_type)) = 'numerisch';
+where lower(TRIM(BOTH FROM deu_type)) like '%numerisch%';
 
 update dgfm.tbl_attributes
 set colour_attribute_description = 'free colour wheel', gb_type = 'T', deu_type = 'T', cz_type = 'T'
