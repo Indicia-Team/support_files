@@ -70,7 +70,7 @@ loop
 
       update occurrence_attributes
       set caption_i18n = other_language_caption::jsonb
-      where caption = attribute_name_to_use and reporting_category_id = reporting_category_id_to_use and id > <min_occ_attr_id_to_process><min_occ_attr_id_to_process>;
+      where caption = attribute_name_to_use and reporting_category_id = reporting_category_id_to_use and id > <min_occ_attr_id_to_process>;
 
 
     attribute_name_to_use := null;
