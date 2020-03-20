@@ -1,0 +1,10 @@
+Note that the scripts numbering is a bit odd.
+They should just be run in order regardless if there appears to be missing scripts
+e.g.
+a possible running order might be as follows (if there are no other scripts in between)
+1C
+1E
+3A
+4B
+
+This odd numbering is caused by scripts being removed and combined over time (e.g. the scripts only needed for the first ever run are kept in a separate folder)
