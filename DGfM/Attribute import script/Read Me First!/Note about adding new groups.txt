@@ -1,0 +1,5 @@
+There is a script for adding new Lot groups in the "Scripts no longer needed" folder.
+However I think any future imports will add only 1 or 2 groups (if any at all), you may as well add these individually in the Character Manager.
+Note that the actual allocation to the Lot groups is still handled by script as that is a much bigger task.
+
+This situation may change if further tests are carried out and we find that the group addition script is always 100% reliable in all situations, I have not run the script enough times to claim that yet so  may as well add individual ones in the Character Manager.
