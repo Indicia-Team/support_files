@@ -49,11 +49,20 @@ mapInitialisationHooks.push(function(div) {
 });
 
 jQuery(document).ready(function($) {
+	// Copy the first appearance thumbnail and add it after the page title 
+	$('.page-header').after($('.thumbnail:contains(Habitus):first, .thumbnail:contains(Appearance):first, .thumbnail:contains(Celkový vzhled):first').find('img').clone().prop('id', 'title-thumbnail'));
+	// Change the element before the image (the heading) so the image is at the end of the heading rather than the previous line
+	$('#title-thumbnail').prev().css("display", "inline-block");
+	// Add spaces between title and img
+	$('#title-thumbnail').before("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	
 	// Stop the Endangerness label in German cutting off by giving a bit more room to it
 	$("dt:contains(Bestand und Bedrohung)").css("width", "170px");
+	
 	// Move the description author from the Details tab to the Descriptions tab.
 	// The html for author-move-to is held in the Form Structure.
     $('#author-move-from').insertBefore('#author-move-to');
+    
     // Change the Drupal page title to be the same as the species name (which we have setup in a hidden field in species_details)
     $('.js-quickedit-page-title').each(function( index ) {
       $(this).text($('#species-name-hidden').text());
