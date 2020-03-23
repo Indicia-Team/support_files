@@ -1,0 +1,49 @@
+-- To run this code, you will need to do replacements of the following,
+-- <min_row_to_process>
+-- <max_row_to_process>
+-- Note this script uses hard-coded variables such as taxon_rank which are taken from DGfM Warehouse
+
+DO
+$do$
+declare order_to_import RECORD;
+BEGIN 
+FOR order_to_import IN 
+(
+  select distinct tcld.klass as class
+  from tbl_complete_list_dgfm tcld
+) loop
+IF (order_to_import.row_num >= <min_row_to_process> and order_to_import.row_num <= <max_row_to_process>) THEN
+  IF (NOT EXISTS (
+    select t.id
+    from indicia.taxa t_order
+    join indicia.taxa_taxon_lists ttl_order on ttl_order.taxon_id = t_order.id and ttl_order.taxon_list_id = 1 and ttl_order.deleted=false
+    join indicia.taxa t_class on t_class.taxon=order_to_import.class AND t_class.deleted=false
+    join indicia.taxa_taxa_taxon_lists ttl_class on t_class.id=ttl_class.taxon_id AND ttl_class.id = ttl_order.parent_id AND ttl_class.deleted=false
+    where t_order.taxon = order_to_import.class and t_order.taxon_rank_id = 2 and t_order.deleted=false
+    ORDER BY t_order.id desc
+    LIMIT 1
+  )
+  THEN
+    insert into indicia.taxa (
+        taxa,
+        taxon_rank_id,
+        created_on,
+        created_by_id,
+        updated_on,
+        updated_by_id
+    )
+    values (
+        (order_to_import.order,
+        2,
+        now(),
+        1,
+        now(),
+        1
+    );
+  ELSE
+  END IF;
+ELSE
+END IF;
+END LOOP;
+END
+$do$;
