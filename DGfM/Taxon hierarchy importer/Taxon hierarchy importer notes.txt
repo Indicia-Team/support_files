@@ -1,0 +1,1 @@
+These files allow the levels in the taxon hierarchy to be created before the standard Indicia import is used to import the species level (with Genus selected as the parent_id)
