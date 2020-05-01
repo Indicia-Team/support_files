@@ -1,0 +1,41 @@
+--To run this code, you will need to do replacements of,
+--<taxon_file_filepath>
+
+set search_path TO dgfm, public;
+
+create schema if not exists dgfm;
+
+DROP TABLE IF EXISTS tbl_complete_list_dgfm;
+
+CREATE TABLE tbl_complete_list_dgfm (
+Rang varchar (7),
+Taxnr integer,
+Sipnr integer,
+Artname varchar,
+Tschechischer_Name varchar,
+deutscher_name varchar,
+Anmerkung varchar,
+Rote_Liste_Kategorie_Deutschland varchar,
+Rote_Liste_Kategorie_Bayern varchar,
+Rote_Liste_Kategorie_Tschechien varchar,
+Rote_Liste_Kategorie_Osterreich varchar,
+Gruppe varchar,
+Familie varchar,
+Ordnung varchar,
+Klasse varchar,
+bemerkung varchar,
+Gattungsinformation varchar,
+gattung varchar,
+art varchar,
+autor varchar,
+Jahr varchar,
+Qualifizierungsvermerk varchar,
+Order_ext varchar,
+Family_ext varchar
+);
+
+
+COPY tbl_complete_list_dgfm
+FROM '<taxon_file_filepath>'
+WITH DELIMITER ','
+CSV HEADER;

@@ -1,0 +1,47 @@
+-- To run this code, you will need to do replacements of the following,
+-- <min_row_to_process>
+-- <max_row_to_process>
+-- Note this script uses hard-coded variables such as taxon_rank which are taken from DGfM Warehouse
+
+DO
+$do$
+declare class_to_import RECORD;
+BEGIN 
+FOR class_to_import IN 
+(
+  select distinct tcld.klass as class, tcld.ordnung as order
+  from tbl_complete_list_dgfm tcld
+) loop
+IF (class_to_import.row_num >= <min_row_to_process> and class_to_import.row_num <= <max_row_to_process>) THEN
+  IF (NOT EXISTS (
+    select t.id
+    from indicia.taxa t
+    join indicia.taxa_taxon_lists tll on ttl.taxon_id = t.id and ttl.taxon_list_id = 1 and ttl.deleted=false
+    where t.taxon = class_to_import.class and t.taxon_rank_id = 1 and t.deleted=false
+    ORDER BY t.id desc
+    LIMIT 1
+  )
+  THEN
+    insert into indicia.taxa (
+        taxa,
+        taxon_rank_id,
+        created_on,
+        created_by_id,
+        updated_on,
+        updated_by_id
+    )
+    values (
+        (class_to_import.class,
+        1,
+        now(),
+        1,
+        now(),
+        1
+    );
+  ELSE
+  END IF;
+ELSE
+END IF;
+END LOOP;
+END
+$do$;

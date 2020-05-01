@@ -1,0 +1,7 @@
+If importing from XML data
+
+1. Run the XML through the Literature_XML_convertor.xslt file to convert it (e.g. Netbeans supports doing this)
+
+2. Run the resulting file through the import_file_from_converted_xml.sql file
+
+3. Run copy_data.sql
