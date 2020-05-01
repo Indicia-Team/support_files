@@ -2,8 +2,6 @@ input {
   # Config file required to include occurrence associations in the index.
   # Query => autofeed mode enables tracking of downloaded records on the server-side since the
   # http_poller input plugin has no logic for importing changes.
-  # Uncomment the query => confidential line to include confidential records.
-  # Uncomment the query => release_status line to include unreleased records.
   http_poller {
     urls => {
       indicia => {
@@ -15,7 +13,7 @@ input {
         }
         query => {
           proj_id => "{{ Project ID }}"
-          from_update_date => "1900-01-01"
+          occurrences_autofeed_proj_id => "{{ Occurrences Project ID }}"
           autofeed => "t"
           max_time => 80
         }
@@ -61,7 +59,7 @@ filter {
   }
   ruby {
     # Script to clean up nulls and empty values.
-    path => "/Users/john/Documents/Git repos/indicia_support_files/Elasticsearch/logstash-rb/compact_event.rb"
+    path => "{{ Working folder path }}/logstash-rb/compact_event.rb"
   }
 }
 output {
@@ -80,9 +78,8 @@ output {
     elasticsearch {
       hosts => ["{{ Elasticsearch address }}"]
       index => "occurrence_{{ Indicia warehouse unique name }}_errors"
-
     }
     # Uncomment the following to see the normal events output to the terminal.
-    stdout { codec => json }
+    # stdout { codec => json }
   }
 }

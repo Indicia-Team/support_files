@@ -175,7 +175,7 @@ we need to change mappings.
 #### Elasticsearch 6.*
 
 ```json
-PUT occurrence_brc1_v1
+PUT occurrence_brc1_v1?include_type_name=true
 {
   "settings": {
     "number_of_shards": 4,
@@ -204,11 +204,11 @@ PUT occurrence_brc1_v1
         "metadata.updated_by_id": { "type": "integer" },
         "metadata.created_on": {
           "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
+          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
         },
         "metadata.updated_on": {
           "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
+          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
         },
         "metadata.group.id": { "type": "integer" },
         "metadata.input_form": { "type": "keyword" },
@@ -224,7 +224,7 @@ PUT occurrence_brc1_v1
         "identification.verifier.id": { "type": "integer" },
         "identification.verified_on": {
           "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
+          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
         },
         "identification.verification_status": { "type": "keyword" },
         "identification.verification_substatus": { "type": "integer" },
@@ -262,8 +262,22 @@ PUT occurrence_brc1_v1
           "properties": {
             "id": { "type": "integer" },
             "association_type": { "type": "keyword" },
-            "accepted_name": { "type": "keyword" },
-            "vernacular_name": { "type": "keyword" }
+            "accepted_name": {
+              "type": "keyword",
+              "fields": {
+                "text": {
+                  "type": "text"
+                }
+              }
+            },
+            "vernacular_name": {
+              "type": "keyword",
+              "fields": {
+                "text": {
+                  "type": "text"
+                }
+              }
+            }
           }
         },
         "taxon.accepted_taxon_id": { "type": "keyword" },
@@ -370,8 +384,22 @@ PUT occurrence_brc1_v1
         "properties": {
           "id": { "type": "integer" },
           "association_type": { "type": "keyword" },
-          "accepted_name": { "type": "keyword" },
-          "vernacular_name": { "type": "keyword" }
+          "accepted_name": {
+            "type": "keyword",
+            "fields": {
+              "text": {
+                "type": "text"
+              }
+            }
+          },
+          "vernacular_name": {
+            "type": "keyword",
+            "fields": {
+              "text": {
+                "type": "text"
+              }
+            }
+          }
         }
       },
       "taxon.accepted_taxon_id": { "type": "keyword" },
