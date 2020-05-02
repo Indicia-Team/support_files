@@ -1,6 +1,12 @@
 jQuery(document).ready(function($) {
   // Don't want the attribute that holds whether a description is finished to be visible
   $('#ctrl-wrap-taxAttr-2197').hide();
+  
+  // Hide the Popularname fields as the common names field should be used instead
+  $("fieldset:contains('Populärname')").hide();
+  $("fieldset:contains('vernacular name')").hide();
+  $("fieldset:contains('jméno v národním jazyce')").hide();
+    
   $('#finish-button').prop('value', 'Finish description');
   // On page load if the description is already finished, then make page read-only
   if ($('#taxAttr\\:2197').is(':checked')) {
@@ -65,12 +71,9 @@ jQuery(document).ready(function($) {
   $('#ctrl-wrap-taxAttr-1921').hide();
   
   //These ones are hidden for now but should be read-only
-  $('#ctrl-wrap-metaFields-commonNames').hide();
-  $('#ctrl-wrap-metaFields-synonyms').hide();
-  $('#ctrl-wrap-taxon-authority').hide();
   $('#ctrl-wrap-taxa_taxon_list-parent_id').hide();
-  //$('#ctrl-wrap-taxon-taxon_group_id').hide();
-  //$('#ctrl-wrap-taxon-taxon_rank_id').hide();
+  $('#ctrl-wrap-taxon-taxon_group_id').hide();
+  $('#ctrl-wrap-taxon-taxon_rank_id').hide();
 
   
   //These fields shouldn't be seen by the user
