@@ -49,6 +49,14 @@ mapInitialisationHooks.push(function(div) {
 });
 
 jQuery(document).ready(function($) {
+
+	// Hide the language in the popular name field, as DGfM don't want it shown on screen
+	$("dt").filter(function() {
+    	return $(this).text() === "German" || $(this).text() === "deutsch" || $(this).text() === "německy" || 
+    	$(this).text() === "english" || $(this).text() === "englisch" || $(this).text() === "anglicky" || 
+    	$(this).text() === "Czech" || $(this).text() === "tschechisch" || $(this).text() === "česky"
+	}).hide();
+	
 	// Copy the first appearance thumbnail and add it after the page title 
 	$('.page-header').after($('.thumbnail:contains(Habitus):first, .thumbnail:contains(Appearance):first, .thumbnail:contains(Celkový vzhled):first').find('img').clone().prop('id', 'title-thumbnail'));
 	// Change the element before the image (the heading) so the image is at the end of the heading rather than the previous line
