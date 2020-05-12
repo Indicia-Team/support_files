@@ -75,6 +75,10 @@ jQuery(document).ready(function($) {
     $('.js-quickedit-page-title').each(function( index ) {
       $(this).text($('#species-name-hidden').text());
     });
+    //Change the Ecology label on the Protection tab to be a custom one
+	$('#tab-schutz').find("h3:contains(Ökologie)").text("Gefährdungsstatus");
+	$('#tab-protection').find("h3:contains(Ecology)").text("Conservation status");
+	$('#tab-ochrana').find("h3:contains(ekologie)").text("Stav nebezpečí");
 });
 
 
