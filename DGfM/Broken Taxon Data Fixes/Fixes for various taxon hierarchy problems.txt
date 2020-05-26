@@ -1,0 +1,210 @@
+-- Various fixes to the taxon hierarchy caused by apparent problems with the taxon import process (time of writing is 26/5/2020, so these problems may or may not be present in future importer versions)
+
+
+
+-- Remove the latest taxon in groups of duplicate non-preferred species with the same meaning (as non preferred they don't have ay attribute values either)
+update indicia.taxa_taxon_lists
+set deleted=true,updated_on=now(),updated_by_id=1
+where id in 
+(select max(id)
+from indicia.cache_taxa_taxon_lists
+where taxon_list_id=1 and preferred = false and taxon || taxon_meaning_id || coalesce(authority,'') in 
+
+(select taxon || taxon_meaning_id || coalesce(authority,'')
+from indicia.cache_taxa_taxon_lists
+where taxon_list_id=1 and preferred = false
+group by taxon,taxon_meaning_id,authority
+having count(*) > 1) 
+
+group by taxon || coalesce(authority,''), taxon_meaning_id
+order by taxon || coalesce(authority,''), taxon_meaning_id);
+
+
+
+
+-- SEE NOTE BELOW, WILL PROBABLY NEED MORE THAN ONE RUN
+-- Similar but use preferred_taxon instead of taxon_meaning_id. This should not really be needed apart there are problems where the taxon_meaning_id doesn't match the preferred taxon. (that is fixed in a minute). Will also need to take into account that there might be more 2 in the groups of duplicates, so we need to run exactly the same sql again until we get no results! (noting that the result will takes some time to come through to the cache_taxa_taxon_lists table
+update indicia.taxa_taxon_lists
+set deleted=true,updated_on=now(),updated_by_id=1
+where id in 
+(select id
+from indicia.cache_taxa_taxon_lists
+where id in
+
+(select max(id)
+from indicia.cache_taxa_taxon_lists
+where taxon_list_id=1 and preferred=false
+group by taxon,preferred_taxon,authority
+having count(*) > 1)
+
+-- don't delete the preferred species
+and id not in
+(select id from indicia.cache_taxa_taxon_lists where preferred = true)
+
+-- never delete species which have attribute values (excluding red list)
+and id not in (
+select id
+from indicia.cache_taxa_taxon_lists
+where id in 
+(select taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))));
+
+
+
+
+-- Correct taxa whose taxon meaning id does not match the meaning of the species in the preferred_taxa_taxon_list_id column
+update indicia.taxa_taxon_lists ttl
+set taxon_meaning_id=cttl_pref.taxon_meaning_id,updated_on=now(),updated_by_id=1
+from indicia.cache_taxa_taxon_lists cttl
+join indicia.cache_taxa_taxon_lists cttl_pref on cttl_pref.id = cttl.preferred_taxa_taxon_list_id
+where cttl.id=ttl.id
+and ttl.taxon_meaning_id != cttl_pref.taxon_meaning_id
+
+and ttl.taxon_list_id  = 1 
+and cttl.taxon_list_id  = 1 
+and cttl_pref.taxon_list_id = 1;
+
+
+-- Set preferred = false if the ttl id doesn't match the same id as the preferred species
+update indicia.taxa_taxon_lists
+set preferred=false,updated_on=now(),updated_by_id=1
+where id in 
+(select id
+from indicia.cache_taxa_taxon_lists
+where preferred=true and preferred_taxa_taxon_list_id != id and taxon_list_id=1
+and id not in 
+(select taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921)));
+
+-- This code deletes all the non preferred items whose preferred taxon set to be the same name as the current taxon, but whose preferred_taxa_taxon_id id is pointing at another taxon which is preferred and has the same taxon authority
+-- i.e. it is removing some types of duplicates
+-- (Note this also needed a manual check to make sure these are all preferred in the spreadsheet, as we are removing the unpreferred item)
+update indicia.taxa_taxon_lists
+set deleted=true,updated_on=now(),updated_by_id=1
+where id in 
+(select cttl.id
+from indicia.cache_taxa_taxon_lists cttl
+join indicia.cache_taxa_taxon_lists cttl_linked_pref on cttl_linked_pref.id = cttl.preferred_taxa_taxon_list_id and cttl_linked_pref.preferred=true and cttl_linked_pref.taxon_list_id=1
+where cttl.preferred_taxon=cttl.taxon and cttl.preferred_taxa_taxon_list_id != cttl.id
+and cttl.taxon_meaning_id=cttl_linked_pref.taxon_meaning_id AND cttl.taxon || ' ' || coalesce(cttl.authority,'') = cttl_linked_pref.taxon || ' ' || coalesce(cttl_linked_pref.authority,'')
+and cttl.preferred=false 
+and cttl.taxon_list_id=1
+and cttl.id not in 
+(select id 
+from indicia.cache_taxa_taxon_lists
+where id in
+(select taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+)
+and cttl.preferred_taxa_taxon_list_id in 
+(
+select cttl.id
+from indicia.cache_taxa_taxon_lists cttl
+where cttl.preferred_taxon=cttl.taxon and cttl.preferred_taxa_taxon_list_id = cttl.id
+)
+order by cttl.taxon);
+
+-- Delete non preferred species who preferred_taxon name is the same as the species but the preferred_taxa_taxon_list_id is a different preferred species ID  with the same name
+-- NOTE: If possible, manually check that the remaing preferred species are actually preferred in the latest spreadsheet
+update indicia.taxa_taxon_lists
+set deleted=true,updated_on=now(),updated_by_id=1
+where id in 
+(select cttl.id
+from indicia.cache_taxa_taxon_lists cttl
+join indicia.cache_taxa_taxon_lists cttl_linked_pref on cttl_linked_pref.id = cttl.preferred_taxa_taxon_list_id
+where cttl.preferred_taxon=cttl.taxon and cttl.preferred_taxa_taxon_list_id != cttl.id
+and cttl.taxon_meaning_id=cttl_linked_pref.taxon_meaning_id and cttl.taxon_list_id=1
+and cttl.id not in 
+(select taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl.preferred_taxa_taxon_list_id in 
+(
+select cttl.id
+from indicia.cache_taxa_taxon_lists cttl
+where cttl.preferred_taxon=cttl.taxon and cttl.preferred_taxa_taxon_list_id = cttl.id
+)
+order by cttl.taxon);
+
+
+-- Remove latest non preferred item with the same meaning id
+update indicia.taxa_taxon_lists
+set deleted=true,updated_on=now(),updated_by_id=1
+where id in
+(select max(id)
+from indicia.cache_taxa_taxon_lists
+where 
+taxon_list_id = 1 and preferred=false and
+
+id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+
+and
+taxon || coalesce(authority,'') in
+(select taxon || coalesce(authority,'')
+from indicia.cache_taxa_taxon_lists 
+where taxon_list_id = 1 and preferred=false 
+group by taxon || coalesce(authority,''),taxon_meaning_id
+having count(*) > 1)
+Group by taxon || ' ' || coalesce(authority,''));
+
+
+-- Do same for preferred
+update indicia.taxa_taxon_lists
+set deleted=true,updated_on=now(),updated_by_id=1
+where id in
+(select max(id)
+from indicia.cache_taxa_taxon_lists
+where 
+taxon_list_id = 1 and preferred=true and
+
+id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+
+and
+taxon || coalesce(authority,'') in
+(select taxon || coalesce(authority,'')
+from indicia.cache_taxa_taxon_lists 
+where taxon_list_id = 1 and preferred=true
+group by taxon || coalesce(authority,''),taxon_meaning_id
+having count(*) > 1)
+Group by taxon || ' ' || coalesce(authority,''));
+
+
+-- Fix empty taxon ranks for species
+-- (Note: we check for a blank space as name of taxa at the species taxon rank are multi-word)
+update indicia.taxa
+set taxon_rank_id=3,updated_on=now(),updated_by_id=1
+where taxon_rank_id is null and taxon like '% %' and id in
+(select taxon_id
+from indicia.taxa_taxon_lists
+where taxon_list_id = 1 and preferred=true and parent_id is not null
+order by id desc);
+
+
+-- THE FOLLOWING ARE JUST CHECKS
+-- This should return nothing (all none species ranks should have children)
+select id
+from indicia.cache_taxa_taxon_lists
+where 
+taxon_list_id = 1 and preferred=true and taxon_rank_id!=3 
+and id not in
+(select parent_id from indicia.cache_taxa_taxon_lists);
+
+-- This should return nothing
+select id,taxon,preferred
+from indicia.cache_taxa_taxon_lists
+where taxon_rank_id=3 and taxon_list_id = 1 and taxon || coalesce(authority,'') in
+(select taxon || coalesce(authority,'')
+from indicia.cache_taxa_taxon_lists 
+where taxon_rank_id=3 and taxon_list_id = 1
+group by taxon || coalesce(authority,'')
+having count(*) > 1)
+order by taxon || ' ' || authority asc,id desc;
