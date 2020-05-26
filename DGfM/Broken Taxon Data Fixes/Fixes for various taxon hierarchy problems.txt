@@ -188,6 +188,17 @@ from indicia.taxa_taxon_lists
 where taxon_list_id = 1 and preferred=true and parent_id is not null
 order by id desc);
 
+-- If this returns anything, then set the parent_id and taxon rank manually
+select id,taxon,parent_id,taxon_rank_id
+from indicia.cache_taxa_taxon_lists
+where taxon_rank_id is null and taxon_list_id = 1 and preferred=true and parent_id is null
+and taxon like '% %'
+and id in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+order by id desc;
+
 
 -- THE FOLLOWING ARE JUST CHECKS
 -- This should return nothing (all none species ranks should have children)
