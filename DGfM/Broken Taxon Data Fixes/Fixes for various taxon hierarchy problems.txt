@@ -185,7 +185,7 @@ set taxon_rank_id=3,updated_on=now(),updated_by_id=1
 where taxon_rank_id is null and taxon like '% %' and id in
 (select taxon_id
 from indicia.taxa_taxon_lists
-where taxon_list_id = 1 and preferred=true and parent_id is not null
+where taxon_list_id = 1 and preferred=true
 order by id desc);
 
 -- If this returns anything, then set the parent_id and taxon rank manually
