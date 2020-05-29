@@ -197,6 +197,13 @@ from indicia.taxa_taxon_lists
 where taxon_list_id = 1
 order by id desc);
 
+-- Fix cache_tables, for some reason they were not up to date
+update indicia.cache_taxa_taxon_lists
+set taxon_rank_id = 3, taxon_rank='Species'
+where taxon_rank_id is null and taxon like '% %' and taxon_list_id = 1
+and taxon in
+(select taxon from indicia.taxa where taxon_rank_id IS NOT NULL);
+
 -- Check for empty taxon ranks for remaining non species ranks. Examine any results in comparison to spreadsheet and set -- rank as required
 select id,taxon
 from indicia.cache_taxa_taxon_lists
