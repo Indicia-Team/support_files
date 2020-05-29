@@ -188,6 +188,15 @@ from indicia.taxa_taxon_lists
 where taxon_list_id = 1
 order by id desc);
 
+-- Update taxon_rank for species with a hyphen in the name as these appear to be species in the spreadsheet
+update indicia.taxa
+set taxon_rank_id=3,updated_on=now(),updated_by_id=1
+where taxon_rank_id is null and taxon like '%-%' and id in
+(select taxon_id
+from indicia.taxa_taxon_lists
+where taxon_list_id = 1
+order by id desc);
+
 -- Check for empty taxon ranks for remaining non species ranks. Examine any results in comparison to spreadsheet and set -- rank as required
 select id,taxon
 from indicia.cache_taxa_taxon_lists
