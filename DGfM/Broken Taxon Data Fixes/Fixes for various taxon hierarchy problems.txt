@@ -218,43 +218,23 @@ where taxon_rank_id is null and taxon_list_id = 1
 order by id desc;
 
 
+-- Point species without a parent_id at their genus
+update indicia.taxa_taxon_lists cttl1
+set parent_id = genus.id,updated_on=now(),updated_by_id=1
+from indicia.cache_taxa_taxon_lists cttl2 
+left join indicia.cache_taxa_taxon_lists genus on genus.taxon = substring(cttl2.taxon from '[^ ]+'::text) and genus.taxon_list_id = 1
+where cttl1.id = cttl2.id and 
+cttl2.parent_id is null and cttl2.taxon_rank_id = 3 and cttl2.taxon_list_id = 1
+and cttl1.parent_id IS NULL
+and genus.taxon is not null
+and cttl2.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921));
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- THE FOLLOWING ARE JUST DATA CHECKS, NOT UPDATE STATEMENTS
 -- If this returns anything, then set the parent_id and taxon rank manually
 select id,taxon,parent_id,taxon_rank_id
 from indicia.cache_taxa_taxon_lists
@@ -266,8 +246,6 @@ from indicia.taxa_taxon_list_attribute_values where deleted=false
 and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
 order by id desc;
 
-
--- THE FOLLOWING ARE JUST DATA CHECKS, NOT UPDATE STATEMENTS
 -- This should return nothing (all none species ranks should have children)
 select id
 from indicia.cache_taxa_taxon_lists
