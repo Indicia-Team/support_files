@@ -177,6 +177,13 @@ group by taxon || coalesce(authority,''),taxon_meaning_id
 having count(*) > 1)
 Group by taxon || ' ' || coalesce(authority,''));
 
+-- update taxon_rank on taxa which have empty taxon ranks but an equivalent is not empty
+update indicia.taxa t1
+set taxon_rank_id=t_has_rank.taxon_rank_id,updated_on=now(),updated_by_id=1
+from indicia.taxa t2
+join indicia.taxa t_has_rank on t2.taxon = t_has_rank.taxon and t_has_rank.taxon_rank_id is not null
+and t_has_rank.deleted=false
+where t1.id=t2.id AND t2.taxon_rank_id is null;
 
 -- Fix empty taxon ranks for species
 -- (Note: we check for a blank space as name of taxa at the species taxon rank are multi-word)
@@ -209,6 +216,120 @@ select id,taxon
 from indicia.cache_taxa_taxon_lists
 where taxon_rank_id is null and taxon_list_id = 1
 order by id desc;
+
+
+
+
+
+
+
+
+
+-- The following will take the parent_id from a duplicate taxon, then fill in the taxon wihich has it missing, then delete the one which had the parent_id filled in
+--However that only makes sense if the synonyms/preferred status of the one we are updating is better, so check the latest spreadhseet against the values returned by this update statment and only run the update statements once you are happy this is the situation
+
+select cttl_without_parent.id as no_parent_cttl_id,cttl_without_parent.taxon || ' ' || coalesce(cttl_without_parent.authority,''), cttl_without_parent.preferred as no_parent_cttl_preferred,cttl_with_parent.preferred as with_parent_cttl_preferred,synonyms.taxon || ' ' || coalesce(synonyms.authority,'') as synonym,cttl_with_parent.id as with_parent_cttl_id,cttl_with_parent.parent_id as with_parent_cttl_parnet_id
+from indicia.cache_taxa_taxon_lists cttl_without_parent
+join indicia.cache_taxa_taxon_lists cttl_with_parent on cttl_with_parent.taxon || ' ' || coalesce(cttl_with_parent.authority,'')
+= cttl_without_parent.taxon || ' ' || coalesce(cttl_without_parent.authority,'') and cttl_with_parent.parent_id is not null and cttl_with_parent.taxon_list_id = 1
+join indicia.cache_taxa_taxon_lists synonyms on synonyms.taxon_meaning_id = cttl_without_parent.taxon_meaning_id
+where cttl_without_parent.parent_id is null and cttl_without_parent.taxon_list_id = 1
+and cttl_without_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.taxon_meaning_id not in
+(select distinct taxon_meaning_id
+from indicia.taxon_media where deleted=false);
+
+
+select cttl_without_parent.id as no_parent_cttl_id,cttl_without_parent.taxon || ' ' || coalesce(cttl_without_parent.authority,''), cttl_without_parent.preferred as no_parent_cttl_preferred,cttl_with_parent.id as with_parent_cttl_id,cttl_with_parent.parent_id as with_parent_cttl_parnet_id
+from indicia.cache_taxa_taxon_lists cttl_without_parent
+join indicia.cache_taxa_taxon_lists cttl_with_parent on cttl_with_parent.taxon || ' ' || coalesce(cttl_with_parent.authority,'')
+= cttl_without_parent.taxon || ' ' || coalesce(cttl_without_parent.authority,'') and cttl_with_parent.parent_id is not null and cttl_with_parent.taxon_list_id = 1
+where cttl_without_parent.parent_id is null and cttl_without_parent.taxon_list_id = 1
+and cttl_without_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.taxon_meaning_id not in
+(select distinct taxon_meaning_id
+from indicia.taxon_media where deleted=false);
+
+-- Only run following updates if happy with above select statement
+update indicia.taxa_taxon_lists ttl
+set parent_id=cttl_with_parent.parent_id,updated_on=now(),updated_by_id=1
+from indicia.cache_taxa_taxon_lists cttl_without_parent
+join indicia.cache_taxa_taxon_lists cttl_with_parent on cttl_with_parent.taxon || ' ' || coalesce(cttl_with_parent.authority,'')
+= cttl_without_parent.taxon || ' ' || coalesce(cttl_without_parent.authority,'') and cttl_with_parent.parent_id is not null and cttl_with_parent.taxon_list_id = 1
+where ttl.id = cttl_without_parent.id
+AND cttl_without_parent.parent_id is null and cttl_without_parent.taxon_list_id = 1
+and cttl_without_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.taxon_meaning_id not in
+(select distinct taxon_meaning_id
+from indicia.taxon_media where deleted=false);
+
+update indicia.taxa_taxon_lists ttl
+set deleted=true,updated_on=now(),updated_by_id=1
+from indicia.cache_taxa_taxon_lists cttl_without_parent
+join indicia.cache_taxa_taxon_lists cttl_with_parent on cttl_with_parent.taxon || ' ' || coalesce(cttl_with_parent.authority,'')
+= cttl_without_parent.taxon || ' ' || coalesce(cttl_without_parent.authority,'') and cttl_with_parent.parent_id is not null and cttl_with_parent.taxon_list_id = 1
+where ttl.id = cttl_with_parent.id
+AND cttl_without_parent.parent_id is null and cttl_without_parent.taxon_list_id = 1
+and cttl_without_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.id not in
+(select distinct taxa_taxon_list_id 
+from indicia.taxa_taxon_list_attribute_values where deleted=false 
+and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
+and cttl_with_parent.taxon_meaning_id not in
+(select distinct taxon_meaning_id
+from indicia.taxon_media where deleted=false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- If this returns anything, then set the parent_id and taxon rank manually
 select id,taxon,parent_id,taxon_rank_id
