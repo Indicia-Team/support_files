@@ -222,7 +222,7 @@ and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921))
 order by id desc;
 
 
--- THE FOLLOWING ARE JUST CHECKS
+-- THE FOLLOWING ARE JUST DATA CHECKS, NOT UPDATE STATEMENTS
 -- This should return nothing (all none species ranks should have children)
 select id
 from indicia.cache_taxa_taxon_lists
@@ -242,10 +242,32 @@ group by taxon || coalesce(authority,'')
 having count(*) > 1)
 order by taxon || ' ' || authority asc,id desc;
 
--- This should return nothing, if it does, check the database to see if that taxon has anoth correct entry and then delete the broken ones
+-- This should return nothing, if it does, check the database to see if that taxon has another correct entry and then delete the broken ones
 select cttl.id,cttl.taxon,cttl.preferred
 from indicia.cache_taxa_taxon_lists cttl
 join indicia.cache_taxa_taxon_lists cttl_pref on cttl_pref.id = cttl.preferred_taxa_taxon_list_id
 where cttl.taxon_meaning_id != cttl_pref.taxon_meaning_id
 and cttl.taxon_list_id  = 1 
 and cttl_pref.taxon_list_id = 1;
+
+
+
+
+
+
+-- Make sure there are no items which are deleted and have children
+-- This should return nothing (e.g. no deleted Genus which have species under them)
+select count(ttl.id)
+from indicia.taxa_taxon_lists ttl
+where ttl.deleted=true and ttl.taxon_list_id = 1 and ttl.id in
+(select parent_id
+from indicia.taxa_taxon_lists
+where deleted=false and taxon_list_id = 1);
+
+select count(*)
+from indicia.taxa_taxon_lists
+where deleted=false and taxon_list_id = 1 and parent_id IS NOT NULL
+and parent_id not in
+(select id
+from indicia.cache_taxa_taxon_lists where taxon_list_id = 1);
+
