@@ -392,3 +392,8 @@ and parent_id not in
 (select id
 from indicia.cache_taxa_taxon_lists where taxon_list_id = 1);
 
+
+-- Check any remaining taxa without rank, fix manually. In my case there were lots, but I check of the spreadsheet showed they were all "Species" rank and could be fixed easily with update statement
+select id,taxon
+from indicia.cache_taxa_taxon_lists
+where taxon_rank_id is null and taxon_list_id = 1;
