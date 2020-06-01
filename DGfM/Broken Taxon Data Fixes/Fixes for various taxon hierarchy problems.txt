@@ -226,11 +226,7 @@ left join indicia.cache_taxa_taxon_lists genus on genus.taxon = substring(cttl2.
 where cttl1.id = cttl2.id and 
 cttl2.parent_id is null and cttl2.taxon_rank_id = 3 and cttl2.taxon_list_id = 1
 and cttl1.parent_id IS NULL
-and genus.taxon is not null
-and cttl2.id not in
-(select distinct taxa_taxon_list_id 
-from indicia.taxa_taxon_list_attribute_values where deleted=false 
-and taxa_taxon_list_attribute_id not in (1076,1077,1920,1921));
+and genus.taxon is not null;
 
 
 
