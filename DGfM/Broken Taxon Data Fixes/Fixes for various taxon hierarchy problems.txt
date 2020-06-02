@@ -295,3 +295,7 @@ from indicia.cache_taxa_taxon_lists where taxon_list_id = 1);
 select id,taxon
 from indicia.cache_taxa_taxon_lists
 where taxon_rank_id is null and taxon_list_id = 1;
+
+-- Make sure there are no species left without a parent_id
+-- Manually fix if needed as these will probably be special cases
+select id,taxon,parent_id from indicia.cache_taxa_taxon_lists where parent_id is null and taxon_rank_id = 3 and taxon_list_id = 1;
