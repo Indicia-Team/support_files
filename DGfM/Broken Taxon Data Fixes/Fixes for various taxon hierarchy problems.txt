@@ -299,3 +299,15 @@ where taxon_rank_id is null and taxon_list_id = 1;
 -- Make sure there are no species left without a parent_id
 -- Manually fix if needed as these will probably be special cases
 select id,taxon,parent_id from indicia.cache_taxa_taxon_lists where parent_id is null and taxon_rank_id = 3 and taxon_list_id = 1;
+
+--Make sure there aren't any images for deleted taxa that don't have another taxa with the same meaning using the image
+select count(*) 
+from indicia.taxa_taxon_lists 
+where deleted=true 
+and taxon_meaning_id in 
+(select taxon_meaning_id
+from indicia.taxa_taxon_lists
+where deleted=false and taxon_meaning_id not in
+(select taxon_meaning_id 
+from indicia.taxa_taxon_lists 
+where deleted=false));
