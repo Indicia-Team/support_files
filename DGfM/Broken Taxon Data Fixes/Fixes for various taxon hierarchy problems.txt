@@ -311,3 +311,20 @@ where deleted=false and taxon_meaning_id not in
 (select taxon_meaning_id 
 from indicia.taxa_taxon_lists 
 where deleted=false));
+
+
+-- Check for any species where the parent_id does not match between cache and non-cache_tables
+-- Manually correct after examination....an example is given before if you determine the parent_id is correct in the cache table
+-- The parent_id of synonyms should match its preferred species
+select cttl.id,cttl.taxon,cttl.preferred,cttl.parent_id,ttl.parent_id,ttl_parent.taxon as non_cache_parent,cache_parent.taxon as cache_parent
+from indicia.cache_taxa_taxon_lists cttl
+left join indicia.taxa_taxon_lists ttl on ttl.id = cttl.id and ttl.deleted=false
+left join indicia.cache_taxa_taxon_lists ttl_parent on ttl_parent.id = ttl.parent_id
+left join indicia.cache_taxa_taxon_lists cache_parent on cache_parent.id = cttl.parent_id
+where cttl.parent_id != ttl.parent_id and cttl.taxon_list_id = 1;
+
+--update indicia.taxa_taxon_lists ttl
+--set parent_id = cttl.parent_id,updated_on=now(),updated_by_id=1
+--from indicia.cache_taxa_taxon_lists cttl
+--where ttl.id=cttl.id
+--and cttl.parent_id != ttl.parent_id and cttl.taxon_list_id = 1;
