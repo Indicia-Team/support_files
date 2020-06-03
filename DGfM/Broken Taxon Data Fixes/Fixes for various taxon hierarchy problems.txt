@@ -328,3 +328,11 @@ where cttl.parent_id != ttl.parent_id and cttl.taxon_list_id = 1;
 --from indicia.cache_taxa_taxon_lists cttl
 --where ttl.id=cttl.id
 --and cttl.parent_id != ttl.parent_id and cttl.taxon_list_id = 1;
+
+
+-- Make sure all synonyms have same parent_id as preferred species.
+-- Manually fix if issues found
+select cttl.id,cttl.taxon,cttl.parent_id,cttl.preferred_taxa_taxon_list_id,preferred_item.taxon,preferred_item.parent_id
+from indicia.cache_taxa_taxon_lists cttl 
+join indicia.cache_taxa_taxon_lists preferred_item on preferred_item.id =  cttl.preferred_taxa_taxon_list_id
+where cttl.parent_id != preferred_item.parent_id;
