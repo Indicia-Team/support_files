@@ -12,34 +12,34 @@ set unit = substring(caption, '\[(.*?)\]')
 where id > <min_ttl_attr_id_to_process>;
 
 update indicia.taxa_taxon_list_attributes
-set caption = replace(caption, ' [μm]', '')
+set caption = rtrim(replace(caption, '[μm]', ''))
 where id > <min_ttl_attr_id_to_process>;
 
 update indicia.taxa_taxon_list_attributes
-set caption_i18n = replace(caption_i18n::text, ' [μm]', '')::jsonb
+set caption_i18n = rtrim(replace(caption_i18n::text, '[μm]', ''))::jsonb
 where id > <min_ttl_attr_id_to_process>;
 
 update indicia.occurrence_attributes
-set caption = replace(caption, ' [μm]', '')
+set caption = rtrim(replace(caption, '[μm]', ''))
 where id > <min_occ_attr_id_to_process>;
 
 update indicia.occurrence_attributes
-set caption_i18n = replace(caption_i18n::text, ' [μm]', '')::jsonb
+set caption_i18n = rtrim(replace(caption_i18n::text, '[μm]', ''))::jsonb
 where id > <min_occ_attr_id_to_process>;
 
 update indicia.taxa_taxon_list_attributes
-set caption = replace(caption, ' [mm]', '')
+set caption = rtrim(replace(caption, '[mm]', ''))
 where id > <min_ttl_attr_id_to_process>;
 
 update indicia.taxa_taxon_list_attributes
-set caption_i18n = replace(caption_i18n::text, ' [mm]', '')::jsonb
+set caption_i18n = rtrim(replace(caption_i18n::text, '[mm]', ''))::jsonb
 where id > <min_ttl_attr_id_to_process>;
 
 update indicia.occurrence_attributes
-set caption = replace(caption, ' [mm]', '')
+set caption = rtrim(replace(caption, '[mm]', ''))
 where id > <min_occ_attr_id_to_process>;
 
 update indicia.occurrence_attributes
-set caption_i18n = replace(caption_i18n::text, ' [mm]', '')::jsonb
+set caption_i18n = rtrim(replace(caption_i18n::text, '[mm]', ''))::jsonb
 where id > <min_occ_attr_id_to_process>;
 
