@@ -249,6 +249,8 @@ PUT occurrence_brc1_v1?include_type_name=true
         },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
+        "location.code": { "type": "keyword" },
+        "location.parent.code": { "type": "keyword" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
         "occurrence.source_system_key": { "type": "keyword" },
         "occurrence.individual_count": { "type": "integer" },
