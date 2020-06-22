@@ -200,6 +200,9 @@ PUT occurrence_brc1_v1?include_type_name=true
         "event.attributes": {
           "type": "nested"
         },
+        "event.parent_attributes": {
+          "type": "nested"
+        },
         "metadata.created_by_id": { "type": "integer" },
         "metadata.updated_by_id": { "type": "integer" },
         "metadata.created_on": {
