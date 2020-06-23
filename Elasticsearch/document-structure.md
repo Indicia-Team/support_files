@@ -44,7 +44,15 @@ the index will contain documents structured as described below. Note:
 -----|-----
 **Data type**|nested
 **Warehouse field**|`sample_attribute_values.*`
-**Description**|List of custom attribute values for the sampling event. Each item has an `id` and `value` and should be read in conjuction with the sample_attributes table
+**Description**|List of custom attribute values for the sampling event. Each item has an `id` and `value` and should be read in conjuction with the sample_attributes table.
+
+`event.parent_attributes`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`sample_attribute_values.*`
+**Description**|List of custom attribute values for the parent event sampling event if it exists.
+Each item has an `id` and `value` and should be read in conjuction with the sample_attributes
+table.
 
 `event.date_end`||
 -----|-----
@@ -196,6 +204,12 @@ the index will contain documents structured as described below. Note:
 **Warehouse field**|`people.first_name`, `people.surname`
 **Description**|If reviewed by a verifier, name of verifier.
 
+`location.code`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`locations.code`
+**Description**|Code for the location if the recorder adding the record explicitly linked the record to a location in the locations table.
+
 `location.coordinate_uncertainty_in_meters`||
 -----|-----
 **Data type**|number
@@ -267,6 +281,12 @@ the index will contain documents structured as described below. Note:
 **Data type**|number
 **Warehouse field**|`locations.id`
 **Description**|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the ID of this location.
+
+`location.parent.code`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`locations.code`
+**Description**|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the code of this location.
 
 `location.parent.name`||
 -----|-----

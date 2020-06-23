@@ -200,6 +200,9 @@ PUT occurrence_brc1_v1?include_type_name=true
         "event.attributes": {
           "type": "nested"
         },
+        "event.parent_attributes": {
+          "type": "nested"
+        },
         "metadata.created_by_id": { "type": "integer" },
         "metadata.updated_by_id": { "type": "integer" },
         "metadata.created_on": {
@@ -246,6 +249,8 @@ PUT occurrence_brc1_v1?include_type_name=true
         },
         "location.location_id": { "type": "integer" },
         "location.parent.location_id": { "type": "integer" },
+        "location.code": { "type": "keyword" },
+        "location.parent.code": { "type": "keyword" },
         "location.coordinate_uncertainty_in_meters": { "type": "integer" },
         "occurrence.source_system_key": { "type": "keyword" },
         "occurrence.individual_count": { "type": "integer" },
@@ -322,6 +327,9 @@ PUT occurrence_brc1_v1
       "event.attributes": {
         "type": "nested"
       },
+      "event.parent_attributes": {
+        "type": "nested"
+      },
       "metadata.created_by_id": { "type": "integer" },
       "metadata.updated_by_id": { "type": "integer" },
       "metadata.created_on": {
@@ -368,6 +376,8 @@ PUT occurrence_brc1_v1
       },
       "location.location_id": { "type": "integer" },
       "location.parent.location_id": { "type": "integer" },
+      "location.code": { "type": "keyword" },
+      "location.parent.code": { "type": "keyword" },
       "location.coordinate_uncertainty_in_meters": { "type": "integer" },
       "occurrence.source_system_key": { "type": "keyword" },
       "occurrence.individual_count": { "type": "integer" },

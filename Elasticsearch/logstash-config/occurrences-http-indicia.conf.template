@@ -173,6 +173,11 @@ filter {
     remove_field => "sample_attrs_json"
   }
   json {
+    source => "parent_sample_attrs_json"
+    target => "parent_sample_attrs_orig"
+    remove_field => "parent_sample_attrs_json"
+  }
+  json {
     source => "occurrence_attrs_json"
     target => "occurrence_attrs_orig"
     remove_field => "occurrence_attrs_json"
@@ -180,7 +185,7 @@ filter {
   ruby {
     code => "
     require 'uri'
-    ['sample', 'occurrence'].each do |source|
+    ['sample', 'parent_sample', 'occurrence'].each do |source|
       if event.get(source + '_attrs_orig')
         attrs = []
         event.get(source + '_attrs_orig').to_hash.each do |key,value|
@@ -196,6 +201,7 @@ filter {
     end
     "
     remove_field => "sample_attrs_orig"
+    remove_field => "parent_sample_attrs_orig"
     remove_field => "occurrence_attrs_orig"
   }
   # Convert our list of fields into a nicely structured occurrence document.
@@ -244,8 +250,10 @@ filter {
       "given_locality_name" => "[location][verbatim_locality]"
       "recorded_location_id" => "[location][location_id]"
       "recorded_location_name" => "[location][name]"
+      "recorded_location_code" => "[location][code]"
       "recorded_parent_location_id" => "[location][parent][location_id]"
       "recorded_parent_location_name" => "[location][parent][name]"
+      "recorded_parent_location_code" => "[location][parent][code]"
       "locations" => "[location][higher_geography]"
       "sample_id" => "[event][event_id]"
       "parent_sample_id" => "[event][parent_event_id]"
@@ -261,6 +269,7 @@ filter {
       "attr_biotope" => "[event][habitat]"
       "attr_sample_method" => "[event][sampling_protocol]"
       "sample_attrs" => "[event][attributes]"
+      "parent_sample_attrs" => "[event][parent_attributes]"
       "taxon_key" => "[taxon][taxon_id]"
       "taxa_taxon_list_id" => "[taxon][taxa_taxon_list_id]"
       "taxon_meaning_id" => "[taxon][taxon_meaning_id]"
