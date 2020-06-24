@@ -164,60 +164,91 @@ FOR image_and_details_to_import IN
       END IF;
 
       EXCEPTION WHEN others THEN
-        insert into dgfm.tbl_taxon_image_details_failed_rows(
-          row_num,
-          bildnummer,
-          taxRef_gattung,
-          art,
-          taxref_ID,
-          bildkategorie,
-          TKnr,
-          TKname,
-          land,
-          bundesland,
-          regierungsbezirk,
-          landkreis,
-          fundort_1,
-          NN_hohe,
-          koordinaten_1,
-          koordinaten_2,
-          begleitpflanzen,
-          datum_gesammelt,
-          leg,
-          det,
-          conf,
-          fot,
-          herbar,
-          herbarbelegnr,
-          anmerkung 
-        )
-        values(
-          image_and_details_to_import.row_num,
-          image_and_details_to_import.bildnummer,
-          image_and_details_to_import.taxRef_gattung,
-          image_and_details_to_import.art,
-          image_and_details_to_import.taxref_ID,
-          image_and_details_to_import.bildkategorie,
-          image_and_details_to_import.TKnr,
-          image_and_details_to_import.TKname,
-          image_and_details_to_import.land,
-          image_and_details_to_import.bundesland,
-          image_and_details_to_import.regierungsbezirk,
-          image_and_details_to_import.landkreis,
-          image_and_details_to_import.fundort_1,
-          image_and_details_to_import.NN_hohe,
-          image_and_details_to_import.koordinaten_1,
-          image_and_details_to_import.koordinaten_2,
-          image_and_details_to_import.begleitpflanzen,
-          image_and_details_to_import.datum_gesammelt,
-          image_and_details_to_import.leg,
-          image_and_details_to_import.det,
-          image_and_details_to_import.conf,
-          image_and_details_to_import.fot,
-          image_and_details_to_import.herbar,
-          image_and_details_to_import.herbarbelegnr,
-          image_and_details_to_import.anmerkung 
-        );
+        IF (NOT EXISTS (
+          select row_num
+          from dgfm.tbl_taxon_image_details_failed_rows ttidfr
+          where (ttidfr.bildnummer = image_and_details_to_import.bildnummer OR (ttidfr.bildnummer IS NULL AND image_and_details_to_import.bildnummer IS NULL))
+          and (ttidfr.taxRef_gattung = image_and_details_to_import.taxRef_gattung OR (ttidfr.taxRef_gattung IS NULL AND image_and_details_to_import.taxRef_gattung IS NULL))
+          and (ttidfr.art = image_and_details_to_import.art OR (ttidfr.art IS NULL AND image_and_details_to_import.art IS NULL))
+          and (ttidfr.taxref_ID = image_and_details_to_import.taxref_ID OR (ttidfr.taxref_ID IS NULL AND image_and_details_to_import.taxref_ID IS NULL))
+          and (ttidfr.bildkategorie = image_and_details_to_import.bildkategorie OR (ttidfr.bildkategorie IS NULL AND image_and_details_to_import.bildkategorie IS NULL))
+          and (ttidfr.TKnr = image_and_details_to_import.TKnr OR (ttidfr.TKnr IS NULL AND image_and_details_to_import.TKnr IS NULL))
+          and (ttidfr.TKname = image_and_details_to_import.TKname OR (ttidfr.TKname IS NULL AND image_and_details_to_import.TKname IS NULL))
+          and (ttidfr.land = image_and_details_to_import.land OR (ttidfr.land IS NULL AND image_and_details_to_import.land IS NULL))
+          and (ttidfr.bundesland = image_and_details_to_import.bundesland OR (ttidfr.bundesland IS NULL AND image_and_details_to_import.bundesland IS NULL))
+          and (ttidfr.regierungsbezirk = image_and_details_to_import.regierungsbezirk OR (ttidfr.regierungsbezirk IS NULL AND image_and_details_to_import.regierungsbezirk IS NULL))
+          and (ttidfr.landkreis = image_and_details_to_import.landkreis OR (ttidfr.landkreis IS NULL AND image_and_details_to_import.landkreis IS NULL))
+          and (ttidfr.fundort_1 = image_and_details_to_import.fundort_1 OR (ttidfr.fundort_1 IS NULL AND image_and_details_to_import.fundort_1 IS NULL))
+          and (ttidfr.NN_hohe = image_and_details_to_import.NN_hohe OR (ttidfr.NN_hohe IS NULL AND image_and_details_to_import.NN_hohe IS NULL))
+          and (ttidfr.koordinaten_1 = image_and_details_to_import.koordinaten_1 OR (ttidfr.koordinaten_1 IS NULL AND image_and_details_to_import.koordinaten_1 IS NULL))
+          and (ttidfr.koordinaten_2 = image_and_details_to_import.koordinaten_2 OR (ttidfr.koordinaten_2 IS NULL AND image_and_details_to_import.koordinaten_2 IS NULL))
+          and (ttidfr.begleitpflanzen = image_and_details_to_import.begleitpflanzen OR (ttidfr.begleitpflanzen IS NULL AND image_and_details_to_import.begleitpflanzen IS NULL))
+          and (ttidfr.datum_gesammelt = image_and_details_to_import.datum_gesammelt OR (ttidfr.datum_gesammelt IS NULL AND image_and_details_to_import.datum_gesammelt IS NULL))
+          and (ttidfr.leg = image_and_details_to_import.leg OR (ttidfr.leg IS NULL AND image_and_details_to_import.leg IS NULL))
+          and (ttidfr.det = image_and_details_to_import.det OR (ttidfr.det IS NULL AND image_and_details_to_import.det IS NULL))
+          and (ttidfr.conf = image_and_details_to_import.conf OR (ttidfr.conf IS NULL AND image_and_details_to_import.conf IS NULL))
+          and (ttidfr.fot = image_and_details_to_import.fot OR (ttidfr.fot IS NULL AND image_and_details_to_import.fot IS NULL))
+          and (ttidfr.herbar = image_and_details_to_import.herbar OR (ttidfr.herbar IS NULL AND image_and_details_to_import.herbar IS NULL))
+          and (ttidfr.herbarbelegnr = image_and_details_to_import.herbarbelegnr OR (ttidfr.herbarbelegnr IS NULL AND image_and_details_to_import.herbarbelegnr IS NULL))
+          and (ttidfr.anmerkung = image_and_details_to_import.anmerkung OR (ttidfr.anmerkung IS NULL AND image_and_details_to_import.anmerkung IS NULL))
+        ))
+        THEN
+          insert into dgfm.tbl_taxon_image_details_failed_rows(
+            row_num,
+            bildnummer,
+            taxRef_gattung,
+            art,
+            taxref_ID,
+            bildkategorie,
+            TKnr,
+            TKname,
+            land,
+            bundesland,
+            regierungsbezirk,
+            landkreis,
+            fundort_1,
+            NN_hohe,
+            koordinaten_1,
+            koordinaten_2,
+            begleitpflanzen,
+            datum_gesammelt,
+            leg,
+            det,
+            conf,
+            fot,
+            herbar,
+            herbarbelegnr,
+            anmerkung 
+          )
+          values(
+            image_and_details_to_import.row_num,
+            image_and_details_to_import.bildnummer,
+            image_and_details_to_import.taxRef_gattung,
+            image_and_details_to_import.art,
+            image_and_details_to_import.taxref_ID,
+            image_and_details_to_import.bildkategorie,
+            image_and_details_to_import.TKnr,
+            image_and_details_to_import.TKname,
+            image_and_details_to_import.land,
+            image_and_details_to_import.bundesland,
+            image_and_details_to_import.regierungsbezirk,
+            image_and_details_to_import.landkreis,
+            image_and_details_to_import.fundort_1,
+            image_and_details_to_import.NN_hohe,
+            image_and_details_to_import.koordinaten_1,
+            image_and_details_to_import.koordinaten_2,
+            image_and_details_to_import.begleitpflanzen,
+            image_and_details_to_import.datum_gesammelt,
+            image_and_details_to_import.leg,
+            image_and_details_to_import.det,
+            image_and_details_to_import.conf,
+            image_and_details_to_import.fot,
+            image_and_details_to_import.herbar,
+            image_and_details_to_import.herbarbelegnr,
+            image_and_details_to_import.anmerkung 
+          );
+        ELSE
+        END IF;
     END;
   ELSE
   END IF;
