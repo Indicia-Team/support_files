@@ -44,6 +44,36 @@ herbarbelegnr varchar,
 anmerkung varchar
 );
 
+DROP TABLE IF EXISTS tbl_taxon_image_details_failed_rows;
+
+CREATE TABLE tbl_taxon_image_details_failed_rows (
+row_num int,
+bildnummer varchar,
+taxRef_gattung varchar,
+art varchar,
+taxref_ID  varchar,
+bildkategorie  varchar,
+TKnr  varchar,
+TKname  varchar,
+land  varchar,
+bundesland  varchar,
+regierungsbezirk  varchar,
+landkreis varchar,
+fundort_1  varchar,
+NN_hohe varchar,
+koordinaten_1 varchar,
+koordinaten_2 varchar,
+begleitpflanzen varchar,
+datum_gesammelt varchar,
+leg varchar,
+det varchar,
+conf varchar,
+fot varchar,
+herbar varchar,
+herbarbelegnr varchar,
+anmerkung varchar
+);
+
 COPY tbl_taxon_image_details
 FROM '<taxon_image_details_file_path>'
 WITH DELIMITER ','

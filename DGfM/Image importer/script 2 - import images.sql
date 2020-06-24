@@ -50,27 +50,28 @@ FOR image_and_details_to_import IN
 ) loop
   IF (image_and_details_to_import.row_num >= <min_row_to_process> and image_and_details_to_import.row_num <= <max_row_to_process>) THEN
     -- Insert image if doesn't already exist
-    IF (NOT EXISTS (
-      select tm.id
-        from taxon_media tm
-        join taxa_taxon_lists ttl on 
-            ttl.taxon_meaning_id = tm.taxon_meaning_id
-            AND ttl.taxon_list_id = <taxon_list_id>
-            AND ttl.preferred = true
-            AND ttl.deleted = false
-        join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
-        AND t.taxon = image_and_details_to_import.taxRef_gattung || ' ' || image_and_details_to_import.art 
-        AND t.search_code = image_and_details_to_import.taxref_ID
-        where 
-            ((trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) IS NULL
-            AND
-            image_and_details_to_import.bildnummer IS NULL)
-            OR
-            trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) = image_and_details_to_import.bildnummer::text)
-            AND tm.deleted=false))
-    THEN
-      insert into indicia.taxon_media(taxon_meaning_id,path,caption,created_on,created_by_id,updated_on,updated_by_id,external_details,media_type_id,exif)
-      values (
+    BEGIN
+      IF (NOT EXISTS (
+        select tm.id
+          from taxon_media tm
+          join taxa_taxon_lists ttl on 
+              ttl.taxon_meaning_id = tm.taxon_meaning_id
+              AND ttl.taxon_list_id = <taxon_list_id>
+              --AND ttl.preferred = true
+              AND ttl.deleted = false
+          join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
+          AND replace(image_and_details_to_import.taxRef_gattung || ' ' || image_and_details_to_import.art, ' ', '') like '%' || replace(t.taxon, ' ', '') || '%'
+          --AND t.search_code = image_and_details_to_import.taxref_ID
+          where 
+              ((trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) IS NULL
+              AND
+              image_and_details_to_import.bildnummer IS NULL)
+              OR
+              trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) = image_and_details_to_import.bildnummer::text)
+              AND tm.deleted=false))
+      THEN
+        insert into indicia.taxon_media(taxon_meaning_id,path,caption,created_on,created_by_id,updated_on,updated_by_id,external_details,media_type_id,exif)
+        values (
           (select taxon_meaning_id from indicia.cache_taxa_taxon_lists where taxon_list_id = <taxon_list_id> and replace(taxon, ' ', '') = replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, ' ', '')),
           '<filename_prefix>' || image_and_details_to_import.bildnummer || '.jpg',
           -- Caption must be 100 characters max 
@@ -158,9 +159,66 @@ FOR image_and_details_to_import IN
             'herbarbelegnr', image_and_details_to_import.herbarbelegnr,
             'anmerkung', image_and_details_to_import.anmerkung
           )
-      );
-    ELSE
-    END IF;
+        );
+      ELSE
+      END IF;
+
+      EXCEPTION WHEN others THEN
+        insert into dgfm.tbl_taxon_image_details_failed_rows(
+          row_num,
+          bildnummer,
+          taxRef_gattung,
+          art,
+          taxref_ID,
+          bildkategorie,
+          TKnr,
+          TKname,
+          land,
+          bundesland,
+          regierungsbezirk,
+          landkreis,
+          fundort_1,
+          NN_hohe,
+          koordinaten_1,
+          koordinaten_2,
+          begleitpflanzen,
+          datum_gesammelt,
+          leg,
+          det,
+          conf,
+          fot,
+          herbar,
+          herbarbelegnr,
+          anmerkung 
+        )
+        values(
+          image_and_details_to_import.row_num,
+          image_and_details_to_import.bildnummer,
+          image_and_details_to_import.taxRef_gattung,
+          image_and_details_to_import.art,
+          image_and_details_to_import.taxref_ID,
+          image_and_details_to_import.bildkategorie,
+          image_and_details_to_import.TKnr,
+          image_and_details_to_import.TKname,
+          image_and_details_to_import.land,
+          image_and_details_to_import.bundesland,
+          image_and_details_to_import.regierungsbezirk,
+          image_and_details_to_import.landkreis,
+          image_and_details_to_import.fundort_1,
+          image_and_details_to_import.NN_hohe,
+          image_and_details_to_import.koordinaten_1,
+          image_and_details_to_import.koordinaten_2,
+          image_and_details_to_import.begleitpflanzen,
+          image_and_details_to_import.datum_gesammelt,
+          image_and_details_to_import.leg,
+          image_and_details_to_import.det,
+          image_and_details_to_import.conf,
+          image_and_details_to_import.fot,
+          image_and_details_to_import.herbar,
+          image_and_details_to_import.herbarbelegnr,
+          image_and_details_to_import.anmerkung 
+        );
+    END;
   ELSE
   END IF;
 END LOOP;
