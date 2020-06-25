@@ -1,4 +1,5 @@
 -- In order to run this script, the following tags need replacing
+-- <csv_filename> (just used for error logging)
 -- <taxon_list_id>
 -- <min_row_to_process>
 -- <max_row_to_process>
@@ -60,7 +61,7 @@ FOR image_and_details_to_import IN
               --AND ttl.preferred = true
               AND ttl.deleted = false
           join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
-          AND replace(image_and_details_to_import.taxRef_gattung || ' ' || image_and_details_to_import.art, ' ', '') like '%' || replace(t.taxon, ' ', '') || '%'
+          AND replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, ' ', '') like '%' || replace(t.taxon, ' ', '') || '%'
           --AND t.search_code = image_and_details_to_import.taxref_ID
           where 
               ((trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) IS NULL
@@ -160,41 +161,29 @@ FOR image_and_details_to_import IN
             'anmerkung', image_and_details_to_import.anmerkung
           )
         );
+
+        -- If the row has previously been logged as failing, then remove the logged failing row as it has now been inserted
+        IF (EXISTS (
+          select failing_row_num
+          from dgfm.tbl_taxon_image_details_failed_rows ttidfr
+          where ttidfr.bildnummer::text = image_and_details_to_import.bildnummer::text
+        ))
+        THEN
+          delete from dgfm.tbl_taxon_image_details_failed_rows ttidfr      
+          where ttidfr.bildnummer::text = image_and_details_to_import.bildnummer::text;
+        ELSE
+        END IF;
       ELSE
       END IF;
 
       EXCEPTION WHEN others THEN
         IF (NOT EXISTS (
-          select row_num
+          select failing_row_num
           from dgfm.tbl_taxon_image_details_failed_rows ttidfr
-          where (ttidfr.bildnummer = image_and_details_to_import.bildnummer OR (ttidfr.bildnummer IS NULL AND image_and_details_to_import.bildnummer IS NULL))
-          and (ttidfr.taxRef_gattung = image_and_details_to_import.taxRef_gattung OR (ttidfr.taxRef_gattung IS NULL AND image_and_details_to_import.taxRef_gattung IS NULL))
-          and (ttidfr.art = image_and_details_to_import.art OR (ttidfr.art IS NULL AND image_and_details_to_import.art IS NULL))
-          and (ttidfr.taxref_ID = image_and_details_to_import.taxref_ID OR (ttidfr.taxref_ID IS NULL AND image_and_details_to_import.taxref_ID IS NULL))
-          and (ttidfr.bildkategorie = image_and_details_to_import.bildkategorie OR (ttidfr.bildkategorie IS NULL AND image_and_details_to_import.bildkategorie IS NULL))
-          and (ttidfr.TKnr = image_and_details_to_import.TKnr OR (ttidfr.TKnr IS NULL AND image_and_details_to_import.TKnr IS NULL))
-          and (ttidfr.TKname = image_and_details_to_import.TKname OR (ttidfr.TKname IS NULL AND image_and_details_to_import.TKname IS NULL))
-          and (ttidfr.land = image_and_details_to_import.land OR (ttidfr.land IS NULL AND image_and_details_to_import.land IS NULL))
-          and (ttidfr.bundesland = image_and_details_to_import.bundesland OR (ttidfr.bundesland IS NULL AND image_and_details_to_import.bundesland IS NULL))
-          and (ttidfr.regierungsbezirk = image_and_details_to_import.regierungsbezirk OR (ttidfr.regierungsbezirk IS NULL AND image_and_details_to_import.regierungsbezirk IS NULL))
-          and (ttidfr.landkreis = image_and_details_to_import.landkreis OR (ttidfr.landkreis IS NULL AND image_and_details_to_import.landkreis IS NULL))
-          and (ttidfr.fundort_1 = image_and_details_to_import.fundort_1 OR (ttidfr.fundort_1 IS NULL AND image_and_details_to_import.fundort_1 IS NULL))
-          and (ttidfr.NN_hohe = image_and_details_to_import.NN_hohe OR (ttidfr.NN_hohe IS NULL AND image_and_details_to_import.NN_hohe IS NULL))
-          and (ttidfr.koordinaten_1 = image_and_details_to_import.koordinaten_1 OR (ttidfr.koordinaten_1 IS NULL AND image_and_details_to_import.koordinaten_1 IS NULL))
-          and (ttidfr.koordinaten_2 = image_and_details_to_import.koordinaten_2 OR (ttidfr.koordinaten_2 IS NULL AND image_and_details_to_import.koordinaten_2 IS NULL))
-          and (ttidfr.begleitpflanzen = image_and_details_to_import.begleitpflanzen OR (ttidfr.begleitpflanzen IS NULL AND image_and_details_to_import.begleitpflanzen IS NULL))
-          and (ttidfr.datum_gesammelt = image_and_details_to_import.datum_gesammelt OR (ttidfr.datum_gesammelt IS NULL AND image_and_details_to_import.datum_gesammelt IS NULL))
-          and (ttidfr.leg = image_and_details_to_import.leg OR (ttidfr.leg IS NULL AND image_and_details_to_import.leg IS NULL))
-          and (ttidfr.det = image_and_details_to_import.det OR (ttidfr.det IS NULL AND image_and_details_to_import.det IS NULL))
-          and (ttidfr.conf = image_and_details_to_import.conf OR (ttidfr.conf IS NULL AND image_and_details_to_import.conf IS NULL))
-          and (ttidfr.fot = image_and_details_to_import.fot OR (ttidfr.fot IS NULL AND image_and_details_to_import.fot IS NULL))
-          and (ttidfr.herbar = image_and_details_to_import.herbar OR (ttidfr.herbar IS NULL AND image_and_details_to_import.herbar IS NULL))
-          and (ttidfr.herbarbelegnr = image_and_details_to_import.herbarbelegnr OR (ttidfr.herbarbelegnr IS NULL AND image_and_details_to_import.herbarbelegnr IS NULL))
-          and (ttidfr.anmerkung = image_and_details_to_import.anmerkung OR (ttidfr.anmerkung IS NULL AND image_and_details_to_import.anmerkung IS NULL))
+          where ttidfr.bildnummer::text = image_and_details_to_import.bildnummer::text
         ))
         THEN
           insert into dgfm.tbl_taxon_image_details_failed_rows(
-            row_num,
             bildnummer,
             taxRef_gattung,
             art,
@@ -218,10 +207,12 @@ FOR image_and_details_to_import IN
             fot,
             herbar,
             herbarbelegnr,
-            anmerkung 
+            anmerkung,
+            failing_file_name,
+            failing_row_num,
+            warning_text
           )
           values(
-            image_and_details_to_import.row_num,
             image_and_details_to_import.bildnummer,
             image_and_details_to_import.taxRef_gattung,
             image_and_details_to_import.art,
@@ -245,7 +236,10 @@ FOR image_and_details_to_import IN
             image_and_details_to_import.fot,
             image_and_details_to_import.herbar,
             image_and_details_to_import.herbarbelegnr,
-            image_and_details_to_import.anmerkung 
+            image_and_details_to_import.anmerkung,
+            '<csv_filename>',
+            image_and_details_to_import.row_num,
+            SQLERRM
           );
         ELSE
         END IF;
