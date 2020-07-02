@@ -676,7 +676,8 @@ Search and replace the following values:
   installed earlier.
 * {{ Working folder path }} - full path to the elasticsearch folder where you
   have the checked out files. When replacing this in the configuration, check
-  that the edits result in valid file paths.
+  that the edits result in valid file paths. Ensure that the paths created when
+  you replace this option have backslashes throughout if using Windows.
 * {{ Elasticsearch address }} - the URI that Elasticsearch is installed on
   (possibly localhost:9200 if you followed these instructions to install
   on a single machine). Specify https:// at the start if using the HTTPS
