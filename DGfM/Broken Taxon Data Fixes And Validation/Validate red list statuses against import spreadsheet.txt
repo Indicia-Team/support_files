@@ -1,0 +1,106 @@
+
+
+// For each of the red list categories, detect items in the import spreadsheet that are missing from the database
+// Return the taxon of the failing row
+select distinct tcld.gattung || ' ' || tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+where (tcld.Rote_Liste_Kategorie_Osterreich IS NOT NULL AND tcld.Rote_Liste_Kategorie_Osterreich != '') and tcld.gattung || ' ' || tcld.art not in
+(select tcld.gattung || ' ' ||tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+JOIN indicia.cache_termlists_terms ctt on ctt.term = tcld.Rote_Liste_Kategorie_Osterreich and termlist_id = 2678
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.int_value = ctt.id AND ttlav.taxa_taxon_list_attribute_id = 1920
+and ttlav.deleted=false
+JOIN indicia.cache_taxa_taxon_lists cttl on cttl.id = ttlav.taxa_taxon_list_id and replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%' and cttl.taxon_list_id = 1
+where (tcld.Rote_Liste_Kategorie_Osterreich IS NOT NULL AND tcld.Rote_Liste_Kategorie_Osterreich != ''));
+
+
+select distinct tcld.gattung || ' ' || tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+where (tcld.Rote_Liste_Kategorie_Tschechien IS NOT NULL AND tcld.Rote_Liste_Kategorie_Tschechien != '') and tcld.gattung || ' ' || tcld.art not in
+(select tcld.gattung || ' ' ||tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+JOIN indicia.cache_termlists_terms ctt on ctt.term = tcld.Rote_Liste_Kategorie_Tschechien and termlist_id = 2679
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.int_value = ctt.id AND ttlav.taxa_taxon_list_attribute_id = 1921
+and ttlav.deleted=false
+JOIN indicia.cache_taxa_taxon_lists cttl on cttl.id = ttlav.taxa_taxon_list_id and replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%' and cttl.taxon_list_id = 1
+where (tcld.Rote_Liste_Kategorie_Tschechien IS NOT NULL AND tcld.Rote_Liste_Kategorie_Tschechien != ''));
+
+
+select distinct tcld.gattung || ' ' || tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+where (tcld.Rote_Liste_Kategorie_Bayern IS NOT NULL AND tcld.Rote_Liste_Kategorie_Bayern != '') and tcld.gattung || ' ' || tcld.art not in
+(select tcld.gattung || ' ' ||tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+JOIN indicia.cache_termlists_terms ctt on ctt.term = tcld.Rote_Liste_Kategorie_Bayern and termlist_id = 3050
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.int_value = ctt.id AND ttlav.taxa_taxon_list_attribute_id = 1077
+and ttlav.deleted=false
+JOIN indicia.cache_taxa_taxon_lists cttl on cttl.id = ttlav.taxa_taxon_list_id and replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%' and cttl.taxon_list_id = 1
+where (tcld.Rote_Liste_Kategorie_Bayern IS NOT NULL AND tcld.Rote_Liste_Kategorie_Bayern != ''));
+
+
+select distinct tcld.gattung || ' ' || tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+where (tcld.Rote_Liste_Kategorie_Deutschland IS NOT NULL AND tcld.Rote_Liste_Kategorie_Deutschland != '') and tcld.gattung || ' ' || tcld.art not in
+(select tcld.gattung || ' ' ||tcld.art
+from dgfm.tbl_complete_list_dgfm tcld
+JOIN indicia.cache_termlists_terms ctt on ctt.term = tcld.Rote_Liste_Kategorie_Deutschland and termlist_id = 2680
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.int_value = ctt.id AND ttlav.taxa_taxon_list_attribute_id = 1076
+and ttlav.deleted=false
+JOIN indicia.cache_taxa_taxon_lists cttl on cttl.id = ttlav.taxa_taxon_list_id and replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%' and cttl.taxon_list_id = 1
+where (tcld.Rote_Liste_Kategorie_Deutschland IS NOT NULL AND tcld.Rote_Liste_Kategorie_Deutschland != ''));
+
+
+
+
+
+
+
+
+
+// Do the opposite, and make sure there aren't items in the database that weren't originally in the spreadsheet
+select taxon
+from indicia.cache_taxa_taxon_lists cttl
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.taxa_taxon_list_id = cttl.id AND ttlav.taxa_taxon_list_attribute_id = 1920
+and ttlav.deleted=false
+JOIN indicia.cache_termlists_terms ctt on ctt.id = ttlav.int_value and termlist_id = 2678
+LEFT JOIN dgfm.tbl_complete_list_dgfm tcld on tcld.Rote_Liste_Kategorie_Osterreich = ctt.term 
+AND replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%'
+where taxon_list_id = 1 and tcld.Rote_Liste_Kategorie_Osterreich IS NULL
+order by cttl.taxon asc;
+
+
+select taxon
+from indicia.cache_taxa_taxon_lists cttl
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.taxa_taxon_list_id = cttl.id AND ttlav.taxa_taxon_list_attribute_id = 1921
+and ttlav.deleted=false
+JOIN indicia.cache_termlists_terms ctt on ctt.id = ttlav.int_value and termlist_id = 2679
+LEFT JOIN dgfm.tbl_complete_list_dgfm tcld on tcld.Rote_Liste_Kategorie_Tschechien = ctt.term 
+AND replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%'
+where taxon_list_id = 1 and tcld.Rote_Liste_Kategorie_Tschechien IS NULL
+order by cttl.taxon asc;
+
+
+select taxon
+from indicia.cache_taxa_taxon_lists cttl
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.taxa_taxon_list_id = cttl.id AND ttlav.taxa_taxon_list_attribute_id = 1077
+and ttlav.deleted=false
+JOIN indicia.cache_termlists_terms ctt on ctt.id = ttlav.int_value and termlist_id = 3050
+LEFT JOIN dgfm.tbl_complete_list_dgfm tcld on tcld.Rote_Liste_Kategorie_Bayern = ctt.term 
+AND replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%'
+where taxon_list_id = 1 and tcld.Rote_Liste_Kategorie_Bayern IS NULL;
+
+
+select taxon
+from indicia.cache_taxa_taxon_lists cttl
+JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.taxa_taxon_list_id = cttl.id AND ttlav.taxa_taxon_list_attribute_id = 1076
+and ttlav.deleted=false
+JOIN indicia.cache_termlists_terms ctt on ctt.id = ttlav.int_value and termlist_id = 2680
+LEFT JOIN dgfm.tbl_complete_list_dgfm tcld on tcld.Rote_Liste_Kategorie_Deutschland = ctt.term 
+AND replace(cttl.taxon, ' ','') like '%' || replace(tcld.gattung || tcld.art, ' ','') || '%'
+where taxon_list_id = 1 and tcld.Rote_Liste_Kategorie_Deutschland IS NULL;
+
+
+
+
+
+
