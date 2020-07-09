@@ -108,3 +108,32 @@ where deleted=false and caption like '%[%' and caption like '%]%' and allow_rang
 update indicia.taxa_taxon_list_attributes
 set allow_ranges=true
 where deleted=false and id > <min_ttl_attr_id_to_process> and data_type='F' and allow_ranges=false;
+
+--Set order of journal fields
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=100
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption = 'Zeitschrift, Buch');
+
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=101
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption = 'Titel');
+
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=102
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption like '%Seitenzahl%');
+
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=103
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption like '%Autoren%');
+
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=104
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption = 'Jahr');
+
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=105
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption like '%Ausgabenummer%');
+
+update indicia.taxon_lists_taxa_taxon_list_attributes
+set weight=106
+where taxa_taxon_list_attribute_id  in (select id from indicia.taxa_taxon_list_attributes where deleted=false and caption = 'Seiten');
