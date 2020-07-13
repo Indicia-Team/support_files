@@ -1,0 +1,15 @@
+-- Get terms with missing English
+select distinct ctt.termlist_title, ctt.termlist_id as termlist_id,ctt.term as german_term, ctt.id as termlists_term_id
+from indicia.cache_termlists_terms ctt
+LEFT join indicia.cache_termlists_terms ctt_eng on ctt_eng.meaning_id = ctt.meaning_id AND ctt_eng.language_iso = 'eng'
+WHERE ctt_eng.id IS NULL AND ctt.preferred = true
+AND ctt.termlist_id > 39 AND ctt.termlist_id != 2945 AND ctt.termlist_id != 3162
+AND ctt.termlist_id != 2678 AND ctt.termlist_id != 2679 AND ctt.termlist_id != 2680 AND ctt.termlist_id != 3050;
+
+-- Get terms with missing Czech
+select distinct ctt.termlist_title, ctt.termlist_id as termlist_id,ctt.term as german_term, ctt.id as termlists_term_id
+from indicia.cache_termlists_terms ctt
+LEFT join indicia.cache_termlists_terms ctt_cze on ctt_cze.meaning_id = ctt.meaning_id AND ctt_cze.language_iso = 'cze'
+WHERE ctt_cze.id IS NULL AND ctt.preferred = true
+AND ctt.termlist_id > 39 AND ctt.termlist_id != 2945 AND ctt.termlist_id != 3162
+AND ctt.termlist_id != 2678 AND ctt.termlist_id != 2679 AND ctt.termlist_id != 2680 AND ctt.termlist_id != 3050;
