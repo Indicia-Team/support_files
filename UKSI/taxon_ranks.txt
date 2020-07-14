@@ -61,7 +61,7 @@
 0,,"excluded word",0
 0,,"vernacular name",0
 0,,"latin word",1
-110,"Coh","Cohort",1
+116,"Coh","Cohort",1
 350,"FrmSpc","Forma specialis",1
 330,"ecad","ecad",0
 175,"Div(z)","Division",0
@@ -78,3 +78,5 @@
 5,"Emp","Empire",0
 5,"Dom","Domain",0
 85,"SubtCls","Subterclass",0
+115,"SupCoh","Supercohort",1
+117,"SubCoh","Subcohort",1
