@@ -65,7 +65,7 @@ jQuery(document).ready(function($) {
 	$('#title-thumbnail').before("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 	
 	// Stop the Endangerness label in German cutting off by giving a bit more room to it
-	$("dt:contains(Bestand und Bedrohung)").css("width", "170px");
+	//$("dt:contains(Bestand und Bedrohung)").css("width", "170px");
 	
 	// Move the description author from the Details tab to the Descriptions tab.
 	// The html for author-move-to is held in the Form Structure.
@@ -75,10 +75,6 @@ jQuery(document).ready(function($) {
     $('.js-quickedit-page-title').each(function( index ) {
       $(this).text($('#species-name-hidden').text());
     });
-    //Change the Ecology label on the Protection tab to be a custom one
-	$('#tab-schutz').find("h3:contains(Ökologie)").text("Gefährdungsstatus");
-	$('#tab-protection').find("h3:contains(Ecology)").text("Conservation status");
-	$('#tab-ochrana').find("h3:contains(ekologie)").text("Stav nebezpečí");
 	
 	// Remove the pages caption in the literature section leaving only the comma behind
 	$('#tab-literature').find("b:contains(page)").each(function() {
@@ -99,6 +95,22 @@ jQuery(document).ready(function($) {
 	$('#tab-literatura').find("b:contains(strana)").each(function() {
 	  $(this).html($(this).html().replace('strana', ''));
 	});
+	
+	// On the protection tab remove the are/sub-area names
+	$('#tab-protection').find("dt:contains(Endangerness)").each(function() {
+	  $(this).html($(this).html().replace('Endangerness', ''));
+	});
+	$('#tab-schutz').find("dt:contains(Bestand und Bedrohung)").each(function() {
+	  $(this).html($(this).html().replace('Bestand und Bedrohung', ''));
+	});
+	$('#tab-ochrana').find("dt:contains(ohrožení)").each(function() {
+	  $(this).html($(this).html().replace('ohrožení', ''));
+	});
+	
+	//Change the Ecology label on the Protection tab to be a custom one
+	$('#tab-schutz').find("h3:contains(Ökologie)").text("Gefährdungsstatus");
+	$('#tab-protection').find("h3:contains(Ecology)").text("Endangerness");
+	$('#tab-ochrana').find("h3:contains(ekologie)").text("Stav nebezpečí");
 });
 
 
