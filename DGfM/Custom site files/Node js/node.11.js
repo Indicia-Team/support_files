@@ -79,6 +79,26 @@ jQuery(document).ready(function($) {
 	$('#tab-schutz').find("h3:contains(Ökologie)").text("Gefährdungsstatus");
 	$('#tab-protection').find("h3:contains(Ecology)").text("Conservation status");
 	$('#tab-ochrana').find("h3:contains(ekologie)").text("Stav nebezpečí");
+	
+	// Remove the pages caption in the literature section leaving only the comma behind
+	$('#tab-literature').find("b:contains(page)").each(function() {
+	  $(this).html($(this).html().replace('page', ''));
+	});
+	$('#tab-literature').find("b:contains(Pages)").each(function() {
+	  $(this).html($(this).html().replace('Pages', ''));
+	});
+	$('#tab-literatur').find("b:contains(Seitenzahl (von bis bei zeitschrift, Gesamtseitenz)").each(function() {
+	  $(this).html($(this).html().replace('Seitenzahl (von bis bei zeitschrift, Gesamtseitenz', ''));
+	});
+	$('#tab-literatur').find("b:contains(Seiten)").each(function() {
+	  $(this).html($(this).html().replace('Seiten', ''));
+	});
+	$('#tab-literatura').find("b:contains(Stránky)").each(function() {
+	  $(this).html($(this).html().replace('Stránky', ''));
+	});
+	$('#tab-literatura').find("b:contains(strana)").each(function() {
+	  $(this).html($(this).html().replace('strana', ''));
+	});
 });
 
 
