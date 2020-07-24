@@ -17,7 +17,9 @@ CREATE TABLE preferred_names
   long_name character varying, -- Taxon rank name
   short_name character varying(10),
   marine_flag boolean,
-  terrestrial_freshwater_flag boolean,
+  freshwater_flag boolean,
+  terrestrial_flag boolean,
+  non_native_flag boolean,
   sort_code integer
 )
 WITH (

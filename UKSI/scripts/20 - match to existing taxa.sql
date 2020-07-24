@@ -15,7 +15,10 @@ SET id=t.id,
     OR COALESCE(pt.taxon_rank_id, 0)<>COALESCE(t.taxon_rank_id, 0)
     OR COALESCE(pt.attribute, '')<>COALESCE(t.attribute, '')
     OR pt.marine_flag<>t.marine_flag
-  ) OR {{ force-cache-rebuild }} 
+    OR pt.freshwater_flag<>t.freshwater_flag
+    OR pt.terrestrial_flag<>t.terrestrial_flag
+    OR pt.non_native_flag<>t.non_native_flag
+  ) OR {{ force-cache-rebuild }}
 FROM taxa t
 JOIN taxa_taxon_lists ttl on ttl.taxon_id=t.id
   AND ttl.taxon_list_id = (SELECT uksi_taxon_list_id FROM uksi.uksi_settings)
