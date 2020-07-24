@@ -127,9 +127,11 @@ where i.new=true;
 
 -- Taxa
 insert into taxa(id, taxon, taxon_group_id, language_id, external_key, authority, search_code, scientific,
-  created_on, created_by_id, updated_on, updated_by_id, deleted, description, taxon_rank_id, attribute, marine_flag)
+  created_on, created_by_id, updated_on, updated_by_id, deleted, description, taxon_rank_id, attribute,
+  marine_flag, freshwater_flag, terrestrial_flag, non_native_flag)
 select id, taxon, taxon_group_id, language_id, external_key, authority, search_code, scientific,
-  created_on, created_by_id, updated_on, updated_by_id, deleted, description, taxon_rank_id, attribute, marine_flag
+  created_on, created_by_id, updated_on, updated_by_id, deleted, description, taxon_rank_id, attribute,
+  marine_flag, freshwater_flag, terrestrial_flag, non_native_flag
 from import.taxa i
 where i.new=true;
 
