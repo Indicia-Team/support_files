@@ -19,6 +19,9 @@ select distinct t.search_code as key,
   || '~' || coalesce(cttl.taxon_rank, '')
   || '~' || coalesce(cttl.taxon_rank_sort_order::text, '')
   || '~' || cttl.marine_flag::text
+  || '~' || cttl.freshwater_flag::text
+  || '~' || cttl.terrestrial_flag::text
+  || '~' || cttl.non_native_flag::text
   || '~' || coalesce(tkingdom.taxon, '')
   || '~' || coalesce(tphylum.taxon, '')
   || '~' || coalesce(tclass.taxon, '')

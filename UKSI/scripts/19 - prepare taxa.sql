@@ -17,6 +17,9 @@ SELECT DISTINCT NULL::integer AS id,
   tr.id AS taxon_rank_id,
   uan.attribute,
   COALESCE(upn.marine_flag, false) AS marine_flag,
+  COALESCE(upn.freshwater_flag, false) AS freshwater_flag,
+  COALESCE(upn.terrestrial_flag, false) AS terrestrial_flag,
+  COALESCE(upn.non_native_flag, false) AS non_native_flag,
   false AS is_new,
   false AS changed
 INTO uksi.prepared_taxa

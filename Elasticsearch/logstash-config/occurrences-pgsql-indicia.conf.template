@@ -57,6 +57,8 @@ input {
           TRIM(leading 'POINT(' FROM TRIM(trailing ')' FROM st_astext(st_centroid(st_transform(reduce_precision(o.public_geom, false, 1000, '4326'), 4326))))) as map_sq_1km,
           TRIM(leading 'POINT(' FROM TRIM(trailing ')' FROM st_astext(st_centroid(st_transform(reduce_precision(o.public_geom, false, 2000, '4326'), 4326))))) as map_sq_2km,
           TRIM(leading 'POINT(' FROM TRIM(trailing ')' FROM st_astext(st_centroid(st_transform(reduce_precision(o.public_geom, false, 10000, '4326'), 4326))))) as map_sq_10km,
+          snf.public_entered_sref as input_sref,
+          snf.entered_sref_system as input_sref_system,
           onf.output_sref,
           onf.output_sref_system,
           CASE
@@ -157,10 +159,9 @@ filter {
       "taxon_rank",
       "taxon_rank_sort_order",
       "marine_flag",
-      "taxon_kingdom",
-      "taxon_phylum",
-      "taxon_class",
-      "taxon_order",
+      "freshwater_flag",
+      "terrestrial_flag",
+      "non_native_flag",
       "taxon_family",
       "taxon_subfamily",
       "taxon_genus",
@@ -334,6 +335,8 @@ filter {
       "map_sq_1km" => "[location][grid_square][1km][centre]"
       "map_sq_2km" => "[location][grid_square][2km][centre]"
       "map_sq_10km" => "[location][grid_square][10km][centre]"
+      "input_sref" => "[location][input_sref]"
+      "input_sref_system" => "[location][input_sref_system]"
       "output_sref" => "[location][output_sref]"
       "output_sref_system" => "[location][output_sref_system]"
       "coordinate_uncertainty_in_meters" => "[location][coordinate_uncertainty_in_meters]"
@@ -371,6 +374,9 @@ filter {
       "taxon_rank" => "[taxon][taxon_rank]"
       "taxon_rank_sort_order" => "[taxon][taxon_rank_sort_order]"
       "marine_flag" => "[taxon][marine]"
+      "freshwater_flag" => "[taxon][freshwater]"
+      "terrestrial_flag" => "[taxon][terrestrial]"
+      "non_native_flag" => "[taxon][non_native]"
       "taxon_kingdom" => "[taxon][kingdom]"
       "taxon_phylum" => "[taxon][phylum]"
       "taxon_class" => "[taxon][class]"

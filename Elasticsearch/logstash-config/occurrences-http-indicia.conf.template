@@ -59,6 +59,9 @@ filter {
       "taxon_rank",
       "taxon_rank_sort_order",
       "marine_flag",
+      "freshwater_flag",
+      "terrestrial_flag",
+      "non_native_flag",
       "taxon_kingdom",
       "taxon_phylum",
       "taxon_class",
@@ -244,6 +247,8 @@ filter {
       "map_sq_1km" => "[location][grid_square][1km][centre]"
       "map_sq_2km" => "[location][grid_square][2km][centre]"
       "map_sq_10km" => "[location][grid_square][10km][centre]"
+      "input_sref" => "[location][input_sref]"
+      "input_sref_system" => "[location][input_sref_system]"
       "output_sref" => "[location][output_sref]"
       "output_sref_system" => "[location][output_sref_system]"
       "coordinate_uncertainty_in_meters" => "[location][coordinate_uncertainty_in_meters]"
@@ -284,6 +289,9 @@ filter {
       "taxon_rank" => "[taxon][taxon_rank]"
       "taxon_rank_sort_order" => "[taxon][taxon_rank_sort_order]"
       "marine_flag" => "[taxon][marine]"
+      "freshwater_flag" => "[taxon][freshwater]"
+      "terrestrial_flag" => "[taxon][terrestrial]"
+      "non_native_flag" => "[taxon][non_native]"
       "taxon_kingdom" => "[taxon][kingdom]"
       "taxon_phylum" => "[taxon][phylum]"
       "taxon_class" => "[taxon][class]"

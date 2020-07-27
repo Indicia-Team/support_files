@@ -258,6 +258,18 @@ table.
 **Warehouse field**|`map_squares.geom`
 **Description**|As `location.grid_square.1km.centre` for 10km grid squares.
 
+`location.input_sref`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`cache_samples_functional.public_entered_sref`, derived from `samples.entered_sref`
+**Description**|Spatial reference in notation as input by the recorder. If the record is sensitive, then the `location.output_sref` value is used, blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive record, shows the original full precision reference.
+
+`location.input_sref_system`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`cache_samples_functional.entered_sref_system`, derived from `samples.entered_sref_system`
+**Description**|Spatial reference system code, e.g. OSGB or an EPSG projection ID, for the value in `location.input_sref`.
+
 `location.name`||
 -----|-----
 **Data type**|string
@@ -273,7 +285,7 @@ table.
 `location.output_sref_system`||
 -----|-----
 **Data type**|string
-**Warehouse field**|`locations.id`
+**Warehouse field**|`cache_samples_functional.output_sref_system`, derived from `samples.entered_sref_system`
 **Description**|Spatial reference system code, e.g. OSGB or an EPSG projection ID.
 
 `location.parent.location_id`||
@@ -533,6 +545,24 @@ table.
 **Data type**|boolean
 **Warehouse field**|`taxa.marine_flag`
 **Description**|True if the taxon is associated with marine environments.
+
+`taxon.freshwater`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`taxa.freshwater_flag`
+**Description**|True if the taxon is associated with freshwater environments.
+
+`taxon.terrestrial`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`taxa.terrestrial_flag`
+**Description**|True if the taxon is associated with terrestrial environments.
+
+`taxon.non_native`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`taxa.non_native_flag`
+**Description**|True if the taxon is associated with non-native environments.
 
 `taxon.order`||
 -----|-----

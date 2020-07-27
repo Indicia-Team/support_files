@@ -291,6 +291,9 @@ PUT occurrence_brc1_v1?include_type_name=true
         "taxon.species_taxon_id": { "type": "keyword" },
         "taxon.taxon_id": { "type": "keyword" },
         "taxon.marine": { "type": "boolean" },
+        "taxon.freshwater": { "type": "boolean" },
+        "taxon.terrestrial": { "type": "boolean" },
+        "taxon.non_native": { "type": "boolean" },
         "taxon.taxa_taxon_list_id": { "type": "integer" },
         "taxon.taxon_meaning_id": { "type": "integer" },
         "taxon.taxon_rank_sort_order": { "type": "short" }
@@ -418,6 +421,9 @@ PUT occurrence_brc1_v1
       "taxon.species_taxon_id": { "type": "keyword" },
       "taxon.taxon_id": { "type": "keyword" },
       "taxon.marine": { "type": "boolean" },
+      "taxon.freshwater": { "type": "boolean" },
+      "taxon.terrestrial": { "type": "boolean" },
+      "taxon.non_native": { "type": "boolean" },
       "taxon.taxa_taxon_list_id": { "type": "integer" },
       "taxon.taxon_meaning_id": { "type": "integer" },
       "taxon.taxon_rank_sort_order": { "type": "short" }
