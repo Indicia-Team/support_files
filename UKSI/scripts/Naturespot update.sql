@@ -1,5 +1,12 @@
 /*
  Script to repair Naturespot TVK mismatches.
+ 
+ NatureSpot has its own taxon list. Names on the list are mapped to UKSI via the external_key field
+ which is the preferred name's TVK. If a preffered name on UKSI is relegated to a synonym so there is
+ a new preferred name TVK, this will leave the NatureSpot list pointing to a synonym rather than a
+ preferred name. This fix updates the TVKs and provides information to pass to the NatureSpot site 
+ editors so they can update their species accounts.
+ 
  IMPORTANT! This script includes a query output which needs to be sent the Naturespot.org.uk admin team.
 */
 
