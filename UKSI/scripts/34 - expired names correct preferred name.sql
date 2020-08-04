@@ -27,3 +27,17 @@ AND ttl.taxon_id=t.id
 AND ttl.allow_data_entry=false
 AND ttl.deleted=false
 AND t.external_key<>atvk.recommended_taxon_version_key;
+
+-- Some dodgy common names for families in UKSI are sometimes marked as species rank.
+UPDATE taxa SET taxon_rank_id=25, updated_on=now()
+WHERE id IN (
+	SELECT ttl.taxon_id
+	FROM cache_taxa_taxon_lists cttl
+	JOIN taxa_taxon_lists ttl ON ttl.id=cttl.id AND ttl.deleted=false
+	JOIN cache_taxa_taxon_lists cttlpref ON cttlpref.taxon_meaning_id=cttl.taxon_meaning_id AND cttlpref.preferred=true
+	WHERE cttl.taxon_list_id=15 AND cttlpref.taxon_list_id=15
+	AND cttl.preferred=false
+	AND cttl.taxon_rank_id<>cttlpref.taxon_rank_id
+	AND cttl.taxon_rank='Species' AND cttlpref.taxon_rank='Family'
+	AND cttl.language_iso<>'lat'
+);
