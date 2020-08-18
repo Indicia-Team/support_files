@@ -14,7 +14,7 @@
  Run this script to build a temporary table with all details of taxon names that are mismatched on the Naturespot list.
  */
 drop table if exists to_fix;
-select cttl8.id as id_on_naturespot, cttl8.taxon as taxon_on_naturespot, cttl8.external_key as tvk_on_naturespot,
+select distinct cttl8.id as id_on_naturespot, cttl8.taxon as taxon_on_naturespot, cttl8.external_key as tvk_on_naturespot,
  cttl15.taxon as taxon_on_uksi, cttl15.authority as authority_on_uksi, cttl15.external_key as tvk_on_uksi,
  t.taxon as synonym_pointed_to_by_naturespot_tvk, t.authority as synonym_authority
 into temporary to_fix
