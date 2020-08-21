@@ -41,15 +41,29 @@ filter {
     field => "taxon_key"
     destination => "taxon_data_blob"
   }
-  # Split all the taxon data blob field content into separate fields.
+  # Second chance if the name's search code does not point to a valid taxon,
+  # use the accepted taxon key (=external key).
+  if ![taxon_data_blob] {
+    translate {
+      dictionary_path => "{{ Working folder path }}/data/taxa.yml"
+      field => "accepted_taxon_key"
+      destination => "taxon_data_blob"
+    }
+  }
+  # Split all the taxon data blob field content into separate fields. The
+  # looked up taxon name/authority (as recorded) is ignored as the one in the
+  # database is more likely to be reliable, e.g. if a taxon's search_code does
+  # not point to a valid taxon, we don't want to overwrite the name as recorded
+  # with the name looked up by external key, as the latter will be the accepted
+  # name, not the name as recorded.
   csv {
     source => "taxon_data_blob"
     separator => "~"
     skip_empty_columns => true
     quote_char => "`"
     columns => [
-      "taxon_name",
-      "taxon_authority",
+      "taxon_name_from_lookup",
+      "taxon_authority_from_lookup",
       "accepted_taxon_key",
       "accepted_taxon_name",
       "accepted_taxon_authority",
@@ -72,7 +86,7 @@ filter {
       "taxon_species",
       "taxon_species_key"
     ]
-    remove_field => "taxon_data_blob"
+    remove_field => ["taxon_data_blob", "taxon_name_from_lookup", "taxon_authority_from_lookup"]
   }
   # Lookup the taxon path data and attach to the document.
   translate {
