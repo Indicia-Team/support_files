@@ -11,7 +11,7 @@ input {
     urls => {
       indicia => {
         method => get
-        url => "http://localhost/warehouse/index.php/services/rest/reports/library/occurrences/list_for_elastic_all_taxonomy.xml"
+        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/occurrences/list_for_elastic_all_taxonomy.xml"
         headers => {
           Accept => "application/json"
           Authorization => "USER:{{ User }}:SECRET:{{ Secret }}"
