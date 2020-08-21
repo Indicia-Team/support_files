@@ -64,15 +64,12 @@ jQuery(document).ready(function($) {
 	// Add spaces between title and img
 	$('#title-thumbnail').before("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 	
-	// Stop the Endangerness label in German cutting off by giving a bit more room to it
-	//$("dt:contains(Bestand und Bedrohung)").css("width", "170px");
-	
 	// Move the description author from the Details tab to the Descriptions tab.
 	// The html for author-move-to is held in the Form Structure.
     $('#author-move-from').insertBefore('#author-move-to');
     
     // Change the Drupal page title to be the same as the species name (which we have setup in a hidden field in species_details)
-    $('.js-quickedit-page-title').each(function( index ) {
+    $('.page-header').each(function( index ) {
       $(this).text($('#species-name-hidden').text());
     });
 	
@@ -107,10 +104,16 @@ jQuery(document).ready(function($) {
 	  $(this).html($(this).html().replace('ohrožení', ''));
 	});
 	
-	//Change the Ecology label on the Protection tab to be a custom one
-	$('#tab-schutz').find("h3:contains(Ökologie)").text("Gefährdungsstatus");
-	$('#tab-protection').find("h3:contains(Ecology)").text("Endangerness");
-	$('#tab-ochrana').find("h3:contains(ekologie)").text("Stav nebezpečí");
+	//Change the Ecology label on the Protection tab to be blank (hiding/removing it causes oddities)
+	$('#tab-schutz').find("h3:contains(Ökologie)").text("");
+	$('#tab-protection').find("h3:contains(Ecology)").text("");
+	$('#tab-ochrana').find("h3:contains(ekologie)").text("");
+	
+	// Change name of Protection tab, we have to do this as Czech special characters are not allowed as part of
+	// the proper name. This isn't really needed for English/German, but have done it in same way for consistency
+	$('#tab-schutz-tab').find("span:contains(Schutz)").text("Gefährdungsstatus");
+	$('#tab-protection-tab').find("span:contains(Protection)").text("Endangerness");
+	$('#tab-ochrana-tab').find("span:contains(Ochrana)").text("Stav ohrožení");
 });
 
 
