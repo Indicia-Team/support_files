@@ -1,0 +1,36 @@
+-- This script is designed to correct situation where duplicate occurrences have been created (why this happened I am not sure) and that the following situation applies:
+-- In this case the situation is that the duplicates either had identical occurrence attribute values, or one of the duplicates had additional occurrence attribute values 
+-- which were missing from the other duplicate. In these cases we delete the one with fewer occurrence attribute values.
+-- The fix assumes that the one with more occurrence attribute values includes all the ones from the duplicate which has fewer occurrence attribute values.
+
+select o.external_key,o.id,count(*)
+into temporary mydata
+from indicia.occurrences o
+left join indicia.occurrence_attribute_values oav on oav.occurrence_id = o.id and oav.deleted=false
+where o.deleted=false
+and external_key in
+(select external_key
+from indicia.occurrences
+where deleted=false
+group by external_key
+having count(*) > 1)
+group by o.external_key,o.id
+order by o.external_key,count(*) desc;
+
+select distinct t1.external_key, t1.id
+from mydata t1
+join mydata t2 on t2.external_key=t1.external_key
+  and (t2.count>t1.count
+  or (t1.count=t2.count and t1.id>t2.id))
+order by t1.external_key
+
+update indicia.occurrences
+set deleted=true,updated_by_id = 1, updated_on = now()
+where id in 
+(select t1.id
+from mydata t1
+join mydata t2 on t2.external_key=t1.external_key
+  and (t2.count>t1.count
+  or (t1.count=t2.count and t1.id>t2.id))
+order by t1.external_key);
+
