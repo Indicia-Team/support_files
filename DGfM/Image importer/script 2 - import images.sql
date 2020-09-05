@@ -61,8 +61,8 @@ FOR image_and_details_to_import IN
               --AND ttl.preferred = true
               AND ttl.deleted = false
           join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
-          AND replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, ' ', '') like '%' || replace(t.taxon, ' ', '') || '%'
-          --AND t.search_code = image_and_details_to_import.taxref_ID
+          -- regexp_replace allows all white space (such as tabs) to be removed, not just space characters
+          AND regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') like '%' || regexp_replace(t.taxon, '\s', '', 'g') || '%'
           where 
               ((trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) IS NULL
               AND
@@ -73,7 +73,8 @@ FOR image_and_details_to_import IN
       THEN
         insert into indicia.taxon_media(taxon_meaning_id,path,caption,created_on,created_by_id,updated_on,updated_by_id,external_details,media_type_id,exif)
         values (
-          (select taxon_meaning_id from indicia.cache_taxa_taxon_lists where taxon_list_id = <taxon_list_id> and replace(taxon, ' ', '') = replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, ' ', '')),
+          -- regexp_replace allows all white space (such as tabs) to be removed, not just space characters
+          (select taxon_meaning_id from indicia.cache_taxa_taxon_lists where taxon_list_id = <taxon_list_id> and regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g')),
           '<filename_prefix>' || image_and_details_to_import.bildnummer || '.jpg',
           -- Caption must be 100 characters max 
           CASE WHEN 
@@ -113,10 +114,18 @@ FOR image_and_details_to_import IN
                   to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
                   coalesce(image_and_details_to_import.bundesland, '') || ', ' ||
                   coalesce(image_and_details_to_import.landkreis, '')
+          WHEN 
+            length(
+  '             Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
+                  to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
+                  coalesce(image_and_details_to_import.bundesland, '')
+              ) < 101 AND image_and_details_to_import.bundesland IS NOT NULL THEN 
+              'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
+                  to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
+                  coalesce(image_and_details_to_import.bundesland, '')
           ELSE 
               'Foto: ' || coalesce(image_and_details_to_import.fot, '')  || ', ' ||
-                    to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY') || ', ' ||
-                    coalesce(image_and_details_to_import.bundesland, '')
+                  to_char(cast(image_and_details_to_import.datum_gesammelt as date), 'DD.MM.YYYY')
           END,
           now(),
           1,
