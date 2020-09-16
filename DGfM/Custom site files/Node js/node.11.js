@@ -67,10 +67,14 @@ jQuery(document).ready(function($) {
 	// Move the description author from the Details tab to the Descriptions tab.
 	// The html for author-move-to is held in the Form Structure.
     $('#author-move-from').insertBefore('#author-move-to');
-    
     // Change the Drupal page title to be the same as the species name (which we have setup in a hidden field in species_details)
+    // with the common name for the currently selected Drupal language displayed in brackets (also in a hidden field)
     $('.page-header').each(function( index ) {
-      $(this).text($('#species-name-hidden').text());
+      if ($('#current_common_name').text()) {
+      	$(this).text($('#species-name-hidden').text() + " " + '('+$('#current_common_name').text()+')');
+      } else {
+      	$(this).text($('#species-name-hidden').text());
+      }
     });
 	
 	// Remove the pages caption in the literature section leaving only the comma behind
