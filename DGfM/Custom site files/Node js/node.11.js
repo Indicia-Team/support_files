@@ -64,9 +64,10 @@ jQuery(document).ready(function($) {
 	// Add spaces between title and img
 	$('#title-thumbnail').before("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 	
-	// Move the description author from the Details tab to the Descriptions tab.
+	// Move the main comment and description author from the Details tab to the Descriptions tab.
 	// The html for author-move-to is held in the Form Structure.
     $('#author-move-from').insertBefore('#author-move-to');
+    $('#main-comment-move-from').insertBefore('#main-comment-move-to');
     // Change the Drupal page title to be the same as the species name (which we have setup in a hidden field in species_details)
     // with the common name for the currently selected Drupal language displayed in brackets (also in a hidden field)
     $('.page-header').each(function( index ) {
