@@ -244,6 +244,35 @@ where taxon in
 and taxa_taxon_list_attribute_id in
 (select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
 
+// Comment can also be set to Czech if we detect Czech specific characters
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36029, updated_on = now(), updated_by_id = 1
+where
+(text_value like '%á%' OR 
+text_value like '%č%' OR 
+text_value like '%ď%' OR 
+text_value like '%é%' OR 
+text_value like '%ě%' OR 
+text_value like '%í%' OR 
+text_value like '%ň%' OR 
+text_value like '%ř%' OR 
+text_value like '%š%' OR 
+text_value like '%ť%' OR 
+text_value like '%ú%' OR 
+text_value like '%ů%' OR 
+text_value like '%ý%' OR 
+text_value like '%ž%' OR
+text_value like '%Á%' OR
+text_value like '%Č%' OR
+text_value like '%É%' OR
+text_value like '%Í%' OR
+text_value like '%Ř%' OR
+text_value like '%Š%' OR
+text_value like '%Ú%' OR
+text_value like '%Ž%')
+and taxa_taxon_list_attribute_id in
+(select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
+
 // Set comments to non language specific if the comment can be found in termlists where the translations between the languages are the same
 select * 
 from indicia.taxa_taxon_list_attribute_values
