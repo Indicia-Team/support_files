@@ -258,3 +258,13 @@ FOR image_and_details_to_import IN
 END LOOP;
 END
 $do$;
+
+-- Strip extra jpg extensions which can occur because bildnummer
+-- sometimes include .jpg and sometimes doesn't
+update indicia.taxon_media
+set path = replace(path,'.jpg.jpg','.jpg')
+where path like '%.jpg.jpg%';
+
+update indicia.taxon_media
+set path = replace(path,'.JPG.jpg','.jpg')
+where path like '%.JPG.jpg%';
