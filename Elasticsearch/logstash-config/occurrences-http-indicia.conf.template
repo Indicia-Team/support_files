@@ -278,6 +278,7 @@ filter {
       "parent_sample_id" => "[event][parent_event_id]"
       "date_start" => "[event][date_start]"
       "date_end" => "[event][date_end]"
+      "date_type" => "[event][date_type]"
       "day_of_year" => "[event][day_of_year]"
       "week" => "[event][week]"
       "ukbms_week" => "[event][ukbms_week]"
