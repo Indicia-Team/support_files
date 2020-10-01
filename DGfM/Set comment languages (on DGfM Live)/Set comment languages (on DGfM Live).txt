@@ -1,0 +1,298 @@
+-- Script to set the language for comments so they are only shown when a specific langauge is selected.
+-- To do this, we use some rules (which are not perfect), so further development may be beneficial.
+-- Script uses hard coded attribute IDS from DGfM live warehouse, not to be run without alteration/testing
+-- on other Warehouses.
+
+-- Initially assume any comments without a language set are in German
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36028, updated_by_id = 1, updated_on = now()
+where source_id IS NULL AND taxa_taxon_list_attribute_id in (select id from indicia.taxa_taxon_list_attributes where deleted=false and lower(caption)='(kommentar)');
+
+// These are know to have been filled in by English contributors, so set their comments to English
+select text_value from indicia.taxa_taxon_list_attribute_values where text_value is not null and taxa_taxon_list_id in
+(select id 
+from indicia.cache_taxa_taxon_lists
+where taxon_meaning_id in
+(select taxon_meaning_id
+from indicia.cache_taxa_taxon_lists
+where taxon in
+('Aleuria aurantia',
+'Anthracobia maurilabra',
+'Anthracobia melaloma',
+'Anthracobia subatra',
+'Anthracobia tristis',
+'Byssonectria fusispora',
+'Sepultariella semi-immersa',
+'Byssonectria terrestris agg.',
+'Cheilymenia coprinaria',
+'Cheilymenia dennisii',
+'Cheilymenia granulata',
+'Cheilymenia megaspora',
+'Cheilymenia stercorea',
+'Cheilymenia theleboloides',
+'Cheilymenia vitellina',
+'Flavoscypha phlebophora',
+'Geopora arenicola',
+'Geopora foliacea',
+'Geopora tenuis',
+'Geopyxis carbonaria',
+'Geopyxis majalis',
+'Humaria solsequia',
+'Humaria hemisphaerica',
+'Kotlabaea deformis',
+'Lamprospora esterlechnerae',
+'Leucoscypha leucotricha',
+'Melastiza boudieri',
+'Melastiza contorta',
+'Melastiza cornubiensis',
+'Neottiella rutilans',
+'Octospora affinis',
+'Octospora humosa',
+'Octospora leucoloma',
+'Pseudombrophila cervaria',
+'Pseudombrophila deerrata',
+'Pulvinula constellatio',
+'Pyronema domesticum',
+'Pyronema omphalodes',
+'Ramsbottomia asperior',
+'Ramsbottomia crechqueraultii',
+'Ramsbottomia macracantha',
+'Scutellinia cejpii',
+'Scutellinia crinita',
+'Scutellinia kerguelensis',
+'Scutellinia legaliae',
+'Scutellinia macrospora',
+'Scutellinia mirabilis',
+'Scutellinia olivascens',
+'Scutellinia pilatii',
+'Scutellinia pseudotrechispora',
+'Scutellinia scutellata',
+'Scutellinia subhirtella',
+'Scutellinia umbrorum',
+'Scutellinia vitreola',
+'Sowerbyella radiculata',
+'Sphaerosporella brunnea',
+'Spooneromyces laeticolor',
+'Stephensia bombycina',
+'Tarzetta catinus',
+'Tarzetta cupularis',
+'Tarzetta velata',
+'Tricharina gilva',
+'Trichophaea abundans',
+'Trichophaea gregaria',
+'Trichophaea hemisphaerioides',
+'Trichophaea paludosa',
+'Trichophaea pseudogregaria',
+'Trichophaea woolhopeia',
+'Trichophaeopsis bicuspis')))
+and taxa_taxon_list_attribute_id in
+(select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
+
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36027, updated_on = now(), updated_by_id = 1
+where text_value is not null and taxa_taxon_list_id in
+(select id 
+from indicia.cache_taxa_taxon_lists
+where taxon_meaning_id in
+(select taxon_meaning_id
+from indicia.cache_taxa_taxon_lists
+where taxon in
+('Aleuria aurantia',
+'Anthracobia maurilabra',
+'Anthracobia melaloma',
+'Anthracobia subatra',
+'Anthracobia tristis',
+'Byssonectria fusispora',
+'Sepultariella semi-immersa',
+'Byssonectria terrestris agg.',
+'Cheilymenia coprinaria',
+'Cheilymenia dennisii',
+'Cheilymenia granulata',
+'Cheilymenia megaspora',
+'Cheilymenia stercorea',
+'Cheilymenia theleboloides',
+'Cheilymenia vitellina',
+'Flavoscypha phlebophora',
+'Geopora arenicola',
+'Geopora foliacea',
+'Geopora tenuis',
+'Geopyxis carbonaria',
+'Geopyxis majalis',
+'Humaria solsequia',
+'Humaria hemisphaerica',
+'Kotlabaea deformis',
+'Lamprospora esterlechnerae',
+'Leucoscypha leucotricha',
+'Melastiza boudieri',
+'Melastiza contorta',
+'Melastiza cornubiensis',
+'Neottiella rutilans',
+'Octospora affinis',
+'Octospora humosa',
+'Octospora leucoloma',
+'Pseudombrophila cervaria',
+'Pseudombrophila deerrata',
+'Pulvinula constellatio',
+'Pyronema domesticum',
+'Pyronema omphalodes',
+'Ramsbottomia asperior',
+'Ramsbottomia crechqueraultii',
+'Ramsbottomia macracantha',
+'Scutellinia cejpii',
+'Scutellinia crinita',
+'Scutellinia kerguelensis',
+'Scutellinia legaliae',
+'Scutellinia macrospora',
+'Scutellinia mirabilis',
+'Scutellinia olivascens',
+'Scutellinia pilatii',
+'Scutellinia pseudotrechispora',
+'Scutellinia scutellata',
+'Scutellinia subhirtella',
+'Scutellinia umbrorum',
+'Scutellinia vitreola',
+'Sowerbyella radiculata',
+'Sphaerosporella brunnea',
+'Spooneromyces laeticolor',
+'Stephensia bombycina',
+'Tarzetta catinus',
+'Tarzetta cupularis',
+'Tarzetta velata',
+'Tricharina gilva',
+'Trichophaea abundans',
+'Trichophaea gregaria',
+'Trichophaea hemisphaerioides',
+'Trichophaea paludosa',
+'Trichophaea pseudogregaria',
+'Trichophaea woolhopeia',
+'Trichophaeopsis bicuspis')))
+and taxa_taxon_list_attribute_id in
+(select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
+
+// These are know to have been filled in by Czech contributors, so set their comments to Czech
+select text_value from indicia.taxa_taxon_list_attribute_values where text_value is not null and taxa_taxon_list_id in
+(select id 
+from indicia.cache_taxa_taxon_lists
+where taxon_meaning_id in
+(select taxon_meaning_id
+from indicia.cache_taxa_taxon_lists
+where taxon in
+('Arcangeliella volemoides',
+'Balsamia polysperma',
+'Elaphomyces asperulus',
+'Elaphomyces granulatus',
+'Elaphomyces muricatus',
+'Endogone pisiformis',
+'Gastrosporium simplex',
+'Gautieria otthii',
+'Hydnotrya michaelis',
+'Hydnotrya tulasnei',
+'Choiromyces meandriformis',
+'Melanogaster ambiguus',
+'Melanogaster broomeanus',
+'Melanogaster intermedius',
+'Melanogaster variegatus',
+'Picoa carthusiana',
+'Rhizopogon luteolus',
+'Rhizopogon roseolus',
+'Rhizopogon vulgaris',
+'Tuber aestivum',
+'Tuber brumale',
+'Tuber dryophilum',
+'Tuber maculatum',
+'Tuber mesentericum',
+'Tuber puberulum',
+'Tuber rufum')))
+and taxa_taxon_list_attribute_id in
+(select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
+
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36029, updated_on = now(), updated_by_id = 1
+where text_value is not null and taxa_taxon_list_id in
+(select id 
+from indicia.cache_taxa_taxon_lists
+where taxon_meaning_id in
+(select taxon_meaning_id
+from indicia.cache_taxa_taxon_lists
+where taxon in
+('Arcangeliella volemoides',
+'Balsamia polysperma',
+'Elaphomyces asperulus',
+'Elaphomyces granulatus',
+'Elaphomyces muricatus',
+'Endogone pisiformis',
+'Gastrosporium simplex',
+'Gautieria otthii',
+'Hydnotrya michaelis',
+'Hydnotrya tulasnei',
+'Choiromyces meandriformis',
+'Melanogaster ambiguus',
+'Melanogaster broomeanus',
+'Melanogaster intermedius',
+'Melanogaster variegatus',
+'Picoa carthusiana',
+'Rhizopogon luteolus',
+'Rhizopogon roseolus',
+'Rhizopogon vulgaris',
+'Tuber aestivum',
+'Tuber brumale',
+'Tuber dryophilum',
+'Tuber maculatum',
+'Tuber mesentericum',
+'Tuber puberulum',
+'Tuber rufum')))
+and taxa_taxon_list_attribute_id in
+(select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
+
+// Comment can also be set to Czech if we detect Czech specific characters
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36029, updated_on = now(), updated_by_id = 1
+where
+(text_value like '%á%' OR 
+text_value like '%č%' OR 
+text_value like '%ď%' OR 
+text_value like '%é%' OR 
+text_value like '%ě%' OR 
+text_value like '%í%' OR 
+text_value like '%ň%' OR 
+text_value like '%ř%' OR 
+text_value like '%š%' OR 
+text_value like '%ť%' OR 
+text_value like '%ú%' OR 
+text_value like '%ů%' OR 
+text_value like '%ý%' OR 
+text_value like '%ž%' OR
+text_value like '%Á%' OR
+text_value like '%Č%' OR
+text_value like '%É%' OR
+text_value like '%Í%' OR
+text_value like '%Ř%' OR
+text_value like '%Š%' OR
+text_value like '%Ú%' OR
+text_value like '%Ž%')
+and taxa_taxon_list_attribute_id in
+(select id from indicia.taxa_taxon_list_attributes where caption = '(Kommentar)');
+
+// Set comments to non language specific if the comment can be found in termlists where the translations between the languages are the same
+select * 
+from indicia.taxa_taxon_list_attribute_values
+where id in
+(select id from indicia.taxa_taxon_list_attribute_values where
+taxa_taxon_list_attribute_id in (select id from indicia.taxa_taxon_list_attributes where deleted=false and lower(caption)='(kommentar)')
+ and text_value in
+(select term from indicia.cache_termlists_terms where language_iso = 'deu' and term in
+(select term from indicia.terms where language_id in (1,7))));
+
+update indicia.taxa_taxon_list_attribute_values
+set source_id = null, updated_on = now(), updated_by_id = 1
+where id in
+(select id from indicia.taxa_taxon_list_attribute_values where
+taxa_taxon_list_attribute_id in (select id from indicia.taxa_taxon_list_attributes where deleted=false and lower(caption)='(kommentar)')
+ and text_value in
+(select term from indicia.cache_termlists_terms where language_iso = 'deu' and term in
+(select term from indicia.terms where language_id in (1,7))));
+
+// Set Hauptkommentar to German on request from client
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36028,updated_on = now(),updated_by_id=1
+where taxa_taxon_list_attribute_id = 2175;

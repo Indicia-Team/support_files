@@ -62,7 +62,9 @@ FOR image_and_details_to_import IN
               AND ttl.deleted = false
           join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
           -- regexp_replace allows all white space (such as tabs) to be removed, not just space characters
-          AND regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') like '%' || regexp_replace(t.taxon, '\s', '', 'g') || '%'
+          AND 
+          (regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') = regexp_replace(t.taxon, '\s', '', 'g') || 
+           regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') || 'agg.' = regexp_replace(t.taxon, '\s', '', 'g'))
           where 
               ((trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) IS NULL
               AND
@@ -74,7 +76,11 @@ FOR image_and_details_to_import IN
         insert into indicia.taxon_media(taxon_meaning_id,path,caption,created_on,created_by_id,updated_on,updated_by_id,external_details,media_type_id,exif)
         values (
           -- regexp_replace allows all white space (such as tabs) to be removed, not just space characters
-          (select taxon_meaning_id from indicia.cache_taxa_taxon_lists where taxon_list_id = <taxon_list_id> and regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g')),
+          (select taxon_meaning_id 
+          from indicia.cache_taxa_taxon_lists 
+          where taxon_list_id = <taxon_list_id> and 
+          (regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') || 
+           regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') || 'agg.')),
           '<filename_prefix>' || image_and_details_to_import.bildnummer || '.jpg',
           -- Caption must be 100 characters max 
           CASE WHEN 
@@ -258,3 +264,13 @@ FOR image_and_details_to_import IN
 END LOOP;
 END
 $do$;
+
+-- Strip extra jpg extensions which can occur because bildnummer
+-- sometimes include .jpg and sometimes doesn't
+update indicia.taxon_media
+set path = replace(path,'.jpg.jpg','.jpg')
+where path like '%.jpg.jpg%';
+
+update indicia.taxon_media
+set path = replace(path,'.JPG.jpg','.jpg')
+where path like '%.JPG.jpg%';
