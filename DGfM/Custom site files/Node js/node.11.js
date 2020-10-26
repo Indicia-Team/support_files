@@ -129,7 +129,7 @@ jQuery(window).on('load', function() {
   var stringToTranslate;
   jQuery('.text-translate').each(function( index ) {
 	if (jQuery(this).text()) {
-	  stringToTranslate = jQuery(this).text();
+	  stringToTranslate = jQuery(this).text().trim();
  	  jQuery(this).text(Drupal.t(stringToTranslate));
  	}
   });
