@@ -1,9 +1,12 @@
 -- In order to run this script, the following tags need replacing
--- <csv_filename> (just used for error logging)
--- <taxon_list_id>
--- <min_row_to_process>
--- <max_row_to_process>
--- <filename_prefix> (the supplied image files have typically had an extra prefix in the name in comparison to what is in the spreadsheet's
+-- 1. <csv_filename> (just used for error logging)
+-- 2. <taxon_list_id>
+  -- Important note: This refers to the number in the row_num column which is the row number from the original spreadsheet,
+  -- it is NOT the row number in the table e.g. there could be just two rows left to process, but their row numbers could be 500 & 1000
+  -- so you must make sure that range is covered
+-- 3. <min_row_to_process>
+-- 4. <max_row_to_process>
+-- 5. <filename_prefix> (the supplied image files have typically had an extra prefix in the name in comparison to what is in the spreadsheet's
 -- bildnummer column. Specify what this prefix is using this tag.
 -- e.g Agaricus_altipes_00162_FHampe_hab.jpg is listed in the spreadsheet but the file is actually called Funga_Agaricus_altipes_00162_FHampe_hab.jpg
 -- In this case, replace the <filename_prefix> tag with Funga_
@@ -49,6 +52,8 @@ FOR image_and_details_to_import IN
     anmerkung 
   from dgfm.tbl_taxon_image_details dttid
 ) loop
+  -- Important note: This refers to the number in the row_num column which is the row number from the original spreadsheet,
+  -- it is NOT the row number in the table.
   IF (image_and_details_to_import.row_num >= <min_row_to_process> and image_and_details_to_import.row_num <= <max_row_to_process>) THEN
     -- Insert image if doesn't already exist
     BEGIN
@@ -63,8 +68,8 @@ FOR image_and_details_to_import IN
           join indicia.taxa t on t.id = ttl.taxon_id AND t.deleted=false
           -- regexp_replace allows all white space (such as tabs) to be removed, not just space characters
           AND 
-          (regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') = regexp_replace(t.taxon, '\s', '', 'g') || 
-           regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') || 'agg.' = regexp_replace(t.taxon, '\s', '', 'g'))
+          ((regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') = regexp_replace(t.taxon, '\s', '', 'g')) OR 
+           (regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art || 'agg.', '\s', '', 'g')  = regexp_replace(t.taxon, '\s', '', 'g')))
           where 
               ((trim('"' from cast(cast(tm.exif as json)->'bildnummer' as text)) IS NULL
               AND
@@ -79,8 +84,8 @@ FOR image_and_details_to_import IN
           (select taxon_meaning_id 
           from indicia.cache_taxa_taxon_lists 
           where taxon_list_id = <taxon_list_id> and 
-          (regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') || 
-           regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g') || 'agg.')),
+          ((regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art, '\s', '', 'g')) OR 
+           (regexp_replace(taxon, '\s', '', 'g')  = regexp_replace(image_and_details_to_import.taxRef_gattung || image_and_details_to_import.art || 'agg.', '\s', '', 'g')))),
           '<filename_prefix>' || image_and_details_to_import.bildnummer || '.jpg',
           -- Caption must be 100 characters max 
           CASE WHEN 
