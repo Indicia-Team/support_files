@@ -125,6 +125,116 @@ from dgfm.tbl_attribute_set_allocations dta
         );
       ELSE
       END IF;
+      -- This code only applies to attributes that include (95%) or (85%) in caption. We can comment this out as most of time not applicable.
+      -- Note this commented out code has not been run much before, so may require further testing.
+      /*IF (EXISTS (
+        select ttla.id 
+          from taxa_taxon_list_attributes ttla
+          join taxon_lists_taxa_taxon_list_attributes tlttla on tlttla .taxa_taxon_list_attribute_id = ttla.id AND tlttla.taxon_list_id=<taxon_list_id> AND tlttla.deleted=false
+          where ttla.caption = attribute_set_allocation_to_import.deu_attribute_name_shortened || ' (95%)' 
+          AND ttla.deleted=false 
+          AND reporting_category_id in (
+            select tt.id
+            from termlists_terms tt 
+            join terms t on t.id = tt.term_id AND t.term = attribute_set_allocation_to_import.deu_attribute_sub_area AND t.deleted=false
+            join termlists_terms tt_parent_area on tt_parent_area.id = tt.parent_id AND tt_parent_area.deleted=false
+            join terms t_parent_area on t_parent_area.id = tt_parent_area.term_id AND t_parent_area.term = attribute_set_allocation_to_import.deu_attribute_area AND t_parent_area.deleted=false
+            where tt.deleted=false  
+            ORDER BY ID desc limit 1
+          )
+          order by ttla.id desc limit 1))
+      THEN
+       insert into
+        indicia.attribute_sets_taxa_taxon_list_attributes
+        (
+            attribute_set_id,
+            taxa_taxon_list_attribute_id,
+            created_by_id,
+            created_on,
+            updated_by_id,
+            updated_on
+        )
+        values (
+            (select id from indicia.attribute_sets where title = attribute_set_names_array[idx] AND deleted=false order by id desc limit 1),
+            (
+              select ttla.id 
+              from taxa_taxon_list_attributes ttla
+              join taxon_lists_taxa_taxon_list_attributes tlttla on tlttla .taxa_taxon_list_attribute_id = ttla.id AND tlttla.taxon_list_id=<taxon_list_id> AND tlttla.deleted=false
+              where ttla.caption = attribute_set_allocation_to_import.deu_attribute_name_shortened || ' (95%)' 
+              AND ttla.deleted=false 
+              AND reporting_category_id in (
+                select tt.id
+                from termlists_terms tt 
+                join terms t on t.id = tt.term_id AND t.term = attribute_set_allocation_to_import.deu_attribute_sub_area AND t.deleted=false
+                join termlists_terms tt_parent_area on tt_parent_area.id = tt.parent_id AND tt_parent_area.deleted=false
+                join terms t_parent_area on t_parent_area.id = tt_parent_area.term_id AND t_parent_area.term = attribute_set_allocation_to_import.deu_attribute_area AND t_parent_area.deleted=false
+                where tt.deleted=false  
+                ORDER BY ID desc limit 1
+              )
+              order by ttla.id desc limit 1
+            ),
+            1,
+            now(),
+            1,
+            now()
+        );
+      ELSE
+      END IF;*/
+      /*IF (EXISTS (
+        select ttla.id 
+        from taxa_taxon_list_attributes ttla
+        join taxon_lists_taxa_taxon_list_attributes tlttla on tlttla .taxa_taxon_list_attribute_id = ttla.id AND tlttla.taxon_list_id=<taxon_list_id> AND tlttla.deleted=false
+        where 
+        (ttla.caption = attribute_set_allocation_to_import.deu_attribute_name_shortened || ' (80%)')
+        AND ttla.deleted=false 
+        AND reporting_category_id in (
+          select tt.id
+          from termlists_terms tt 
+          join terms t on t.id = tt.term_id AND t.term = attribute_set_allocation_to_import.deu_attribute_sub_area AND t.deleted=false
+          join termlists_terms tt_parent_area on tt_parent_area.id = tt.parent_id AND tt_parent_area.deleted=false
+          join terms t_parent_area on t_parent_area.id = tt_parent_area.term_id AND t_parent_area.term = attribute_set_allocation_to_import.deu_attribute_area AND t_parent_area.deleted=false
+          where tt.deleted=false  
+          ORDER BY ID desc limit 1
+        )
+        order by ttla.id desc limit 1))
+      THEN
+        insert into
+        indicia.attribute_sets_taxa_taxon_list_attributes
+        (
+            attribute_set_id,
+            taxa_taxon_list_attribute_id,
+            created_by_id,
+            created_on,
+            updated_by_id,
+            updated_on
+        )
+        values (
+            (select id from indicia.attribute_sets where title = attribute_set_names_array[idx] AND deleted=false order by id desc limit 1),
+            (
+              select ttla.id 
+              from taxa_taxon_list_attributes ttla
+              join taxon_lists_taxa_taxon_list_attributes tlttla on tlttla .taxa_taxon_list_attribute_id = ttla.id AND tlttla.taxon_list_id=<taxon_list_id> AND tlttla.deleted=false
+              where 
+              (ttla.caption = attribute_set_allocation_to_import.deu_attribute_name_shortened || ' (80%)')
+              AND ttla.deleted=false 
+              AND reporting_category_id in (
+                select tt.id
+                from termlists_terms tt 
+                join terms t on t.id = tt.term_id AND t.term = attribute_set_allocation_to_import.deu_attribute_sub_area AND t.deleted=false
+                join termlists_terms tt_parent_area on tt_parent_area.id = tt.parent_id AND tt_parent_area.deleted=false
+                join terms t_parent_area on t_parent_area.id = tt_parent_area.term_id AND t_parent_area.term = attribute_set_allocation_to_import.deu_attribute_area AND t_parent_area.deleted=false
+                where tt.deleted=false  
+                ORDER BY ID desc limit 1
+              )
+              order by ttla.id desc limit 1
+            ),
+            1,
+            now(),
+            1,
+            now()
+        );
+      ELSE
+      END IF;*/
     ELSE
     END IF;   
     idx := idx + 1;
