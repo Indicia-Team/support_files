@@ -10,7 +10,7 @@ ORDER BY tp.external_key, tp.taxon_list_id, cttlcheck.allow_data_entry DESC;
 CREATE INDEX ix_master_list_paths ON master_list_paths(external_key);
 
 SELECT DISTINCT ('"' || t.search_code
-    || '": "' || replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(
+    || '": "' || replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(
     t.taxon
     || '~' || coalesce(t.authority, '')
     || '~' || cttl.external_key
@@ -43,7 +43,8 @@ SELECT DISTINCT ('"' || t.search_code
   E'\u0096', '-'),
   E'\u008A', 'Š'),
   E'\u009A', 'š'),
-  E'\u009c', 'œ') || '"') AS taxon_data
+  E'\u009C', 'œ'),
+  E'\u009E', 'ž') || '"') AS taxon_data
 FROM cache_taxa_taxon_lists cttl
 JOIN taxa_taxon_lists ttl ON ttl.id=cttl.id AND ttl.deleted=false
 JOIN taxa t ON t.id=ttl.taxon_id AND t.deleted=false
