@@ -561,53 +561,21 @@ To update the taxa.yml file with a fresh copy of the data:
 * Open the queries/prepare-taxa-lookup.sql file in pgAdmin, connecting to an
   Indicia database that has the UKSI dataset loaded.
 * Search and replace <taxon_list_id> with the ID of the UKSI list. If there are
-  multiple lists then change this filter to an `IN (...)` clause. For the BRC
-  warehouse1 for example, this filter is set to `IN (15, 251, 258, 260, 261, 265)`
+  multiple lists then change this filter to an ` IN (...)` clause. For the BRC
+  warehouse1 for example, this filter is set to ` IN (15, 251, 258, 260, 261, 265)`
   to support use of the UK Species Inventory and the various lists for ABLE as
   well as the list for MammalNet-Europe.
-* In pgAdmin 3:
-  * Ensure that your search_path is set to indicia, public, e.g. by running the
-    query below, or ensuring it is your logged in user's default search path:
-    ```
-    set search_path=indicia, public;
-    ```
-
-  * Select the “Execute query, write result to file” toolbutton.
-  * On the options dialog, uncheck the Column names option. Set the column
-    separator to a colon followed by a space (": ") and the quote char to a
-    double quote. Set the output file to Elasticsearch/data/taxa.yml in the
-    working folder.
-  * Open the resulting file in a text editor and search and replace "" for \".
-* In pgAdmin 4:
-  * If indicia, public is not your logged in users default search path, then
-    edit the query to add "indicia." in front of all the table names (use a
-    different prefix if your schema is different).
-  * Click the Download as CSV button. Note that I had problems using this under
-    Internet Explorer with Enhanced Security Configuration enabled so ending up
-    using Chrome instead.
-  * Rename the downloaded file to taxa.yml and replace the file in
-    Elasticsearch/data in your working folder.
-  * Edit the file in a text editor. Remove the first row (column titles) and
-    perform the following replacements:
-    ```
-    * "," with ": "
-    * \ with \\
-    * """ with "\"
-    * "" with \"
-    * Regexp \u0082 with ,
-    * Regexp \u0084 with ,,
-    * Regexp \u0086 with †
-    * Regexp \u0090 with empty string
-    * Regexp \u0092 with '
-    * Regexp \u0093 with \"
-    * Regexp \u0094 with \"
-    * Regexp \u0096 with -
-    * Regexp \u008A with Š
-    * Regexp \u009A with š
-    * Regexp \u009c with œ
-    * Regexp u\u009Ei with ůži
-    * Regexp \u009E with ž
-    ```
+* In pgAdmin 4, if indicia, public is not your logged in users default search path, then
+  edit the query to add "indicia." in front of all the table names (use a
+  different prefix if your schema is different).
+* In pgAdmin's preferences, set CSV/Text output CSV Quoting option to "None".
+* Click the Download as CSV button. Note that I had problems using this under
+  Internet Explorer with Enhanced Security Configuration enabled so ending up
+  using Chrome instead.
+* Rename the downloaded file to taxa.yml and replace the file in
+  Elasticsearch/data in your working folder.
+* Edit the file in a text editor. Remove the first row (column titles) and
+  save it.
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above to download the output from the prepare-taxon-paths.sql file.

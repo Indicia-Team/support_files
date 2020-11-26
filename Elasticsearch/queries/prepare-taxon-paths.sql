@@ -1,4 +1,4 @@
-select cttl.external_key, string_agg(cttlp.external_key, ',' order by cttlp.taxon_rank_sort_order)
+select '"' || cttl.external_key || '": "' || string_agg(cttlp.external_key, ',' order by cttlp.taxon_rank_sort_order) || '"'
 from cache_taxa_taxon_lists cttl
 join master_list_paths ctp on ctp.external_key=cttl.external_key
 join cache_taxa_taxon_lists cttlp on cttlp.taxon_meaning_id=ANY(ctp.path)
