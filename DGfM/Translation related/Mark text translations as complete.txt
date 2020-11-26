@@ -1,0 +1,22 @@
+-- Set the language as 'trn' on text values we know have been translated
+-- These are treated as non-language specific (so Drupal does the translation)
+-- but we also know they have been handled.
+update indicia.taxa_taxon_list_attribute_values
+set source_id = 36730, updated_on = now(), updated_by_id = 1
+where text_value in
+('pointed',
+'often somewhat asymmetrical',
+'paler than marginal hairs',
+'brown to dark reddish-brown',
+'subhyaline, pale brownish to brown',
+'hyaline',
+'pale brownish',
+'paler',
+'yellow-brown',
+'yellow-brown to reddish-brown',
+'yellow brown to reddish brown',
+'yellow brown with dark reddish-brown walls',
+'yellow brown',
+'pale brown');
+
+

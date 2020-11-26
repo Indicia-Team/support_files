@@ -1,0 +1,14 @@
+-- Attempt to remove extra spaces that might of crept into the image names in the spreadsheets that
+-- are not present in the actual image names on the disc
+
+update indicia.taxon_media
+set path = replace(path,' _','_');
+
+update indicia.taxon_media
+set path = replace(path,' _','_');
+
+update indicia.taxon_media
+set path = replace(path,'_ ','_');
+
+update indicia.taxon_media
+set path = replace(path,'_ ','_');

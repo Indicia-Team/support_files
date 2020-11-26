@@ -121,5 +121,19 @@ jQuery(document).ready(function($) {
 	$('#tab-ochrana-tab').find("span:contains(Ochrana)").text("Stav ohrožení");
 });
 
+// Translate text fields (including comments) returned from report
+// by passing them into Drupal's translator.
+// Note: these translations must be imported using Drupal's translation facility first
+// as Drupal doesn't know to register text values returned from the report for translation.
+jQuery(window).on('load', function() {
+  var stringToTranslate;
+  jQuery('.text-translate').each(function( index ) {
+	if (jQuery(this).text()) {
+	  stringToTranslate = jQuery(this).text().trim();
+ 	  jQuery(this).text(Drupal.t(stringToTranslate));
+ 	}
+  });
+}); 
+
 
  

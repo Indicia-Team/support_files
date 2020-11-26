@@ -272,10 +272,17 @@ jQuery(document).ready(function($) {
     $('.spectrum-input').change(function() {
       var idSafe = $(this).attr('data-for').replace(':', '\\:');
       var input = $('#' + idSafe);
-      $(input).val(
-        $('input[data-for="' + idSafe + '"][data-idx="1"]').val() + ';' +
-        $('input[data-for="' + idSafe + '"][data-idx="2"]').val()
-      );
+      if ($('input[data-for="' + idSafe + '"][data-idx="1"]').val() || 
+      	  $('input[data-for="' + idSafe + '"][data-idx="2"]').val()) {
+        $(input).val(
+          $('input[data-for="' + idSafe + '"][data-idx="1"]').val() + ';' +
+          $('input[data-for="' + idSafe + '"][data-idx="2"]').val()
+        );
+      } else {
+      	// Don't want to leave a hanging semi-colon in database, as that would cause attribute caption to show
+      	// for blank value on description
+        $(input).val('');
+      }
     });
   });
 });
