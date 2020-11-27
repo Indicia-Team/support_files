@@ -1,9 +1,8 @@
 
 -- IMPORTANT. This script assumes that the external key for the Area, sub-area termlist is 'indicia:area_sub_area'. If needed this can be set in the 
 -- database first.
---To run this code, you will need to do replacements of,
---<areas_tl_id>
-
+-- To run this code, you will need to do replacements of,
+-- <areas_tl_id>
 
 set search_path TO indicia, public;
 
@@ -35,7 +34,6 @@ FOR area_sub_area_to_import IN
   THEN
     -- It may seem logical to check area!=null, however don't do this for Area or we could leave sub-area hanging if it doesn't have a parent (althought there should be no nulls ideally).
     -- Data should be checked before import that it is correct without nulls
-    --AVB if we end up limiting this to 200, doesn't that mean we end up need to put the same limit every time we check an area in where claus. Try and remove the limit and see if it still works
     perform insert_term(LEFT(TRIM(BOTH from area_sub_area_to_import.deu_attribute_area),200),'deu',null,'indicia:area_sub_area');
     IF (area_sub_area_to_import.gb_attribute_area != 'null' AND area_sub_area_to_import.gb_attribute_area IS NOT NULL) THEN
         perform insert_term(LEFT(TRIM(BOTH from area_sub_area_to_import.gb_attribute_area),200),'eng',null,'indicia:area_sub_area');
