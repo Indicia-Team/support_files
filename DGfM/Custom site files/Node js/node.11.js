@@ -133,6 +133,13 @@ jQuery(window).on('load', function() {
  	  jQuery(this).text(Drupal.t(stringToTranslate));
  	}
   });
+
+  jQuery(jQuery("span:contains('hladký') ").find('.text-translate')).each(function( index ) {
+	if (jQuery(this).closest('dd').prev().html().trim() === 'kapilicium (vlášení)' &&
+		jQuery(this).prev().html().trim() === 'struktura povrchu') {
+	  jQuery("span:contains('hladký') ").find('.text-translate').html('hladká');
+	}
+  });
 }); 
 
 
