@@ -2,10 +2,10 @@ jQuery(document).ready(function($) {
   // Don't want the attribute that holds whether a description is finished to be visible
   $('#ctrl-wrap-taxAttr-2197').hide();
   
-  // Hide the Popularname fields as the common names field should be used instead
-  $("fieldset:contains('Populärname')").hide();
-  $("fieldset:contains('vernacular name')").hide();
-  $("fieldset:contains('jméno v národním jazyce')").hide();
+  // Remove the Popularname fields as the common names field should be used instead
+  $("fieldset:contains('Populärname')").remove();
+  $("fieldset:contains('vernacular name')").remove();
+  $("fieldset:contains('jméno v národním jazyce')").remove();
     
   $('#finish-button').prop('value', 'Finish description');
   // On page load if the description is already finished, then make page read-only
