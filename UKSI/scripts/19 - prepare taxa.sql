@@ -20,6 +20,7 @@ SELECT DISTINCT NULL::integer AS id,
   COALESCE(upn.freshwater_flag, false) AS freshwater_flag,
   COALESCE(upn.terrestrial_flag, false) AS terrestrial_flag,
   COALESCE(upn.non_native_flag, false) AS non_native_flag,
+  upn.organism_key,
   false AS is_new,
   false AS changed
 INTO uksi.prepared_taxa

@@ -20,6 +20,7 @@ SET taxon=pt.taxon,
   freshwater_flag=pt.freshwater_flag,
   terrestrial_flag=pt.terrestrial_flag,
   non_native_flag=pt.non_native_flag,
+  organism_key=pt.organism_key,
   updated_on=now(),
   updated_by_id=(select updated_by_user_id from uksi.uksi_settings)
 FROM uksi.prepared_taxa pt
