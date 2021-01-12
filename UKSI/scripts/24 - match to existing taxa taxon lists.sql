@@ -19,10 +19,10 @@ SET id=ttl.id,
 FROM taxa t
 JOIN taxa_taxon_lists ttl
   ON ttl.taxon_id=t.id
-  AND ttl.taxon_list_id=pttl.taxon_list_id
   AND ttl.deleted=false
 WHERE t.search_code=pttl.input_taxon_version_key
-AND t.deleted=false;
+AND t.deleted=false
+AND ttl.taxon_list_id=pttl.taxon_list_id;
 
 -- Because there might be mistakes in the old data, we need to make sure any cases where a taxon meaning ID is shared
 -- across names which are pointing to different concepts do end up with different taxon meanings IDs. This particularly
