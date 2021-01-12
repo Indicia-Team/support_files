@@ -22,7 +22,8 @@ SELECT DISTINCT null::integer AS id,
   null::boolean as orig_preferred,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
-  null::integer AS orig_common_taxon_id
+  null::integer AS orig_common_taxon_id,
+  not pn.redundant as allow_data_entry
 INTO uksi.prepared_taxa_taxon_lists
 FROM uksi.prepared_taxa pt
 JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key;
@@ -47,7 +48,8 @@ SELECT DISTINCT null::integer AS id,
   null::boolean as orig_preferred,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
-  null::integer AS orig_common_taxon_id
+  null::integer AS orig_common_taxon_id,
+  not pn.redundant as allow_data_entry
 FROM uksi.prepared_taxa pt
 JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key
 -- Find names already on each child list

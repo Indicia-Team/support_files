@@ -11,7 +11,7 @@ SET taxon_list_id=pttl.taxon_list_id,
   common_taxon_id=pttl.common_taxon_id,
   updated_on=now(),
   updated_by_id=(select updated_by_user_id from uksi.uksi_settings),
-  allow_data_entry=true
+  allow_data_entry=pttl.allow_data_entry
 FROM uksi.prepared_taxa_taxon_lists pttl
 WHERE pttl.id=ttl.id
 AND pttl.changed=true

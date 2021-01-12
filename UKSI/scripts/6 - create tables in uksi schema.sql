@@ -20,7 +20,8 @@ CREATE TABLE preferred_names
   freshwater_flag boolean,
   terrestrial_flag boolean,
   non_native_flag boolean,
-  sort_code integer
+  sort_code integer,
+  redundant boolean
 )
 WITH (
   OIDS=FALSE
@@ -43,7 +44,8 @@ CREATE TABLE all_names
   output_group_key character(16),
   rank character varying,
   attribute character varying(100),
-  short_name character varying
+  short_name character varying,
+  redundant boolean
 )
 WITH (
   OIDS=FALSE

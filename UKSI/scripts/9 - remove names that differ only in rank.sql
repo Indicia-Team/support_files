@@ -16,7 +16,10 @@ DELETE FROM all_names WHERE input_taxon_version_key IN (
     AND (lower(replace(l2.authority, '-', ' ')) = lower(replace(l1.authority, '-', ' ')) OR l1.authority IS NULL)
     -- different rank
     AND l2.rank<>l1.rank
+    -- only count this name if not redundant
+		AND l2.redundant=false
   -- join to find the rank of the preferred name to make sure it is a different rank to the one we are about to delete
   JOIN all_names pref ON pref.input_taxon_version_key=l1.recommended_taxon_version_key AND pref.rank<>l1.rank
   WHERE l1.recommended_taxon_version_key<>l1.input_taxon_version_key
+  AND l1.redundant=false
 );

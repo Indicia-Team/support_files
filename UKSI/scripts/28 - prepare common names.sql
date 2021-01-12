@@ -16,6 +16,8 @@ JOIN uksi.prepared_taxa t on t.id=ttl.taxon_id
 JOIN uksi.all_names an
   ON an.recommended_taxon_version_key=t.external_key
   AND an.taxon_type='V' AND an.language='en'
+  -- No redundant names.
+  AND an.redundant=false
 JOIN uksi.prepared_taxa tc on tc.search_code=an.input_taxon_version_key
 JOIN uksi.prepared_taxa_taxon_lists ttlc on ttlc.taxon_id=tc.id and ttlc.taxon_list_id=ttl.taxon_list_id
 -- Find any common names explicitly determined by tcn_duplicates.
