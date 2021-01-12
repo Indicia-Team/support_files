@@ -115,7 +115,11 @@ HELP;
     // Fake define so we can load kohana config.
     define('SYSPATH', 0);
     $config = [];
-    require_once $settings['warehouse-path'] . 'application/config/database.php';
+    $dbConfigFilePath = $settings['warehouse-path'] . 'application' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
+    if (!file_exists($dbConfigFilePath)) {
+      die ('Database config file not found at ' . $dbConfigFilePath);
+    }
+    require_once $dbConfigFilePath;
 
     // Connect to PostgreSQL.
     $dbConf = $config['default']['connection'];
