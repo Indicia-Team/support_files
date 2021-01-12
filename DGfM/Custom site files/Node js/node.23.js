@@ -2,10 +2,10 @@ jQuery(document).ready(function($) {
   // Don't want the attribute that holds whether a description is finished to be visible
   $('#ctrl-wrap-taxAttr-2197').hide();
   
-  // Hide the Popularname fields as the common names field should be used instead
-  $("fieldset:contains('Populärname')").hide();
-  $("fieldset:contains('vernacular name')").hide();
-  $("fieldset:contains('jméno v národním jazyce')").hide();
+  // Remove the Popularname fields as the common names field should be used instead
+  $("fieldset:contains('Populärname')").remove();
+  $("fieldset:contains('vernacular name')").remove();
+  $("fieldset:contains('jméno v národním jazyce')").remove();
     
   $('#finish-button').prop('value', 'Finish description');
   // On page load if the description is already finished, then make page read-only
@@ -64,11 +64,11 @@ jQuery(document).ready(function($) {
   //Hide the delete button, so contributors can't delete taxa
   $('#delete-button').hide();
   
-  //Hide redlist fields as these won't be edited
-  $('#ctrl-wrap-taxAttr-1076').hide();
-  $('#ctrl-wrap-taxAttr-1077').hide();
-  $('#ctrl-wrap-taxAttr-1920').hide();
-  $('#ctrl-wrap-taxAttr-1921').hide();
+  // Remove redlist fields as these won't be edited
+  $('#ctrl-wrap-taxAttr-1076').remove();
+  $('#ctrl-wrap-taxAttr-1077').remove();
+  $('#ctrl-wrap-taxAttr-1920').remove();
+  $('#ctrl-wrap-taxAttr-1921').remove();
   
   //These ones are hidden for now but should be read-only
   $('#ctrl-wrap-taxa_taxon_list-parent_id').hide();
