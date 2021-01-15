@@ -23,10 +23,11 @@ SELECT DISTINCT null::integer AS id,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
   null::integer AS orig_common_taxon_id,
-  not pn.redundant as allow_data_entry
+  not an.redundant as allow_data_entry
 INTO uksi.prepared_taxa_taxon_lists
 FROM uksi.prepared_taxa pt
-JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key;
+JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key
+JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code;
 
 -- Add the existing names from child lists
 INSERT INTO uksi.prepared_taxa_taxon_lists
@@ -49,9 +50,10 @@ SELECT DISTINCT null::integer AS id,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
   null::integer AS orig_common_taxon_id,
-  not pn.redundant as allow_data_entry
+  not an.redundant as allow_data_entry
 FROM uksi.prepared_taxa pt
 JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key
+JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code
 -- Find names already on each child list
 JOIN taxa t ON t.search_code=pt.search_code
 JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false
