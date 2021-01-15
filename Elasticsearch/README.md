@@ -574,8 +574,8 @@ To update the taxa.yml file with a fresh copy of the data:
   using Chrome instead.
 * Rename the downloaded file to taxa.yml and replace the file in
   Elasticsearch/data in your working folder.
-* Edit the file in a text editor. Remove the first row (column titles) and
-  save it.
+* Edit the file in a text editor. Remove the first row (column titles), then
+  ensure the line endings are set to LF and save it.
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above to download the output from the prepare-taxon-paths.sql file.
