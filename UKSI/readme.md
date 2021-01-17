@@ -11,6 +11,8 @@ Preparation:
 * **Before running the script, please ensure that your warehouse scheduled tasks
   have been run and then stopped to ensure everything is up to date.** See the
   [scheduled tasks documentation](http://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/scheduled-tasks.html?highlight=scheduled).
+* **Double check all work queue tasks are processed (work_queue table empty). If not, run the 
+  scheduled tasks again until they are.
 * **Back up your database!**
 
 ```
