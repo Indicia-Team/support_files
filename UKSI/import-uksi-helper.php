@@ -275,16 +275,6 @@ HELP;
     pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='cache_builder'");
     // @todo Consider if the following is best way to prevent data cleaner firing a load of messages
     pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='data_cleaner'");
-    $ensurePreferredIdsUpdated = <<<SQL
-UPDATE cache_occurrences_functional o
-SET
-  preferred_taxa_taxon_list_id=cttl.preferred_taxa_taxon_list_id,
-  taxa_taxon_list_external_key=cttl.external_key
-FROM cache_taxa_taxon_lists cttl
-WHERE cttl.id=o.taxa_taxon_list_id
-AND (o.preferred_taxa_taxon_list_id <> cttl.preferred_taxa_taxon_list_id OR o.taxa_taxon_list_external_key <> cttl.external_key)
-SQL;
-    pg_query($conn, $ensurePreferredIdsUpdated);
   }
 
 }

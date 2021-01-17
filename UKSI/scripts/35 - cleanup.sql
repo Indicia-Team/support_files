@@ -104,24 +104,6 @@ FROM taxa_taxon_lists ttl
 WHERE ttl.id=cts.taxa_taxon_list_id
 AND cts.taxon_meaning_id<>ttl.taxon_meaning_id;
 
--- Temporary indexes will help
-CREATE INDEX ix_temp ON cache_occurrences_functional(taxon_meaning_id);
-CREATE INDEX ix_temp2 ON cache_occurrences_functional(taxa_taxon_list_id);
-UPDATE cache_occurrences_functional co
-SET taxon_meaning_id=ttl.taxon_meaning_id
-FROM taxa_taxon_lists ttl
-WHERE ttl.id=co.taxa_taxon_list_id
-AND co.taxon_meaning_id<>ttl.taxon_meaning_id;
-DROP INDEX ix_temp;
-DROP INDEX ix_temp2;
-
--- Now, it should hopefully be safe to clean up old meanings.
-DELETE FROM taxon_meanings WHERE id IN (
-  SELECT tm.id FROM taxon_meanings tm
-  LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=tm.id
-  WHERE ttl.id IS NULL
-);
-
 -- Verification rules may also link by TVKs which are no-longer preferred.
 UPDATE verification_rule_metadata vrm
 SET value=t.external_key
