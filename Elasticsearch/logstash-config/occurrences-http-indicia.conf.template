@@ -322,6 +322,8 @@ filter {
       "attr_stage" => "[occurrence][life_stage]"
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
       "attr_sex_stage_count_exact" => "[occurrence][individual_count]"
+      "attr_behaviour" => "[occurrence][behaviour]"
+      "attr_reproductive_condition" => "[occurrence][attr_reproductive_condition]"
       "zero_abundance" => "[occurrence][zero_abundance]"
       "comment" => "[occurrence][occurrence_remarks]"
       "media_list" => "[occurrence][media]"

@@ -432,6 +432,12 @@ table.
 **Warehouse field**|`websites.title`
 **Description**|Title of the Indicia website registration on the warehouse.
 
+`occurrence.behaviour`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_attribute_value.*`
+**Description**|Behaviour shown by the subject (text).
+
 `occurrence.media`||
 -----|-----
 **Data type**|nested
@@ -467,6 +473,12 @@ table.
 **Data type**|string
 **Warehouse field**|`occurrence_attribute_value.*`
 **Description**|Abundance information (text or numeric).
+
+`occurrence.reproductive_condition`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_attribute_value.*`
+**Description**|Reproductive condition of the biological individual (text).
 
 `occurrence.source_system_key`||
 -----|-----
