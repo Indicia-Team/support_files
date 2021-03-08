@@ -8,15 +8,15 @@ jQuery(document).ready(function () {
   jQuery('#level-select').on('change', function() {
 
     if (jQuery(this).val() == 'wildflower-option') {
-		  window.location="node/wildflower-data-entry?group_id=" + urlParams.get('group_id');
+		  window.location="wildflower-data-entry?group_id=" + urlParams.get('group_id');
     }
     
     if (jQuery(this).val() == 'indicator-option') {
-		  window.location="node/indictor-data-entry?group_id=" + urlParams.get('group_id');
+		  window.location="indicator-data-entry?group_id=" + urlParams.get('group_id');
     }
 
 	 if (jQuery(this).val() == 'inventory-option') {
-		 window.location="node/inventory-data-entry?group_id=" + urlParams.get('group_id');
+		 window.location="inventory-data-entry?group_id=" + urlParams.get('group_id');
 	 }
       
   });
