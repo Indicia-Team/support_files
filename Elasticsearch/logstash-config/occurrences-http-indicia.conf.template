@@ -293,6 +293,8 @@ filter {
       "taxon_key" => "[taxon][taxon_id]"
       "taxa_taxon_list_id" => "[taxon][taxa_taxon_list_id]"
       "taxon_meaning_id" => "[taxon][taxon_meaning_id]"
+      "taxon_list_id" => "[taxon][taxon_list][id]"
+      "taxon_list_title" => "[taxon][taxon_list][title]"
       "taxon_name" => "[taxon][taxon_name]"
       "taxon_authority" => "[taxon][taxon_name_authorship]"
       "accepted_taxon_key" => "[taxon][accepted_taxon_id]"
