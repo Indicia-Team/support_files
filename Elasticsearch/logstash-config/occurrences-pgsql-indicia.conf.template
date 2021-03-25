@@ -115,7 +115,11 @@ input {
           ELSE null
           END as media_data,
           cttl.taxon_list_id,
-          cttl.taxon_list_title
+          cttl.taxon_list_title,
+          cttl.taxon_group_id,
+          cttl.taxon_group_title as taxon_group,
+          cttl.taxon_group_id as input_taxon_group_id,
+          cttl.taxon_group_title as input_taxon_group
         from cache_occurrences_functional o
         join cache_occurrences_nonfunctional onf on onf.id=o.id
         join occurrences occ on occ.id=o.id and occ.deleted=false
@@ -375,6 +379,8 @@ filter {
       "accepted_taxon_authority" => "[taxon][accepted_name_authorship]"
       "taxon_group_id" => "[taxon][group_id]"
       "taxon_group" => "[taxon][group]"
+      "input_taxon_group_id" => "[taxon][input_group_id]"
+      "input_taxon_group" => "[taxon][input_group]"
       "common_name" => "[taxon][vernacular_name]"
       "taxon_rank" => "[taxon][taxon_rank]"
       "taxon_rank_sort_order" => "[taxon][taxon_rank_sort_order]"

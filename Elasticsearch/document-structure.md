@@ -532,13 +532,25 @@ table.
 -----|-----
 **Data type**|string
 **Warehouse field**|`taxon_group.title`
-**Description**|Output group label for the taxon (e.g. terrestrial mammal).
+**Description**|Output group label for the taxon (e.g. terrestrial mammal, from the taxon as mapped to the mastter list).
 
 `taxon.group_id`||
 -----|-----
 **Data type**|string
 **Warehouse field**|`taxon_group.id`
-**Description**|Output group ID for the taxon.
+**Description**|Output group ID for the taxon (from the taxon as mapped to the mastter list).
+
+`taxon.input_group`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxon_group.title`
+**Description**|Input group label for the taxon (label from the taxon list the record was input against).
+
+`taxon.input_group_id`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxon_group.id`
+**Description**|Input group ID for the taxon (ID from the taxon list the record was input against).
 
 `taxon.higher_taxon_ids`||
 -----|-----
@@ -618,11 +630,17 @@ table.
 **Warehouse field**|`taxa.search_code`
 **Description**|Key of the given taxon (e.g. a taxon version key).
 
-`taxon.taxa_taxon_list_id`||
+`taxon.taxon_meaning_id`||
 -----|-----
 **Data type**|number
 **Warehouse field**|`taxon_meanings.id`
-**Description**|ID given to this taxon concept in the taxon_meaningsß table.
+**Description**|ID given to this taxon concept in the taxon_meanings table.
+
+`taxon.taxon_list_id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`taxon_list.id`
+**Description**|ID to the taxon list the record was input against.
 
 `taxon.taxon_name`||
 -----|-----

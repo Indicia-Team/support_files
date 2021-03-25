@@ -302,6 +302,8 @@ filter {
       "accepted_taxon_authority" => "[taxon][accepted_name_authorship]"
       "taxon_group_id" => "[taxon][group_id]"
       "taxon_group" => "[taxon][group]"
+      "input_taxon_group_id" => "[taxon][input_group_id]"
+      "input_taxon_group" => "[taxon][input_group]"
       "common_name" => "[taxon][vernacular_name]"
       "taxon_rank" => "[taxon][taxon_rank]"
       "taxon_rank_sort_order" => "[taxon][taxon_rank_sort_order]"
