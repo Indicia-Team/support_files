@@ -1,13 +1,14 @@
 jQuery(document).ready(function () {
   //Code to automatically select required page links when user selects project type.
+  
+  //Always hide the links management list, as this is setup automatically
+  jQuery('#group-pages-fieldset').hide();
 
   // Get group_id from URL to check if we are editing as we don't want to auto-set options when editing
   const urlParamsString = window.location.search;
   const urlParams = new URLSearchParams(urlParamsString);
   
   if (!urlParams.get('group_id')) {
-  	//Hide the links management list, as this is setup automatically
-  	jQuery('#group-pages-fieldset').hide();
   	// Setup links as mode is selected
   	jQuery('#group\\:group_type_id').on('change', function() {
   	  //NPMS Mode
