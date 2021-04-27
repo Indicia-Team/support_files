@@ -60,3 +60,11 @@ Notes on running the script:
 
 For notes on regenerating the text files containing the UKSI data, see the
 [documentation on Read the Docs](http://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/importing-uksi.html?highlight=uksi).
+
+## Separate database and web server?
+The above instructions apply if PostgreSQL is running on the same server as the Warehouse web application. If they are on different servers then 
+* Copy the UKSI folder to both servers,
+* Run the PHP script on the Warehouse web server with `--data-path=/absolute/path/to/UKSI/on/postgres/server`
+
+If the data-path is incorrect a file not found error will arise.
+Postgres must have read permissions to the UKSI files or a permission denied error will occur.
