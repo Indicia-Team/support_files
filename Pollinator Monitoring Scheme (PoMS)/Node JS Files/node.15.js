@@ -1,19 +1,7 @@
-jQuery(document).ready(function($) {
-  $('#dynamic-survey_id option[value="638"]').hide();
-  $('#dynamic-survey_id option[value="641"]').hide();
-
-  // If the multi-sample scenario, when user selects their sample on the popup, hide the selection
-  // and show the data.
-  // Need Live as the html we are selecting is beuilt after
-  jQuery( ".sample-link" ).live( "click", function() {
-    jQuery('#multi-feature-selection-panel').hide();
-    jQuery("#sample-" + jQuery(this).prop('id').replace(/\D/g, "") + "-panel").show();
-  });
-});    
-
 function display_info_popup(features) { 
   // Don't display popup if user clicks on nothing on the map
   if (features && features[0].attributes['sample_id']) {
+
     var labelsArray = ['Beetles', 'Bumblebees', 'Butterflies and moths', 'Honeybees', 'Hoverflies', 'Other flies', 'Other insects',
     'Small insects', 'Solitary bees', 'Wasps', 'Start time', 'Cover within patch', 'Flowers counted', 'Flowers unit', 'Patch context',
     'Cloud cover', 'Wind', 'Patch sunshine'];
@@ -41,9 +29,9 @@ function display_info_popup(features) {
       popup_html = popup_html + '<span><em>Count details</em></span>';
       // For each data label we need, display a label along with its data item provide the data exists
       for (var idx3 = 0; idx3 < labelsArray.length; idx3++) {
-        if (features[idx2].attributes[labelsArray[idx3]]) {
+        if (features[idx2].attributes[labelsArray[idx3].toLowerCase().replace(/\s/g, "_")]) {
           popup_html = 
-          popup_html + "<br>" + labelsArray[idx3] + ': ' + features[idx2].attributes[labelsArray[idx3]];
+          popup_html + "<br>" + labelsArray[idx3] + ': ' + features[idx2].attributes[labelsArray[idx3].toLowerCase().replace(/\s/g, "_")];
         }
       }
       popup_html = popup_html + '</div>';
@@ -55,3 +43,16 @@ function display_info_popup(features) {
     }
   }
 }
+
+(function($){
+  $(function(){
+  $( "body" ).on( "click", ".sample-link", function() {
+    $('#multi-feature-selection-panel').hide();
+    $("#sample-" + $(this).prop('id').replace(/\D/g, "") + "-panel").show();
+  });
+
+  $('#dynamic-survey_id option[value="638"]').hide();
+  $('#dynamic-survey_id option[value="641"]').hide();
+  });
+})(jQuery);
+
