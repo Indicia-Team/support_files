@@ -52,7 +52,6 @@ function display_info_popup(features) {
   });
 
   $('#dynamic-survey_id option[value="638"]').hide();
-  $('#dynamic-survey_id option[value="641"]').hide();
   });
 })(jQuery);
 
