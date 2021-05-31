@@ -58,7 +58,7 @@ FOR taxon_record IN
 LOOP
 FOR attribute_record IN 
     SELECT ttla.id,ttla.caption,
-    coalesce(ctt.term,ttlav.text_value,int_value::text,float_value::text,date_start_value || ', ' || date_end_value,'') ||
+    coalesce(ctt_german.term,ttlav.text_value,int_value::text,float_value::text,date_start_value || ', ' || date_end_value,'') ||
     CASE WHEN upper_value IS NOT NULL THEN ', ' || upper_value ELSE '' END AS attribute_value
     , ctt_area.term as area, ctt_sub_area.term as sub_area
     FROM indicia.taxa_taxon_list_attributes ttla
@@ -68,6 +68,10 @@ FOR attribute_record IN
     JOIN indicia.cache_taxa_taxon_lists cttl_meaning on cttl_meaning.id = ttlav.taxa_taxon_list_id AND cttl_meaning.taxon_list_id=1 
     JOIN indicia.cache_taxa_taxon_lists cttl_preferred on cttl_preferred.taxon_meaning_id = cttl_meaning.taxon_meaning_id  AND cttl_preferred.preferred=true AND
         cttl_meaning.id = taxon_record.cycling_taxa_taxon_list_id
+
+    JOIN indicia.cache_termlists_terms ctt_meaning on ctt_meaning.id = ttlav.int_value
+    JOIN indicia.cache_termlists_terms ctt_german on ctt_german.meaning_id = ctt_meaning.meaning_id  AND ctt_german.language_iso='deu'
+
     LEFT JOIN indicia.cache_termlists_terms ctt on ctt.id = ttlav.id
     JOIN indicia.taxon_lists_taxa_taxon_list_attributes tlttla on tlttla.taxa_taxon_list_attribute_id=ttla.id and tlttla.taxon_list_id = 1 and tlttla.deleted=false and tlttla.id not in (30,33,2134,2132,2133)
     JOIN indicia.cache_termlists_terms ctt_sub_area on ctt_sub_area.id = ttla.reporting_category_id 
