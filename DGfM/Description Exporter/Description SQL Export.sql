@@ -69,8 +69,8 @@ FOR attribute_record IN
     JOIN indicia.cache_taxa_taxon_lists cttl_preferred on cttl_preferred.taxon_meaning_id = cttl_meaning.taxon_meaning_id  AND cttl_preferred.preferred=true AND
         cttl_meaning.id = taxon_record.cycling_taxa_taxon_list_id
 
-    JOIN indicia.cache_termlists_terms ctt_meaning on ctt_meaning.id = ttlav.int_value
-    JOIN indicia.cache_termlists_terms ctt_german on ctt_german.meaning_id = ctt_meaning.meaning_id  AND ctt_german.language_iso='deu'
+    LEFT JOIN indicia.cache_termlists_terms ctt_meaning on ctt_meaning.id = ttlav.int_value
+    LEFT JOIN indicia.cache_termlists_terms ctt_german on ctt_german.meaning_id = ctt_meaning.meaning_id  AND ctt_german.language_iso='deu'
 
     LEFT JOIN indicia.cache_termlists_terms ctt on ctt.id = ttlav.id
     JOIN indicia.taxon_lists_taxa_taxon_list_attributes tlttla on tlttla.taxa_taxon_list_attribute_id=ttla.id and tlttla.taxon_list_id = 1 and tlttla.deleted=false and tlttla.id not in (30,33,2134,2132,2133)
