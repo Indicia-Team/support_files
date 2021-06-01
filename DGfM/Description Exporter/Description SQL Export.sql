@@ -58,8 +58,15 @@ FOR taxon_record IN
 LOOP
 FOR attribute_record IN 
     SELECT ttla.id,ttla.caption,
-    coalesce(ctt_german.term,ttlav.text_value,int_value::text,float_value::text,date_start_value || ', ' || date_end_value,'') ||
-    CASE WHEN upper_value IS NOT NULL THEN ', ' || upper_value ELSE '' END AS attribute_value
+    string_agg(coalesce(
+        case when ttla.data_type = 'L' then ctt_german.term else null end,
+        case when ttla.data_type = 'T' then ttlav.text_value else null end,
+        case when ttla.data_type = 'I' then int_value::text else null end,
+        case when ttla.data_type = 'F' then float_value::text else null end,
+        case when ttla.data_type = 'D' then date_start_value || ', ' || date_end_value else null end,
+        ''
+    ) ||
+    CASE WHEN upper_value IS NOT NULL THEN ', ' || upper_value ELSE '' END,',') AS attribute_value
     , ctt_area.term as area, ctt_sub_area.term as sub_area
     FROM indicia.taxa_taxon_list_attributes ttla
     JOIN indicia.taxa_taxon_list_attribute_values ttlav on ttlav.taxa_taxon_list_attribute_id = ttla.id AND ttlav.deleted=false 
@@ -77,6 +84,7 @@ FOR attribute_record IN
     JOIN indicia.cache_termlists_terms ctt_sub_area on ctt_sub_area.id = ttla.reporting_category_id 
     JOIN indicia.cache_termlists_terms ctt_area on ctt_area.id = ctt_sub_area.parent_id
     where ttla.deleted=false AND ttla.id > XXX AND ttla.id < XXX
+    GROUP BY ctt_area.term, ctt_sub_area.term, ttla.id, ttla.caption,tlttla.weight
     ORDER BY ctt_area.term,ctt_sub_area.term,tlttla.weight asc
 LOOP
 colToUse = lower(regexp_replace(REPLACE(LEFT(attribute_record.area,15) || ' ' || LEFT(attribute_record.sub_area,15) || ' ' || LEFT(attribute_record.caption,15) || ' ' || attribute_record.id, ' ', '_'), '\W+', '', 'g'));
