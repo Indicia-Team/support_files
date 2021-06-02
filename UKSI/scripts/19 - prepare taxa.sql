@@ -28,4 +28,16 @@ FROM uksi.all_names uan
 JOIN taxon_groups tg ON tg.external_key=uan.output_group_key and tg.deleted=false
 JOIN languages l ON substring(l.iso from 1 for 2)=uan.language OR (l.iso='gla' AND uan.language='gd') AND l.deleted=false
 JOIN taxon_ranks tr ON COALESCE(tr.short_name, tr.rank)=COALESCE(uan.short_name, uan.rank) AND tr.deleted=false
-JOIN uksi.preferred_names upn ON upn.taxon_version_key=uan.recommended_taxon_version_key;
+-- Prefer non-redundant organisms.
+JOIN uksi.preferred_names upn ON upn.taxon_version_key=uan.recommended_taxon_version_key AND upn.redundant=false;
+
+-- As a fallback, fill in details where a non-redundant name isn't available.
+UPDATE uksi.prepared_taxa pt
+SET marine_flag = COALESCE(upn.marine_flag, false),
+  freshwater_flag = COALESCE(upn.freshwater_flag, false),
+  terrestrial_flag = COALESCE(upn.terrestrial_flag, false),
+  non_native_flag = COALESCE(upn.non_native_flag, false),
+  organism_key = upn.organism_key
+FROM uksi.preferred_names upn
+WHERE pt.organism_key IS NULL
+AND upn.taxon_version_key=pt.external_key AND upn.redundant=true;
