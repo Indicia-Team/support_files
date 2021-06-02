@@ -2,7 +2,7 @@ SET search_path=indicia, public;
 
 -- Build a copy of what the taxa_taxon_lists table should end up like. 
 -- We'll need to do some key mappings later, e.g. to get the parent_id, 
--- taxon_meaning_id and common_taxon_id.
+-- and taxon_meaning_id.
 DROP TABLE IF EXISTS gbif.prepared_taxa_taxon_lists;
 
 SELECT DISTINCT null::integer AS id,
@@ -13,15 +13,15 @@ SELECT DISTINCT null::integer AS id,
   pt.search_code = pt.external_key AS preferred,
   pt.search_code AS gbif_id, -- not used by Indicia, but makes matching easier.
   pt.external_key AS recommended_taxon_version_key,
-  gb_accepted.parent_key AS parent_search_code,
-  null::boolean AS changed,
+  gb_accepted.parent_key::varchar(20) AS parent_search_code,
+  false AS is_new,
+  false AS changed,
   null::boolean as orig_preferred,
   null::integer AS orig_taxon_meaning_id,
-  null::integer AS orig_parent_id,
+  null::integer AS orig_parent_id
 INTO gbif.prepared_taxa_taxon_lists
 FROM gbif.prepared_taxa pt
-JOIN gbif.backbone gb_accepted ON gb_accepted.id = pt.external_key
-JOIN gbif.backbone gb ON gb.id = pt.search_code;
+JOIN gbif.backbone gb_accepted ON gb_accepted.id = pt.external_key::int;
 
 -- Add the existing names from child lists
 INSERT INTO gbif.prepared_taxa_taxon_lists
@@ -33,14 +33,14 @@ SELECT DISTINCT null::integer AS id,
   pt.search_code = pt.external_key AS preferred,
   pt.search_code AS gbif_id, -- not used by Indicia, but makes matching easier.
   pt.external_key AS recommended_taxon_version_key,
-  gb_accepted.parent_key AS parent_search_code,
-  null:boolean AS changed,
+  gb_accepted.parent_key::varchar(20) AS parent_search_code,
+  false AS is_new,
+  false AS changed,
   null::boolean as orig_preferred,
   null::integer AS orig_taxon_meaning_id,
-  null::integer AS orig_parent_id,
+  null::integer AS orig_parent_id
 FROM gbif.prepared_taxa pt
-JOIN gbif.backbone gb_accepted ON gb_accepted.id = pt.external_key
-JOIN gbif.backbone gb ON gb.id = pt.search_code;
+JOIN gbif.backbone gb_accepted ON gb_accepted.id = pt.external_key::int
 -- Find names already on each child list
 JOIN taxa t ON t.search_code = pt.search_code
 JOIN taxa_taxon_lists ttl ON ttl.taxon_id = t.id AND ttl.deleted = false

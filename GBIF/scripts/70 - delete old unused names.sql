@@ -32,7 +32,7 @@ WHERE taxa_taxon_list_id IN (SELECT id FROM to_process);
 UPDATE taxa_taxon_lists ttl
 SET deleted = true,
   updated_on = now(),
-  updated_by_id = (SELECT value FROM gbif.settings WHERE key = 'updated_by_id'),
+  updated_by_id = (SELECT value FROM gbif.settings WHERE key = 'updated_by_id')
 FROM to_process d
 WHERE d.id = ttl.id
 AND deleted = false;

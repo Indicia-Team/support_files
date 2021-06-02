@@ -133,7 +133,8 @@ CREATE OR REPLACE FUNCTION
     genus_or_above text,
     specific_epithet text,
     infra_specific_epithet text, 
-    canonical_name text
+    canonical_name text,
+    scientific_name text
   )
   -- Compose taxon name from components
   RETURNS text
@@ -144,6 +145,12 @@ CREATE OR REPLACE FUNCTION
       infra_specific_type text;
     BEGIN
 
+      IF canonical_name IS NULL THEN
+        -- There are taxa in GBIF Backbone for which all name information is
+        -- absent bar the scientific name. 
+        RETURN scientific_name;
+      END IF;
+      
       IF notho_type = 'GENERIC' THEN
         prefix := 'x ';
       ELSE
@@ -204,15 +211,16 @@ SELECT DISTINCT NULL::integer AS id,
     gb.genus_or_above,
     gb.specific_epithet,
     gb.infra_specific_epithet, 
-    gb.canonical_name
+    gb.canonical_name,
+    gb.scientific_name
   ) AS taxon,
 
   -- search_code is unique GBIF key of taxon
-  gb.id AS search_code,
+  gb.id::varchar(20) AS search_code,
 
   -- external_key is unique GBIF key of preferred taxon for this record.
   CASE WHEN gb.is_synonym = false THEN 
-    gb.id ELSE gb.parent_key 
+    gb.id::varchar(50) ELSE gb.parent_key::varchar(50) 
   END AS external_key,
 
   -- taxon_group_id is currently a single value for all GBIF taxa.

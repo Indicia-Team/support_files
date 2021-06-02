@@ -28,7 +28,7 @@ $scripts = [
     'description' => 'Create backbone table for GBIF data.',
   ],
   [
-    'file' => '40 - import GBIF data.sql',
+    'file' => '40 - import gbif data.sql',
     'description' => 'Import the CSV data into the database.',
     'result' => 'GBIF records imported',
     'connection' => 'su',
@@ -72,7 +72,7 @@ $scripts = [
   ],
   [
     'file' => '120 - insert new taxa.sql',
-    'description' => 'Insert new taxon records'.,
+    'description' => 'Insert new taxon records',
     'result' => 'Number of new taxon records',
   ],
   [
@@ -98,61 +98,49 @@ $scripts = [
       'preferred names',
     'output' => "SELECT 'new meanings' as type, count(*) FROM new_taxon_meanings " .
       "UNION " .
-      "SELECT 'meanings attached to preferred names' as type, count(*) FROM " .
-      "gbif.prepared_taxa_taxon_lists WHERE taxon_meaning_id IS NOT NULL;",
+      "SELECT 'meanings attached to preferred names' as type, count(*) " .
+      "FROM gbif.prepared_taxa_taxon_lists WHERE taxon_meaning_id IS NOT NULL;",
   ],
-  // [
-  //   'file' => '26 - populate synonym taxon meanings.sql',
-  //   'description' => 'Populate taxon meanings into the synonyms',
-  //   'result' => 'Meanings attached to synonyms',
-  // ],
-  // [
-  //   'file' => '27 - populate parent links.sql',
-  //   'description' => 'Fill in the parent to child links',
-  //   'output' => "SELECT 'children linked to parents' as type, count(*) FROM uksi.prepared_taxa_taxon_lists WHERE parent_id IS NOT NULL " .
-  //     "UNION " .
-  //     "SELECT 'changes or new parent links' as type, count(*) FROM uksi.prepared_taxa_taxon_lists WHERE COALESCE(parent_id, 0)<>COALESCE(orig_parent_id, 0);",
-  // ],
-  // [
-  //   'file' => '28 - prepare common names.sql',
-  //   'description' => 'Prepare common name mappings',
-  //   'result' => 'Names mapped to common names',
-  // ],
-  // [
-  //   'file' => '29 - apply common names.sql',
-  //   'description' => 'Apply common name mappings',
-  //   'output' => "select 'Names which had a common name change' as type, count(*) from uksi.prepared_taxa_taxon_lists " .
-  //     'where changed=true and coalesce(common_taxon_id, 0)<>coalesce(orig_common_taxon_id, 0)'
-  // ],
-  // [
-  //   'file' => '30 - insert new taxa taxon lists.sql',
-  //   'description' => 'Insert new taxa taxon list records',
-  //   'result' => 'Number of new taxa taxon list record',
-  // ],
-  // [
-  //   'file' => '31 - update existing changed taxa taxon lists.sql',
-  //   'description' => 'Update values for existing taxa taxon lists which have changed',
-  //   'result' => 'Number of pre-existing taxa taxon lists updated',
-  // ],
-  // [
-  //   'file' => '32 - fixup attribute values.sql',
-  //   'description' => 'Ensure taxa taxon list attribute values point to the preferred name',
-  //   'result' => 'Number of attribute values relinked to preferred names',
-  // ],
-  // [
-  //   'file' => '33 - designations.sql',
-  //   'description' => 'Update the taxon designations data',
-  // ],
-  // [
-  //   'file' => '34 - expired names correct preferred name.sql',
-  //   'description' => 'Correct preferred name for expired names',
-  // ],
-  // [
-  //   'file' => '35 - cleanup.sql',
-  //   'description' => 'Tidy up orphaned records',
-  // ],
-  // [
-  //   'file' => '36 - ensure cache update is thorough.sql',
-  //   'description' => 'Ensure updated common and preferred names are applied to all names in concept',
-  // ],
+  [
+    'file' => '160 - populate synonym taxon meanings.sql',
+    'description' => 'Populate taxon meanings into the synonyms',
+    'result' => 'Meanings attached to synonyms',
+  ],
+  [
+    'file' => '170 - populate parent links.sql',
+    'description' => 'Fill in the parent to child links',
+    'output' => "SELECT 'children linked to parents' as type, count(*) " .
+      "FROM gbif.prepared_taxa_taxon_lists WHERE parent_id IS NOT NULL " .
+      "UNION " .
+      "SELECT 'changes or new parent links' as type, count(*) " .
+      "FROM gbif.prepared_taxa_taxon_lists " .
+      "WHERE COALESCE(parent_id, 0) <> COALESCE(orig_parent_id, 0);",
+  ],
+  [
+    'file' => '180 - insert new taxa taxon lists.sql',
+    'description' => 'Insert new taxa taxon list records',
+    'result' => 'Number of new taxa taxon list record',
+  ],
+  [
+    'file' => '190 - update existing changed taxa taxon lists.sql',
+    'description' => 'Update values for existing taxa taxon lists which have changed',
+    'result' => 'Number of pre-existing taxa taxon lists updated',
+  ],
+  [
+    'file' => '200 - fixup attribute values.sql',
+    'description' => 'Ensure taxa taxon list attribute values point to the preferred name',
+    'result' => 'Number of attribute values relinked to preferred names',
+  ],
+  [
+    'file' => '210 - expired names correct preferred name.sql',
+    'description' => 'Correct preferred name for expired names',
+  ],
+  [
+    'file' => '220 - cleanup.sql',
+    'description' => 'Tidy up orphaned records',
+  ],
+  [
+    'file' => '230 - ensure cache update is thorough.sql',
+    'description' => 'Ensure updated common and preferred names are applied to all names in concept',
+  ],
 ];

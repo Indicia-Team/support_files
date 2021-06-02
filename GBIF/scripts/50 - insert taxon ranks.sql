@@ -43,7 +43,7 @@ SELECT
 	gtr.short_name, 
 	gtr.rank, 
 	CASE gtr.list_font_italic WHEN 1 THEN true ELSE false END, 
-	now()
+	now(),
 	(SELECT value FROM gbif.settings WHERE key = 'updated_by_id'),
 	now(),
 	(SELECT value FROM gbif.settings WHERE key = 'updated_by_id')

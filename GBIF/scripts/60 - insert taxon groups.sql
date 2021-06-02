@@ -27,7 +27,7 @@ SELECT
   now(), 
 	(SELECT value FROM gbif.settings WHERE key = 'updated_by_id'),
   now(), 
-	(SELECT value FROM gbif.settings WHERE key = 'updated_by_id'),
+	(SELECT value FROM gbif.settings WHERE key = 'updated_by_id')
 FROM gbif.taxon_groups gtg
 LEFT JOIN taxon_groups tg 
   ON tg.title = 'GBIF Backbone'
@@ -39,5 +39,3 @@ INSERT INTO gbif.settings (key, value)
 SELECT 'taxon_group_id', id
 FROM taxon_groups
 WHERE title = 'GBIF Backbone' AND deleted = false;
-
-DROP TABLE gbif.taxon_groups;

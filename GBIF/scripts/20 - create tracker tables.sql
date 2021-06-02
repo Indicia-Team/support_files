@@ -1,13 +1,7 @@
-DROP TABLE IF EXISTS gbif.changed_occurrence_ids;
 DROP TABLE IF EXISTS gbif.changed_taxa_taxon_list_ids;
 
--- Create tables to capture changed records that we can apply cache table 
+-- Create table to capture changed records that we can apply cache table 
 -- updates to at the end.
-SELECT id
-INTO gbif.changed_occurrence_ids
-FROM occurrences
-LIMIT 0;
-
 SELECT id
 INTO gbif.changed_taxa_taxon_list_ids
 FROM taxa_taxon_lists

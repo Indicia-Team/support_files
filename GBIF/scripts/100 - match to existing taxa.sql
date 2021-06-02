@@ -8,16 +8,16 @@ SET id = t.id,
   changed = (
     pt.taxon <> t.taxon
     OR pt.taxon_group_id <> t.taxon_group_id
-    OR pt.external_key::varchar(50) <> t.external_key
+    OR pt.external_key <> t.external_key
     OR COALESCE(pt.authority, '') <> COALESCE(t.authority, '')
-    OR pt.search_code::varchar(20) <> t.search_code
+    OR pt.search_code <> t.search_code
     OR COALESCE(pt.taxon_rank_id, 0) <> COALESCE(t.taxon_rank_id, 0)
   ) OR {{ force-cache-rebuild }}
 FROM taxa t
 JOIN taxa_taxon_lists ttl on ttl.taxon_id = t.id
   AND ttl.taxon_list_id = (SELECT value FROM gbif.settings WHERE key = 'taxon_list_id')
   AND ttl.deleted=false
-WHERE t.search_code = pt.search_code::varchar(20)
+WHERE t.search_code = pt.search_code
 AND t.deleted = false;
 
 -- Remember the taxon changes so we can update the cache tables.

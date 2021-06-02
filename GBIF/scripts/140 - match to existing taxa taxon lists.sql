@@ -1,7 +1,7 @@
 SET search_path=indicia, public;
 
 -- Match up all the existing taxa to the updated copies using the search_code
--- (GBIF id). We'll also grab the meaning ID for which we'll keep AS it is for 
+-- (GBIF id). We'll also grab the meaning ID for it which we'll keep as is for 
 -- existing preferred names. We also grab the original taxon_meaning_id and 
 -- original parent_id for all existing names though update them later - 
 -- grabbing them here just makes it easier to detect changes.
@@ -38,7 +38,7 @@ AND ttl.taxon_list_id = pttl.taxon_list_id;
 -- cache refresh
 UPDATE gbif.prepared_taxa_taxon_lists to_update
 SET changed = true
-FROM uksi.prepared_taxa_taxon_lists to_keep
+FROM gbif.prepared_taxa_taxon_lists to_keep
 WHERE to_keep.taxon_meaning_id = to_update.taxon_meaning_id
 AND to_keep.recommended_taxon_version_key <> to_update.recommended_taxon_version_key;
 
@@ -46,7 +46,7 @@ AND to_keep.recommended_taxon_version_key <> to_update.recommended_taxon_version
 UPDATE gbif.prepared_taxa_taxon_lists to_clear
 SET taxon_meaning_id = NULL,
   changed = true
-FROM uksi.prepared_taxa_taxon_lists to_keep
+FROM gbif.prepared_taxa_taxon_lists to_keep
 WHERE to_keep.taxon_meaning_id = to_clear.taxon_meaning_id
 AND to_keep.recommended_taxon_version_key <> to_clear.recommended_taxon_version_key
 AND to_keep.id < to_clear.id;
