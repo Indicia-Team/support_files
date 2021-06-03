@@ -65,7 +65,7 @@ FOR attribute_record IN
         case when ttla.data_type = 'D' then date_start_value || ', ' || date_end_value else null end,
         ''
     ) ||
-    CASE WHEN upper_value IS NOT NULL THEN ', ' || upper_value ELSE '' END,',') AS attribute_value
+    CASE WHEN upper_value IS NOT NULL THEN ' - ' || upper_value ELSE '' END,',') AS attribute_value
     , ctt_area.term as area, ctt_sub_area.term as sub_area
     FROM indicia.cache_taxa_taxon_lists cttl
     JOIN indicia.cache_taxa_taxon_lists cttl_preferred_not_req on cttl_preferred_not_req.taxon_meaning_id = cttl.taxon_meaning_id
