@@ -110,3 +110,10 @@ END LOOP;
 END LOOP;
 END
 $do$;
+
+-- Once the code has been run, the data can be exported using the following commands.
+-- It is important to include the "order by", because then the row order is the same and the two files can be put together.
+
+--COPY (select * from complete_descriptions order by name asc) TO '/root/complete_descriptions.csv' DELIMITER ',' CSV HEADER;
+
+--COPY (select * from complete_descriptions_2 order by name asc) TO '/root/complete_descriptions_2.csv' DELIMITER ',' CSV HEADER;
