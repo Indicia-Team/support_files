@@ -4,4 +4,6 @@ jQuery(document).ready(function () {
   jQuery('.node-wildflower-data-entry').hide();
   jQuery('.node-indicator-data-entry').hide();
   jQuery('.node-inventory-data-entry').hide();
+  // Make sure the links aren't all on one line
+  jQuery('<br>').insertBefore('.node-inventory-data-entry');
 });
