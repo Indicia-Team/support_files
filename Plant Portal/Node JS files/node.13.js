@@ -42,13 +42,13 @@ jQuery(document).ready(function () {
       	jQuery('[name="group+\\:pages\\:\\:1\\:1"]').val('List squares');
       	
       	// Add new rows to allow us to setup Wildflower/Indicator/Inventory
-      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:0" value="node/wildflower-data-entry:NPMS Mode - Wildflower">');
+      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:0" value="wildflower-data-entry:NPMS Mode - Wildflower">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:1" value="Wildflower">');
       	
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:0" value="node/indicator-data-entry:NPMS Mode - Indicator">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:0" value="indicator-data-entry:NPMS Mode - Indicator">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:1" value="Indicator">');
 	  
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:0" value="node/inventory-data-entry:NPMS Mode - Inventory">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:0" value="inventory-data-entry:NPMS Mode - Inventory">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:1" value="Inventory">');
 
       }
