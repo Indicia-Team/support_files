@@ -13,5 +13,6 @@ jQuery(document).ready(function () {
   jQuery('.node-inventory-data-entry').hide();
   
   // Make sure the links aren't all on one line
+  jQuery('<br>').insertBefore('.my-samples-npms-mode');
   jQuery('<br>').insertBefore('.npms-mode-data-entry-selection');
 });
