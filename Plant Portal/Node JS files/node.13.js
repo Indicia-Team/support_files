@@ -1,5 +1,13 @@
 // Note there are IDs in this script which are setup for the BRC Dev Warehouse. 
 jQuery(document).ready(function () {
+  // Limit to 250 characters
+  jQuery('#entry_form').submit(function(e) {
+    if (jQuery('#group\\:description').val().length > 250 ) {
+      alert('Please make sure the group description field length is 250 characters or less');
+      e.preventDefault();
+    }
+  });
+
   //Code to automatically select required page links when user selects project type.
   
   //Always hide the links management list, as this is setup automatically
