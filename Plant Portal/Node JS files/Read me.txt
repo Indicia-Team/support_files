@@ -1,2 +1,0 @@
-The Drupal node ID numbers from these files are from the Dev site, and would need adjusting for test or live.
-There are also elements inside the files which may need altering for live, such as the mode ID numbers in node.13.js
