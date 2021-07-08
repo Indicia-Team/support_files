@@ -34,6 +34,14 @@ jQuery(document).ready(function () {
     jQuery('[name="group+:pages::5:0"]').remove(); 
     jQuery('[name="group+:pages::5:1"]').remove();
     jQuery('[name="group+:pages::5:2"]').remove();
+    
+    jQuery('[name="group+:pages::6:0"]').remove(); 
+    jQuery('[name="group+:pages::6:1"]').remove();
+    jQuery('[name="group+:pages::6:2"]').remove();
+    
+    jQuery('[name="group+:pages::7:0"]').remove(); 
+    jQuery('[name="group+:pages::7:1"]').remove();
+    jQuery('[name="group+:pages::7:2"]').remove();
   }
   
   if (!urlParams.get('group_id')) {
@@ -54,21 +62,31 @@ jQuery(document).ready(function () {
       	jQuery('[name="group+\\:pages\\:\\:1\\:0"] option[value="my-samples-npms-mode:NPMS Mode - My samples"]').prop('selected', true);
       	jQuery('[name="group+\\:pages\\:\\:1\\:1"]').val('My samples');
       	
-      	// Add new rows to allow us to see the squares for the project
-      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:0" value="list-squares-npms-mode:NPMS Mode - List squares">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:1" value="List squares">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:2" value="f:Available only to group members">');
+      	// Add new row to allow admins to see the samples for the project
+      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:0" value="samples-admin-npms-mode:NPMS Mode - Samples administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:1" value="Samples administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::2:2" value="t:Available only to group admins">');
+      	
+      	// Add new row to allow us to see the squares for the project
+      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:0" value="list-squares-npms-mode:NPMS Mode - List squares">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:1" value="List squares">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:2" value="f:Available only to group members">');
+	  	
+	  	// Admins get a special screen for square admins where the squares can be added and edited
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:0" value="squares-admin-npms-mode:NPMS Mode - Squares administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:1" value="Squares administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:2" value="t:Available only to group admins">');
 
       	
       	// Add new rows to allow us to setup Wildflower/Indicator/Inventory
-      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:0" value="wildflower-data-entry:NPMS Mode - Wildflower">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::3:1" value="Wildflower">');
+      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::5:0" value="wildflower-data-entry:NPMS Mode - Wildflower">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::5:1" value="Wildflower">');
       	
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:0" value="indicator-data-entry:NPMS Mode - Indicator">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::4:1" value="Indicator">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::6:0" value="indicator-data-entry:NPMS Mode - Indicator">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::6:1" value="Indicator">');
 	  
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::5:0" value="inventory-data-entry:NPMS Mode - Inventory">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::5:1" value="Inventory">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::7:0" value="inventory-data-entry:NPMS Mode - Inventory">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::7:1" value="Inventory">');
 
       }
     
