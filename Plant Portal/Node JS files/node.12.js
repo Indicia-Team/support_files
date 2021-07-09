@@ -15,4 +15,6 @@ jQuery(document).ready(function () {
   // Make sure the links aren't all on one line
   jQuery('<br>').insertBefore('.my-samples-npms-mode');
   jQuery('<br>').insertBefore('.npms-mode-data-entry-selection');
+  jQuery('<br>').insertBefore('.samples-admin-npms-mode');
+  jQuery('<br>').insertBefore('.squares-admin-npms-mode');
 });
