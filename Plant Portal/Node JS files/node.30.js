@@ -1,9 +1,13 @@
 // Note there are IDs in this script which are setup for the BRC Dev Warehouse. 
 jQuery(document).ready(function () {
-  // Limit to 250 characters
+  // Make mandatory and Limit to 250 characters
   jQuery('#entry_form').submit(function(e) {
+    if (jQuery('#group\\:description').val().length < 1) {
+      alert('Please make sure the project description field is filled in');
+      e.preventDefault();
+    }
     if (jQuery('#group\\:description').val().length > 250 ) {
-      alert('Please make sure the group description field length is 250 characters or less');
+      alert('Please make sure the project description field length is 250 characters or less');
       e.preventDefault();
     }
   });
