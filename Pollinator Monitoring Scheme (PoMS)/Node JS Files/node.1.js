@@ -1,3 +1,89 @@
+jQuery(document).ready(function($) {
+
+  var habitatNames = ['','Garden','School grounds','Parkland with trees','Churchyard',
+      'Grassy verge or hedgerow edge','Grassland with wild flowers (e.g. meadow)',
+      'Amenity grassland (usually mown short)','Farm crops or grassy pasture',
+      'Upland moorland','Lowland heath',"Brownfield or other 'waste ground'",
+      'Woodland','Other - please describe below'];
+	
+  var targetNames = ['','Bramble (Blackberry) - Rubus fruticosus','Buddleja','Buttercup - Ranunculus species',
+      'Dandelion - Taraxacum officinale','Hawthorn - Crataegus','Heathers - Calluna and Erica species',
+      'Hogweed - Heracleum sphondylium','Ivy - Hedera','Knapweeds (Common or Greater) - Centaurea nigra or scabiosa',
+      'Lavender (English) - Lavandula angustifolia','Ragwort - Jacobaea/Senecio species','Thistle - Cirsium or Carduus',
+      'White Clover - Trifolium repens','White Dead-nettle - Lamium album','Other - please describe below'];
+      
+  var typeNames = ['','individual flower','flower head','flower umbel','flower spike'];
+  
+  var patchOccupationNames = ['','Growing in a larger patch of the same flower','Growing in a larger patch of many different flowers',
+      'More or less isolated','Not recorded'];
+      
+  var patchContextNames = ['','Growing in a larger patch of the same flower','Growing in a larger patch of many different flowers',
+      'More or less isolated','Not recorded'];
+      
+  var skyNames = ['','All or mostly blue','Half blue and half cloud','All or mostly cloud','Not recorded'];
+    
+  var sunShadeNames = ['','Entirely in sunshine','Partly in sun and partly shaded','Entirely shaded','Not recorded'];
+  
+  var windNames = ['','Leaves still/moving occasionally','Leaves moving gently all the time',
+      'Leaves moving strongly','Not recorded'];
+	
+  // Habitat drop-down
+  jQuery('#smpAttr\\:1048 option').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),habitatNames) === -1) {
+	  jQuery(this).remove();
+    }
+  });
+  
+  // Target flower drop-down
+  jQuery('#smpAttr\\:1050 option').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),targetNames) === -1) {
+	  jQuery(this).remove();
+    }
+  });
+  
+  // Type flower drop-down
+  jQuery('#smpAttr\\:1054 option').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),typeNames) === -1) {
+	  jQuery(this).remove();
+    }
+  });
+  
+  // Patch occupation radio buttons
+  jQuery('#smpAttr\\:1052').find('input').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),patchOccupationNames) === -1) {
+	  jQuery(this).parent('li').remove();
+    }
+  });
+  
+  // Patch context radio buttons
+  jQuery('#smpAttr\\:1055').find('input').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),patchContextNames) === -1) {
+	  jQuery(this).parent('li').remove();
+    }
+  });
+  
+  // Sky above your location
+  jQuery('#smpAttr\\:1057 option').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),skyNames) === -1) {
+	  jQuery(this).remove();
+    }
+  });
+  
+  // Sun or shade
+  jQuery('#smpAttr\\:1061 option').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),sunShadeNames) === -1) {
+	  jQuery(this).remove();
+    }
+  });
+  
+  // Wind strength
+  jQuery('#smpAttr\\:1058 option').each(function() {
+    if (jQuery.inArray(jQuery(this).text(),windNames) === -1) {
+	  jQuery(this).remove();
+    }
+  });
+});
+
 (function($){
   // Closure.
   $(function(){
