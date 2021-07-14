@@ -1,5 +1,6 @@
 jQuery(document).ready(function($) {
-
+  // Make sure the system only ever shows the initially agreed upon sets or terms, nothing added for other countries
+  // or the app
   var habitatNames = ['','Garden','School grounds','Parkland with trees','Churchyard',
       'Grassy verge or hedgerow edge','Grassland with wild flowers (e.g. meadow)',
       'Amenity grassland (usually mown short)','Farm crops or grassy pasture',
