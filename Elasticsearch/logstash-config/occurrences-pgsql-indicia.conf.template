@@ -173,7 +173,9 @@ filter {
       "taxon_subfamily",
       "taxon_genus",
       "taxon_species",
-      "taxon_species_key"
+      "taxon_species_key",
+      "taxon_species_authority",
+      "taxon_species_vernacular"
     ]
     remove_field => "taxon_data_csv"
   }
@@ -397,6 +399,8 @@ filter {
       "taxon_genus" => "[taxon][genus]"
       "taxon_species" => "[taxon][species]"
       "taxon_species_key" => "[taxon][species_taxon_id]"
+      "taxon_species_authority" => "[taxon][species_authorship]"
+      "taxon_species_common_name" => "[taxon][species_vernacular]"
       "taxon_path_keys" => "[taxon][higher_taxon_ids]"
       "external_key" => "[occurrence][source_system_key]"
       "attr_sex" => "[occurrence][sex]"

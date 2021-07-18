@@ -492,6 +492,12 @@ table.
 **Warehouse field**|`occurrence_attribute_values.*`
 **Description**|Label indicating the sex of the recorded organism.
 
+`occurrence.zero_abundance`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`occurrence.zero_abundance*`
+**Description**|Indicates if a record is of absence of a species.
+
 `taxon.accepted_name`||
 -----|-----
 **Data type**|string
@@ -606,11 +612,23 @@ table.
 **Warehouse field**|`taxa.taxon`
 **Description**|Species of the taxon. Allows sub-species to be aggregated to a single species name when counting species in a list and also allows higher taxa to be excluded from such counts.
 
+`taxon.species_authorship`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.authority`
+**Description**|Author and date associated with the name given in `taxon.species`.
+
 `taxon.species_taxon_id`||
 -----|-----
 **Data type**|string
 **Warehouse field**|`taxa.external_key`
 **Description**|External key of the taxon given in the `taxon.species` field (allows disambiguation of name clashes).
+
+`taxon.species_vernacular`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxa.taxon`
+**Description**|Common name associated with this taxon at the species level.
 
 `taxon.subfamily`||
 -----|-----
