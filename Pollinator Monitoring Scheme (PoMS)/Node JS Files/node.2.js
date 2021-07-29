@@ -222,41 +222,6 @@ jQuery(document).ready(function($) {
     otherFlower();
     floralUnit();
     
-    // Currently have to fake the Welsh species names as the Drupal translation doesn't seem to work
-    $('.taxon-name').each(function() {
-      if (window.location.href.indexOf('/cy/') > 0) {
-        if ($(this).text() === 'Bumblebees') {
-          $(this).text('Cacwn');
-        }
-        if ($(this).text() === 'Honeybees') {
-          $(this).text('Gwenyn mêl');
-        }
-        if ($(this).text() === 'Solitary bees') {
-          $(this).text('Gwenyn unigol');
-        }
-        if ($(this).text() === 'Wasps') {
-          $(this).text('Gwenyn meirch');
-        }
-        if ($(this).text() === 'Hoverflies') {
-          $(this).text('Pryfed hofran');
-        }
-        if ($(this).text() === 'Other flies') {
-          $(this).text('Clêr eraill');
-        }
-        if ($(this).text() === 'Butterflies and moths') {
-          $(this).text('Pili palod a gwyfynod');
-        }
-        if ($(this).text() === 'Beetles') {
-          $(this).text('Chwilod');
-        }
-        if ($(this).text() === 'Small insects (<3mm)') {
-          $(this).text('Pryfed bach (<3mm)');
-        }
-        if ($(this).text() === 'Other insects') {
-          $(this).text('Pryfed eraill');
-        }
-      }
-    });
   });
 })(jQuery);
 
