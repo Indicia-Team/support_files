@@ -14,14 +14,17 @@ Preparation:
 * **Double check all work queue tasks are processed (work_queue table empty). If not, run the 
   scheduled tasks again until they are.
 * **Back up your database!**
+* Download and decompress the GBIF data from 
+  https://hosted-datasets.gbif.org/datasets/backbone/backbone-current-simple.txt.gz
+  to a file named backbone-current-simple.txt
 
 ```
-Usage: php import-uksi.php [options]
+Usage: php import-gbif.php [options]
 
  --warehouse-path           The path to the warehouse installation folder.
  --su                       PostgreSQL superuser username required for some scripts.
  --supass                   PostgreSQL superuser password required for some scripts.
- --taxon\_list\_id          The ID of the existing list in the warehouse which will be updated with UKSI data.
+ --taxon\_list\_id          The ID of the existing list in the warehouse which will be updated with GBIF data.
  --user\_id                 The ID of the existing user in the warehouse which will be used in the record metadata
                             for changes and new records.
 Optional
@@ -36,24 +39,24 @@ Optional
 
 Example:
 ```
-php import-uksi.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
+php import-gbif.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
 ```
 
 Notes on running the script:
 * If your php executable is not on your path, then you will need to include the
   path in the call, e.g:
   ```
-  /path/to/php/php.exe import-uksi.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
+  /path/to/php/php.exe import-gbif.php --warehouse-path=/Library/WebServer/Documents/warehouse --su=postgres --supass=12345678 --taxon_list_id=123 --user_id=123
   ```
 * You will need to ensure the php executable is running as a user which has
-  read access to the text file containing the GBIF data downloaded from 
-  https://hosted-datasets.gbif.org/datasets/backbone/backbone-current-simple.txt.gz.
+  read access to the text file containing the GBIF data which you downloaded.
   One way to do that on Windows is to right click the folder
   containing the text files and select Properties, then use the Security tab
   to grant read access to the Users account.
 * If you experience an error whilst running the tool and are able to resolve
   the error, you can restart the tool at a certain script number by adding
-  ```start=<script number>``` to the command line parameters and running the tool again.
+  `--start=<script number>` to the command line parameters and running the tool
+  again.
 
 **Once you have run the script remember to restart your scheduled tasks**.
 
