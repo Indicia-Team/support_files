@@ -21,9 +21,14 @@ into temporary to_fix
 from cache_taxa_taxon_lists cttl8
 join cache_taxa_taxon_lists cttl15 on cttl15.taxon_list_id=15 and cttl15.taxon=cttl8.taxon and cttl15.allow_data_entry=true
 left join taxa t on t.search_code=cttl8.external_key
+-- A left join to the accepted name, as it might be the synonmym we found is a homonym of an accepted name elsewhere, 
+-- in which case the NatureSpot name is correct.
+left join cache_taxa_Taxon_lists cttl15correct on cttl15correct.taxon_list_id=15 and cttl15correct.taxon=cttl8.taxon and cttl15correct.allow_data_entry=true and cttl15correct.preferred=true
+  and cttl15correct.external_key=cttl8.external_key
 where cttl8.taxon_list_id=8
 and cttl15.external_key<>cttl8.external_key
 and cttl8.preferred=true
+and cttl15correct.id is null
 order by cttl8.taxon;
 
 /*
