@@ -325,7 +325,7 @@ filter {
       "taxon_species_authority" => "[taxon][species_authorship]"
       "taxon_species_common_name" => "[taxon][species_vernacular]"
       "taxon_path_keys" => "[taxon][higher_taxon_ids]"
-      "external_key" => "[occurrence][source_system_key]"
+      "occurrence_external_key" => "[occurrence][source_system_key]"
       "attr_sex" => "[occurrence][sex]"
       "attr_stage" => "[occurrence][life_stage]"
       "attr_sex_stage_count" => "[occurrence][organism_quantity]"
