@@ -21,22 +21,16 @@ function detect_canopy_option() {
 function detect_abundance_option() {
   if (jQuery('#smpAttr\\:1625\\:0:checked').val()) {
     show_domin();
-  }
-  
-  if (jQuery('#smpAttr\\:1625\\:1:checked').val()) {
+  } else if (jQuery('#smpAttr\\:1625\\:1:checked').val()) {
     show_braun();
-  }
-  
-  if (jQuery('#smpAttr\\:1625\\:2:checked').val()) {
+  } else if (jQuery('#smpAttr\\:1625\\:2:checked').val()) {
     show_percentage();
-  }
-  
-  if (jQuery('#smpAttr\\:1625\\:3:checked').val()) {
+  } else if (jQuery('#smpAttr\\:1625\\:3:checked').val()) {
     show_individual_plant();
-  }
-  
-  if (jQuery('#smpAttr\\:1625\\:4:checked').val()) {
+  } else if (jQuery('#smpAttr\\:1625\\:4:checked').val()) {
     show_cell_freq();
+  } else {
+  	hide_all_abundances();
   }
 }
 
@@ -80,55 +74,63 @@ function show_cell_freq() {
   determine_column_to_show_hide('cell_freq','show');
 }
 
+function hide_all_abundances() {
+  determine_column_to_show_hide('domin','hide');
+  determine_column_to_show_hide('braun','hide');
+  determine_column_to_show_hide('percentage','hide');
+  determine_column_to_show_hide('individual_plant','hide');
+  determine_column_to_show_hide('cell_freq','hide');
+}
+
 function determine_column_to_show_hide(abundanceType, action) {
   var dominAttrId = 214;
   var braunAttrId = 890;
   var percentageAttrId = 891;
   var individualPlantAttrId = 892;
   var cellFreqAttrId = 893;
-  var dominCellClass = 'scIndicatorInventoryAbundance';
-  var braunCellClass = 'scPlantPortalStandardBraunBlanquetCell';
-  var percentageCellClass = 'scPlantPortalStandardPercentageCell';
-  var individualPlantCellClass = 'scPlantPortalStandardIndividualPlantCountCell';
-  var cellFreqCellClass = 'scPlantPortalStandardCellFrequencyCell';
+  var dominInputClass = 'scIndicatorInventoryAbundance';
+  var braunInputClass = 'scPlantPortalStandardBraunBlanquet';
+  var percentageInputClass = 'scPlantPortalStandardPercentage';
+  var individualPlantInputClass = 'scPlantPortalStandardIndividualPlantCount';
+  var cellFreqInputClass = 'scPlantPortalStandardCellFrequency';
 
   if (abundanceType === 'domin') {
     if (action === 'show') {
-      set_column_to_show_hide(dominAttrId, dominCellClass, 'show');
+      set_column_to_show_hide(dominAttrId, dominInputClass, 'show');
     } else {
-      set_column_to_show_hide(dominAttrId, dominCellClass, 'hide');
+      set_column_to_show_hide(dominAttrId, dominInputClass, 'hide');
     }
   }
 
   if (abundanceType === 'braun') {
     if (action === 'show') {
-      set_column_to_show_hide(braunAttrId, braunCellClass, 'show');
+      set_column_to_show_hide(braunAttrId, braunInputClass, 'show');
     } else {
-      set_column_to_show_hide(braunAttrId, braunCellClass, 'hide');
+      set_column_to_show_hide(braunAttrId, braunInputClass, 'hide');
     }
   }
 
   if (abundanceType === 'percentage') {
     if (action === 'show') {
-      set_column_to_show_hide(percentageAttrId, percentageCellClass, 'show');
+      set_column_to_show_hide(percentageAttrId, percentageInputClass, 'show');
     } else {
-      set_column_to_show_hide(percentageAttrId, percentageCellClass, 'hide');
+      set_column_to_show_hide(percentageAttrId, percentageInputClass, 'hide');
     }
   }
 
   if (abundanceType === 'individual_plant') {
     if (action === 'show') {
-  	  set_column_to_show_hide(individualPlantAttrId, individualPlantCellClass, 'show');
+  	  set_column_to_show_hide(individualPlantAttrId, individualPlantInputClass, 'show');
     } else {
-      set_column_to_show_hide(individualPlantAttrId, individualPlantCellClass, 'hide');
+      set_column_to_show_hide(individualPlantAttrId, individualPlantInputClass, 'hide');
     }
   }
 
   if (abundanceType === 'cell_freq') {
     if (action === 'show') {
-      set_column_to_show_hide(cellFreqAttrId, cellFreqCellClass, 'show');
+      set_column_to_show_hide(cellFreqAttrId, cellFreqInputClass, 'show');
     } else {
-      set_column_to_show_hide(cellFreqAttrId, cellFreqCellClass, 'hide');
+      set_column_to_show_hide(cellFreqAttrId, cellFreqInputClass, 'hide');
     }
   }
 }
@@ -139,10 +141,11 @@ function set_column_to_show_hide(attrId, inputClass, action) {
   if (action === 'show') {
     jQuery('#'+ canopyGridId + '-attr' + attrId + '-0').show();
     jQuery('#'+ groundLayerGridId + '-attr' + attrId + '-0').show();
-    jQuery('.'+ inputClass).show();
+    jQuery('.'+ inputClass + 'Cell').show();
   } else {
     jQuery('#'+ canopyGridId + '-attr' + attrId + '-0').hide();
     jQuery('#'+ groundLayerGridId + '-attr' + attrId + '-0').hide();
-    jQuery('.'+ inputClass).hide();
+    jQuery('.'+ inputClass + 'Cell').hide();
+    jQuery('.'+ inputClass).val('');
   }
 }
