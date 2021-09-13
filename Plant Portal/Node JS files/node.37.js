@@ -29,6 +29,8 @@ function detect_abundance_option() {
     show_individual_plant();
   } else if (jQuery('#smpAttr\\:1625\\:4:checked').val()) {
     show_cell_freq();
+  } else if (jQuery('#smpAttr\\:1625\\:5:checked').val()) {
+    show_present_absent();
   } else {
   	hide_all_abundances();
   }
@@ -40,6 +42,7 @@ function show_domin() {
   determine_column_to_show_hide('percentage','hide');
   determine_column_to_show_hide('individual_plant','hide');
   determine_column_to_show_hide('cell_freq','hide');
+  determine_column_to_show_hide('present_absent','hide');
 }
 
 function show_braun() {
@@ -48,6 +51,7 @@ function show_braun() {
   determine_column_to_show_hide('percentage','hide');
   determine_column_to_show_hide('individual_plant','hide');
   determine_column_to_show_hide('cell_freq','hide');
+  determine_column_to_show_hide('present_absent','hide');
 }
   
 function show_percentage() {
@@ -56,6 +60,7 @@ function show_percentage() {
   determine_column_to_show_hide('percentage','show');
   determine_column_to_show_hide('individual_plant','hide');
   determine_column_to_show_hide('cell_freq','hide');
+  determine_column_to_show_hide('present_absent','hide');
 }
   
 function show_individual_plant() {
@@ -64,6 +69,7 @@ function show_individual_plant() {
   determine_column_to_show_hide('percentage','hide');
   determine_column_to_show_hide('individual_plant','show');
   determine_column_to_show_hide('cell_freq','hide');
+  determine_column_to_show_hide('present_absent','hide');
 }
   
 function show_cell_freq() {
@@ -72,6 +78,16 @@ function show_cell_freq() {
   determine_column_to_show_hide('percentage','hide');
   determine_column_to_show_hide('individual_plant','hide');
   determine_column_to_show_hide('cell_freq','show');
+  determine_column_to_show_hide('present_absent','hide');
+}
+
+function show_present_absent() {
+  determine_column_to_show_hide('domin','hide');
+  determine_column_to_show_hide('braun','hide');
+  determine_column_to_show_hide('percentage','hide');
+  determine_column_to_show_hide('individual_plant','hide');
+  determine_column_to_show_hide('cell_freq','hide');
+  determine_column_to_show_hide('present_absent','show');
 }
 
 function hide_all_abundances() {
@@ -80,6 +96,7 @@ function hide_all_abundances() {
   determine_column_to_show_hide('percentage','hide');
   determine_column_to_show_hide('individual_plant','hide');
   determine_column_to_show_hide('cell_freq','hide');
+  determine_column_to_show_hide('present_absent','hide');
 }
 
 function determine_column_to_show_hide(abundanceType, action) {
@@ -88,11 +105,13 @@ function determine_column_to_show_hide(abundanceType, action) {
   var percentageAttrId = 891;
   var individualPlantAttrId = 892;
   var cellFreqAttrId = 893;
+  var presentAbsentAttrId = 894;
   var dominInputClass = 'scIndicatorInventoryAbundance';
   var braunInputClass = 'scPlantPortalStandardBraunBlanquet';
   var percentageInputClass = 'scPlantPortalStandardPercentage';
   var individualPlantInputClass = 'scPlantPortalStandardIndividualPlantCount';
   var cellFreqInputClass = 'scPlantPortalStandardCellFrequency';
+  var presentAbsentInputClass = 'scPlantPortalStandardPresentAbsent';
 
   if (abundanceType === 'domin') {
     if (action === 'show') {
@@ -131,6 +150,14 @@ function determine_column_to_show_hide(abundanceType, action) {
       set_column_to_show_hide(cellFreqAttrId, cellFreqInputClass, 'show');
     } else {
       set_column_to_show_hide(cellFreqAttrId, cellFreqInputClass, 'hide');
+    }
+  }
+  
+  if (abundanceType === 'present_absent') {
+    if (action === 'show') {
+      set_column_to_show_hide(presentAbsentAttrId, presentAbsentInputClass, 'show');
+    } else {
+      set_column_to_show_hide(presentAbsentAttrId, presentAbsentInputClass, 'hide');
     }
   }
 }
