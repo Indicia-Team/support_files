@@ -1,6 +1,6 @@
-# Using Elasticsearch to report on Indicia occurrences
+# Using Elasticsearch to report on Indicia samples
 
-This document describes how to setup Elasticsearch with Indicia occurrence records loaded as
+This document describes how to setup Elasticsearch with Indicia samples records loaded as
 document objects. This setup involves a Elasticsearch instance (single machine or cluster) using
 Logstash to continuosly copy data updates from the Indicia REST API into Elasticsearch. As data
 are accessed via the REST API, the Elasticsearch server and Indicia server do not need to be on the
@@ -32,7 +32,7 @@ we need to change mappings.
 #### Elasticsearch 6.*
 
 ```json
-PUT occurrence_brc1_v1?include_type_name=true
+PUT sample_brc1_v1?include_type_name=true
 {
   "settings": {
     "number_of_shards": 4,
@@ -62,6 +62,9 @@ PUT occurrence_brc1_v1?include_type_name=true
         "event.parent_attributes": {
           "type": "nested"
         },
+        "event.media": {
+          "type": "nested"
+        },
         "metadata.created_by_id": { "type": "integer" },
         "metadata.updated_by_id": { "type": "integer" },
         "metadata.created_on": {
@@ -83,16 +86,16 @@ PUT occurrence_brc1_v1?include_type_name=true
         "metadata.release_status": { "type": "keyword" },
         "metadata.trial": { "type": "boolean" },
         "metadata.tracking": { "type": "integer" },
-        "identification.verifier.id": { "type": "integer" },
-        "identification.verified_on": {
+        "metadata.verifier.id": { "type": "integer" },
+        "metadata.verified_on": {
           "type": "date",
           "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
         },
-        "identification.verification_status": { "type": "keyword" },
-        "identification.verification_substatus": { "type": "integer" },
-        "identification.verification_decision_source": { "type": "keyword" },
-        "identification.auto_checks.enabled": { "type": "boolean" },
-        "identification.auto_checks.result": { "type": "boolean" },
+        "metadata.verification_status": { "type": "keyword" },
+        "stats.count_occurrences": { "type": "integer" },
+        "stats.count_species": { "type": "integer" },
+        "stats.count_taxon_groups": { "type": "integer" },
+        "stats.sum_individual_count": { "type": "integer" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
         "location.grid_square.srid": { "type": "integer" },
@@ -110,54 +113,7 @@ PUT occurrence_brc1_v1?include_type_name=true
         "location.parent.location_id": { "type": "integer" },
         "location.code": { "type": "keyword" },
         "location.parent.code": { "type": "keyword" },
-        "location.coordinate_uncertainty_in_meters": { "type": "integer" },
-        "occurrence.source_system_key": { "type": "keyword" },
-        "occurrence.individual_count": { "type": "integer" },
-        "occurrence.zero_abundance": { "type": "boolean" },
-        "occurrence.occurrence_remarks": { "type": "text" },
-        "occurrence.attributes": {
-          "type": "nested"
-        },
-        "occurrence.media": {
-          "type": "nested"
-        },
-        "occurrence.associations": {
-          "type": "nested",
-          "properties": {
-            "id": { "type": "integer" },
-            "association_type": { "type": "keyword" },
-            "accepted_name": {
-              "type": "keyword",
-              "fields": {
-                "text": {
-                  "type": "text"
-                }
-              }
-            },
-            "vernacular_name": {
-              "type": "keyword",
-              "fields": {
-                "text": {
-                  "type": "text"
-                }
-              }
-            }
-          }
-        },
-        "taxon.accepted_taxon_id": { "type": "keyword" },
-        "taxon.group_id": { "type": "integer" },
-        "taxon.input_group_id": { "type": "integer" },
-        "taxon.higher_taxon_ids": { "type": "keyword" },
-        "taxon.species_taxon_id": { "type": "keyword" },
-        "taxon.taxon_id": { "type": "keyword" },
-        "taxon.taxon_list.id": { "type": "integer" },
-        "taxon.marine": { "type": "boolean" },
-        "taxon.freshwater": { "type": "boolean" },
-        "taxon.terrestrial": { "type": "boolean" },
-        "taxon.non_native": { "type": "boolean" },
-        "taxon.taxa_taxon_list_id": { "type": "integer" },
-        "taxon.taxon_meaning_id": { "type": "integer" },
-        "taxon.taxon_rank_sort_order": { "type": "short" }
+        "location.coordinate_uncertainty_in_meters": { "type": "integer" }
       }
     }
   }
@@ -167,7 +123,7 @@ PUT occurrence_brc1_v1?include_type_name=true
 #### Elasticsearch 7.*
 
 ```json
-PUT occurrence_brc1_v1
+PUT sample_brc1_v1
 {
   "settings": {
     "number_of_shards": 4,
@@ -196,6 +152,9 @@ PUT occurrence_brc1_v1
       "event.parent_attributes": {
         "type": "nested"
       },
+      "event.media": {
+        "type": "nested"
+      },
       "metadata.created_by_id": { "type": "integer" },
       "metadata.updated_by_id": { "type": "integer" },
       "metadata.created_on": {
@@ -217,16 +176,16 @@ PUT occurrence_brc1_v1
       "metadata.release_status": { "type": "keyword" },
       "metadata.trial": { "type": "boolean" },
       "metadata.tracking": { "type": "integer" },
-      "identification.verifier.id": { "type": "integer" },
-      "identification.verified_on": {
+      "metadata.verifier.id": { "type": "integer" },
+      "metadata.verified_on": {
         "type": "date",
         "format": "uuuu-MM-dd HH:mm:ss||uuuu-MM-dd HH:mm:ss.SSS||uuuu-MM-dd"
       },
-      "identification.verification_status": { "type": "keyword" },
-      "identification.verification_substatus": { "type": "integer" },
-      "identification.verification_decision_source": { "type": "keyword" },
-      "identification.auto_checks.enabled": { "type": "boolean" },
-      "identification.auto_checks.result": { "type": "boolean" },
+      "metadata.verification_status": { "type": "keyword" },
+      "stats.count_occurrences": { "type": "integer" },
+      "stats.count_species": { "type": "integer" },
+      "stats.count_taxon_groups": { "type": "integer" },
+      "stats.sum_individual_count": { "type": "integer" },
       "location.geom": { "type": "geo_shape" },
       "location.point": { "type": "geo_point" },
       "location.grid_square.srid": { "type": "integer" },
@@ -244,54 +203,7 @@ PUT occurrence_brc1_v1
       "location.parent.location_id": { "type": "integer" },
       "location.code": { "type": "keyword" },
       "location.parent.code": { "type": "keyword" },
-      "location.coordinate_uncertainty_in_meters": { "type": "integer" },
-      "occurrence.source_system_key": { "type": "keyword" },
-      "occurrence.individual_count": { "type": "integer" },
-      "occurrence.zero_abundance": { "type": "boolean" },
-      "occurrence.occurrence_remarks": { "type": "text" },
-      "occurrence.attributes": {
-        "type": "nested"
-      },
-      "occurrence.media": {
-        "type": "nested"
-      },
-      "occurrence.associations": {
-        "type": "nested",
-        "properties": {
-          "id": { "type": "integer" },
-          "association_type": { "type": "keyword" },
-          "accepted_name": {
-            "type": "keyword",
-            "fields": {
-              "text": {
-                "type": "text"
-              }
-            }
-          },
-          "vernacular_name": {
-            "type": "keyword",
-            "fields": {
-              "text": {
-                "type": "text"
-              }
-            }
-          }
-        }
-      },
-      "taxon.accepted_taxon_id": { "type": "keyword" },
-      "taxon.group_id": { "type": "integer" },
-      "taxon.input_group_id": { "type": "integer" },
-      "taxon.higher_taxon_ids": { "type": "keyword" },
-      "taxon.species_taxon_id": { "type": "keyword" },
-      "taxon.taxon_id": { "type": "keyword" },
-      "taxon.taxon_list.id": { "type": "integer" },
-      "taxon.marine": { "type": "boolean" },
-      "taxon.freshwater": { "type": "boolean" },
-      "taxon.terrestrial": { "type": "boolean" },
-      "taxon.non_native": { "type": "boolean" },
-      "taxon.taxa_taxon_list_id": { "type": "integer" },
-      "taxon.taxon_meaning_id": { "type": "integer" },
-      "taxon.taxon_rank_sort_order": { "type": "short" }
+      "location.coordinate_uncertainty_in_meters": { "type": "integer" }
     }
   }
 }
@@ -316,8 +228,8 @@ POST /_aliases
 {
   "actions" : [
     { "add" : {
-      "index" : "occurrence_brc1_v1",
-      "alias" : "occurrence_search",
+      "index" : "sample_brc1_v1",
+      "alias" : "sample_search",
       "filter" : {
         "bool" : {
           "must": [
@@ -333,35 +245,33 @@ POST /_aliases
       }
     } },
     { "add" : {
-      "index" : "occurrence_brc1_v1",
-      "alias" : "occurrence_brc1_index"
+      "index" : "sample_brc1_v1",
+      "alias" : "sample_brc1_index"
     } }
   ]
 }
 ```
 
-Now, if we later add a second warehouse to our Elasticsearch cluster with a
-second index called brc2, we can run the same request but replace brc1 with
-brc2.
+Now, if we later add a second warehouse to our Elasticsearch cluster with a second index called
+brc2, we can run the same request but replace brc1 with brc2.
 
-Now, we can index documents from warehouse brc1 into occurrence_brc1_index,
-documents from warehouse brc2 into occurrence_brc2_index and search across
-both indexes using occurrence_search. We could also then provide a filtered
-index for use by a client website, for example:
+Now, we can index documents from warehouse brc1 into sample_brc1_index, documents from warehouse
+brc2 into sample_brc2_index and search across both indexes using sample_search. We could also then
+provide a filtered index for use by a client website, for example:
 
 ```json
 POST /_aliases
 {
   "actions" : [
     { "add" : {
-      "index" : "occurrence_brc1",
-      "alias" : "occurrence_search_ukbms",
+      "index" : "sample_brc1",
+      "alias" : "sample_search_ukbms",
       "filter" : {
         "bool" : {
           "must": [
             {
               "query_string": {
-                "query": "metadata.website.id:27 AND metadata.confidential:false AND occurrence.zero_abundance:false AND metadata.release_status:R AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+                "query": "metadata.website.id:27 AND metadata.confidential:false AND metadata.trial:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
                 "analyze_wildcard": true,
                 "default_field": "*"
               }
@@ -396,64 +306,12 @@ $ git clone https://github.com/Indicia-Team/support_files.git
 ```
 
 You need just the Elasticsearch folder which we will refer to as our working folder from now on.
-If you already have other pipelines setup, e.g. for samples, then you only need a single copy
+If you already have other pipelines setup, e.g. for occurrences, then you only need a single copy
 of the support files folder which can be shared between the pipelines.
-
-#### Prepare the lookups for taxon data
-
-Normally it will be acceptable to use the taxa.csv and taxon-paths.csv files
-provided in the repository. Use the following instructions to regenerate them
-if there are taxonomic changes that need to be applied to your imports.
-
-Rather than expect all data sources to provide all the taxonomic information
-related to a record in a single consistent format, we will use the UKSI dataset
-copied into a YML file to create a lookup table containing the information,
-keyed by external key (i.e. the NBN key of the taxon name). This file is
-provided in the Elasticsearch/data/taxa.yml file. Then, during import, sources
-can provide just a taxon NBN key and Logstash will be configured to use this
-YML file to populate all the required taxon information to add to the search
-index.
-
-A second YML file is constructed from the UKSI data to provide path information
-from the taxon's root through the taxonomic levels down to the taxon itself.
-This makes queries based on higher taxa easy and performant. Normally you can
-just use the copies of the 2 YML files provided in the repository, but
-instructions for generating or updating them are provided below.
-
-To update the taxa.yml file with a fresh copy of the data:
-
-* Open the queries/prepare-taxa-lookup.sql file in pgAdmin, connecting to an
-  Indicia database that has the UKSI dataset loaded.
-* Search and replace <taxon_list_id> with the ID of the UKSI list. If there are
-  multiple lists then change this filter to an ` IN (...)` clause. For the BRC
-  warehouse1 for example, this filter is set to ` IN (15, 251, 258, 260, 261, 265)`
-  to support use of the UK Species Inventory and the various lists for ABLE as
-  well as the list for MammalNet-Europe.
-* In pgAdmin 4, if indicia, public is not your logged in users default search path, then
-  edit the query to add "indicia." in front of all the table names (use a
-  different prefix if your schema is different).
-* In pgAdmin's preferences, set CSV/Text output CSV Quoting option to "None".
-* Click the Download as CSV button. Note that I had problems using this under
-  Internet Explorer with Enhanced Security Configuration enabled so ending up
-  using Chrome instead.
-* Rename the downloaded file to taxa.yml and replace the file in
-  Elasticsearch/data in your working folder.
-* Edit the file in a text editor. Remove the first row (column titles), then
-  ensure the line endings are set to LF and save it.
-
-To update the taxon-paths.yml file with a fresh copy of the data, repeat the
-steps above to download the output from the prepare-taxon-paths.sql file.
-Search and replace "," with ": " then save the results as taxon-paths.yml.
-
-Note that if multiple taxon lists are used to define the taxonomic hierarchy
-then you should repeat the extraction for both lists and append the YAML data
-together. For example in the BRC warehouse1 there is a list ID 15 for the UKSI
-and also list 251 for European Butterflies since not all taxa are on the UK
-list.
 
 #### Prepare the lookup for location data
 
-The location data lookup only needs to be prepared once - it can be shared with the samples
+The location data lookup only needs to be prepared once - it can be shared with the occurrences
 pipeline if both are configured.
 
 * Open the queries/prepare-locations-lookup.sql file in pgAdmin, connecting to
@@ -501,21 +359,21 @@ There is a real world example of a location data update in the
 
 #### Prepare the Logstash configuration file (RESTful access)
 
-This approach uses the Indicia RESTful API to access the records. To do this, access must be
-granted on the warehouse by configuring a client user ID, secret and at least 2 project IDs (one
+Logstash is going to use the Indicia RESTful API to access the records. To enable this, access must
+be granted on the warehouse by configuring a client user ID, secret and at least 2 project IDs (one
 for records and one for deletions) for the appropriate set of records. Either request this from the
 administrator of your warehouse, or if you are the administrator then the information needed is
 documented at
 https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html. If
-you are setting up other pipelines (e.g. for samples), then they can share a single client user ID
-but will need their own unique project IDs so that the pipelines can be separately tracked.
+you are setting up other pipelines (e.g. for occurrences), then they can share a single client user
+ID but will need their own unique project IDs so that the pipelines can be separately tracked.
 
 Two templates are provided for you in your working directory's logstash-config folder, one for
-record inserts and updates and another for deletions. Copy the `occurrences-http-indicia.template`
-file to a new file called `occurrences-http-indicia.conf`. Copy the
-`occurrences-http-indicia-deletions.template` file to a new file called
-`occurrences-http-indicia-deletions.conf` and edit them in your preferred text editor. Search and
-replace the following values:
+record inserts and updates and another for deletions. Copy the samples-http-indicia.conf.template
+file to a new file called samples-http-indicia.conf. Copy the
+samples-http-indicia-deletions.conf.template file to a new file called
+samples-http-indicia-deletions.conf and edit them in your preferred text editor. Search and replace
+the following values:
 
 * {{ Warehouse URL }} - the web address of the warehouse, e.g. https://warehouse1.indicia.org.uk.
 * {{ User }} - your client user ID.
@@ -588,8 +446,8 @@ returned. Find the section in the config file **input** > **http_poller** > **ur
 If you are planning to hold sensitive records in your index then the suggested approach
 is to contain 2 copies of each record, one blurred and one at full precision. Then we can
 use a filter on an index alias to limit the searched records appropriately. To achieve
-this, copy your occurrences-http-indicia.conf configuration file to a file called
-occurrences-http-indicia-sensitive.conf. You also need to create a new project in the
+this, copy your samples-http-indicia.conf configuration file to a file called
+samples-http-indicia-sensitive.conf. You also need to create a new project in the
 REST API on the warehouse which has the same configuration as your existing project, but
 a different ID so that sensitive record syncing can be tracked. This project's
 configuration needs to be amended to enable access to the sensitive records report since
@@ -602,7 +460,7 @@ sensitive records report if you are not including sensitive records in the index
   'resource_options' => array(
     'reports' => array(
       'authorise' => [
-        'library/occurrences/list_for_elastic_sensitive.xml',
+        'library/samples/list_for_elastic_sensitive.xml',
       ],
     ),
   ),
@@ -872,4 +730,4 @@ the update status of the API feed to Elasticsearch.
 
 ## Index structure notes
 
-See [Occurrences Document Structure](occurrences-document-structure.md).
+See [Samples Document Structure](samples-document-structure.md).
