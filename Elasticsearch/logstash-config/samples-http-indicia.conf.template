@@ -1,0 +1,215 @@
+input {
+  # Query => autofeed mode enables tracking of downloaded samples on the server-side since the
+  # http_poller input plugin has no logic for importing changes.
+  http_poller {
+    urls => {
+      indicia => {
+        method => get
+        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/samples/list_for_elastic.xml"
+        headers => {
+          Accept => "application/json"
+          Authorization => "USER:{{ User }}:SECRET:{{ Secret }}"
+        }
+        query => {
+          proj_id => "{{ Project ID }}"
+          from_update_date => "1900-01-01"
+          autofeed => "t"
+          max_time => 80
+        }
+      }
+    }
+    request_timeout => 120
+    connect_timeout => 20
+    socket_timeout => 100
+    schedule => { cron => "*/2 * * * * UTC" }
+    keepalive => false
+    codec => "json"
+  }
+}
+filter {
+  # Split the indexed location IDs into separate items.
+  mutate {
+    split => {
+      "indexed_location_ids" => ","
+    }
+  }
+  # Map the indexed locations keys list into a blob of location information.
+  translate {
+    dictionary_path => "{{ Working folder path }}/data/locations.yml"
+    field => "indexed_location_ids"
+    iterate_on => "indexed_location_ids"
+    destination => "locations_blob"
+    remove_field => "indexed_location_ids"
+  }
+  # Split the indexed locations blob into a list of structured location objects.
+  ruby {
+    code => "
+      if event.get('locations_blob')
+        event.set('locations', event.get('locations_blob').compact.collect { |t|
+          c = t.split '~'
+          {
+            'id' => c[0],
+            'name' =>  c[1],
+            'code' => c[2],
+            'type' => c[3]
+          }
+        })
+      end
+    "
+    remove_field => "locations_blob"
+  }
+  # Split the media into separate items.
+  mutate {
+    split => {
+      "media_data" => "@@"
+    }
+  }
+  # Convert the media data for each item into an object.
+  ruby {
+    code => "
+      if event.get('media_data')
+        event.set('media_list', event.get('media_data').collect { |t|
+          c = t.split '~~'
+          {
+            'path' =>  c[0],
+            'caption' => c[1],
+            'licence' => c[2],
+            'type' => c[3]
+          }.delete_if { |k, v| v.blank? }
+        })
+      end
+    "
+    remove_field => "media_data"
+  }
+  # Convert JSON text to JSON
+  json {
+    source => "sample_attrs_json"
+    target => "sample_attrs_orig"
+    remove_field => "sample_attrs_json"
+  }
+  json {
+    source => "parent_sample_attrs_json"
+    target => "parent_sample_attrs_orig"
+    remove_field => "parent_sample_attrs_json"
+  }
+  ruby {
+    code => "
+    require 'uri'
+    ['sample', 'parent_sample'].each do |source|
+      if event.get(source + '_attrs_orig')
+        attrs = []
+        event.get(source + '_attrs_orig').to_hash.each do |key,value|
+          if not value =~ URI::MailTo::EMAIL_REGEXP
+            attrObj = {}
+            attrObj['id'] = key
+            attrObj['value'] = value
+            attrs.push(attrObj)
+          end
+        end
+        event.set(source + '_attrs', attrs)
+      end
+    end
+    "
+    remove_field => [
+      "sample_attrs_orig",
+      "parent_sample_attrs_orig"
+    ]
+  }
+  # Convert our list of fields into a nicely structured sample document.
+  # Also cleanup remaining report fields that we don't need in doc.
+  mutate {
+    rename => {
+      "created_on" => "[metadata][created_on]"
+      "updated_on" => "[metadata][updated_on]"
+      "created_by_id" => "[metadata][created_by_id]"
+      "updated_by_id" => "[metadata][updated_by_id]"
+      "group_id" => "[metadata][group][id]"
+      "group_title" => "[metadata][group][title]"
+      "survey_id" => "[metadata][survey][id]"
+      "survey_title" => "[metadata][survey][title]"
+      "website_id" => "[metadata][website][id]"
+      "website_title" => "[metadata][website][title]"
+      "sensitive" => "[metadata][sensitive]"
+      "sensitivity_precision" => "[metadata][sensitivity_precision]"
+      "sensitivity_blur" => "[metadata][sensitivity_blur]"
+      "trial" => "[metadata][trial]"
+      "confidential" => "[metadata][confidential]"
+      "release_status" => "[metadata][release_status]"
+      "tracking" => "[metadata][tracking]"
+      "input_form" => "[metadata][input_form]"
+      "verifier" => "[metadata][verifier][name]"
+      "verified_by_id" => "[metadata][verifier][id]"
+      "verified_on" => "[metadata][verified_on]"
+      "record_status" => "[metadata][verification_status]"
+      "query" => "[metadata][query]"
+      "count_occurrences" => "[stats][count_occurrences]"
+      "count_taxa" => "[stats][count_taxa]"
+      "count_taxon_groups" => "[stats][count_taxon_groups]"
+      "sum_individual_count" => "[stats][sum_individual_count]"
+      "point" => "[location][point]"
+      "geom" => "[location][geom]"
+      "map_sq_srid" => "[location][grid_square][srid]"
+      "map_sq_1km" => "[location][grid_square][1km][centre]"
+      "map_sq_2km" => "[location][grid_square][2km][centre]"
+      "map_sq_10km" => "[location][grid_square][10km][centre]"
+      "input_sref" => "[location][input_sref]"
+      "input_sref_system" => "[location][input_sref_system]"
+      "output_sref" => "[location][output_sref]"
+      "output_sref_system" => "[location][output_sref_system]"
+      "coordinate_uncertainty_in_meters" => "[location][coordinate_uncertainty_in_meters]"
+      "given_locality_name" => "[location][verbatim_locality]"
+      "recorded_location_id" => "[location][location_id]"
+      "recorded_location_name" => "[location][name]"
+      "recorded_location_code" => "[location][code]"
+      "recorded_parent_location_id" => "[location][parent][location_id]"
+      "recorded_parent_location_name" => "[location][parent][name]"
+      "recorded_parent_location_code" => "[location][parent][code]"
+      "locations" => "[location][higher_geography]"
+      "sample_id" => "[event][event_id]"
+      "parent_sample_id" => "[event][parent_event_id]"
+      "date_start" => "[event][date_start]"
+      "date_end" => "[event][date_end]"
+      "date_type" => "[event][date_type]"
+      "day_of_year" => "[event][day_of_year]"
+      "week" => "[event][week]"
+      "ukbms_week" => "[event][ukbms_week]"
+      "month" => "[event][month]"
+      "year" => "[event][year]"
+      "recorders" => "[event][recorded_by]"
+      "sample_comment" => "[event][event_remarks]"
+      "attr_biotope" => "[event][habitat]"
+      "attr_sample_method" => "[event][sampling_protocol]"
+      "sample_attrs" => "[event][attributes]"
+      "parent_sample_attrs" => "[event][parent_attributes]"
+      "sample_external_key" => "[event][source_system_key]"
+      "media_list" => "[event][media]"
+    }
+    remove_field => [
+      "date"
+    ]
+  }
+  ruby {
+    # Script to clean up nulls and empty values.
+    path => "{{ Working folder path }}/logstash-rb/compact_event.rb"
+  }
+}
+output {
+  if [id] {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "sample_{{ Indicia warehouse unique name }}_index"
+      # Our records need a unique ID in the index for updates.
+      document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    }
+    # Uncomment the following to see the normal events output to the terminal.
+    # stdout { codec => json }
+  }
+  else {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "sample_{{ Indicia warehouse unique name }}_errors"
+    }
+    # Uncomment the following to see the error events output to the terminal.
+    # stdout { codec => json }
+  }
+}

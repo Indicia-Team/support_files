@@ -1,0 +1,49 @@
+input {
+  # Query => autofeed mode enables tracking of downloaded records on the server-side since the
+  # http_poller input plugin has no logic for importing changes.
+  http_poller {
+    urls => {
+      indicia => {
+        method => get
+        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/samples/list_sample_deletions.xml"
+        headers => {
+          Accept => "application/json"
+          Authorization => "USER:{{ User }}:SECRET:{{ Secret }}"
+        }
+        query => {
+          proj_id => "{{ Project ID }}"
+          from_update_date => "1900-01-01"
+          autofeed => "t"
+          max_time => 80
+        }
+      }
+    }
+    request_timeout => 120
+    connect_timeout => 20
+    socket_timeout => 100
+    schedule => { cron => "*/2 * * * * UTC"}
+    keepalive => false
+    codec => "json"
+  }
+}
+output {
+  if [id] {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "sample_{{ Indicia warehouse unique name }}_index"
+      # Our records need a unique ID in the index for updates.
+      document_id => "{{ Indicia warehouse unique name }}|%{id}"
+      action => "delete"
+    }
+    # Uncomment the following to see the normal events output to the terminal.
+    # stdout { codec => json }
+  }
+  else {
+    elasticsearch {
+      hosts => ["{{ Elasticsearch address }}"]
+      index => "sample_{{ Indicia warehouse unique name }}_errors"
+    }
+    # Uncomment the following to see the error events output to the terminal.
+    # stdout { codec => json }
+  }
+}
