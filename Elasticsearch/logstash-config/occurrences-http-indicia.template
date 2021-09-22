@@ -219,11 +219,14 @@ filter {
       end
     end
     "
-    remove_field => "sample_attrs_orig"
-    remove_field => "parent_sample_attrs_orig"
-    remove_field => "occurrence_attrs_orig"
+    remove_field => [
+      "sample_attrs_orig",
+      "parent_sample_attrs_orig",
+      "occurrence_attrs_orig"
+    ]
   }
   # Convert our list of fields into a nicely structured occurrence document.
+  # Also cleanup remaining report fields that we don't need in doc.
   mutate {
     rename => {
       "created_on" => "[metadata][created_on]"
@@ -292,6 +295,7 @@ filter {
       "attr_sample_method" => "[event][sampling_protocol]"
       "sample_attrs" => "[event][attributes]"
       "parent_sample_attrs" => "[event][parent_attributes]"
+      "sample_external_key" => "[event][source_system_key]"
       "taxon_key" => "[taxon][taxon_id]"
       "taxa_taxon_list_id" => "[taxon][taxa_taxon_list_id]"
       "taxon_meaning_id" => "[taxon][taxon_meaning_id]"
@@ -337,6 +341,7 @@ filter {
       "media_list" => "[occurrence][media]"
       "occurrence_attrs" => "[occurrence][attributes]"
     }
+    remove_field => "date"
   }
   ruby {
     # Script to clean up nulls and empty values.
