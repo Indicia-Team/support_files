@@ -139,6 +139,11 @@ filter {
       "media_data" => "@@"
     }
   }
+  mutate {
+    split => {
+      "event_media_data" => "@@"
+    }
+  }
   # Convert the media data for each item into an object.
   ruby {
     code => "
@@ -153,8 +158,19 @@ filter {
           }.delete_if { |k, v| v.blank? }
         })
       end
+      if event.get('event_media_data')
+        event.set('event_media_list', event.get('event_media_data').collect { |t|
+          c = t.split '~~'
+          {
+            'path' =>  c[0],
+            'caption' => c[1],
+            'licence' => c[2],
+            'type' => c[3]
+          }.delete_if { |k, v| v.blank? }
+        })
+      end
     "
-    remove_field => "media_data"
+    remove_field => ["media_data", "event_media_data"]
   }
   # Tidy data cleaner info. First, add a pipe character between items in the
   # text so it can be split easily.
@@ -296,6 +312,7 @@ filter {
       "sample_attrs" => "[event][attributes]"
       "parent_sample_attrs" => "[event][parent_attributes]"
       "sample_external_key" => "[event][source_system_key]"
+      "event_media_list" => "[event][media]"
       "taxon_key" => "[taxon][taxon_id]"
       "taxa_taxon_list_id" => "[taxon][taxa_taxon_list_id]"
       "taxon_meaning_id" => "[taxon][taxon_meaning_id]"
