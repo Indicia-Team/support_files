@@ -90,6 +90,12 @@ table.
 **Warehouse field**|Habitat/biotope for the sample.
 **Description**|`sample_attribute_values.*`
 
+`event.media`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`sample_media`
+**Description**|List of media files associated with the event. Each item contains the file name, caption, type and licence. Prefix the file name with the path to the warehouse upload folder to locate the file.
+
 `event.month`||
 -----|-----
 **Data type**|number
