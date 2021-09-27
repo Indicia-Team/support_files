@@ -256,6 +256,8 @@ filter {
       "survey_title" => "[metadata][survey][title]"
       "website_id" => "[metadata][website][id]"
       "website_title" => "[metadata][website][title]"
+      "private" => "[metadata][private]"
+      "privacy_precision" => "[metadata][privacy_precision]"
       "sensitive" => "[metadata][sensitive]"
       "sensitivity_precision" => "[metadata][sensitivity_precision]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
