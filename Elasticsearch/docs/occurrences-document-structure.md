@@ -1,7 +1,7 @@
-# Document structure for the default Indicia Elasticsearch configuration.
+# Document structure for the default Indicia Elasticsearch occurrences configuration.
 
 If the standard instructions for configuring Elasticsearch and Indicia are followed, then
-the index will contain documents structured as described below. Note:
+the occurrences index will contain documents structured as described below. Note:
 
 * sensitive records are represented by 2 copies of the record, one which is full
   precision (metadata.sensitivity_blur=F) and one which is blurred accordingly
@@ -20,7 +20,10 @@ the index will contain documents structured as described below. Note:
 -----|-----
 **Data type**|string
 **Warehouse field**|Derived from `occurrences.id`
-**Description**|Elasticsearch index unique ID. This is the Indicia warehouse ID, with a prefix that denotes the warehouse the record was sourced from, ensuring that \_id is always unique. E.g. BRC1&#124;123456. Where a record is sensitive, the index stores 2 copies of the record with a default blurred view and a full precision view - in the latter case ! is appended to the \_id value, e.g. BRC1&#124;123456!.
+**Description**|Elasticsearch index unique ID. This is the Indicia warehouse ID, with a prefix that denotes the
+warehouse the record was sourced from, ensuring that \_id is always unique. E.g. BRC1&#124;123456. Where a record is
+sensitive or belongs to a sample flagged as private, the index stores 2 copies of the record with a default blurred
+view and a full precision view - in the latter case ! is appended to the \_id value, e.g. BRCSMP&#124;123456!.
 
 `id`||
 -----|-----
@@ -184,7 +187,7 @@ table.
 -----|-----
 **Data type**|string
 **Warehouse field**|`occurrence.record_status`
-**Description**|Verification status of the record. Possible values are:<br>V = accepted<br>V1 = accepted as correct<br/>C = not reviewed<br>R = not accepted
+**Description**|Verification status of the record. Possible values are:<br>V = accepted<br>C = not reviewed<br>R = not accepted.
 
 `identification.verification_substatus`||
 -----|-----
@@ -226,7 +229,7 @@ table.
 -----|-----
 **Data type**|geo\_shape
 **Warehouse field**|`samples.geom`
-**Description**|Boundary of the occurrence’s sample. Blurred if sensitive and not the full precision version of the record.
+**Description**|Boundary of the occurrence’s sample. Blurred if sensitive or private and not the full precision version of the record.
 
 `location.higher_geography`||
 -----|-----
@@ -250,7 +253,10 @@ table.
 -----|-----
 **Data type**|keyword
 **Warehouse field**|`map_squares.geom`
-**Description**|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries). Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the mapped projection. Empty if sensitivity of the records means this precision should not be visible
+**Description**|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection
+to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries).
+Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the
+mapped projection. Empty if sensitivity or privacy of the records means this precision should not be visible.
 
 `location.grid_square.2km.centre`||
 -----|-----
@@ -268,7 +274,10 @@ table.
 -----|-----
 **Data type**|string
 **Warehouse field**|`cache_samples_functional.public_entered_sref`, derived from `samples.entered_sref`
-**Description**|Spatial reference in notation as input by the recorder. If the record is sensitive, then the `location.output_sref` value is used, blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive record, shows the original full precision reference.
+**Description**|Spatial reference in notation as input by the recorder. If the record is sensitive or private, then the
+`location.output_sref` value is used, blurred to the appropriate precision unless this is the full precision version of
+the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index
+aliases). For the full precision version of a sensitive or private record, shows the original full precision reference.
 
 `location.input_sref_system`||
 -----|-----
@@ -286,7 +295,11 @@ table.
 -----|-----
 **Data type**|string
 **Warehouse field**|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
-**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid Reference). If the record is sensitive, then blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive record, shows the original full precision reference.
+**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid
+Reference). If the record is sensitive or private, then blurred to the appropriate precision unless this is the full
+precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out
+from default index aliases). For the full precision version of a sensitive or private record, shows the original full
+precision reference.
 
 `location.output_sref_system`||
 -----|-----
@@ -372,6 +385,18 @@ table.
 **Warehouse field**|`occurrences.release_status`
 **Description**|For records that are not ready for release into public reporting systems, gives the status. Values are R = released, U = unreleased, P = pending review. Values U and P should be filtered out in default index aliases.
 
+`metadata.privacy_precision`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`samples.privacy_precision`
+**Description**|True if the sample containing the record is flagged as private.
+
+`metadata.private`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|derived from `samples.privacy_precision`
+**Description**|For records that are private, indicates the size of the grid square to blur to.
+
 `metadata.sensitive`||
 -----|-----
 **Data type**|boolean
@@ -382,7 +407,9 @@ table.
 -----|-----
 **Data type**|string
 **Warehouse field**|derived from `occurrences.sensitivity_precision`
-**Description**|Where the index contains 2 copies of sensitive records, identifies which copy of the record this document relates to. F = full precision, B = blurred. Default index aliases should filter out documents where sensitivity\_blur = F.
+**Description**|Where the index contains 2 copies of sensitive or private records, identifies which copy of the record
+this document relates to. F = full precision, B = blurred. Default index aliases should filter out documents where
+sensitivity\_blur = F.
 
 `metadata.sensitivity_precision`||
 -----|-----
