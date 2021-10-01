@@ -69,11 +69,11 @@ PUT sample_brc1_v1?include_type_name=true
         "metadata.updated_by_id": { "type": "integer" },
         "metadata.created_on": {
           "type": "date",
-          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
         },
         "metadata.updated_on": {
           "type": "date",
-          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
         },
         "metadata.group.id": { "type": "integer" },
         "metadata.input_form": { "type": "keyword" },
@@ -91,11 +91,11 @@ PUT sample_brc1_v1?include_type_name=true
         "metadata.verifier.id": { "type": "integer" },
         "metadata.verified_on": {
           "type": "date",
-          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
         },
         "metadata.verification_status": { "type": "keyword" },
         "stats.count_occurrences": { "type": "integer" },
-        "stats.count_species": { "type": "integer" },
+        "stats.count_taxa": { "type": "integer" },
         "stats.count_taxon_groups": { "type": "integer" },
         "stats.sum_individual_count": { "type": "integer" },
         "location.geom": { "type": "geo_shape" },
@@ -187,7 +187,7 @@ PUT sample_brc1_v1
       },
       "metadata.verification_status": { "type": "keyword" },
       "stats.count_occurrences": { "type": "integer" },
-      "stats.count_species": { "type": "integer" },
+      "stats.count_taxa": { "type": "integer" },
       "stats.count_taxon_groups": { "type": "integer" },
       "stats.sum_individual_count": { "type": "integer" },
       "location.geom": { "type": "geo_shape" },
