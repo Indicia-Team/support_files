@@ -111,5 +111,8 @@ jQuery(document).ready(function () {
 
       }
   	});
+  } else {
+  	// Don't allow project type to be changed in edit mode
+  	jQuery('#ctrl-wrap-group-group_type_id').remove();
   }
 });
