@@ -46,6 +46,10 @@ jQuery(document).ready(function () {
     jQuery('[name="group+:pages::7:0"]').remove(); 
     jQuery('[name="group+:pages::7:1"]').remove();
     jQuery('[name="group+:pages::7:2"]').remove();
+    
+	jQuery('[name="group+:pages::8:0"]').remove(); 
+    jQuery('[name="group+:pages::8:1"]').remove();
+    jQuery('[name="group+:pages::8:2"]').remove();
   }
   
   if (!urlParams.get('group_id')) {
@@ -91,6 +95,11 @@ jQuery(document).ready(function () {
 	  
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::7:0" value="inventory-data-entry:NPMS Mode - Inventory">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::7:1" value="Inventory">');
+	  	
+	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::8:0" value="npms-mode-square-importer:NPMS Mode - Square importer for projects">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::8:1" value="Square importer">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::8:2" value="t:Available only to group admins">');
+
 
       }
     

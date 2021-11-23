@@ -17,4 +17,5 @@ jQuery(document).ready(function () {
   jQuery('<br>').insertBefore('.npms-mode-data-entry-selection');
   jQuery('<br>').insertBefore('.samples-admin-npms-mode');
   jQuery('<br>').insertBefore('.squares-admin-npms-mode');
+  jQuery('<br>').insertBefore('.npms-mode-square-importer');
 });
