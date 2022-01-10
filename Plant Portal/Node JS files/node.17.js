@@ -14,7 +14,7 @@ jQuery(document).ready(function () {
     jQuery('<div>View a list of squares for the project here</div>').insertBefore('[href*="list-squares-npms-mode"]');
 
     jQuery('[href*="my-samples-npms-mode"]').closest('li').before('<hr>');
-    jQuery('<div>View you visits here</div>').insertBefore('[href*="my-samples-npms-mode"]');
+    jQuery('<div>View your visits here</div>').insertBefore('[href*="my-samples-npms-mode"]');
 
     jQuery('[href*="my-projects"]').closest('li').before('<hr>');
     jQuery('[href*="my-projects"]').text('Return to your projects list');
