@@ -1,7 +1,6 @@
 jQuery(document).ready(function($) {
   // Make sure the system only ever shows the initially agreed upon sets or terms, nothing added for other countries
   // or the app
-  var stationNumberNames = ['','1','2','3','4','5'];
   
   var trapDisturbedNames = ['','yes','no','not sure'];
   
