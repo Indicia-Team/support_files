@@ -27,6 +27,7 @@ global $custom_terms;
  * @package	Client
  */
 $custom_terms = array(
+  'Fill in details of your {1} below' => 'Fill in details of your project below',
   '{1} name' => 'Project name',
   '{1} description' => 'Project descriptions',
   '{1} type' => 'Project type',
@@ -86,4 +87,6 @@ $custom_terms = array(
     . 'characters of their surname then selecting their name from '
     . 'the list of suggestions and clicking the Add button. Users will need '
     . 'register on this website before you can add them.',
+  'How users join this {1}' => 'How users join this project',
+  'Create {1}' => 'Create project'
 );
