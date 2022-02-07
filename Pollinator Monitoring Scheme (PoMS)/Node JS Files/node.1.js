@@ -238,7 +238,8 @@ jQuery(document).ready(function($) {
       // On form submit, validate location.
       var valid;
       valid = validate1kmSquare();
-      if (valid) {
+      // Validation only works on OSGB
+      if (valid && $('#imp-sref-system option:selected').val() == 'OSGB') {
         valid = validateSref();
       }
       if (!valid) {
