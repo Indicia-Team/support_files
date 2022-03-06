@@ -147,16 +147,22 @@ table.
 **Warehouse field**|websites.verification_checks_enabled`
 **Description**|True if from a dataset that has automated rule checking enabled (warehouse Data Cleaner module).
 
+`identification.auto_checks.identification_difficulty`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|occurrence_comments.sub_type`
+**Description**|If the record is flagged by an identification difficulty rule, specifies the difficulty from 1 to 5.
+
 `identification.auto_checks.output`||
 -----|-----
 **Data type**|nested
-**Warehouse field**|`occurrence_comment.*`
+**Warehouse field**|`occurrence_comments.*`
 **Description**|List of objects describing automated rule check violations. Each object contains a value for message and rule type.
 
 `identification.auto_checks.result`||
 -----|-----
 **Data type**|boolean
-**Warehouse field**|`occurrence_comment.*`
+**Warehouse field**|`occurrence_comments.*`
 **Description**|True if passes automated rule checks, false if fails, omitted if not checked.
 
 `identification.identified_by`||

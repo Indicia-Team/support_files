@@ -275,6 +275,7 @@ filter {
       "record_decision_source" => "[identification][verification_decision_source]"
       "data_cleaner_list" => "[identification][auto_checks][output]"
       "data_cleaner_result" => "[identification][auto_checks][result]"
+      "identification_difficulty" => "[identification][auto_checks][identification_difficulty]"
       "verification_checks_enabled" => "[identification][auto_checks][enabled]"
       "query" => "[identification][query]"
       "attr_certainty" => "[identification][recorder_certainty]"
