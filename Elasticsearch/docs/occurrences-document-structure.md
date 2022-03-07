@@ -165,6 +165,13 @@ table.
 **Warehouse field**|`occurrence_comments.*`
 **Description**|True if passes automated rule checks, false if fails, omitted if not checked.
 
+`identification.auto_checks.applied_verification_rule_types`||
+-----|-----
+**Data type**|string array
+**Warehouse field**|`cache_occurrences_functional.applied_verification_rule_types`
+**Description**|List of key verification rule types that have been applied to an occurrence, giving an indication of
+rule coverage. E.g. ["period","period_within_year","without_polygon"].
+
 `identification.identified_by`||
 -----|-----
 **Data type**|string

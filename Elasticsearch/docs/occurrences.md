@@ -99,6 +99,7 @@ PUT occurrence_brc1_v1?include_type_name=true
           "type": "nested"
         },
         "identification.auto_checks.result": { "type": "boolean" },
+        "identification.auto_checks.verification_rule_types_applied": { "type": "keyword" },
         "location.geom": { "type": "geo_shape" },
         "location.point": { "type": "geo_point" },
         "location.grid_square.srid": { "type": "integer" },
@@ -242,6 +243,7 @@ PUT occurrence_brc1_v1
         "type": "nested"
       },
       "identification.auto_checks.result": { "type": "boolean" },
+      "identification.auto_checks.verification_rule_types_applied": { "type": "keyword" },
       "location.geom": { "type": "geo_shape" },
       "location.point": { "type": "geo_point" },
       "location.grid_square.srid": { "type": "integer" },
