@@ -1,4 +1,7 @@
-jQuery(document).ready(function () {
+/*
+ * This should be included in the the report grid @callback option
+ */
+function organise_project_links() {  
   // Hide the links to the data entry pages as these must be associated with a group, 
   // but are actually accessed via another page
   jQuery('.wildflower-data-entry').hide();
@@ -17,4 +20,5 @@ jQuery(document).ready(function () {
   jQuery('<br>').insertBefore('.npms-mode-data-entry-selection');
   jQuery('<br>').insertBefore('.samples-admin-npms-mode');
   jQuery('<br>').insertBefore('.squares-admin-npms-mode');
-});
+  jQuery('<br>').insertBefore('.npms-mode-square-importer');
+}

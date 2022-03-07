@@ -5,28 +5,49 @@ jQuery(document).ready(function($) {
       'Grassy verge or hedgerow edge','Grassland with wild flowers (e.g. meadow)',
       'Amenity grassland (usually mown short)','Farm crops or grassy pasture',
       'Upland moorland','Lowland heath',"Brownfield or other 'waste ground'",
-      'Woodland','Other - please describe below'];
+      'Woodland','Other - please describe below',
+      'Gardd','Tir ysgol','Tir parc gyda choed','Mynwent eglwys','Ymyl glaswelltog neu ymyl gwrych',
+      'Glaswelltir gyda blodau gwyllt (e.e. dôl)','Glaswelltir amwynder (wedi ei dorri’n fyr fel arfer)',
+      'Cnydau fferm neu boraf laswelltog','Rhostir ucheldir','Gweundir iseldir','Tir llwyd neu ‘dir gwastraff’ arall',
+      'Coetir','Arall - disgrifiwch isod'];
 	
   var targetNames = ['','Bramble (Blackberry) - Rubus fruticosus','Buddleja','Buttercup - Ranunculus species',
       'Dandelion - Taraxacum officinale','Hawthorn - Crataegus','Heathers - Calluna and Erica species',
       'Hogweed - Heracleum sphondylium','Ivy - Hedera','Knapweeds (Common or Greater) - Centaurea nigra or scabiosa',
       'Lavender (English) - Lavandula angustifolia','Ragwort - Jacobaea/Senecio species','Thistle - Cirsium or Carduus',
-      'White Clover - Trifolium repens','White Dead-nettle - Lamium album','Other - please describe below'];
+      'White Clover - Trifolium repens','White Dead-nettle - Lamium album','Other - please describe below',
+      'Miaren/Mwyaren Ddu - Rubus fruticosus','Buddleja','Blodyn menyn - rhywogaethau Ranunculus',
+      'Dant y llew - Taraxacum officinale','Draenen Wen - Crataegus','Grug - Rhywogaethau Calluna ac Erica',
+      'Efwr - Heracleum sphondylium','Iorwg - Hedera','Y Bengaled/Bengaled Fawr - Centaurea nigra neu scabiosa',
+      'Lafant (Saesnig) - Lavandula angustifolia','Llysiau’r Gingroen - rhywogaethau Jacobaea/Senecio',
+      'Ysgall - Carduus neu Cirsium','Meillionen Wen - Trifolium repens',
+      'Marddanhadlen Wen - Lamium album','Arall - disgrifiwch isod'];
       
-  var typeNames = ['','individual flower','flower head','flower umbel','flower spike'];
+  var typeNames = ['','individual flower','flower head','flower umbel','flower spike',
+      'blodyn unigol','pen blodau','wmbel blodau','pigyn blodau'];
   
   var patchOccupationNames = ['','Growing in a larger patch of the same flower','Growing in a larger patch of many different flowers',
-      'More or less isolated','Not recorded'];
+      'More or less isolated','Not recorded',
+      "Mae'r blodau targed yn gorchuddio llai na hanner y llain","Mae'r blodau targed yn gorchuddio tua hanner y llain",
+      "Mae'r blodau targed yn gorchuddio dros hanner y llain","Heb ei gofnodi"];
       
   var patchContextNames = ['','Growing in a larger patch of the same flower','Growing in a larger patch of many different flowers',
-      'More or less isolated','Not recorded'];
+      'More or less isolated','Not recorded',
+      'Yn tyfu mewn llain fwy o’r un blodyn','Yn tyfu mewn llain fwy o lawer o flodau gwahanol',
+      'Wedi ei hynysu fwy neu lai','Heb ei gofnodi'];
       
-  var skyNames = ['','All or mostly blue','Half blue and half cloud','All or mostly cloud','Not recorded'];
+  var skyNames = ['','All or mostly blue','Half blue and half cloud','All or mostly cloud','Not recorded',
+      "I gyd neu’r rhan fwyaf yn las","Hanner yn las hanner yn gymylog",
+      "Yn gwbl neu’n bennaf gymylog","Heb ei gofnodi"];
     
-  var sunShadeNames = ['','Entirely in sunshine','Partly in sun and partly shaded','Entirely shaded','Not recorded'];
+  var sunShadeNames = ['','Entirely in sunshine','Partly in sun and partly shaded','Entirely shaded','Not recorded',
+      'Yn gyfan gwbl yn yr haul','Rhannol yn yr haul a rhannol yn y cysgod',
+      'Yn gyfan gwbl yn y cysgod','Heb ei gofnodi'];
   
   var windNames = ['','Leaves still/moving occasionally','Leaves moving gently all the time',
-      'Leaves moving strongly','Not recorded'];
+      'Leaves moving strongly','Not recorded',
+      'Dail yn llonydd/symud weithiau',"Dail yn symud yn ysgafn drwy’r amser",
+      "Dail yn symud yn sylweddol","Heb ei gofnodi"];
 	
   // Habitat drop-down
   jQuery('#smpAttr\\:1048 option').each(function() {
@@ -97,7 +118,7 @@ jQuery(document).ready(function($) {
     var $flower = $('#smpAttr\\:1050');
     var $flowerOther = $('#smpAttr\\:1051');
     var $flowerOtherWrapper = $('#ctrl-wrap-smpAttr-1051');
-    var vagueFlowerOptions = ['14100', '13572', '13610', '13612', '13613', '13575'];
+    var vagueFlowerOptions = ['14100', '13572', '13610', '13608', '13612', '13613', '13575'];
     // Vague flowers are buttercup, hawthorn, knapweeds, ragwort, thistle, other
     var flowerOtherOption = 13575;
     var flowerOther = '';
@@ -107,8 +128,6 @@ jQuery(document).ready(function($) {
     $floralUnit.after(
       '<input id="hidden-smpAttr:1054" name="hidden-smpAttr:1054" type="hidden" value="">');
     var $floralUnitHidden = $('#hidden-smpAttr\\:1054');
-    // The name of the Floral Unit input is variable, containing the sample_id
-    // when editing. Ensure we preserve when page loads.
     var floralUnitInputName;
     var manualUnit = '';
     var flower2floralUnit = [];
@@ -181,48 +200,6 @@ jQuery(document).ready(function($) {
         $floralUnitHidden.prop('name', floralUnitInputName);
       }
     }
-    
-    function validate1kmSquare() {
-      if ($('#imp-location').val().length === 0) {
-        alert("Please select a 1km square from the defined list.");
-        return false;
-      }
-      else {
-        return true;
-      }
-    }
-  
-    function validateSref() {
-      // First 6 characters of location_autocomplete should be a 4-figure gridref.
-      var bigSref = $('#imp-location\\:name').val().slice(0, 6);
-      var smallSref = $('#imp-sref').val();
-      if (smallSref.length === 0) {
-        alert("Please enter a precise grid reference.");
-        return false
-      }
-      // smallSref must be inside bigSref (the 1km square).
-      if (bigSref.slice(0,2).toLowerCase() == smallSref.slice(0, 2).toLowerCase()) {
-        // Good! First two letter match.
-        bigSref = bigSref.slice(2);
-        smallSref = smallSref.slice(2);
-        var smallSrefLen = smallSref.length;
-        if (smallSrefLen % 2 == 0) {
-          // Still good! smallSref has an even number of digits. 
-          var bigSrefEasting = bigSref.slice(0, 2);
-          var bigSrefNorthing = bigSref.slice(2);
-          var smallSrefEasting = smallSref.slice(0, smallSrefLen/2);
-          var smallSrefNorthing = smallSref.slice(smallSrefLen/2);
-          if ((smallSrefEasting.slice(0, 2) == bigSrefEasting) &&
-              (smallSrefNorthing.slice(0, 2) == bigSrefNorthing)) {
-            // Yay! Its either the same as bigSref or inside it.
-            return true;
-          }
-        }
-      }
-      
-      alert("Please ensure the precise grid reference is inside the 1km square.");
-      return false;
-    }
   
     // Set up event handlers
     $habitat.change(function(){
@@ -234,18 +211,7 @@ jQuery(document).ready(function($) {
       otherFlower();
       floralUnit();
     });
-    $('#save-button').click(function(e){
-      // On form submit, validate location.
-      var valid;
-      valid = validate1kmSquare();
-      // Validation only works on OSGB
-      if (valid && $('#imp-sref-system option:selected').val() == 'OSGB') {
-        valid = validateSref();
-      }
-      if (!valid) {
-        e.preventDefault();
-      }
-    });
+
     
     // Initialise on load as we may be editing a record.
     habitatOther = $habitatOther.val();

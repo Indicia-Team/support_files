@@ -109,11 +109,45 @@ function addUserSiteData(locationId, userIdToAdd,features) {
 }
     
 mapInitialisationHooks.push(function (div) {
-  //Set the click "?" map control to be the default one
+  //Switch off WMS layers by default
+  jQuery.each(div.map.layers, function(idx, layer) {
+    if (layer.name === "SSSIs" ||
+        layer.name === "National Parks" ||
+        layer.name === "National Nature Reserves" ||
+        layer.name === "AONBs" ||
+        layer.name === "National Trust Properties" ||
+        layer.name === "Vice County Boundaries" ||
+        layer.name === "RSPB Reserves") {
+      layer.setVisibility(false);
+    }
+  });
+
+  // Set the layer label, this actually only takes effect on the label when the layer
+  // checkbox is switch on and off
+  jQuery.each(div.map.layers, function(idx, lay) {
+    if (lay.name === 'Report output') {
+      lay.name = 'Display Square Search';
+    }
+  });
+
+  
   jQuery.each(div.map.controls, function(idx, ctrl) {
-    if (ctrl.CLASS_NAME==="OpenLayers.Control") {
+    // Need to set the layer checkbox name, otherwise it isn't what we want when the page initially
+    // loads
+    if (ctrl.dataLayers) {
+      jQuery.each(ctrl.dataLayers, function(idx, dataLayer) {
+        if (dataLayer.labelSpan.innerHTML === 'Report output') {
+          dataLayer.labelSpan.innerHTML = 'Display Square Search';
+          dataLayer.inputElem.defaultValue = 'Display Square Search';
+          dataLayer.inputElem.name = 'Display Square Search';
+        }
+      });
+    }
+
+    //Set the click "?" map control to be the default one
+    if (ctrl.displayClass === "left olControlSelectFeature") {
       ctrl.activate();
-    } else if (ctrl.CLASS_NAME==="OpenLayers.Control.Navigation") {
+    } else if (ctrl.displayClass === "left olControlNavigation" || ctrl.displayClass === "left olControlClickSref") {
       ctrl.deactivate();
     }
   });
