@@ -217,6 +217,11 @@ filter {
     target => "occurrence_attrs_orig"
     remove_field => "occurrence_attrs_json"
   }
+  json {
+    source => "verification_rule_types_applied_json"
+    target => "verification_rule_types_applied"
+    remove_field => "verification_rule_types_applied_json"
+  }
   ruby {
     code => "
     require 'uri'
@@ -275,6 +280,8 @@ filter {
       "record_decision_source" => "[identification][verification_decision_source]"
       "data_cleaner_list" => "[identification][auto_checks][output]"
       "data_cleaner_result" => "[identification][auto_checks][result]"
+      "verification_rule_types_applied" => "[identification][auto_checks][verification_rule_types_applied]"
+      "identification_difficulty" => "[identification][auto_checks][identification_difficulty]"
       "verification_checks_enabled" => "[identification][auto_checks][enabled]"
       "query" => "[identification][query]"
       "attr_certainty" => "[identification][recorder_certainty]"
