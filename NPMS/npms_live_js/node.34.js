@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
   $('.filter-row').hide();
 });
 
-jQuery(window).load(function () {
+jQuery(document).ready(function() {
   if(jQuery('#sampleList').length === 0) {
     jQuery('#sampleList-description').remove();
   }
