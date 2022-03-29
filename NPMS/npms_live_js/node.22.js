@@ -2,7 +2,7 @@
 
 //We want to hide the grid on the page, the ID seems to vary. Using a few separate exact selectors as I think it is possibly faster than
 //one vague selector...not sure
-jQuery(window).on('load', function () {
+jQuery(document).ready(function () {
   jQuery('#report-grid-0').hide();
   jQuery('#report-grid-1').hide();
   jQuery('#report-grid-2').hide();
