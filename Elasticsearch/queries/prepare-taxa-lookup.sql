@@ -32,9 +32,9 @@ SELECT DISTINCT ('"' || t.search_code
     || '~' || coalesce(tsubfamily.taxon, '')
     || '~' || coalesce(tgenus.taxon, '')
     || '~' || coalesce(tspecies.taxon, '')
-    || '~' || coalesce(tspecies.external_key, ''),
-    || '~' || coalesce(tspecies.authority, ''),
-    || '~' || coalesce(tspecies.default_common_name, '')
+    || '~' || coalesce(tspecies.external_key, '')
+    || '~' || coalesce(tspecies.authority, '')
+    || '~' || coalesce(tspecies.default_common_name, ''),
   '\', '\\'),
   '"', '\"'),
   E'\u0082', ','),
