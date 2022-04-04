@@ -57,6 +57,7 @@ $custom_terms = array_merge($custom_terms, array(
 	'Alternatively you can tick the box "Skip initial grid of data" in the "User Interface" section of the Edit page for the form.',
 	
   'Report Parameters' => 'My visits',
-  'The information has been updated.' => ''
+  'The information has been updated.' => '',
+  'Are you sure you want to delete this form?' => 'Are you sure you wish to delete this survey?'
 )
 );
