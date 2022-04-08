@@ -9,6 +9,6 @@
     } else {
       $('#pdf-link-path').hide();
     }
-    $('#ctrl-wrap-locAttr-136').hide();
+    $('#container-locAttr-136').hide();
   });
 }) (jQuery);
