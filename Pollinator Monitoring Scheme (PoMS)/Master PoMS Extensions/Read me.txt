@@ -1,0 +1,3 @@
+Extension files that are shared between the FIT Count/SPRING and UKPoMS projects.
+The files in this folder can be considered as the master files that include all the code from all the projects (in case the projects get out of sync).
+When any of the shared projects are updated, these files should also be updated (ideally all the shared projects should use these master files).
