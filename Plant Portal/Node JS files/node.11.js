@@ -21,4 +21,8 @@ function organise_project_links() {
   jQuery('<br>').insertBefore('.samples-admin-npms-mode');
   jQuery('<br>').insertBefore('.squares-admin-npms-mode');
   jQuery('<br>').insertBefore('.npms-mode-square-importer');
+  
+  // Change grid headers
+  jQuery('#all-activities-th-pages').find('a:contains("Links")').text('Project options');
+  jQuery('.report-grid').find('.col-actions:first').html('Membership options');
 }
