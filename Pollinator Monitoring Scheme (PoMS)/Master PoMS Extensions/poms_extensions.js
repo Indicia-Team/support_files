@@ -239,6 +239,16 @@ jQuery(document).ready(function ($) {
     }
     window.location.href = url;
   });
+
+  // For SPRING pan-trap  
+  // Delay the square default otherwise the country and its children will not be ready first
+  $('#country-select-list').ready(function() {
+    setTimeout(function() {
+      if (indiciaData.defaultSquareSelection) {
+        $('#imp-location option[value=' + indiciaData.defaultSquareSelection + ']').prop('selected', true);
+      }
+    }, 1000);
+  });
 });
 
 // This code is only used by the limit_termlists_and_species_to_selected_location extension

@@ -344,4 +344,79 @@ class extension_poms_extensions {
     $taxaTaxonListIdsToFilterBy = self::build_allowed_ids_from_db_result($taxaTaxonListIdsToFilterByResult);
     return $taxaTaxonListIdsToFilterBy;
   }
+
+  /**
+   * Draw MVS square selector with an initial country filter. Currently used on the SPRING pan-trap form.
+   * 
+   * @param array $auth  
+   * 
+   * @param array $args
+   *   List of page argument options available to the extension 
+   * 
+   * @param array $options
+   *   List of extension specific options available to the extension 
+   * 
+   */
+  public static function draw_country_and_square_location_control($auth, $args, $tabAlias, $options) {
+    iform_load_helpers(array('report_helper'));
+    // Get default country/square in edit mode as this isn't saved directly against the sample
+    if (!empty($_GET['sample_id'])) {
+      $defaultCountryAndSquareInfo = report_helper::get_report_data(
+        array(
+          'dataSource'=>'projects/poms/get_default_locations_for_sample',
+          'readAuth'=>$auth['read'],
+          'mode'=>'report',
+          'extraParams' => array(
+            'sample_id'=>$_GET['sample_id'],
+            'country_location_type_id' => $options['countryLocationTypeId'],
+            'square_country_code_loc_attr_id' => $options['squareCountryCodeLocAttrId'])
+        )
+      );
+      $defaultCountrySelection = $defaultCountryAndSquareInfo[0]['country_id'];
+      $defaultSquareSelection = $defaultCountryAndSquareInfo[0]['square_id'];
+    } else {
+      $defaultCountrySelection = '';
+      $defaultSquareSelection = '';
+    }
+    $extraParamsForCountryList = array(
+      'location_type_id' => $options['countryLocationTypeId'],
+      'sensattr' => 0,
+      'exclude_sensitive' => false
+    );
+    if (!empty($options['limitCountriesById'])) {
+      $extraParamsForCountryList = array_merge($extraParamsForCountryList, array('idlist' => $options['limitCountriesById']));
+    }
+    $r = data_entry_helper::location_select(array(
+      'report' =>  'library/locations/locations_list_exclude_sensitive',
+      'reportProvidesOrderBy' => true,
+      'id' => 'country-select-list',
+      'helpText' => lang::get('Select a country to filter squares to.'),
+      'fieldname' => 'country-select-list',
+      'blankText' => lang::get('LANG_Blank_Text'),
+      'blankText' => '<please select>',
+      'default' => $defaultCountrySelection,
+      'extraParams' => $auth['read'] + $extraParamsForCountryList
+    ));
+    // We need to default the square in javascript otherwise the country field is not reaady first
+    if (!empty($defaultSquareSelection)) {
+      data_entry_helper::$javascript .= 'indiciaData.defaultSquareSelection='.$defaultSquareSelection.";\n";
+    }
+    // Square location drop-down
+    $r .= data_entry_helper::location_select(array(
+      'parentControlId' => 'country-select-list',
+      'filterField' =>  'country_id',
+      'reportProvidesOrderBy' => true,
+      'searchUpdatesSref' => false,
+      'label' => '1km square',
+      'validation' => 'required',
+      'report' =>  'projects/poms/get_squares_for_country_id',
+      'id' =>  'imp-location',
+      'fieldname' =>  'sample:location_id',
+      'extraParams' => $auth['read'] + array(
+        'square_location_type_id' => $options['squareLocationTypeId'],
+        'square_country_code_loc_attr_id' => $options['squareCountryCodeLocAttrId']
+      ) 
+    ));
+    return $r;
+  }
 }
