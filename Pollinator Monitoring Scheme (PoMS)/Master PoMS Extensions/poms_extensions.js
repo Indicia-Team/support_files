@@ -246,6 +246,8 @@ jQuery(document).ready(function ($) {
     setTimeout(function() {
       if (indiciaData.defaultSquareSelection) {
         $('#imp-location option[value=' + indiciaData.defaultSquareSelection + ']').prop('selected', true);
+        // This isn't a user made change, so stop browser from warning user if they leave page
+        window.onbeforeunload = null;
       }
     }, 1000);
   });
