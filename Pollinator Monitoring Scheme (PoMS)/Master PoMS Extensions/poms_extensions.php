@@ -419,4 +419,86 @@ class extension_poms_extensions {
     ));
     return $r;
   }
+
+  /**
+   * Draw country drop-down and country code for a square.
+   *
+   * @param array $auth
+   *   Auth tokens for reporting.
+   * @param array $args
+   *   List of page argument options available to the extension.
+   * @param array $tabAlias
+   *   $tabAlias parameter.
+   * @param array $options
+   *   List of extension specific options available to the extension.
+   */
+  public static function drawCountryAndSetCountryCode($auth, $args, $tabAlias, $options) {
+    iform_load_helpers(['report_helper']);
+    if (empty($options['countryLocationTypeId'])) {
+      $r .= '<h4>Please fill in the @countryLocationTypeId option for the draw_country_and_set_country_code control</h4>';
+      return $r;
+    }
+    if (empty($options['limitCountriesById'])) {
+      $r .= '<h4>Please fill in the @limitCountriesById option for the draw_country_and_set_country_code control</h4>';
+      return $r;
+    }
+    if (empty($options['countryCodeLocAttrId'])) {
+      $r .= '<h4>Please fill in the @countryCodeLocAttrId option for the draw_country_and_set_country_code control</h4>';
+      return $r;
+    }
+    if (!empty($_GET['location_id'])) {
+      $defaultCountryInfo = report_helper::get_report_data(
+        [
+          'dataSource' => 'projects/poms/get_default_country_for_square',
+          'readAuth' => $auth['read'],
+          'mode' => 'report',
+          'extraParams' => [
+            'square_id' => $_GET['location_id'],
+            'country_location_type_id' => $options['countryLocationTypeId'],
+            'country_code_location_attribute_id' => $options['countryCodeLocAttrId'],
+          ]
+        ]
+      );
+      $defaultCountrySelection = $defaultCountryInfo[0]['id'];
+    }
+    else {
+      $defaultCountrySelection = '';
+    }
+    $extraParamsForCountryList = [
+      'location_type_id' => $options['countryLocationTypeId'],
+      'sensattr' => 0,
+      'exclude_sensitive' => FALSE
+    ];
+    if (!empty($options['limitCountriesById'])) {
+      $extraParamsForCountryList = array_merge($extraParamsForCountryList, ['idlist' => $options['limitCountriesById']]);
+    }
+    $r = data_entry_helper::location_select([
+      'report' => 'library/locations/locations_list_exclude_sensitive',
+      'reportProvidesOrderBy' => TRUE,
+      'id' => 'country-select-list',
+      'helpText' => lang::get('Select a country to filter squares to.'),
+      'fieldname' => 'country-select-list',
+      'blankText' => lang::get('LANG_Blank_Text'),
+      'blankText' => '<please select>',
+      'default' => $defaultCountrySelection,
+      'extraParams' => $auth['read'] + $extraParamsForCountryList
+    ]);
+    data_entry_helper::$javascript .= "indiciaData.indiciaSvc = '" . data_entry_helper::$base_url . "';\n";
+    data_entry_helper::$javascript .= "indiciaData.readAuth = {nonce: '" . $auth['read']['nonce'] . "', auth_token: '" . $auth['read']['auth_token'] . "'};\n";
+    data_entry_helper::$javascript .= "
+    $('#country-select-list').on('change', function() {
+      $.getJSON(indiciaData.indiciaSvc + 'index.php/services/data/location?id=' + $(this).val() + '&location_type_id=' + " . $options['countryLocationTypeId'] . " +
+          '&mode=json&view=detail&callback=?&auth_token=' + indiciaData.readAuth.auth_token + '&nonce=' + indiciaData.readAuth.nonce, 
+        function(data) {
+          if (data && data[0]) {
+            $('#locAttr\\\\:" . $options['countryCodeLocAttrId'] . "').val(data[0].code);
+          } else {
+            $('#locAttr\\\\:" . $options['countryCodeLocAttrId'] . "').val('');
+          }
+        }
+      );
+    });\n";
+    return $r;
+  }
+
 }
