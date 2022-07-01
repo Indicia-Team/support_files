@@ -1,0 +1,10 @@
+name: 'Admin only account cancel'
+description: 'Only show cancel account for admins, even when the permission is made site wide due to an app connection.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+version: "1.0.0"
+package: "Indicia"
+type: module
+dependencies:
+  - iform
+  - easy_login

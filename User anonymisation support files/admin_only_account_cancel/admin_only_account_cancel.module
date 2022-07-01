@@ -1,0 +1,12 @@
+<?php
+
+use \Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Hide cancel account unless you are an administrator.
+ */
+function admin_only_account_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'user_form' && !\Drupal::currentUser()->hasPermission('Administer users')) {
+    unset($form['actions']['delete']);
+  }
+}

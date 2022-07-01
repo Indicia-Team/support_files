@@ -1,0 +1,3 @@
+When an app is attached to a site, and the app has a account cancellation capability, then the cancel account permission needs to be made site wide on the website.
+
+If this is not desirable, this module can be added to the site to stop non-admin users from cancelling accounts.
