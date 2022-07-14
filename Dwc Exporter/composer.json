@@ -1,0 +1,9 @@
+{
+    "name": "ceh/indicia-dwc-autopublish",
+    "description": "PHP script to autopublish Indicia data to DwC archives",
+    "type": "project",
+    "license": "GPL v3",
+    "require": {
+        "elasticsearch/elasticsearch": "^6.7"
+    }
+}
