@@ -1,10 +1,13 @@
 // Introduced for ABLE Issue 68
 jQuery(document).ready(function($) {
   $('#ctrl-wrap-square-select-list').addClass("col-sm-6");
+  $('#ctrl-wrap-sample-date').addClass("col-sm-6");
   $('#ctrl-wrap-imp-location').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1388').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1390').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1384').addClass("col-sm-6");
+  $('#ctrl-wrap-smpAttr-1385').addClass("col-sm-6");
+  $('#ctrl-wrap-smpAttr-1386').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1387').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1389').addClass("col-sm-6");
 	
