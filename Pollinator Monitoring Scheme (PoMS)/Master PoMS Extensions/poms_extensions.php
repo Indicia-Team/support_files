@@ -359,7 +359,7 @@ class extension_poms_extensions {
    */
   public static function draw_country_and_square_location_control($auth, $args, $tabAlias, $options) {
     iform_load_helpers(array('report_helper'));
-    // Get default country/square in edit mode as this isn't saved directly against the sample
+    // Get default to set country in edit mode as this isn't saved directly against the sample
     if (!empty($_GET['sample_id'])) {
       $defaultCountryAndSquareInfo = report_helper::get_report_data(
         array(
@@ -388,7 +388,8 @@ class extension_poms_extensions {
     }
     $r = data_entry_helper::location_select(array(
       'report' =>  'library/locations/locations_list_exclude_sensitive',
-      'reportProvidesOrderBy' => true,
+      'lockable' => TRUE,
+      'reportProvidesOrderBy' => TRUE,
       'id' => 'country-select-list',
       'helpText' => lang::get('Select a country to filter squares to.'),
       'fieldname' => 'country-select-list',
@@ -404,13 +405,14 @@ class extension_poms_extensions {
     // Square location drop-down
     $r .= data_entry_helper::location_select(array(
       'parentControlId' => 'country-select-list',
-      'filterField' =>  'country_id',
+      'lockable' => TRUE,
+      'filterField' => 'country_id',
       'reportProvidesOrderBy' => true,
       'searchUpdatesSref' => false,
       'label' => '1km square',
       'validation' => 'required',
-      'report' =>  'projects/poms/get_squares_for_country_id',
-      'id' =>  'imp-location',
+      'report' => 'projects/poms/get_squares_for_country_id',
+      'id' => 'imp-location',
       'fieldname' =>  'sample:location_id',
       'extraParams' => $auth['read'] + array(
         'square_location_type_id' => $options['squareLocationTypeId'],
@@ -476,7 +478,7 @@ class extension_poms_extensions {
       'report' => 'library/locations/locations_list_exclude_sensitive',
       'reportProvidesOrderBy' => TRUE,
       'id' => 'country-select-list',
-      'helpText' => lang::get('Select a country to filter squares to.'),
+      'helpText' => lang::get('Please select a country for the square.'),
       'fieldname' => 'country-select-list',
       'blankText' => lang::get('LANG_Blank_Text'),
       'blankText' => '<please select>',

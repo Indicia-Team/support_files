@@ -1,3 +1,9 @@
+// 'constant' for the base cookie name for locks
+var COOKIE_NAME = 'indicia_locked_controls';
+
+// variable to hold user name, or empty string for anonymous
+var user = '';
+
 /*
  * Load the textboxes into the correction column for an sample media checking report
  * Call must be placed into the @callback option on the report grid
@@ -240,9 +246,14 @@ jQuery(document).ready(function ($) {
     window.location.href = url;
   });
 
-  // For SPRING pan-trap  
-  // Delay the square default otherwise the country and its children will not be ready first
   $('#country-select-list').ready(function() {
+    // If the square has been locked, we must set it manually because Indicia's
+    // automatic code won't work, as it is linked to a parent list.
+    $lockedSquareValue = getSquareLockedValue();
+    if ($lockedSquareValue && !indiciaData.defaultSquareSelection) {
+      indiciaData.defaultSquareSelection = $lockedSquareValue;
+    }
+    // Delay the square default otherwise the country and its children will not be ready first
     setTimeout(function() {
       if (indiciaData.defaultSquareSelection) {
         $('#imp-location option[value=' + indiciaData.defaultSquareSelection + ']').prop('selected', true);
@@ -251,7 +262,17 @@ jQuery(document).ready(function ($) {
       }
     }, 1000);
   });
+
+  // If the square is set to locked, then we must also lock the country that is linked to it
+  $('#imp-location_lock').on('click', function() {
+    if ($('#country-select-list_lock').hasClass('unlocked-icon') &&
+        $('#imp-location_lock').hasClass('unlocked-icon')) {
+      $('#country-select-list_lock').trigger('click');
+    }
+  });
 });
+
+
 
 // This code is only used by the limit_termlists_and_species_to_selected_location extension
 // We hide the fields and show a Country drop-down unless an existing sample is found with a language filter in an attribute
@@ -296,3 +317,25 @@ function filter_species_by_location(taxaTaxonListIdsToFilterBy) {
     });
   }
 }
+
+/**
+ * Get the location_id of a square that has its padlock set
+ * 
+ * @returns int
+ *    Value of the locked square
+ */
+var getSquareLockedValue = function() {
+  // gets the locked value for the control id supplied, or returns false if
+  // not found
+  var value = false;
+  if (jQuery.cookie(COOKIE_NAME + user)) {
+    var lockedArray = JSON.parse(jQuery.cookie(COOKIE_NAME + user));
+    var i;
+    for (i = 0; i < lockedArray.length; i++) {
+      if (lockedArray[i].ctl_id && lockedArray[i].ctl_id === 'imp-location') {   
+        return lockedArray[i].ctl_value;
+      }
+    }
+  }
+  return value;
+};
