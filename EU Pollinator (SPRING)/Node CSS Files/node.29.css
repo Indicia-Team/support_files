@@ -1,18 +1,15 @@
-#ctrl-wrap-smpAttr-1390 {
-	float: none !important;
+label {
+	float: left !important;
+	clear: left;
 }
-#ctrl-wrap-square-select-list, #ctrl-wrap-imp-location, #ctrl-wrap-sample-date, #ctrl-wrap-smpAttr-1386, #ctrl-wrap-smpAttr-1388, #ctrl-wrap-smpAttr-1385, #ctrl-wrap-smpAttr-1384, #ctrl-wrap-smpAttr-1387, #ctrl-wrap-smpAttr-1389{
-   float: left;
+.control-box {
+	float: left !important;
+	clear: left;
 }
-.ctrl-wrap input:not([type="submit"]), .ctrl-wrap select, .ctrl-wrap textarea, .ctrl-wrap button.inline-control, .ctrl-wrap input.inline-control, .control-width-2 {
-	display: inline;
-	vertical-align: middle;
-	width: 95% !important;
-}
-.ctrl-wrap.not-full-width-sm{
-	width: 100% !important;
+.precise-date-picker {
+	float: left !important;
+	clear: left;
 }
 .deh-required {
-	font-size: 25px !important;
-	vertical-align: middle !important;
+	float: right;
 }

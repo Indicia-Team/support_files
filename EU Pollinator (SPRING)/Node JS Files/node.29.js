@@ -1,6 +1,8 @@
 // Introduced for ABLE Issue 68
 jQuery(document).ready(function($) {
+  $('#ctrl-wrap-country-select-list').addClass("col-sm-12");
   $('#ctrl-wrap-square-select-list').addClass("col-sm-6");
+  $('#ctrl-wrap-transect-name-label').addClass("col-sm-12");
   $('#ctrl-wrap-sample-date').addClass("col-sm-6");
   $('#ctrl-wrap-imp-location').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1388').addClass("col-sm-6");
@@ -10,6 +12,7 @@ jQuery(document).ready(function($) {
   $('#ctrl-wrap-smpAttr-1386').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1387').addClass("col-sm-6");
   $('#ctrl-wrap-smpAttr-1389').addClass("col-sm-6");
+  $('#ctrl-wrap-smpAttr-1666').addClass("col-sm-12");
 	
   // Start time
   $('#smpAttr\\:1385').change(function(e) {
