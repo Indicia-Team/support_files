@@ -36,7 +36,7 @@ $custom_terms = array(
       => 'The following database attributes must be matched to a column in the file to be imported before you can continue',
   'Maps to attribute' => 'Database Attributes',
   'Column in import File' => 'Column in the file to be imported',
-  'Name' => 'Square name',
+  'Name' => 'Name',
   'Centroid sref' => 'Spatial reference',
   'Centroid sref system' => 'Spatial reference system'
 );
