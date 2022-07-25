@@ -75,7 +75,7 @@
 25,"InfKng","Infrakingdom",0
 45,"InfPhl","Infraphylum",0
 125,"ParOrd","Parvorder",0
-5,"Emp","Empire",0
+3,"Emp","Empire",0
 5,"Dom","Domain",0
 85,"SubtCls","Subterclass",0
 115,"SupCoh","Supercohort",1
