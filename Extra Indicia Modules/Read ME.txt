@@ -1,0 +1,8 @@
+"admin_only_account_cancel"
+When an app is attached to a site, and the app has a account cancellation capability, then the cancel account permission needs to be made site wide on the website.
+
+If this is not desirable, this module can be added to the site to stop non-admin users from cancelling accounts from the website but still allowing it from the app.
+
+"easy_login_account_deletion_only"
+Heavily cutdown easy_login module that can operate when only the user fullname field is available (there is no separate last name, first name fields).
+Contains the minimum needed for the delete user anonymiser to work.

@@ -1,0 +1,37 @@
+<?php
+
+use \Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_user_delete.
+ *
+ * If user deletes account, fire code to anonymise the user as applicable.
+ * @param object $account
+ *   User account.
+ */
+function easy_login_account_deletion_only_user_delete($account) {
+  call_warehouse_user_delete($account);
+}
+
+/**
+ * Inform the Warehouse that the user deletion function need to be run.
+ *
+ * @param object $account
+ *   User account.
+ *
+ * @return string
+ *   The response output.
+ */
+function call_warehouse_user_delete($account) {
+  iform_load_helpers(['data_entry_helper']);
+  if (!empty($account->field_indicia_user_id->value)) {
+    $url = data_entry_helper::$base_url . 'index.php/services/user_identifier/delete_user';
+    $config = \Drupal::config('iform.settings');
+    $auth = data_entry_helper::get_read_write_auth($config->get('website_id'), $config->get('password'));
+    $url .= '?nonce=' . $auth['write_tokens']['nonce'] . '&auth_token=' . $auth['write_tokens']['auth_token'];
+    $postargs = 'warehouse_user_id=' . $account->field_indicia_user_id->value;
+    $postargs .= '&website_id_for_user_deletion=' . $config->get('website_id');
+    $response = data_entry_helper::http_post($url, $postargs);
+    return $response['output'];
+  }
+}

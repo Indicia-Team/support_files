@@ -1,0 +1,9 @@
+name: 'Easy login account deletion only'
+description: 'Very simply version of easy login module which only includes the account deletion element.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+version: "1.0.0"
+package: "Indicia"
+type: module
+dependencies:
+  - iform
