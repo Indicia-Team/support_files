@@ -700,11 +700,17 @@ sensitivity\_blur = F.
 **Warehouse field**|`taxon_meanings.id`
 **Description**|ID given to this taxon concept in the taxon_meanings table.
 
-`taxon.taxon_list_id`||
+`taxon.taxon_list.id`||
 -----|-----
 **Data type**|number
 **Warehouse field**|`taxon_list.id`
-**Description**|ID to the taxon list the record was input against.
+**Description**|ID of the taxon list the record was input against.
+
+`taxon.taxon_list.title`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`taxon_list.title`
+**Description**|Title of the taxon list the record was input against.
 
 `taxon.taxon_name`||
 -----|-----
