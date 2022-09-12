@@ -1,0 +1,21 @@
+.scPoMSInsectSpeciesOccurrenceCode {
+	width: 120px !important;
+	height: 50px !important;
+}
+.scSex {
+	width: 120px !important;
+}
+.scPoMSAbundance {
+	width: 120px !important;
+	height: 50px !important;
+}
+.scStage {
+	width: 120px !important;
+}
+.scIdentifiedBy {
+	height: 50px !important;
+}
+.scComment {
+	height: 50px !important;
+}
+
