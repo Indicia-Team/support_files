@@ -338,7 +338,7 @@ var getSquareLockedValue = function() {
     }
   }
   return value;
-};
+}
 
 /*
  * Returns true if an item is found in an array
