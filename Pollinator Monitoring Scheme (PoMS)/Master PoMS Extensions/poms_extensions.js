@@ -236,6 +236,8 @@ jQuery(document).ready(function ($) {
     );
   }
   var url = window.location.href;
+  // Remove existing param otherwise we end up with more than one location_termlist_and_species_filter in the URL
+  url = removeURLParam('location_termlist_and_species_filter', url);
   // When user selects a location to filter by, reload page with filtering applied.
   jQuery("#location_termlist_and_species_filter").on('change', function() {
     if (url.indexOf('?') > -1){
@@ -274,6 +276,38 @@ jQuery(document).ready(function ($) {
 
 
 
+/**
+ * Allow parameter removal from URL.
+ * 
+ * @param string key
+ *   The parameter to remove from the URL.
+ * 
+ * @param string sourceURL
+ *   The URL.
+ * 
+ * @return string 
+ *   The URL with the parameter removed.
+ * 
+ */
+function removeURLParam(key, sourceURL) {
+  var rtn = sourceURL.split("?")[0],
+      param,
+      params_arr = [],
+      queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+  if (queryString !== "") {
+      params_arr = queryString.split("&");
+      for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+          param = params_arr[i].split("=")[0];
+          if (param === key) {
+              params_arr.splice(i, 1);
+          }
+      }
+      if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
+  }
+  return rtn;
+}
+
+
 // This code is only used by the limit_termlists_and_species_to_selected_location extension
 // We hide the fields and show a Country drop-down unless an existing sample is found with a language filter in an attribute
 // or the user is adding new data and the country filter selection has already been made
@@ -293,15 +327,24 @@ function show_fields_after_country_selection() {
 // held in an existing sample or country selection made by the user from a drop-down in add mode
 // Different types of jquery used as drop-downs and radio buttons have different html
 function filter_termlists_by_location(termlistTermIdsToFilterBy) {
-  if (termlistTermIdsToFilterBy && termlistTermIdsToFilterBy instanceof Array) {
+  indiciaData.ignoreSmpAttrs = JSON.parse(indiciaData.ignoreSmpAttrs);
+  if (termlistTermIdsToFilterBy instanceof Array && (termlistTermIdsToFilterBy !== undefined && termlistTermIdsToFilterBy.length != 0)) {
     jQuery('[id^="smpAttr"] option').each(function() {
-      if (jQuery(this).val() && !termlistTermIdsToFilterBy.includes(jQuery(this).val())) {
-        jQuery(this).remove();
+      if (jQuery(this).closest('select').prop('id')) {
+        attrId = jQuery(this).closest('select').prop('id').replace('smpAttr:', '');
+        if (jQuery(this).val() && !termlistTermIdsToFilterBy.includes(jQuery(this).val())
+            && !inArray(attrId, indiciaData.ignoreSmpAttrs)) {
+          jQuery(this).remove();
+        }
       }
     });
     jQuery('[id^="smpAttr"]').each(function() {
-      if (jQuery(this).val() && !termlistTermIdsToFilterBy.includes(jQuery(this).val())) {
-        jQuery(this).parent('li').remove();
+      if (jQuery(this).closest('ul').prop('id')) {
+        attrId = jQuery(this).closest('ul').prop('id').replace('smpAttr:', '');
+        if (jQuery(this).val() && !termlistTermIdsToFilterBy.includes(jQuery(this).val())
+            && !inArray(attrId, indiciaData.ignoreSmpAttrs)) {
+          jQuery(this).parent('li').remove();
+        }
       }
     });
   }
@@ -309,7 +352,7 @@ function filter_termlists_by_location(termlistTermIdsToFilterBy) {
 
 // Same with the species grid
 function filter_species_by_location(taxaTaxonListIdsToFilterBy) {
-  if (taxaTaxonListIdsToFilterBy && taxaTaxonListIdsToFilterBy instanceof Array) {
+  if (taxaTaxonListIdsToFilterBy instanceof Array && taxaTaxonListIdsToFilterBy !== undefined) {
     jQuery('.scTaxaTaxonListId').each(function() {
       if (jQuery(this).val() && !taxaTaxonListIdsToFilterBy.includes(jQuery(this).val())) {
         jQuery(this).closest('tr').remove();

@@ -181,6 +181,8 @@ class extension_poms_extensions {
    * The ID of the attribute that holds the country a sample is associated with</li>
    * <li><b>listOfTermlistsToCheck</b><br/>
    * Comma separated list of attribute termlist IDs on the page (assists code speed))</li>
+   * <li><b>ignoreSmpAttrs</b><br/>
+   * Comma separated list of sample attribute IDs that are to be ignored (all terms will be returned)</li>
    * <li><b>locationTaxonAttributeId</b><br/>
    * The ID of the attribute that holds the countries a taxon is associated with</li>
    * 
@@ -212,6 +214,8 @@ class extension_poms_extensions {
       return $r;
     }
     iform_load_helpers(['report_helper']);
+    $termlistTermIdsToFilterBy = [];
+    $taxaTaxonListIdsToFilterBy = [];
     /* When data entry is initially opened in add mode, display a country drop-down.
        When country selection is made, the page is reloaded with the country selection in the 
        location_termlist_and_species_filter parameter which then limits the species and termlists
@@ -221,16 +225,25 @@ class extension_poms_extensions {
       // Get allowed termlists_term and taxa_taxon_list ids for a country
       $termlistTermIdsToFilterBy = self::get_terms_to_filter_by($auth, $options);
       $taxaTaxonListIdsToFilterBy = self::get_taxa_to_filter_by($auth, $args, $options);
-    } else {
+    } 
+
+    if (empty($_GET['location_termlist_and_species_filter']) || empty($_GET['sample_id'])) {
       $r .= self::create_countries_drop_down($auth['read'], $options['countryTermlistId']);
     }
+      
+    //}
     // In add mode, once the country selection is made, add a hidden field so this can be saved to the sample
     if (!empty($_GET['location_termlist_and_species_filter'])) {
-      $r .= '<input id="smpAttr:'.$options['sampleCountryAttributeId'].'" name="smpAttr:'.$options['sampleCountryAttributeId'].'" value="'.$_GET['location_termlist_and_species_filter'].'">';
+      $r .= '<input style="display:none" id="smpAttr:'.$options['sampleCountryAttributeId'].'" name="smpAttr:'.$options['sampleCountryAttributeId'].'" value="'.$_GET['location_termlist_and_species_filter'].'">';
     }
-    data_entry_helper::$javascript .= "
-    filter_termlists_by_location(".json_encode($termlistTermIdsToFilterBy).");
-    filter_species_by_location(".json_encode($taxaTaxonListIdsToFilterBy).");";
+    if (!empty($options['ignoreSmpAttrs'])) {
+      $options['ignoreSmpAttrs'] = explode(',', $options['ignoreSmpAttrs']);
+      helper_base::$indiciaData['ignoreSmpAttrs'] = json_encode($options['ignoreSmpAttrs']);
+    } else {
+      helper_base::$indiciaData['ignoreSmpAttrs'] = json_encode([]);
+    }
+    data_entry_helper::$javascript .= "filter_termlists_by_location(".json_encode($termlistTermIdsToFilterBy).");";
+    data_entry_helper::$javascript .= "filter_species_by_location(".json_encode($taxaTaxonListIdsToFilterBy).");";
     return $r;
   }
 
@@ -244,9 +257,11 @@ class extension_poms_extensions {
    *   Array for IDs to be used to filter the terms and taxa on the page to a particular country.
    */
   private static function build_allowed_ids_from_db_result($dbResult) {
-    $listToFilterBy = array();
-    foreach ($dbResult as $idx => $dbRow) {
-      $listToFilterBy[$idx] .= $dbRow['id'];
+    $listToFilterBy = [];
+    if (!empty($dbResult[0]['id'])) {
+      foreach ($dbResult as $idx => $dbRow) {
+        $listToFilterBy[$idx] = $dbRow['id'];
+      }
     }
     return $listToFilterBy;
   }
@@ -259,7 +274,8 @@ class extension_poms_extensions {
    *   HTML for a location select drop-down.
    */
   private static function create_countries_drop_down($readAuth, $countryTermlistId) {
-    return data_entry_helper::select([
+    $r = '';
+    $r .= data_entry_helper::select([
       'fieldname' => 'location_termlist_and_species_filter',
       'id' => 'location_termlist_and_species_filter',
       'label' => lang::get('LANG_Country_Label'),
@@ -267,8 +283,11 @@ class extension_poms_extensions {
       'table' => 'termlists_term',
       'captionField' => 'term',
       'valueField' => 'id',
+      'default' => $_GET['location_termlist_and_species_filter'],
 		  'extraParams' => $readAuth + array('view' => 'detail', 'termlist_id' => $countryTermlistId, 'preferred' => 't')
     ]);
+    $r .= '<br>';
+    return $r;
   }
 
   /** 
@@ -292,8 +311,11 @@ class extension_poms_extensions {
     if (!empty($_GET['location_termlist_and_species_filter'])) {
       $params = array_merge($params, ['location_termlist_and_species_filter' => $_GET['location_termlist_and_species_filter']]);
     }
-    // If in edit mode, that filter is held as sample attribute
-    if (!empty($_GET['sample_id'])) {
+    // If in edit mode, filter is held on a sample attribute
+    // Ignore the sample_id for filtering if the location_termlist_and_species_filter param is set.
+    // This is because the user might open a sample which doesn't have the country set, then sets
+    // the country on the page, the empty sample country must then be ignored.
+    if (!empty($_GET['sample_id']) && empty($_GET['location_termlist_and_species_filter'])) {
       $params = array_merge($params, ['sample_id' => $_GET['sample_id']]);
     }
     $termlistTermIdsToFilterByResult = report_helper::get_report_data([
