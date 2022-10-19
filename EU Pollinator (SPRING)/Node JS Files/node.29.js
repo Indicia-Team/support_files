@@ -70,5 +70,4 @@ jQuery(document).ready(function($) {
   $('#smpAttr\\:1386').change() 
   $('[data-for="species-sort-order-1"]').hide();
   $('#species-sort-order-1').hide();
-  $('[name="species-sort-order-2"]').prev('p').hide();
 });
