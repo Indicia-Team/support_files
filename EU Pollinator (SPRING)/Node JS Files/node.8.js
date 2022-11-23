@@ -59,7 +59,7 @@ jQuery(document).ready(function($) {
     // Ready.
 
     function validate1kmSquare() {
-      if ($('#imp-location\\:name').val().length === 0) {
+      if ($('#imp-location').val().length === 0) {
         alert("Please select a 1km square from the defined list.");
         return false;
       }
