@@ -95,9 +95,6 @@ PUT occurrence_brc1_v1?include_type_name=true
         "identification.verification_decision_source": { "type": "keyword" },
         "identification.auto_checks.enabled": { "type": "boolean" },
         "identification.auto_checks.identification_difficulty": { "type": "integer" },
-        "identification.auto_checks.output": {
-          "type": "nested"
-        },
         "identification.auto_checks.result": { "type": "boolean" },
         "identification.auto_checks.verification_rule_types_applied": { "type": "keyword" },
         "location.geom": { "type": "geo_shape" },
@@ -239,9 +236,6 @@ PUT occurrence_brc1_v1
       "identification.verification_decision_source": { "type": "keyword" },
       "identification.auto_checks.enabled": { "type": "boolean" },
       "identification.auto_checks.identification_difficulty": { "type": "integer" },
-      "identification.auto_checks.output": {
-        "type": "nested"
-      },
       "identification.auto_checks.result": { "type": "boolean" },
       "identification.auto_checks.verification_rule_types_applied": { "type": "keyword" },
       "location.geom": { "type": "geo_shape" },
