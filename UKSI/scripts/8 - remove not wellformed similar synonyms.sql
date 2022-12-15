@@ -14,6 +14,7 @@ UPDATE all_names SET redundant=true WHERE input_taxon_version_key IN (
 	  AND l2.language = l1.language
 	  -- same taxonomic concept
 	  AND l2.recommended_taxon_version_key=l1.recommended_taxon_version_key
+		AND l2.organism_key=l1.organism_key
 	  -- matching name and attribute (fuzzy match)
 	  AND lower(replace(l2.item_name || coalesce(' ' || l2.attribute, ''), '-', ' ')) = lower(replace(l1.item_name || coalesce(' ' || l1.attribute, ''), '-', ' '))
 	  -- matching authority (fuzzy), or name to delete's authority is missing
@@ -22,5 +23,5 @@ UPDATE all_names SET redundant=true WHERE input_taxon_version_key IN (
 		AND l2.redundant=false
 	WHERE l1.taxon_version_form IN ('I', 'U')
 	AND l1.recommended_taxon_version_key<>l1.input_taxon_version_key
-	AND l1.redundant=false		
+	AND l1.redundant=false
 );

@@ -12,7 +12,7 @@ INSERT INTO to_process
   SELECT ttl.id
   FROM taxa_taxon_lists ttl
   JOIN taxa t ON t.id=ttl.taxon_id
-  LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code
+  LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code AND an.organism_key=t.organism_key
   LEFT JOIN occurrences o on o.taxa_taxon_list_id=ttl.id
   LEFT JOIN determinations d ON d.taxa_taxon_list_id=ttl.id
   WHERE ttl.taxon_list_id in (select id from uksi.all_uksi_taxon_lists)

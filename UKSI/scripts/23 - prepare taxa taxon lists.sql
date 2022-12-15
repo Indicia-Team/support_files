@@ -15,6 +15,7 @@ SELECT DISTINCT null::integer AS id,
   -- not used by Indicia, but will make matching easier.
   pt.search_code AS input_taxon_version_key,
   pt.external_key AS recommended_taxon_version_key,
+  pt.organism_key AS organism_key,
   pn.parent_tvk AS parent_search_code,
   null::varchar AS common_taxon_tvk,
   false AS is_new,
@@ -26,8 +27,8 @@ SELECT DISTINCT null::integer AS id,
   not an.redundant as allow_data_entry
 INTO uksi.prepared_taxa_taxon_lists
 FROM uksi.prepared_taxa pt
-JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key
-JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code;
+JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key and pn.organism_key=pt.organism_key
+JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code and an.organism_key=pn.organism_key;
 
 -- Add the existing names from child lists
 INSERT INTO uksi.prepared_taxa_taxon_lists
@@ -42,6 +43,7 @@ SELECT DISTINCT null::integer AS id,
   -- not used by Indicia, but will make matching easier.
   pt.search_code AS input_taxon_version_key,
   pt.external_key AS recommended_taxon_version_key,
+  pt.organism_key AS organism_key,
   pn.parent_tvk AS parent_search_code,
   null::varchar AS common_taxon_tvk,
   false AS is_new,
@@ -52,8 +54,8 @@ SELECT DISTINCT null::integer AS id,
   null::integer AS orig_common_taxon_id,
   not an.redundant as allow_data_entry
 FROM uksi.prepared_taxa pt
-JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key
-JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code
+JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key and pn.organism_key=pt.organism_key
+JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code and an.organism_key=pn.organism_key
 -- Find names already on each child list
 JOIN taxa t ON t.search_code=pt.search_code
 JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false

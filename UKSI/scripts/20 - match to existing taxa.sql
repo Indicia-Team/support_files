@@ -18,13 +18,13 @@ SET id=t.id,
     OR pt.freshwater_flag<>t.freshwater_flag
     OR pt.terrestrial_flag<>t.terrestrial_flag
     OR pt.non_native_flag<>t.non_native_flag
-    OR pt.organism_key<>t.organism_key
   ) OR {{ force-cache-rebuild }}
 FROM taxa t
 JOIN taxa_taxon_lists ttl on ttl.taxon_id=t.id
   AND ttl.taxon_list_id = (SELECT uksi_taxon_list_id FROM uksi.uksi_settings)
   AND ttl.deleted=false
 WHERE t.search_code=pt.search_code
+AND t.organism_key=pt.organism_key
 AND t.deleted=false;
 
 -- Remember the taxon changes so we can update the cache tables.

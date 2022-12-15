@@ -32,4 +32,5 @@ TRUNCATE all_taxon_version_keys;
 COPY all_taxon_version_keys FROM '{{ data-path }}all_taxon_version_keys.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
 
 CREATE INDEX ix_all_names_recommended_tvk ON all_names(recommended_taxon_version_key);
+CREATE INDEX ix_all_names_organism_key ON all_names(organism_key);
 CREATE INDEX ix_all_names_input_tvk ON all_names(input_taxon_version_key);

@@ -33,6 +33,7 @@ DROP TABLE IF EXISTS all_names;
 
 CREATE TABLE all_names
 (
+  organism_key character(16),
   recommended_taxon_version_key character(16),
   input_taxon_version_key character(16),
   item_name character varying,

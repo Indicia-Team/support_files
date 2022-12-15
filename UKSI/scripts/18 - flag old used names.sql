@@ -11,7 +11,7 @@ INSERT INTO to_process
   SELECT ttl.id
   FROM taxa_taxon_lists ttl
   JOIN taxa t ON t.id=ttl.taxon_id and t.deleted=false
-  LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code
+  LEFT JOIN uksi.all_names an ON an.input_taxon_version_key=t.search_code AND an.organism_key=t.organism_key
   WHERE ttl.taxon_list_id in (select id from uksi.all_uksi_taxon_lists)
   AND an.recommended_taxon_version_key IS NULL
   AND ttl.deleted=false

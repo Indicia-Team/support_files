@@ -15,6 +15,7 @@ JOIN uksi.prepared_taxa t on t.id=ttl.taxon_id
 -- Find all English vernacular names.
 JOIN uksi.all_names an
   ON an.recommended_taxon_version_key=t.external_key
+  AND an.organism_key=t.organism_key
   AND an.taxon_type='V' AND an.language='en'
   -- No redundant names.
   AND an.redundant=false

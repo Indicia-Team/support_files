@@ -21,6 +21,7 @@ JOIN taxa_taxon_lists ttl
   ON ttl.taxon_id=t.id
   AND ttl.deleted=false
 WHERE t.search_code=pttl.input_taxon_version_key
+AND t.organism_key=pttl.organism_key
 AND t.deleted=false
 AND ttl.taxon_list_id=pttl.taxon_list_id;
 

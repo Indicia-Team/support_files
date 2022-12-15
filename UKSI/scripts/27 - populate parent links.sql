@@ -16,7 +16,7 @@ AND pttlp.taxon_list_id=pttl.taxon_list_id
 AND pttlpref.taxon_list_id=pttl.taxon_list_id;
 
 -- Ensure the parent ID is clear where it should be.
-UPDATE uksi.prepared_taxa_taxon_lists pttl
+UPDATE uksi.prepared_taxa_taxon_lists
 SET parent_id=NULL,
   changed=changed OR orig_parent_id IS NOT NULL
 WHERE parent_search_code IS NULL;
