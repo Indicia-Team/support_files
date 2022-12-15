@@ -24,11 +24,3 @@ UPDATE all_names SET redundant=true WHERE input_taxon_version_key IN (
   WHERE l1.recommended_taxon_version_key<>l1.input_taxon_version_key
   AND l1.redundant=false
 );
-
--- Delete redundant copies of names where there is a second non-redundant
--- copy (due to duplication in ORGANISM_MASTER).
-DELETE from uksi.all_names WHERE input_taxon_version_key IN (
-  SELECT an1.input_taxon_version_key FROM uksi.all_names an1
-  JOIN uksi.all_names an2 ON an2.input_taxon_version_key=an1.input_taxon_version_key
-  WHERE an1.redundant=true AND an2.redundant=false
-) AND redundant=true;
