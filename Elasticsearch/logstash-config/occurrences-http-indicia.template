@@ -257,6 +257,7 @@ filter {
       "licence_code" => "[metadata][licence_code]"
       "group_id" => "[metadata][group][id]"
       "group_title" => "[metadata][group][title]"
+      "import_guid" => "[metadata][import_guid]"
       "survey_id" => "[metadata][survey][id]"
       "survey_title" => "[metadata][survey][title]"
       "website_id" => "[metadata][website][id]"

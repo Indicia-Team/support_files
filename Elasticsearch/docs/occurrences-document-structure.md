@@ -380,6 +380,12 @@ precision reference.
 **Warehouse field**|`groups.title`
 **Description**|If the record is associated with a recording group (activity or project etc), then the title of the group.
 
+`metadata.import_guid`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrences.import_guid`
+**Description**|If the record was created by an import, then the globally unique identifier that was assigned to the batch of records at the time of import.
+
 `metadata.input_form`||
 -----|-----
 **Data type**|string
