@@ -1,3 +1,6 @@
+// NOTE: THIS IS THE DEVELOPER VERSION OF THE CREATE PROJECT PAGE
+// THIS DOES NOT HIDE THE LINK THAT ARE AUTO GENERATED
+
 // Note there are IDs in this script which are setup for the BRC Dev Warehouse. 
 jQuery(document).ready(function () {
   // Make mandatory and Limit to 250 characters
@@ -11,11 +14,6 @@ jQuery(document).ready(function () {
       e.preventDefault();
     }
   });
-
-  //Code to automatically select required page links when user selects project type.
-  
-  //Always hide the links management list, as this is setup automatically
-  jQuery('#group-pages-fieldset').hide();
 
   // Get group_id from URL to check if we are editing as we don't want to auto-set options when editing
   const urlParamsString = window.location.search;
@@ -107,7 +105,7 @@ jQuery(document).ready(function () {
 	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::8:0" value="npms-mode-square-importer:NPMS Mode - Square importer for projects">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::8:1" value="Square importer">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::8:2" value="t:Available only to group admins">');
-	  	
+
 		// View square page for non-managers
 	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::9:0" value="npms-mode-square-details:NPMS Mode - Square Details">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::9:1" value="Square details">');
