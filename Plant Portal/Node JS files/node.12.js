@@ -2,11 +2,13 @@
  * This should be included in the the report grid @callback option
  */
 function organise_project_links() {  
-  // Hide the links to the data entry pages as these must be associated with a group, 
-  // but are actually accessed via another page
+  // Hide the links that are associated with a group but are accessed via other pages 
+  // so shouldn't be in the links list. 
   jQuery('.wildflower-data-entry').hide();
   jQuery('.indicator-data-entry').hide();
   jQuery('.inventory-data-entry').hide();
+  jQuery('.npms-mode-square-details').hide();
+  jQuery('.npms-mode-square-administration').hide();
   
   // Remove link types for old projects. 
   // This has changed, so this bit of code should not be needed going forward once test 
