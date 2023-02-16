@@ -9,6 +9,8 @@ function organise_project_links() {
   jQuery('.inventory-data-entry').hide();
   jQuery('.npms-mode-square-details').hide();
   jQuery('.npms-mode-square-administration').hide();
+  jQuery('.list-plots-npms-mode-admin').hide();
+  jQuery('.edit-plot-npms-mode-admin').hide();
   
   // Remove link types for old projects. 
   // This has changed, so this bit of code should not be needed going forward once test 

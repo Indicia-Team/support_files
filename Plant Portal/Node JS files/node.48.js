@@ -58,6 +58,14 @@ jQuery(document).ready(function () {
 	jQuery('[name="group+:pages::10:0"]').remove(); 
     jQuery('[name="group+:pages::10:1"]').remove();
     jQuery('[name="group+:pages::10:2"]').remove();
+    
+    jQuery('[name="group+:pages::11:0"]').remove(); 
+    jQuery('[name="group+:pages::11:1"]').remove();
+    jQuery('[name="group+:pages::11:2"]').remove();
+    
+	jQuery('[name="group+:pages::12:0"]').remove(); 
+    jQuery('[name="group+:pages::12:1"]').remove();
+    jQuery('[name="group+:pages::12:2"]').remove();
   }
   
   if (!urlParams.get('group_id')) {
@@ -116,6 +124,16 @@ jQuery(document).ready(function () {
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::10:0" value="npms-mode-square-administration:NPMS Mode - Square administration">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::10:1" value="Square administration">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::10:2" value="t:Available only to group admins">');
+	  	
+	  	// List plots for admins
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::11:0" value="list-plots-npms-mode-admin:NPMS Mode - Manage Plots (admin)">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::11:1" value="Manage plots (admin)">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::11:2" value="t:Available only to group admins">');
+	  	
+	  	// Edit plots for admins
+	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::12:0" value="edit-plot-npms-mode-admin:NPMS Mode - Edit Plot (admin)">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::12:1" value="Edit plot (admin)">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="group+:pages::12:2" value="t:Available only to group admins">');
       }
     
       //Standard Mode
