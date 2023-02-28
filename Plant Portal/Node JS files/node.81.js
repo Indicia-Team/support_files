@@ -151,16 +151,15 @@ jQuery(document).ready(function () {
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:1" value="Samples administration">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:2" value="t:Available only to group admins">');
 
-		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:0" value="list-plots-standard-mode:Standard Mode - List plots">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:0" value="standard-mode-list-plots:Standard Mode - List plots">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:1" value="List plots">');
 
-		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:0" value="plot-list-standard-mode:Standard Mode - Manage Plots">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:1" value="Manage plots">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:0" value="plots-admin-standard-mode:Standard Mode - Plot administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:1" value="Plots administration">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:2" value="t:Available only to group admins">');
 
-        jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-plot-management:Standard Mode - plot management">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Plot management">');
-	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:2" value="t:Available only to group admins">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-plot-importer:Standard Mode - Plot importer">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Plot importer">');
 
       }
   	});

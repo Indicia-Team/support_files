@@ -2,6 +2,8 @@
  * This should be included in the the report grid @callback option
  */
 function organise_project_links() {  
+  // NPMS MODE LINKS
+
   // Hide the links that are associated with a group but are accessed via other pages 
   // so shouldn't be in the links list. 
   jQuery('.wildflower-data-entry').hide();
@@ -22,9 +24,19 @@ function organise_project_links() {
   // Make sure the links aren't all on one line
   jQuery('<br>').insertBefore('.my-samples-npms-mode');
   jQuery('<br>').insertBefore('.npms-mode-data-entry-selection');
+  jQuery('<br>').insertBefore('.npms-mode-square-importer');
   jQuery('<br>').insertBefore('.samples-admin-npms-mode');
   jQuery('<br>').insertBefore('.squares-admin-npms-mode');
   jQuery('<br>').insertBefore('.npms-mode-square-importer');
+
+  // STANDARD MODE LINKS
+  jQuery('.standard-mode-edit-plot').hide();
+
+  jQuery('<br>').insertBefore('.my-samples-standard-mode');
+  jQuery('<br>').insertBefore('.standard-mode-data-entry');
+  jQuery('<br>').insertBefore('.samples-admin-standard-mode');
+  jQuery('<br>').insertBefore('plots-admin-standard-mode');
+  jQuery('<br>').insertBefore('.standard-mode-plot-importer');
   
   // Change grid headers
   jQuery('#all-activities-th-pages').find('a:contains("Links")').text('Project options');
