@@ -27,7 +27,6 @@ function organise_project_links() {
   jQuery('<br>').insertBefore('.npms-mode-square-importer');
   jQuery('<br>').insertBefore('.samples-admin-npms-mode');
   jQuery('<br>').insertBefore('.squares-admin-npms-mode');
-  jQuery('<br>').insertBefore('.npms-mode-square-importer');
 
   // STANDARD MODE LINKS
   jQuery('.standard-mode-edit-plot').hide();
