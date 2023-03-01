@@ -31,10 +31,10 @@ function organise_project_links() {
   // STANDARD MODE LINKS
   jQuery('.standard-mode-edit-plot').hide();
 
-  jQuery('<br>').insertBefore('.my-samples-standard-mode');
   jQuery('<br>').insertBefore('.standard-mode-data-entry');
+  jQuery('<br>').insertBefore('.standard-mode-list-plots');
   jQuery('<br>').insertBefore('.samples-admin-standard-mode');
-  jQuery('<br>').insertBefore('plots-admin-standard-mode');
+  jQuery('<br>').insertBefore('.plots-admin-standard-mode');
   jQuery('<br>').insertBefore('.standard-mode-plot-importer');
   
   // Change grid headers
