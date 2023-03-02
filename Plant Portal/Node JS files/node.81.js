@@ -161,6 +161,10 @@ jQuery(document).ready(function () {
 		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-plot-importer:Standard Mode - Plot importer">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Plot importer">');
 
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:0" value="standard-mode-plot-group-admin:Standard Mode - Plot group administration">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:1" value="Plot group administration">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:2" value="t:Available only to group admins">');
+
       }
   	});
   } else {

@@ -30,6 +30,7 @@ function organise_project_links() {
 
   // STANDARD MODE LINKS
   jQuery('.standard-mode-edit-plot').hide();
+  jQuery('.standard-mode-plot-group-admin').hide();
 
   jQuery('<br>').insertBefore('.standard-mode-data-entry');
   jQuery('<br>').insertBefore('.standard-mode-list-plots');
