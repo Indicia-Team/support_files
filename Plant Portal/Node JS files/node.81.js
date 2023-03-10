@@ -1,3 +1,6 @@
+// NOTE: THIS IS THE DEVELOPER VERSION OF THE CREATE PROJECT PAGE
+// THIS DOES NOT HIDE THE LINK THAT ARE AUTO GENERATED
+
 // Note there are IDs in this script which are setup for the BRC Dev Warehouse. 
 jQuery(document).ready(function () {
   // Make mandatory and Limit to 250 characters
@@ -11,11 +14,6 @@ jQuery(document).ready(function () {
       e.preventDefault();
     }
   });
-
-  //Code to automatically select required page links when user selects project type.
-  
-  //Always hide the links management list, as this is setup automatically
-  jQuery('#group-pages-fieldset').hide();
 
   // Get group_id from URL to check if we are editing as we don't want to auto-set options when editing
   const urlParamsString = window.location.search;
@@ -115,7 +113,7 @@ jQuery(document).ready(function () {
 	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::8:0" value="npms-mode-square-importer:NPMS Mode - Square importer for projects">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::8:1" value="Square importer">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::8:2" value="t:Available only to group admins">');
-	  	
+
 		// View square page for non-managers
 	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::9:0" value="npms-mode-square-details:NPMS Mode - Square Details">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::9:1" value="Square details">');
@@ -141,31 +139,32 @@ jQuery(document).ready(function () {
       // Current version for Live Warehouse
       //if (jQuery(this).val() == 18068) {  
         // Always make sure we start with 2 rows
-		    resets_rows();
+		resets_rows();
     	
-        jQuery('[name="groupComplex\\:pages\\:\\:0\\:0"] option[value="standard-mode-data-entry:Standard Mode - data entry"]').prop('selected', true);  
+      	jQuery('[name="groupComplex\\:pages\\:\\:0\\:0"] option[value="standard-mode-data-entry:Standard Mode - data entry"]').prop('selected', true);  
       	jQuery('[name="groupComplex\\:pages\\:\\:0\\:1"]').val('Enter data'); 
       	
-		    jQuery('[name="groupComplex\\:pages\\:\\:1\\:0"] option[value="my-samples-standard-mode:Standard Mode - My samples"]').prop('selected', true);  
+		jQuery('[name="groupComplex\\:pages\\:\\:1\\:0"] option[value="my-samples-standard-mode:Standard Mode - My samples"]').prop('selected', true);  
       	jQuery('[name="groupComplex\\:pages\\:\\:1\\:1"]').val('My samples'); 
 
-		    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:0" value="samples-admin-standard-mode:Standard Mode - Samples administration">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:1" value="Samples administration">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:2" value="t:Available only to group admins">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:0" value="samples-admin-standard-mode:Standard Mode - Samples administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:1" value="Samples administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::2:2" value="t:Available only to group admins">');
 
-		    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:0" value="standard-mode-list-plots:Standard Mode - List plots">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:1" value="List plots">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:0" value="standard-mode-list-plots:Standard Mode - List plots">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::3:1" value="List plots">');
 
-        jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:0" value="plots-admin-standard-mode:Standard Mode - Plot administration">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:1" value="Plots administration">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:2" value="t:Available only to group admins">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:0" value="plots-admin-standard-mode:Standard Mode - Plot administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:1" value="Plots administration">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::4:2" value="t:Available only to group admins">');
 
-		    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-plot-importer:Standard Mode - Plot importer">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Plot importer">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-plot-importer:Standard Mode - Plot importer">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Plot importer">');
 
-        jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:0" value="standard-mode-plot-group-admin:Standard Mode - Plot group administration">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:1" value="Plot group administration">');
-	  	  jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:2" value="t:Available only to group admins">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:0" value="standard-mode-plot-group-admin:Standard Mode - Plot group administration">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:1" value="Plot group administration">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:2" value="t:Available only to group admins">');
+
       }
   	});
   } else {
