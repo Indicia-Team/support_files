@@ -2,6 +2,12 @@ SET search_path=indicia, public;
 
 DROP TABLE IF EXISTS uksi.common_name_mappings;
 
+/* Indexes for performance */
+CREATE INDEX ix_prepared_taxa_taxon_lists_taxon_id ON uksi.prepared_taxa_taxon_lists(taxon_id);
+CREATE INDEX ix_prepared_taxa_id ON uksi.prepared_taxa(id);
+CREATE INDEX ix_prepared_taxa_search_code ON uksi.prepared_taxa(search_code);
+CREATE INDEX ix_tcn_duplicates_organism_key On uksi.tcn_duplicates(organism_key);
+
 /*
  * Create a mapping from the taxa taxon list ID to a common name's taxon ID.
  * This is done by getting a list of taxa taxon list IDs against all common
