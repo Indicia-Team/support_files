@@ -22,7 +22,10 @@ SELECT DISTINCT NULL::integer AS id,
   COALESCE(upn.non_native_flag, false) AS non_native_flag,
   upn.organism_key,
   false AS is_new,
-  false AS changed
+  false AS changed,
+  uan.organism_deprecated,
+  uan.name_deprecated,
+  uan.taxon_version_form as name_form
 INTO uksi.prepared_taxa
 FROM uksi.all_names uan
 JOIN taxon_groups tg ON tg.external_key=uan.output_group_key and tg.deleted=false

@@ -21,6 +21,9 @@ SET taxon=pt.taxon,
   terrestrial_flag=pt.terrestrial_flag,
   non_native_flag=pt.non_native_flag,
   organism_key=pt.organism_key,
+  organism_deprecated=pt.organism_deprecated,
+  name_deprecated=pt.name_deprecated,
+  name_form=pt.name_form,
   updated_on=now(),
   updated_by_id=(select updated_by_user_id from uksi.uksi_settings)
 FROM uksi.prepared_taxa pt

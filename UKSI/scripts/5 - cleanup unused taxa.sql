@@ -37,8 +37,6 @@ FROM broke_meanings_by_id bm
 WHERE bm.id=u.id
 AND u.taxon_meaning_id<>bm.new_taxon_meaning_id;
 
-DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (SELECT old_taxon_meaning_id FROM broke_meanings_by_id);
-
 -- Now get meanings which definitely don't exist any more, so we can fix FKs in
 -- tables which don't have the benefit of being able to use taxa_taxon_list_id
 -- to find the correct taxon_meaning_id.
@@ -87,6 +85,7 @@ DELETE FROM species_alerts WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM taxon_associations WHERE from_taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM taxon_associations WHERE to_taxon_meaning_id IN (SELECT id FROM to_delete);
 DELETE FROM cache_taxon_searchterms WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
+DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (SELECT id FROM to_delete);
 
 -- Remove the taxon meanings.
 DELETE FROM taxon_meanings WHERE id IN (SELECT id FROM to_delete);

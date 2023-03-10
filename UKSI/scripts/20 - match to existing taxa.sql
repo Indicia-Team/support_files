@@ -18,6 +18,9 @@ SET id=t.id,
     OR pt.freshwater_flag<>t.freshwater_flag
     OR pt.terrestrial_flag<>t.terrestrial_flag
     OR pt.non_native_flag<>t.non_native_flag
+    OR pt.organism_deprecated<>t.organism_deprecated
+    OR pt.name_deprecated<>t.name_deprecated
+    OR COALESCE(pt.name_form, '')<>COALESCE(t.name_form, '')
   ) OR {{ force-cache-rebuild }}
 FROM taxa t
 JOIN taxa_taxon_lists ttl on ttl.taxon_id=t.id

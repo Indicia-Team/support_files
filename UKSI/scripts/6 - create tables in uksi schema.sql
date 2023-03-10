@@ -46,7 +46,9 @@ CREATE TABLE all_names
   rank character varying,
   attribute character varying(100),
   short_name character varying,
-  redundant boolean
+  redundant boolean,
+  organism_deprecated boolean,
+  name_deprecated boolean
 )
 WITH (
   OIDS=FALSE
