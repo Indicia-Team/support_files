@@ -85,6 +85,21 @@ PUT occurrence_brc1_v1?include_type_name=true
         "metadata.release_status": { "type": "keyword" },
         "metadata.trial": { "type": "boolean" },
         "metadata.tracking": { "type": "integer" },
+        "identification.custom_verification_rule_flags": {
+          "type": "nested",
+          "properties": {
+            "custom_verification_ruleset_id": { "type": "integer" },
+            "custom_verification_rule_id": { "type": "integer" },
+            "created_by_id": { "type": "integer" },
+            "result": { "type": "keyword" },
+            "icon": { "type": "keyword" },
+            "message": { "type": "text" },
+            "check_date_time": {
+              "type": "date",
+              "format": "8yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        },
         "identification.verifier.id": { "type": "integer" },
         "identification.verified_on": {
           "type": "date",
@@ -226,6 +241,21 @@ PUT occurrence_brc1_v1
       "metadata.release_status": { "type": "keyword" },
       "metadata.trial": { "type": "boolean" },
       "metadata.tracking": { "type": "integer" },
+      "identification.custom_verification_rule_flags": {
+        "type": "nested",
+        "properties": {
+          "custom_verification_ruleset_id": { "type": "integer" },
+          "custom_verification_rule_id": { "type": "integer" },
+          "created_by_id": { "type": "integer" },
+          "result": { "type": "keyword" },
+          "icon": { "type": "keyword" },
+          "message": { "type": "text" },
+          "check_date_time": {
+            "type": "date",
+            "format": "8yyyy-MM-dd HH:mm:ss"
+          }
+        }
+      },
       "identification.verifier.id": { "type": "integer" },
       "identification.verified_on": {
         "type": "date",

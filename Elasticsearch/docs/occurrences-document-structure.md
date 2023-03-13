@@ -172,6 +172,11 @@ table.
 **Description**|List of key verification rule types that have been applied to an occurrence, giving an indication of
 rule coverage. E.g. ["period","period_within_year","without_polygon"].
 
+`identification.custom_verification_rule_flags`||
+-----|-----
+**Data type**|nested
+**Description**|Flags attached to the record by a verifier's custom verification rules. Contains the `custom_verification_ruleset_id` and `custom_verification_rule_id` that generated the flag, `created_by_id`, `result`, `icon`, `message`, `check_date_time`.
+
 `identification.identified_by`||
 -----|-----
 **Data type**|string
