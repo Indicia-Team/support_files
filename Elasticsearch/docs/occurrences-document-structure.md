@@ -165,7 +165,7 @@ table.
 **Warehouse field**|`occurrence_comments.*`
 **Description**|True if passes automated rule checks, false if fails, omitted if not checked.
 
-`identification.auto_checks.applied_verification_rule_types`||
+`identification.auto_checks.verification_rule_types_applied`||
 -----|-----
 **Data type**|string array
 **Warehouse field**|`cache_occurrences_functional.applied_verification_rule_types`
