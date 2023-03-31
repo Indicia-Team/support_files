@@ -24,6 +24,7 @@ SELECT DISTINCT null::integer AS id,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
   null::integer AS orig_common_taxon_id,
+  null::varchar as orig_organism_key,
   not an.redundant as allow_data_entry
 INTO uksi.prepared_taxa_taxon_lists
 FROM uksi.prepared_taxa pt
@@ -52,6 +53,7 @@ SELECT DISTINCT null::integer AS id,
   null::integer AS orig_taxon_meaning_id,
   null::integer AS orig_parent_id,
   null::integer AS orig_common_taxon_id,
+  null::varchar as orig_organism_key,
   not an.redundant as allow_data_entry
 FROM uksi.prepared_taxa pt
 JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key and pn.organism_key=pt.organism_key

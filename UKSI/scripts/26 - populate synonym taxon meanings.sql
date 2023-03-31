@@ -1,7 +1,5 @@
 SET search_path=indicia, public;
 
-DROP TABLE IF EXISTS new_taxon_meanings;
-
 -- Map the preferred name taxon_meaning_ids back into the non-preferred names. Use the orig_taxon_meaning_id
 -- to detect which are actual changes.
 UPDATE uksi.prepared_taxa_taxon_lists pttl
