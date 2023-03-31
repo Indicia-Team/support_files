@@ -45,7 +45,10 @@ if (empty($settings['stop'])) {
 }
 echo 'Total time: ' . round(microtime(TRUE) - $startAll, 1) . "s\n";
 echo "Once back online, please run the script scripts/finalisation.sql to tidy the occurrences " .
-  "cache table. Using the BETWEEN filter to update in batches of a million records.\n";
+  "cache table. Using the BETWEEN filter to update in batches of a million records. Also note " .
+  "that the end of this script has several queries to help identify any taxon restricted " .
+  "attributes where the concept they were restricted to no longer exists. These will need to be " .
+  "manually fixed.\n";
 echo "* For the BRC warehouse1 instance, please ensure that the scripts/Naturespot update.sql \n" .
   "script is run on the warehouse, taking note that this script contains a query to download a " .
   "set of changes that need to be passed to the naturespot.org.uk admin team.\n";

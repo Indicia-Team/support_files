@@ -30,5 +30,29 @@ AND o.id BETWEEN 0 AND 1000000;
 DELETE FROM taxon_meanings WHERE id IN (
   SELECT tm.id FROM taxon_meanings tm
   LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=tm.id
+  LEFT JOIN occurrence_attribute_taxon_restrictions otr ON otr.restrict_to_taxon_meaning_id=tm.id
+  LEFT JOIN sample_attribute_taxon_restrictions str ON str.restrict_to_taxon_meaning_id=tm.id
+  LEFT JOIN taxa_taxon_list_attribute_taxon_restrictions ttr ON ttr.restrict_to_taxon_meaning_id=tm.id
   WHERE ttl.id IS NULL
+  AND otr.id IS NULL
+  AND str.id IS NULL
+  AND ttr.id IS NULL
 );
+
+-- NB, use the following queries to check for attributes restricted to taxa where the concept
+-- (taxon meaning ID) they were linked to no longer exists. These will need checking and
+-- re-pointing to valid taxon meaning IDs.
+SELECT otr.id as occurrence_attribute_taxon_restriction_id
+FROM occurrence_attribute_taxon_restrictions otr
+LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=otr.restrict_to_taxon_meaning_id
+WHERE ttl.id IS NULL;
+
+SELECT str.id as sample_attribute_taxon_restriction_id
+FROM sample_attribute_taxon_restrictions str
+LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=str.restrict_to_taxon_meaning_id
+WHERE ttl.id IS NULL;
+
+SELECT ttl.id as taxa_taxon_list_attribute_taxon_restriction_id
+FROM taxa_taxon_list_attribute_taxon_restrictions ttr
+LEFT JOIN taxa_taxon_lists ttl ON ttl.taxon_meaning_id=ttr.restrict_to_taxon_meaning_id
+WHERE ttl.id IS NULL;
