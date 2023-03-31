@@ -1,5 +1,12 @@
 SET search_path=indicia, public;
 
+-- Store the original organism key for each search code (input taxon version key).
+UPDATE uksi.prepared_taxa_taxon_lists pttl
+SET orig_organism_key=t.organism_key
+FROM taxa t
+JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false AND ttl.taxon_list_id=(select uksi_taxon_list_id from uksi.uksi_settings)
+WHERE t.search_code=pttl.input_taxon_version_key;
+
 -- Match up all the existing taxa to the updated copies using the search_code|input_taxon_version_key.
 -- We'll also grab the meaning ID for which we'll keep AS it is for existing preferred names. We also
 -- grab the original taxon_meaning_id and original parent_id for all existing names though update them
