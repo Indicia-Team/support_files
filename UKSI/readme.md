@@ -68,3 +68,6 @@ The above instructions apply if PostgreSQL is running on the same server as the 
 
 If the data-path is incorrect a file not found error will arise.
 Postgres must have read permissions to the UKSI files or a permission denied error will occur.
+
+## Elasticsearch
+If you have an elasticsearch index based on occurrence data, then logstash will update the taxonomy information, but you first need to update the logstash lookup tables as detailed here: https://github.com/Indicia-Team/support_files/blob/master/Elasticsearch/docs/occurrences.md#prepare-the-lookups-for-taxon-data. If the taxonomy update has affected a lot of records it could take a long time for logstash to process them all, so you may need to wait some time before you see taxonomy changes reflected in the Elasticsearch index.
