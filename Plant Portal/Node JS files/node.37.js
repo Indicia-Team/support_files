@@ -7,10 +7,10 @@ jQuery(document).ready(function () {
     }
   });
 
-  jQuery('#tab-submit').val('Submit');
-  jQuery('#tab-submit').click(function() {
+  jQuery('#save-button').val('Submit');
+  jQuery('#save-button').click(function() {
     if (confirm('Are you sure you want to submit this survey?')) {
-      jQuery('#tab-submit').trigger();
+      jQuery('#save-button').trigger();
     } else {
       return false;
     }
