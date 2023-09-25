@@ -1,11 +1,11 @@
 SET SESSION datestyle = 'ISO,DMY';
 SET search_path=public;
 
--- Table: uksi.preferred_names
+-- Table: uksi.recording_schemes
 
-DROP TABLE IF EXISTS uksi.recording_scheme;
+DROP TABLE IF EXISTS uksi.recording_schemes;
 
-CREATE TABLE uksi.recording_scheme
+CREATE TABLE uksi.recording_schemes
 (
   scheme_key varchar,
   scheme_name varchar
@@ -14,8 +14,8 @@ WITH (
   OIDS=FALSE
 );
 
-TRUNCATE uksi.recording_scheme;
-COPY uksi.recording_scheme FROM '{{ data-path }}recording_scheme.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+TRUNCATE uksi.recording_schemes;
+COPY uksi.recording_schemes FROM '{{ data-path }}recording_schemes.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
 
 -- Table: uksi.recording_scheme_taxa
 
@@ -33,8 +33,8 @@ WITH (
 TRUNCATE uksi.recording_scheme_taxa;
 COPY uksi.recording_scheme_taxa FROM '{{ data-path }}recording_scheme_taxa.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
 
--- Populate indicia.recording_scheme - new schemes
-INSERT INTO indicia.recording_scheme(
+-- Populate indicia.recording_schemes - new schemes
+INSERT INTO indicia.recording_schemes(
   external_key,
   title,
   created_on,
@@ -51,25 +51,25 @@ SELECT
   now(),
   (SELECT updated_by_user_id FROM uksi.uksi_settings),
   FALSE
-FROM uksi.recording_scheme u
-WHERE u.scheme_key NOT IN (SELECT external_key FROM indicia.recording_scheme WHERE deleted = false);
+FROM uksi.recording_schemes u
+WHERE u.scheme_key NOT IN (SELECT external_key FROM indicia.recording_schemes WHERE deleted = false);
 
--- Populate indicia.recording_scheme - modified schemes
-UPDATE indicia.recording_scheme irs
+-- Populate indicia.recording_schemes - modified schemes
+UPDATE indicia.recording_schemes irs
 SET title = urs.scheme_name,
 	updated_by_id = (SELECT updated_by_user_id FROM uksi.uksi_settings),
 	updated_on = now()
-FROM uksi.recording_scheme urs
+FROM uksi.recording_schemes urs
 WHERE urs.scheme_key = irs.external_key
 AND urs.scheme_name <> irs.title
 AND irs.deleted = FALSE;
 
--- Populate indicia.recording_scheme - deleted schemes
-UPDATE indicia.recording_scheme
+-- Populate indicia.recording_schemes - deleted schemes
+UPDATE indicia.recording_schemes
 SET updated_by_id = (SELECT updated_by_user_id FROM uksi.uksi_settings),
 	updated_on = now(),
 	deleted = TRUE
-WHERE external_key NOT IN (SELECT scheme_key FROM uksi.recording_scheme);
+WHERE external_key NOT IN (SELECT scheme_key FROM uksi.recording_schemes);
 
 -- Populate uksi.recording_scheme_taxa - new scheme taxa
 INSERT INTO indicia.recording_scheme_taxa(
@@ -90,7 +90,7 @@ SELECT
   (SELECT updated_by_user_id FROM uksi.uksi_settings),
   FALSE
 FROM uksi.recording_scheme_taxa urst
-JOIN indicia.recording_scheme irs ON irs.external_key = urst.scheme_key AND irs.deleted = FALSE
+JOIN indicia.recording_schemes irs ON irs.external_key = urst.scheme_key AND irs.deleted = FALSE
 WHERE NOT EXISTS (
 	SELECT TRUE FROM indicia.recording_scheme_taxa irst
 	WHERE irst.recording_scheme_id = irs.id
@@ -104,7 +104,7 @@ SET updated_by_id = (SELECT updated_by_user_id FROM uksi.uksi_settings),
 	updated_on = now(),
 	deleted = TRUE
 FROM indicia.recording_scheme_taxa irst
-JOIN indicia.recording_scheme irs ON irs.id = irst.recording_scheme_id
+JOIN indicia.recording_schemes irs ON irs.id = irst.recording_scheme_id
 WHERE NOT EXISTS (
 	SELECT TRUE FROM uksi.recording_scheme_taxa urst
 	WHERE urst.scheme_key = irs.external_key
