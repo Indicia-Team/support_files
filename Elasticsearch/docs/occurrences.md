@@ -484,7 +484,7 @@ To update the taxa.yml file with a fresh copy of the data:
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above to download the output from the prepare-taxon-paths.sql file.
-Search and replace "," with ": " then save the results as taxon-paths.yml.
+Save the results as taxon-paths.yml.
 
 Note that if multiple taxon lists are used to define the taxonomic hierarchy
 then you should repeat the extraction for both lists and append the YAML data
