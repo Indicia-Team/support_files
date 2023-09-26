@@ -1,12 +1,12 @@
 /*
  Script to repair Naturespot TVK mismatches.
- 
+
  NatureSpot has its own taxon list. Names on the list are mapped to UKSI via the external_key field
- which is the preferred name's TVK. If a preffered name on UKSI is relegated to a synonym so there is
+ which is the preferred name's TVK. If a preferred name on UKSI is relegated to a synonym so there is
  a new preferred name TVK, this will leave the NatureSpot list pointing to a synonym rather than a
- preferred name. This fix updates the TVKs and provides information to pass to the NatureSpot site 
+ preferred name. This fix updates the TVKs and provides information to pass to the NatureSpot site
  editors so they can update their species accounts.
- 
+
  IMPORTANT! This script includes a query output which needs to be sent the Naturespot.org.uk admin team.
 */
 
@@ -21,7 +21,7 @@ into temporary to_fix
 from cache_taxa_taxon_lists cttl8
 join cache_taxa_taxon_lists cttl15 on cttl15.taxon_list_id=15 and cttl15.taxon=cttl8.taxon and cttl15.allow_data_entry=true
 left join taxa t on t.search_code=cttl8.external_key
--- A left join to the accepted name, as it might be the synonmym we found is a homonym of an accepted name elsewhere, 
+-- A left join to the accepted name, as it might be the synonmym we found is a homonym of an accepted name elsewhere,
 -- in which case the NatureSpot name is correct.
 left join cache_taxa_Taxon_lists cttl15correct on cttl15correct.taxon_list_id=15 and cttl15correct.taxon=cttl8.taxon and cttl15correct.allow_data_entry=true and cttl15correct.preferred=true
   and cttl15correct.external_key=cttl8.external_key
