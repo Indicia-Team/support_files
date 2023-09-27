@@ -21,7 +21,8 @@ The config file passed as a parameter JSON file containing the following setting
 * elasticsearchHost - the web address or IP address of the server, including the port number. E.g.
   "x.x.x.x:9200" where x.x.x.x is the server IP address.
 * index - name of the Elasticsearch alias or index to query.
-* query - Elasticsearch query to filter the data to the dataset. For example:
+* query - optional Elasticsearch query to filter the data to the dataset. Either query or filterId
+  must be specified. For example:
   ```json
   {
     "bool": {
@@ -31,16 +32,23 @@ The config file passed as a parameter JSON file containing the following setting
     }
   }
   ```
+* filterId - optional, but either query or filterId must be specified. ID of the filter record on
+  the warehouse which will be used to dynamically generate the query. The list of websites
+  available for data flow (according to the website registration configured in warehouse.json) will
+  be automatically applied to the filter.
 * outputType - specify either dwca (Darwin Core Archive) or csv.
 * options - array of options to extend data with.
   * useGridRefsIfPossible - for NBN Atlas export compatibility, switch to using the gridReference
     field instead of decimalLatitude and decimalLongitude where appropriate.
-* outputFile - output file name, relative or absolute file path. Existing CSV files will be
-  overwritten and existing Darwin Core Archive zip files will have the occurrences contents
-  updated.
+* outputFile - optional output file name, relative or absolute file path. Existing CSV files will
+  be overwritten and existing Darwin Core Archive zip files will have the occurrences contents
+  updated. If not specified then uses the config file name to default to
+  `exports/<config file name>.zip`.
 * xmlFilesInDir - if creating a new Darwin Core Archive file, then the eml.xml and meta.xml files
   need to be in a sub-directory specified by this setting and they will be added to the DwC-A Zip
-  archive file.
+  archive file. If not specified but a folder exists with the same filename as the json config file
+  in a metadata subfolder, then this will be used. E.g. if the config file is called
+  `aculeates.json` then the expected location would be `exports/aculeates`.
 * occurrenceIdPrefix - optional, prefix to use when constructing the occurrenceID, e.g. "brc1|".
 * defaultLicenceCode - optional, default licence to apply if not specified at the record level.
   e.g. "CC-BY".
@@ -49,3 +57,17 @@ The config file passed as a parameter JSON file containing the following setting
 * datasetIdSampleAttrId - ID of the sample attribute which holds the datasetID value.
 * basisOfRecord - optional, defaults to "HumanObservation".
 * occurrenceStatus - optional, defaults to "present".
+
+# Warehouse connection config file
+
+In order to configure the connection to the warehouse, create a file `config/warehouse.json` and
+paste the following into it, replacing values in `<>` with the appropriate value for your system:
+
+```json
+{
+  "website_id": <webiste id>,
+  "website_password": "<website password>",
+  "warehouse_url": "<warehouse root url>",
+  "master_checklist_id": <taxon list ID of main list>
+}
+```
