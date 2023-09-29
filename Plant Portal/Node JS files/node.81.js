@@ -163,15 +163,11 @@ jQuery(document).ready(function () {
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="My plot groups">');
 		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:2" value="f:Available only to group members">');
 		
-		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-maintain-plot-group:Standard Mode - Add/Edit plot group">');
-		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Maintain plot group">');
-	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:2" value="f:Available only to group members">');
-		//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:0" value="standard-mode-plot-importer:Standard Mode - Plot importer">');
-	  	//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::5:1" value="Plot importer">');
-
-		//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:0" value="standard-mode-plot-group-admin:Standard Mode - Plot group administration">');
-		//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:1" value="Plot group administration">');
-		//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:2" value="t:Available only to group admins">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:0" value="standard-mode-maintain-plot-group:Standard Mode - Add/Edit plot group">');
+		jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:1" value="Maintain plot group">');
+	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::6:2" value="f:Available only to group members">');
+		//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::7:0" value="standard-mode-plot-importer:Standard Mode - Plot importer">');
+	  	//jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::7:1" value="Plot importer">');
 
       }
   	});
