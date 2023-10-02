@@ -70,9 +70,8 @@ jQuery(document).ready(function () {
   	// Setup links as mode is selected
   	jQuery('#group\\:group_type_id').on('change', function() {
   	  //NPMS Mode
+	  // Note these IDs are from Live Warehouse
       if (jQuery(this).val() == 18067) {
-      // Current version for Live Warehouse
-      //if (jQuery(this).val() == 18067) {  
         // Always make sure we start with 2 rows
 		resets_rows();
 
@@ -135,10 +134,8 @@ jQuery(document).ready(function () {
       }
     
       //Standard Mode
+	  // Note these IDs are from Live Warehouse
       if (jQuery(this).val() == 18068) {
-      // Current version for Live Warehouse
-      //if (jQuery(this).val() == 18068) {  
-        // Always make sure we start with 2 rows
 		resets_rows();
     	
       	jQuery('[name="groupComplex\\:pages\\:\\:0\\:0"] option[value="standard-mode-data-entry:Standard Mode - data entry"]').prop('selected', true);  
