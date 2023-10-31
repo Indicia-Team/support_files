@@ -40,7 +40,7 @@ filter {
   # YAML so we store all the data in a single field separated by ~.
   translate {
     dictionary_path => "{{ Working folder path }}/data/taxa.yml"
-    source "taxon_key"
+    source => "taxon_key"
     target => "taxon_data_blob"
   }
   # Second chance if the name's search code does not point to a valid taxon,
@@ -48,7 +48,7 @@ filter {
   if ![taxon_data_blob] {
     translate {
       dictionary_path => "{{ Working folder path }}/data/taxa.yml"
-      source "accepted_taxon_key"
+      source => "accepted_taxon_key"
       target => "taxon_data_blob"
     }
   }
@@ -95,7 +95,7 @@ filter {
   # Lookup the taxon path data and attach to the document.
   translate {
     dictionary_path => "{{ Working folder path }}/data/taxon-paths.yml"
-    source "accepted_taxon_key"
+    source => "accepted_taxon_key"
     target => "taxon_path_keys"
   }
   # Split the taxon path keys into separate items.
