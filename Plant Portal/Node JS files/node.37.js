@@ -124,11 +124,11 @@ function determine_column_to_show_hide(abundanceType, action) {
   var cellFreqAttrId = 893;
   var presentAbsentAttrId = 894;
   var dominInputClass = 'scAbundance';
-  var braunInputClass = 'scPlantPortalStandardBraunBlanquet';
-  var percentageInputClass = 'scPlantPortalStandardPercentage';
-  var individualPlantInputClass = 'scPlantPortalStandardIndividualPlantCount';
-  var cellFreqInputClass = 'scPlantPortalStandardCellFrequency';
-  var presentAbsentInputClass = 'scPlantPortalStandardPresentAbsent';
+  var braunInputClass = 'scBraunBlanquet';
+  var percentageInputClass = 'scPercentage';
+  var individualPlantInputClass = 'scIndividualPlantCount';
+  var cellFreqInputClass = 'scCellFrequency';
+  var presentAbsentInputClass = 'scPresentAbsent';
   
   if (abundanceType === 'domin') {
     if (action === 'show') {
