@@ -420,6 +420,14 @@ each record. This is because many of the tools provided with Elasticsearch and
 Kibana for mapping only work with point data, such as the heat maps
 visualisation.
 
+### Prepare the Logstash User
+
+The Logstash user only needs to be prepared once - it can be shared with the 
+samples pipeline if both are configured.
+
+```json
+```
+
 ## Set up the data pipeline
 
 ### Logstash configuration
@@ -575,6 +583,10 @@ replace the following values:
   warehouse you are extracting the data from, e.g. BRC1. This will be prefixed
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
+* {{ Logstash user }} - the user (which must be set up on Elasticsearch) that
+  Logstash will use to authenticate.
+* {{ Logstash password }} - the password for the Logstash user.
+
 
 You also need to create a new project in the REST API on the warehouse which
 has the same configuration as your existing project, but a different ID so that
