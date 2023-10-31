@@ -32,7 +32,7 @@ we need to change mappings.
 #### Elasticsearch 6.*
 
 ```json
-PUT sample_brc1_v1?include_type_name=true
+PUT sample_{{ Indicia warehouse unique name }}_v1?include_type_name=true
 {
   "settings": {
     "number_of_shards": 4,
@@ -125,7 +125,7 @@ PUT sample_brc1_v1?include_type_name=true
 #### Elasticsearch 7.*
 
 ```json
-PUT sample_brc1_v1
+PUT sample_{{ Indicia warehouse unique name }}_v1
 {
   "settings": {
     "number_of_shards": 4,
@@ -232,7 +232,7 @@ POST /_aliases
 {
   "actions" : [
     { "add" : {
-      "index" : "sample_brc1_v1",
+      "index" : "sample_{{ Indicia warehouse unique name }}_v1",
       "alias" : "sample_search",
       "filter" : {
         "bool" : {
@@ -249,8 +249,8 @@ POST /_aliases
       }
     } },
     { "add" : {
-      "index" : "sample_brc1_v1",
-      "alias" : "sample_brc1_index"
+      "index" : "sample_{{ Indicia warehouse unique name }}_v1",
+      "alias" : "sample_{{ Indicia warehouse unique name }}_index"
     } }
   ]
 }
@@ -299,7 +299,23 @@ The Logstash user only needs to be prepared once - it can be shared with the
 occurrences pipeline if both are configured.
 
 ```json
-```
+PUT _security/role/logstash_writer
+{
+  "cluster": ["manage_index_templates", "monitor"], 
+  "indices": [
+    {
+      "names": [ "*_{{ Indicia warehouse unique name }}_*" ], 
+      "privileges": ["write","create","create_index"]  
+    }
+  ]
+}
+
+POST _security/user/{{ Logstash user }}
+{
+  "password" : "{{ Logstash password }}",
+  "roles" : [ "logstash_writer"],
+  "full_name" : "Logstash User for Indicia pipelines"
+}```
 
 ## Set up the data pipeline
 
