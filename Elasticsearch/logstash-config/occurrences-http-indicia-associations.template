@@ -66,8 +66,6 @@ output {
   if [id] {
     elasticsearch {
       hosts => ["{{ Elasticsearch address }}"]
-      user => "{{ Logstash user }}"
-      password => "{{ Logstash password }}"
       index => "occurrence_{{ Indicia warehouse unique name }}_index"
       # Our records need a unique ID in the index for updates.
       document_id => "{{ Indicia warehouse unique name }}|%{id}"
@@ -79,8 +77,6 @@ output {
   else {
     elasticsearch {
       hosts => ["{{ Elasticsearch address }}"]
-      user => "{{ Logstash user }}"
-      password => "{{ Logstash password }}"
       index => "occurrence_{{ Indicia warehouse unique name }}_errors"
     }
     # Uncomment the following to see the normal events output to the terminal.
