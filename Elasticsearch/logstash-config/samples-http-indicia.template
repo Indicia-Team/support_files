@@ -36,9 +36,9 @@ filter {
   # Map the indexed locations keys list into a blob of location information.
   translate {
     dictionary_path => "{{ Working folder path }}/data/locations.yml"
-    field => "indexed_location_ids"
+    source "indexed_location_ids"
     iterate_on => "indexed_location_ids"
-    destination => "locations_blob"
+    target => "locations_blob"
     remove_field => "indexed_location_ids"
   }
   # Split the indexed locations blob into a list of structured location objects.
