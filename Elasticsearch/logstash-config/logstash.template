@@ -1,0 +1,12 @@
+# Set path.config in logstash.yml to point to this file.
+
+output {
+  elasticsearch {
+    user => {{ Logstash user }}
+    password => {{ Logstash password }}
+
+    # Add the following if there is TLS encryption on the HTTP interface.
+    # ssl => true
+    # cacert => '/path/to/cert.pem'
+  }
+}

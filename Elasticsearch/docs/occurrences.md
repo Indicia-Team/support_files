@@ -426,7 +426,7 @@ The Logstash user only needs to be prepared once - it can be shared with the
 samples pipeline if both are configured.
 
 ```json
-PUT _security/role/logstash_writer
+POST _security/role/logstash_writer
 {
   "cluster": ["manage_index_templates", "monitor"], 
   "indices": [
@@ -439,9 +439,9 @@ PUT _security/role/logstash_writer
 
 POST _security/user/{{ Logstash user }}
 {
-  "password" : "{{ Logstash password }}",
-  "roles" : [ "logstash_writer"],
-  "full_name" : "Logstash User for Indicia pipelines"
+  "password": "{{ Logstash password }}",
+  "roles": [ "logstash_writer"],
+  "full_name": "Logstash User for Indicia pipelines"
 }
 ```
 
