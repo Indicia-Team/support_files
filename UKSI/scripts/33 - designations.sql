@@ -54,7 +54,7 @@ SET start_date=uttd.date_from,
   source=substring(uttd.detail FROM 'Source: (.+)'),
   deleted=CASE WHEN uttd.date_to IS NULL THEN false else true END
 FROM uksi_taxa_taxon_designations uttd
-WHERE uttd.taxon_id=ttl.taxon_id AND uttd.taxon_designation_id=td.id;
+WHERE uttd.taxon_id=ttd.taxon_id AND uttd.taxon_designation_id=td.id;
 
 -- Insert any missing links.
 INSERT INTO taxa_taxon_designations (
