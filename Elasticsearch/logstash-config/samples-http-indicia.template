@@ -5,7 +5,7 @@ input {
     urls => {
       indicia => {
         method => get
-        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/samples/list_for_elastic.xml"
+        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/samples/list_for_elastic_all.xml"
         headers => {
           Accept => "application/json"
           Authorization => "USER:{{ User }}:SECRET:{{ Secret }}"
