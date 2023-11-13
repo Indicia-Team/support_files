@@ -3,6 +3,8 @@
 
 // Note there are IDs in this script which are setup for the BRC Dev Warehouse. 
 jQuery(document).ready(function () {
+  jQuery('<span class="deh-required">*</span>').insertAfter('#group\\:description');
+  
   // Make mandatory and Limit to 250 characters
   jQuery('#entry_form').submit(function(e) {
     if (jQuery('#group\\:description').val().length < 1) {
