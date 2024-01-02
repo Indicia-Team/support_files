@@ -385,7 +385,7 @@ class extension_poms_extensions {
     if (!empty($_GET['sample_id'])) {
       $defaultCountryAndSquareInfo = report_helper::get_report_data(
         array(
-          'dataSource'=>'projects/poms/get_default_locations_for_sample',
+          'dataSource'=>'projects/PoMS/get_default_locations_for_sample',
           'readAuth'=>$auth['read'],
           'mode'=>'report',
           'extraParams' => array(
@@ -433,7 +433,7 @@ class extension_poms_extensions {
       'searchUpdatesSref' => false,
       'label' => '1km square',
       'validation' => 'required',
-      'report' => 'projects/poms/get_squares_for_country_id',
+      'report' => 'projects/PoMS/get_squares_for_country_id',
       'id' => 'imp-location',
       'fieldname' =>  'sample:location_id',
       'extraParams' => $auth['read'] + array(
@@ -473,7 +473,7 @@ class extension_poms_extensions {
     if (!empty($_GET['location_id'])) {
       $defaultCountryInfo = report_helper::get_report_data(
         [
-          'dataSource' => 'projects/poms/get_default_country_for_square',
+          'dataSource' => 'projects/PoMS/get_default_country_for_square',
           'readAuth' => $auth['read'],
           'mode' => 'report',
           'extraParams' => [
