@@ -598,7 +598,7 @@ present:
       ],
     ],
   ];
-```
+  ```
 
 Two templates are provided for you in your working directory's logstash-config folder, one for
 record inserts and updates and another for deletions. Copy the `occurrences-http-indicia.template`
