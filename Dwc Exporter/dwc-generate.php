@@ -249,11 +249,8 @@ class BuildDwcHelper {
     if (empty($this->conf->basisOfRecord)) {
       $this->conf->basisOfRecord = 'HumanObservation';
     }
-    if (empty($this->conf->occurrenceStatus)) {
-      $this->conf->occurrenceStatus = 'present';
-    }
     if (!isset($this->conf->occurrenceIdPrefix)) {
-      $this->conf->occurrenceStatus = '';
+      $this->conf->occurrenceIdPrefix = '';
     }
     if (empty($this->conf->defaultLicenceCode)) {
       $this->conf->defaultLicenceCode = '';
@@ -1273,7 +1270,7 @@ class BuildDwcHelper {
       'basisOfRecord' => $this->conf->basisOfRecord,
       'identificationVerificationStatus' => $this->getIdentificationVerificationStatus($source),
       'identifiedBy' => empty($source['identification']['identified_by']) ? '' : $source['identification']['identified_by'],
-      'occurrenceStatus' => $this->conf->occurrenceStatus,
+      'occurrenceStatus' => $source['occurrence']['zero_abundance'] === 'true' ? 'absent' : 'present',
       'eventRemarks' => empty($source['event']['event_remarks']) ? '' : $source['event']['event_remarks'],
       'occurrenceRemarks' => empty($source['occurrence']['occurrence_remarks']) ? '' : $source['occurrence']['occurrence_remarks'],
     ];

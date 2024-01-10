@@ -34,6 +34,5 @@
   "datasetName": "{{ Dataset name }}",
   "datasetIdSampleAttrId": 123,
   "basisOfRecord": "HumanObservation",
-  "occurrenceStatus": "present",
   "xmlFilesInDir": "metadata/export-example"
 }

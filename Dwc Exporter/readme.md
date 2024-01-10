@@ -58,7 +58,6 @@ The config file passed as a parameter JSON file containing the following setting
 * datasetName - Darwin Core datasetName to specify.
 * datasetIdSampleAttrId - ID of the sample attribute which holds the datasetID value.
 * basisOfRecord - optional, defaults to "HumanObservation".
-* occurrenceStatus - optional, defaults to "present".
 
 # Warehouse connection config file
 
