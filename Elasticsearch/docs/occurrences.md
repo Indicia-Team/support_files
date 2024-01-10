@@ -484,7 +484,7 @@ To update the taxa.yml file with a fresh copy of the data:
 
 To update the taxon-paths.yml file with a fresh copy of the data, repeat the
 steps above to download the output from the prepare-taxon-paths.sql file.
-Search and replace "," with ": " then save the results as taxon-paths.yml.
+Save the results as taxon-paths.yml.
 
 Note that if multiple taxon lists are used to define the taxonomic hierarchy
 then you should repeat the extraction for both lists and append the YAML data
@@ -544,12 +544,58 @@ There is a real world example of a location data update in the
 
 This approach uses the Indicia RESTful API to access the records. To do this, access must be
 granted on the warehouse by configuring a client user ID, secret and at least 2 project IDs (one
-for records and one for deletions) for the appropriate set of records. Either request this from the
-administrator of your warehouse, or if you are the administrator then the information needed is
-documented at
+for records and one for deletions, plus an optional 3rd for sensitive records) for the appropriate
+set of records. Either request this from the administrator of your warehouse, or if you are the
+administrator then the information needed is documented at
 https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html. If
 you are setting up other pipelines (e.g. for samples), then they can share a single client user ID
 but will need their own unique project IDs so that the pipelines can be separately tracked.
+
+In the warehouse `modules/rest_api/config/rest.php` file, ensure the following configuration is
+present:
+
+* The `$config['elasticsearch']` must contain a key for `directClient` to enable authentication
+  against the client user and project method used by Logstash. Within this key, either set the
+  `resource_options` to contain a key for `reports` containing an empty array (allowing access
+  to all reports) or to limit the available reports to the ones used to populate Logstash. The
+  following shows a minimal configuration for a server which has https configured, add a key
+  `allow_http` set to TRUE if https is not configured for the warehouse.
+  ```
+  $config['elasticsearch'] = [
+    'directClient' => [
+      'resource_options' => [
+        'reports' => [],
+      ],
+    ],
+  ];
+  ```
+* Add a section to the clients configuration to define a user (e.g. called LOGSTASH in this
+  example) with a project that declares what access the LOGSTASH client user has. Here's an
+  example:
+  ```
+  $config['clients'] = [
+    // Client list keyed by client ID.
+    'LOGSTASH' => [
+      'shared_secret' => 'password',
+      'projects' => [
+        // List of available projects keyed by project ID.
+        'OCCSYNC' => [
+          'id' => 'OCCSYNC',
+          'website_id' => 2,
+          'sharing' => 'reporting',
+          'title' => 'Occurrences sync for Logstash',
+          'resource_options' => [
+            'reports' => [
+              'authorise' => [
+                'library/occurrences/list_for_elastic_all.xml',
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+  ];
+```
 
 Two templates are provided for you in your working directory's logstash-config folder, one for
 record inserts and updates and another for deletions. Copy the `occurrences-http-indicia.template`
