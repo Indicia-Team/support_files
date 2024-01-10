@@ -1,0 +1,10 @@
+/* Note for the other data entry forms, the CSS is held in npms_sample_occurrence.css */
+.arrow-block {
+  width: 200px !important;
+  padding-bottom: 30px !important;
+}
+
+.arrow-head {
+  margin-left: 10px !important;
+  margin-top: 5px !important;
+}

@@ -431,9 +431,9 @@ precision reference.
 -----|-----
 **Data type**|string
 **Warehouse field**|derived from `occurrences.sensitivity_precision`
-**Description**|Where the index contains 2 copies of sensitive or private records, identifies which copy of the record
-this document relates to. F = full precision, B = blurred. Default index aliases should filter out documents where
-sensitivity\_blur = F.
+**Description**|Where the index contains 2 copies of sensitive, private or confidential records, identifies which copy
+of the record this document relates to. F = full precision, B = blurred. Default index aliases should filter out
+documents where sensitivity\_blur = F.
 
 `metadata.sensitivity_precision`||
 -----|-----
@@ -463,7 +463,7 @@ sensitivity\_blur = F.
 -----|-----
 **Data type**|boolean
 **Warehouse field**|`occurrences.training`
-**Description**|True if this is a trial record (so should be excluded unleess analysing trial data).
+**Description**|True if this is a trial record (so should be excluded unless analysing trial data).
 
 `metadata.updated_by_id`||
 -----|-----

@@ -369,7 +369,7 @@ sensitivity\_blur = F.
 -----|-----
 **Data type**|boolean
 **Warehouse field**|`samples.training`
-**Description**|True if this is a trial record (so should be excluded unleess analysing trial data).
+**Description**|True if this is a trial record (so should be excluded unless analysing trial data).
 
 `metadata.updated_by_id`||
 -----|-----

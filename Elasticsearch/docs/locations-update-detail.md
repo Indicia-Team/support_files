@@ -36,18 +36,25 @@ a new layer to the location indexing.
    FROM cache_termlists_terms
    WHERE termlist_title='Location types'
    AND term in (
-     'Vice County',
-     'LRC Boundary',
-     'Country',
-     'Cairngorms NP NNR',
-     'Miscellaneous indexed boundaries',
-     'Butterfly Conservation Branch',
-     'National Trust site',
-     'NUTS Level 2',
-     'RSPB Reserves',
-     'Country territorial waters',
-     'NUTS Level 1',
-     'Countries 2016'
+    'AONB',
+    'Butterfly Conservation Branch',
+    'Cairngorms NP NNR',
+    'Countries 2016',
+    'Country',
+    'Country territorial waters',
+    'European Biogeographical Regions 2016',
+    'LRC Boundary',
+    'Miscellaneous indexed boundaries',
+    'National Nature Reserve',
+    'National Park',
+    'National Trust site',
+    'NUTS Level 1',
+    'NUTS Level 2',
+    'NUTS Level 3',
+    'RSPB Reserves',
+    'Site of Special Scientific Interest',
+    'Woodland Trust site',
+    'Vice County'
    )
 5. Grab the latest copy of the locations extraction query and insert the list of IDs into it:
    https://github.com/Indicia-Team/support_files/blob/master/Elasticsearch/queries/prepare-locations-lookup.sql

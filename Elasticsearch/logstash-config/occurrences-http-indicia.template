@@ -11,7 +11,7 @@ input {
     urls => {
       indicia => {
         method => get
-        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/occurrences/list_for_elastic.xml"
+        url => "{{ Warehouse URL }}/index.php/services/rest/reports/library/occurrences/list_for_elastic_all.xml"
         headers => {
           Accept => "application/json"
           Authorization => "USER:{{ User }}:SECRET:{{ Secret }}"
@@ -155,7 +155,7 @@ filter {
             'caption' => c[1],
             'licence' => c[2],
             'type' => c[3]
-          }.delete_if { |k, v| v.blank? }
+          }.delete_if { |k, v| v !~ /[^[:space:]]/ }
         })
       end
       if event.get('event_media_data')
@@ -166,7 +166,7 @@ filter {
             'caption' => c[1],
             'licence' => c[2],
             'type' => c[3]
-          }.delete_if { |k, v| v.blank? }
+          }.delete_if { |k, v| v !~ /[^[:space:]]/ }
         })
       end
     "

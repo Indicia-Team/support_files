@@ -511,23 +511,26 @@ pipeline if both are configured.
   from cache_termlists_terms
   where term in (
     -- The following are directly referenced in the spatial_index_builder's config file.
-    'Vice County',
-    'LRC Boundary',
-    'Country',
-    'Cairngorms NP NNR',
-    'Miscellaneous indexed boundaries',
-    'Butterfly Conservation Branch',
-    'National Trust site',
-    'NUTS Level 2',
-    'RSPB Reserves',
-    'Country territorial waters',
-    'Woodland Trust site',
     'AONB',
-    'National Park',
+    'Butterfly Conservation Branch',
+    'Cairngorms NP NNR',
+    'Countries 2016',
+    'Country',
+    'Country territorial waters',
+    'European Biogeographical Regions 2016',
+    'LRC Boundary',
+    'Miscellaneous indexed boundaries',
     'National Nature Reserve',
-    -- The following are hold parents of NUTS Level 2 which is hierarchical so must be included.
+    'National Park',
+    'National Trust site',
     'NUTS Level 1',
-    'Countries 2016')
+    'NUTS Level 2',
+    'NUTS Level 3',
+    'RSPB Reserves',
+    'Site of Special Scientific Interest',
+    'Woodland Trust site',
+    'Vice County'
+    )
   and termlist_id=5
   ```
   * Click the Download as CSV button.

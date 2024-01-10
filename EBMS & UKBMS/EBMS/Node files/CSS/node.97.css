@@ -1,0 +1,11 @@
+@media screen and (min-width: 1300px), all {
+  header.navbar.container {
+    max-width: initial;
+  }
+  div.container, header.container {
+    width: auto;
+  }
+}
+footer {
+  display: none;
+}

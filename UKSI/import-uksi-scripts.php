@@ -198,4 +198,9 @@ $scripts = [
     'file' => '36 - ensure cache update is thorough.sql',
     'description' => 'Ensure updated common and preferred names are applied to all names in concept',
   ],
+  [
+    'file' => '37 - update rss.sql',
+    'description' => 'Load recording scheme data',
+    'connection' => 'su',
+  ]
 ];

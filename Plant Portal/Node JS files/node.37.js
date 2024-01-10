@@ -7,10 +7,10 @@ jQuery(document).ready(function () {
     }
   });
 
-  jQuery('#tab-submit').val('Submit');
-  jQuery('#tab-submit').click(function() {
+  jQuery('#save-button').val('Submit');
+  jQuery('#save-button').click(function() {
     if (confirm('Are you sure you want to submit this survey?')) {
-      jQuery('#tab-submit').trigger();
+      jQuery('#save-button').trigger();
     } else {
       return false;
     }
@@ -123,13 +123,13 @@ function determine_column_to_show_hide(abundanceType, action) {
   var individualPlantAttrId = 892;
   var cellFreqAttrId = 893;
   var presentAbsentAttrId = 894;
-  var dominInputClass = 'scIndicatorInventoryAbundance';
-  var braunInputClass = 'scPlantPortalStandardBraunBlanquet';
-  var percentageInputClass = 'scPlantPortalStandardPercentage';
-  var individualPlantInputClass = 'scPlantPortalStandardIndividualPlantCount';
-  var cellFreqInputClass = 'scPlantPortalStandardCellFrequency';
-  var presentAbsentInputClass = 'scPlantPortalStandardPresentAbsent';
-
+  var dominInputClass = 'scAbundance';
+  var braunInputClass = 'scBraunBlanquet';
+  var percentageInputClass = 'scPercentage';
+  var individualPlantInputClass = 'scIndividualPlantCount';
+  var cellFreqInputClass = 'scCellFrequency';
+  var presentAbsentInputClass = 'scPresentAbsent';
+  
   if (abundanceType === 'domin') {
     if (action === 'show') {
       set_column_to_show_hide(dominAttrId, dominInputClass, 'show');
