@@ -150,7 +150,11 @@ filter {
 output {
   if [id] {
     elasticsearch {
+      # Ensure hosts begin with https if using SSL.
       hosts => ["{{ Elasticsearch address }}"]
+      # Uncomment the following when using Elasticsearch security features.
+      # user => "{{ Logstash user }}"
+      # password => "{{ Logstash password }}"
       index => "occurrence_{{ Indicia warehouse unique name }}_index"
       # Our records need a unique ID in the index for updates.
       document_id => "{{ Indicia warehouse unique name }}|%{id}"
@@ -158,27 +162,17 @@ output {
     }
     # Uncomment the following to see the normal events output to the terminal.
     # stdout { codec => json }
-    # Uncomment the following and fill in the elasticsearch user details when
-    # using Elasticsearch security features.
-    # user => "elastic"
-    # password => "..."
-    # ssl_enabled => true
-    # Or, uncomment the following if not using https to access Elasticsearch.
-    # ssl_enabled => false
   }
   else {
     elasticsearch {
+      # Ensure hosts begin with https if using SSL.
       hosts => ["{{ Elasticsearch address }}"]
+      # Uncomment the following when using Elasticsearch security features.
+      # user => "{{ Logstash user }}"
+      # password => "{{ Logstash password }}"
       index => "occurrence_{{ Indicia warehouse unique name }}_errors"
     }
     # Uncomment the following to see the error events output to the terminal.
     # stdout { codec => json }
-    # Uncomment the following and fill in the elasticsearch user details when
-    # using Elasticsearch security features.
-    # user => "elastic"
-    # password => "..."
-    # ssl_enabled => true
-    # Or, uncomment the following if not using https to access Elasticsearch.
-    # ssl_enabled => false
   }
 }

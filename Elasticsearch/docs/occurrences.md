@@ -420,6 +420,32 @@ each record. This is because many of the tools provided with Elasticsearch and
 Kibana for mapping only work with point data, such as the heat maps
 visualisation.
 
+### Prepare the Logstash User
+
+The Logstash user only needs to be prepared once - it can be shared with the 
+samples pipeline if both are configured.  This is not required if security is
+disabled.
+
+```json
+PUT _security/role/logstash_writer
+{
+  "cluster": ["manage_index_templates", "monitor"], 
+  "indices": [
+    {
+      "names": [ "*_brc1_*" ], 
+      "privileges": ["write","create","create_index"]  
+    }
+  ]
+}
+
+POST _security/user/{{ Logstash user }}
+{
+  "password" : "{{ Logstash password }}",
+  "roles" : [ "logstash_writer"],
+  "full_name" : "Logstash User for Indicia pipelines"
+}
+```
+
 ## Set up the data pipeline
 
 ### Logstash configuration
@@ -600,14 +626,17 @@ present:
   ];
   ```
 
-Two templates are provided for you in your working directory's logstash-config folder, one for
-record inserts and updates and another for deletions. Copy the `occurrences-http-indicia.template`
-file to a new file called `occurrences-http-indicia.conf`. Copy the
+Two templates are provided for you in your working directory's logstash-config
+folder, one for record inserts and updates and another for deletions. Copy the
+`occurrences-http-indicia.template` file to a new file called
+`occurrences-http-indicia.conf`. Copy the
 `occurrences-http-indicia-deletions.template` file to a new file called
-`occurrences-http-indicia-deletions.conf` and edit them in your preferred text editor. Search and
-replace the following values:
+`occurrences-http-indicia-deletions.conf`. Edit the new files in your preferred
+text editor. If security is enabled, uncomment the user and password settings
+then search and replace the following values:
 
-* {{ Warehouse URL }} - the web address of the warehouse, e.g. https://warehouse1.indicia.org.uk.
+* {{ Warehouse URL }} - the web address of the warehouse, e.g.
+  https://warehouse1.indicia.org.uk.
 * {{ User }} - your client user ID.
 * {{ Secret }} - your client secret.
 * {{ Project ID }} - your client project identifier configured on the warehouse. Make
@@ -624,6 +653,11 @@ replace the following values:
   warehouse you are extracting the data from, e.g. BRC1. This will be prefixed
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
+* {{ Logstash user }} - the user (which must be set up on Elasticsearch) that
+  Logstash will use to authenticate. This is not required if security is
+  disabled.
+* {{ Logstash password }} - the password for the Logstash user. This is not
+  required if security is disabled.
 
 You also need to create a new project in the REST API on the warehouse which
 has the same configuration as your existing project, but a different ID so that
