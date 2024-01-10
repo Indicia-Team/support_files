@@ -4,6 +4,11 @@
     "type": "project",
     "license": "GPL v3",
     "require": {
-        "elasticsearch/elasticsearch": "^6.7"
+        "elasticsearch/elasticsearch": "^8.11"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

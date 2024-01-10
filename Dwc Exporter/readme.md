@@ -4,9 +4,11 @@ A small PHP script for extracting data in an Indicia Warehouse Elasticsearch ins
 Darwin Core archive. Can produce Comma Separated Values (*.csv) files as well.
 
 To run the exporter, it needs to be placed on a machine with visibility of the Elasticsearch server
-and with PHP 7.x or higher installed. Run the script from the command line by invoking PHP.exe,
-providing the location of the script PHP file (dwc-generate.php) and a configuration file as
-parameters.
+and with PHP 8.1 or higher installed. You will also need a config file per export, plus a warehouse
+connection configuration file as described below before running the script.
+
+Run the script from the command line by invoking PHP.exe, providing the location of the script PHP
+file (dwc-generate.php) and a configuration file as parameters.
 
 ```bash
 $ c:\PHP\php.exe "c:\dwc-generate\dwc-generate.php "config\my export.json"

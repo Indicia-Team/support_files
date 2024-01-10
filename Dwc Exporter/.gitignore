@@ -1,1 +1,8 @@
-/vendor/
+vendor/
+metadata/*/*
+config/*
+exports/
+
+!/metadata/export-example/meta.xml
+!/metadata/export-example/eml.xml
+!/config/export-example.json
