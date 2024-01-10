@@ -73,6 +73,13 @@ output {
     }
     # Uncomment the following to see the normal events output to the terminal.
     # stdout { codec => rubydebug }
+    # Uncomment the following and fill in the elasticsearch user details when
+    # using Elasticsearch security features.
+    # user => "elastic"
+    # password => "..."
+    # ssl_enabled => true
+    # Or, uncomment the following if not using https to access Elasticsearch.
+    # ssl_enabled => false
   }
   else {
     elasticsearch {
@@ -81,5 +88,12 @@ output {
     }
     # Uncomment the following to see the normal events output to the terminal.
     # stdout { codec => json }
+    # Uncomment the following and fill in the elasticsearch user details when
+    # using Elasticsearch security features.
+    # user => "elastic"
+    # password => "..."
+    # ssl_enabled => true
+    # Or, uncomment the following if not using https to access Elasticsearch.
+    # ssl_enabled => false
   }
 }
