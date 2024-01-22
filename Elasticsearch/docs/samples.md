@@ -389,14 +389,16 @@ There is a real world example of a location data update in the
 
 #### Prepare the Logstash configuration file (RESTful access)
 
-Logstash is going to use the Indicia RESTful API to access the records. To enable this, access must
-be granted on the warehouse by configuring a client user ID, secret and at least 2 project IDs (one
-for records and one for deletions) for the appropriate set of records. Either request this from the
-administrator of your warehouse, or if you are the administrator then the information needed is
-documented at
-https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html. If
-you are setting up other pipelines (e.g. for occurrences), then they can share a single client user
-ID but will need their own unique project IDs so that the pipelines can be separately tracked.
+Logstash is going to use the Indicia RESTful API to access the records. To
+enable this, access must be granted on the warehouse by configuring a client
+user ID, secret and at least 2 project IDs (one for records and one for
+deletions) for the appropriate set of records. Either request this from the
+administrator of your warehouse, or if you are the administrator then the
+information needed is documented at
+https://indicia-docs.readthedocs.io/en/latest/administrating/warehouse/modules/rest-api.html.
+If you are setting up other pipelines (e.g. for occurrences), then they can
+share a single client user ID but will need their own unique project IDs so that
+the pipelines can be separately tracked.
 
 Two templates are provided for you in your working directory's logstash-config
 folder, one for record inserts and updates and another for deletions. Copy the
@@ -404,8 +406,7 @@ folder, one for record inserts and updates and another for deletions. Copy the
 `samples-http-indicia.conf`. Copy the
 `samples-http-indicia-deletions.conf.template` file to a new file called
 `samples-http-indicia-deletions.conf`.  Edit the new files in your preferred
-text editor. If security is enabled, uncomment the user and password settings
-then search and replace the following values:
+text editor then search and replace the following values:
 
 * {{ Warehouse URL }} - the web address of the warehouse, e.g. https://warehouse1.indicia.org.uk.
 * {{ User }} - your client user ID.
@@ -424,9 +425,19 @@ then search and replace the following values:
   warehouse you are extracting the data from, e.g. BRC1. This will be prefixed
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
+
+If security is enabled, uncomment the user and password settings and replace the
+following:
+
 * {{ Logstash user }} - the user (which must be set up on Elasticsearch) that
   Logstash will use to authenticate.
 * {{ Logstash password }} - the password for the Logstash user.
+
+If you are using HTTPS with a self-signed certificate, uncomment the cacert
+setting and replace the following:
+
+* {{ Certificate file }} - the full path to the CA certificate file created
+  by Elasticsearch and copied to your Logstash server.
 
 You also need to create a new project in the REST API on the warehouse which
 has the same configuration as your existing project, but a different ID so that

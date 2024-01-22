@@ -632,16 +632,15 @@ folder, one for record inserts and updates and another for deletions. Copy the
 `occurrences-http-indicia.conf`. Copy the
 `occurrences-http-indicia-deletions.template` file to a new file called
 `occurrences-http-indicia-deletions.conf`. Edit the new files in your preferred
-text editor. If security is enabled, uncomment the user and password settings
-then search and replace the following values:
+text editor then search and replace the following values:
 
 * {{ Warehouse URL }} - the web address of the warehouse, e.g.
   https://warehouse1.indicia.org.uk.
 * {{ User }} - your client user ID.
 * {{ Secret }} - your client secret.
-* {{ Project ID }} - your client project identifier configured on the warehouse. Make
-  sure you set this correctly for the deletion project configuration to the alternative
-  project ID.
+* {{ Project ID }} - your client project identifier configured on the warehouse.
+  Make sure you set this correctly for the deletion project configuration to the
+  alternative project ID.
 * {{ Working folder path }} - full path to the elasticsearch folder where you
   have the checked out files. When replacing this in the configuration, check
   that the edits result in valid file paths.
@@ -653,11 +652,21 @@ then search and replace the following values:
   warehouse you are extracting the data from, e.g. BRC1. This will be prefixed
   to document IDs generated in Elasticsearch to ensure that if you pull data
   from other sources in future the IDs will not clash.
+
+If security is enabled, uncomment the user and password settings and replace the
+following:
+
 * {{ Logstash user }} - the user (which must be set up on Elasticsearch) that
   Logstash will use to authenticate. This is not required if security is
   disabled.
 * {{ Logstash password }} - the password for the Logstash user. This is not
   required if security is disabled.
+
+If you are using HTTPS with a self-signed certificate, uncomment the cacert
+setting and replace the following:
+
+* {{ Certificate file }} - the full path to the CA certificate file created
+  by Elasticsearch and copied to your Logstash server.
 
 You also need to create a new project in the REST API on the warehouse which
 has the same configuration as your existing project, but a different ID so that

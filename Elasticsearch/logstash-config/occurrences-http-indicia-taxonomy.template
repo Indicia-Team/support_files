@@ -152,6 +152,8 @@ output {
     elasticsearch {
       # Ensure hosts begin with https if using SSL.
       hosts => ["{{ Elasticsearch address }}"]
+      # Uncomment the following when using self-signed certificates.
+      # cacert => "{{ Certificate file }}"
       # Uncomment the following when using Elasticsearch security features.
       # user => "{{ Logstash user }}"
       # password => "{{ Logstash password }}"
@@ -167,6 +169,8 @@ output {
     elasticsearch {
       # Ensure hosts begin with https if using SSL.
       hosts => ["{{ Elasticsearch address }}"]
+      # Uncomment the following when using self-signed certificates.
+      # cacert => "{{ Certificate file }}"
       # Uncomment the following when using Elasticsearch security features.
       # user => "{{ Logstash user }}"
       # password => "{{ Logstash password }}"
