@@ -10,8 +10,9 @@
     var $flower = $('#smpAttr\\:1050');
     var $flowerOther = $('#smpAttr\\:1051');
     var $flowerOtherWrapper = $('#ctrl-wrap-smpAttr-1051');
-    var vagueFlowerOptions = ['14100', '13572', '13610', '13608', '13612', '13613', '13575'];
-    // Vague flowers are buttercup, hawthorn, knapweeds, ragwort, thistle, other
+    // On this project, the only option that displays the extra detail box is the "Other" option.
+    // On UKPoMS this is extended to include vague flowers like buttercup, hawthorn, knapweeds, ragwort, thistle...
+    var vagueFlowerOptions = ['13575'];
     var flowerOtherOption = 13575;
     var flowerOther = '';
 
