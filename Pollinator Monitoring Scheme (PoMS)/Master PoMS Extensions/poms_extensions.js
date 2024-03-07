@@ -352,7 +352,7 @@ function filter_termlists_by_location(termlistTermIdsToFilterBy) {
 
 // Same with the species grid
 function filter_species_by_location(taxaTaxonListIdsToFilterBy) {
-  if (taxaTaxonListIdsToFilterBy instanceof Array && taxaTaxonListIdsToFilterBy !== undefined) {
+  if (taxaTaxonListIdsToFilterBy instanceof Array && taxaTaxonListIdsToFilterBy !== undefined && taxaTaxonListIdsToFilterBy.length != 0) {
     jQuery('.scTaxaTaxonListId').each(function() {
       if (jQuery(this).val() && !taxaTaxonListIdsToFilterBy.includes(jQuery(this).val())) {
         jQuery(this).closest('tr').remove();
