@@ -43,4 +43,15 @@ jQuery(document).ready(function($) {
     }
     window.location.href = '/' + inputForm + '?sample_id=' + doc.event.event_id;
   }
+  
+  indiciaFns.editOccurrence = function(doc) {
+    var inputForm = doc.metadata.input_form;
+    if (doc.metadata.survey.id == 565 || doc.metadata.survey.id == 645) {
+      inputForm = 'mydata/samples/edit';
+    }
+    if (doc.metadata.survey.id == 562) {
+      inputForm = 'walk-data-entry';
+    }
+    window.location.href = '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id;
+  }
 });
