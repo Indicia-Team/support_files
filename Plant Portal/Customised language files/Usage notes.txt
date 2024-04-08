@@ -1,0 +1,2 @@
+Using FTP must be placed in
+/files/private/indicia/lang
