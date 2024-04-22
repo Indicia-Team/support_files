@@ -88,5 +88,6 @@ $custom_terms = array(
     . 'the list of suggestions and clicking the Add button. Users will need '
     . 'register on this website before you can add them.',
   'How users join this {1}' => 'How users join this project',
-  'Create {1}' => 'Create project'
+  'Create {1}' => 'Create project',
+  'Update {1} settings' => 'Update project settings'
 );
