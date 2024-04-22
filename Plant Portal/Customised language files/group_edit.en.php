@@ -89,5 +89,7 @@ $custom_terms = array(
     . 'register on this website before you can add them.',
   'How users join this {1}' => 'How users join this project',
   'Create {1}' => 'Create project',
-  'Update {1} settings' => 'Update project settings'
+  'Update {1} settings' => 'Update project settings',
+  'The group has been updated.' => 'The project has been updated.',
+  'The group has been deleted.' => 'The project has been deleted.'
 );
