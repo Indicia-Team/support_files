@@ -41,6 +41,9 @@ jQuery(document).ready(function($) {
     if (doc.metadata.survey.id == 562) {
       inputForm = 'walk-data-entry';
     }
+    if (doc.metadata.survey.id == 681) {
+      inputForm = 'enter-moth-trap-records';
+    }
     window.location.href = '/' + inputForm + '?sample_id=' + doc.event.event_id;
   }
   
@@ -51,6 +54,9 @@ jQuery(document).ready(function($) {
     }
     if (doc.metadata.survey.id == 562) {
       inputForm = 'walk-data-entry';
+    }
+    if (doc.metadata.survey.id == 681) {
+      inputForm = 'enter-moth-trap-records';
     }
     window.location.href = '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id;
   }
