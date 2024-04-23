@@ -92,5 +92,6 @@ $custom_terms = array(
   'Update {1} settings' => 'Update project settings',
   'The group has been updated.' => 'The project has been updated.',
   'The group has been deleted.' => 'The project has been deleted.',
-  'Are you sure you want to delete this {1}?' => 'Are you sure you want to delete this project?'
+  'Are you sure you want to delete this {1}?' => 'Are you sure you want to delete this project?',
+  'Thank you for submitting your {1} to {2}.' => 'Thank you for submitting your project to Plant Portal.'
 );
