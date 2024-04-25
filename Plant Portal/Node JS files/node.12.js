@@ -9,6 +9,9 @@ function organise_project_links() {
   jQuery('.wildflower-data-entry').hide();
   jQuery('.indicator-data-entry').hide();
   jQuery('.inventory-data-entry').hide();
+  // These two forms are the ones that use organism key filtering
+  jQuery('.npms-mode-wildflower-data-entry').hide();
+  jQuery('.npms-mode-indicator-data-entry').hide();
   jQuery('.npms-mode-square-details').hide();
   jQuery('.npms-mode-square-administration').hide();
   jQuery('.list-plots-npms-mode-admin').hide();
