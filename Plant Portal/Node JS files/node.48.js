@@ -68,6 +68,15 @@ jQuery(document).ready(function () {
 	jQuery('[name="groupComplex:pages::12:0"]').remove(); 
     jQuery('[name="groupComplex:pages::12:1"]').remove();
     jQuery('[name="groupComplex:pages::12:2"]').remove();
+    
+        
+    jQuery('[name="groupComplex:pages::13:0"]').remove(); 
+    jQuery('[name="groupComplex:pages::13:1"]').remove();
+    jQuery('[name="groupComplex:pages::13:2"]').remove();
+    
+    jQuery('[name="groupComplex:pages::14:0"]').remove(); 
+    jQuery('[name="groupComplex:pages::14:1"]').remove();
+    jQuery('[name="groupComplex:pages::14:2"]').remove();
   }
   
   if (!urlParams.get('group_id')) {
@@ -135,6 +144,13 @@ jQuery(document).ready(function () {
 	    jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::12:0" value="edit-plot-npms-mode-admin:NPMS Mode - Edit Plot (admin)">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::12:1" value="Edit plot (admin)">');
 	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::12:2" value="t:Available only to group admins">');
+	  	
+	  	// New organism key filtered forms
+      	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::13:0" value="npms-mode-wildflower-data-entry:NPMS Mode - Wildflower">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::13:1" value="Wildflower">');
+      	
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::14:0" value="npms-mode-indicator-data-entry:NPMS Mode - Indicator">');
+	  	jQuery('#complex-attr-grid-group-pages').append('<input type="text" name="groupComplex:pages::14:1" value="Indicator">');
       }
     
       //Standard Mode
