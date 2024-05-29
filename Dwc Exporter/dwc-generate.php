@@ -180,21 +180,21 @@ class BuildDwcHelper {
     if (empty(trim($configFileContents))) {
       throw new Exception("Empty configuration file");
     }
-    $this->conf = json_decode($configFileContents);
+    $this->conf = json_decode($configFileContents, TRUE);
     if (empty($this->conf)) {
       throw new Exception("Invalid configuration file - JSON parse failure");
     }
     // Apply conventional defaults.
     $baseName = pathinfo($configFileName, PATHINFO_FILENAME);
-    if (empty($this->conf->xmlFilesInDir) && is_dir("metadata/$baseName")) {
-      $this->conf->xmlFilesInDir = "metadata/$baseName";
+    if (empty($this->conf['xmlFilesInDir']) && is_dir("metadata/$baseName")) {
+      $this->conf['xmlFilesInDir'] = "metadata/$baseName";
     }
-    if (empty($this->conf->outputFile)) {
-      $this->conf->outputFile = 'exports/' . preg_replace('/[^a-z0-9]/', '_', strtolower($baseName)) . '.zip';
+    if (empty($this->conf['outputFile'])) {
+      $this->conf['outputFile'] = 'exports/' . preg_replace('/[^a-z0-9]/', '_', strtolower($baseName)) . '.zip';
     }
     // Set the appropriate columns list.
-    $this->headerRow = in_array('useGridRefsIfPossible', $this->conf->options) ? $this->headerRowNbn : $this->headerRowDwc;
-    if (empty($this->conf->query) && !empty($this->conf->filterId)) {
+    $this->headerRow = in_array('useGridRefsIfPossible', $this->conf['options']) ? $this->headerRowNbn : $this->headerRowDwc;
+    if (!empty($this->conf['filterId'])) {
       $this->loadFilterIntoConfig();
     }
   }
@@ -206,54 +206,54 @@ class BuildDwcHelper {
    *   Throws exceptions where problems found.
    */
   private function validateConfig() {
-    if (empty($this->conf->elasticsearchHost)) {
+    if (empty($this->conf['elasticsearchHost'])) {
       throw new Exception("Missing elasticsearchHost setting in configuration");
     }
-    if (empty($this->conf->index)) {
+    if (empty($this->conf['index'])) {
       throw new Exception("Missing index setting in configuration");
     }
-    if (empty($this->conf->outputType)) {
+    if (empty($this->conf['outputType'])) {
       throw new Exception("Missing outputType setting in configuration");
     }
-    if (!in_array($this->conf->outputType, ['dwca', 'csv'])) {
+    if (!in_array($this->conf['outputType'], ['dwca', 'csv'])) {
       throw new Exception("Unsupported outputType setting in configuration");
     }
-    if (empty($this->conf->outputFile)) {
+    if (empty($this->conf['outputFile'])) {
       throw new Exception("Missing outputFile setting in configuration");
     }
-    if (empty($this->conf->query) && empty($this->conf->filterId)) {
+    if (empty($this->conf['query']) && empty($this->conf['filterId'])) {
       throw new Exception("Invalid configuration file - either a query or a filterId entry is required.");
     }
-    if ($this->conf->outputType === 'dwca') {
-      if (!file_exists($this->conf->outputFile) && !isset($this->conf->xmlFilesInDir)) {
+    if ($this->conf['outputType'] === 'dwca') {
+      if (!file_exists($this->conf['outputFile']) && !isset($this->conf['xmlFilesInDir'])) {
         throw new Exception('Darwin Core Archive output file should already exist, or additional XML files specified in folder identified by xmlFilesInDir setting.');
       }
-      if (isset($this->conf->xmlFilesInDir)) {
-        if (!is_dir($this->conf->xmlFilesInDir)) {
-          throw new Exception($this->conf->xmlFilesInDir . ' directory specified in xmlFilesInDir config setting does not exist');
+      if (isset($this->conf['xmlFilesInDir'])) {
+        if (!is_dir($this->conf['xmlFilesInDir'])) {
+          throw new Exception($this->conf['xmlFilesInDir'] . ' directory specified in xmlFilesInDir config setting does not exist');
         }
-        if (!file_exists($this->conf->xmlFilesInDir . DIRECTORY_SEPARATOR . 'eml.xml')) {
-          throw new exception('EML file missing: ' . $this->conf->xmlFilesInDir . DIRECTORY_SEPARATOR . 'eml.xml');
+        if (!file_exists($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'eml.xml')) {
+          throw new exception('EML file missing: ' . $this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'eml.xml');
         }
-        if (!file_exists($this->conf->xmlFilesInDir . DIRECTORY_SEPARATOR . 'meta.xml')) {
-          throw new exception('Metadata file missing: ' . $this->conf->xmlFilesInDir . DIRECTORY_SEPARATOR . 'meta.xml');
+        if (!file_exists($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml')) {
+          throw new exception('Metadata file missing: ' . $this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml');
         }
       }
     }
-    if (empty($this->conf->rightsHolder)) {
+    if (empty($this->conf['rightsHolder'])) {
       throw new Exception("Missing rightsHolder setting in configuration");
     }
-    if (empty($this->conf->datasetName)) {
+    if (empty($this->conf['datasetName'])) {
       throw new Exception("Missing datasetName setting in configuration");
     }
-    if (empty($this->conf->basisOfRecord)) {
-      $this->conf->basisOfRecord = 'HumanObservation';
+    if (empty($this->conf['basisOfRecord'])) {
+      $this->conf['basisOfRecord'] = 'HumanObservation';
     }
-    if (!isset($this->conf->occurrenceIdPrefix)) {
-      $this->conf->occurrenceIdPrefix = '';
+    if (!isset($this->conf['occurrenceIdPrefix'])) {
+      $this->conf['occurrenceIdPrefix'] = '';
     }
-    if (empty($this->conf->defaultLicenceCode)) {
-      $this->conf->defaultLicenceCode = '';
+    if (empty($this->conf['defaultLicenceCode'])) {
+      $this->conf['defaultLicenceCode'] = '';
     }
   }
 
@@ -261,16 +261,16 @@ class BuildDwcHelper {
    * Performs the task of building the file.
    */
   public function buildFile() {
-    $client = ClientBuilder::create()->setHosts([$this->conf->elasticsearchHost])->build();
+    $client = ClientBuilder::create()->setHosts([$this->conf['elasticsearchHost']])->build();
     $params = [
       // How long between scroll requests. Should be small!
       'scroll' => '30s',
       // How many results *per shard* you want back. Set this too high will
       // cause PHP memory errors.
       'size'   => 1000,
-      'index'  => $this->conf->index,
+      'index'  => $this->conf['index'],
       'body'   => [
-        'query' => $this->conf->query,
+        'query' => $this->conf['query'],
       ],
     ];
     // Execute the search.
@@ -304,7 +304,7 @@ class BuildDwcHelper {
     }
     echo "\n";
     fclose($file);
-    if ($this->conf->outputType === 'dwca') {
+    if ($this->conf['outputType'] === 'dwca') {
       echo "Preparing Darwin Core archive file\n";
       $this->updateDwcaFile();
     }
@@ -317,7 +317,7 @@ class BuildDwcHelper {
   private function loadFilterIntoConfig() {
     $filter = $this->getData([
       'table' => 'filter',
-      'id' => $this->conf->filterId,
+      'id' => $this->conf['filterId'],
     ]);
     $definition = json_decode($filter[0]['definition'], TRUE);
     $bool = [
@@ -333,7 +333,7 @@ class BuildDwcHelper {
       ],
     ];
     // Grid system if output is to the NBN.
-    if (in_array('useGridRefsIfPossible', $this->conf->options)) {
+    if (in_array('useGridRefsIfPossible', $this->conf['options'])) {
       $bool['must'][] = [
         'terms' => [
           'location.output_sref_system.keyword' => [
@@ -375,8 +375,15 @@ class BuildDwcHelper {
     //$this->applyUserFiltersAccessRestrictions($definition, $bool);
     $this->applyUserFiltersTaxaScratchpadList($definition, $bool);
     $this->applySharingAgreement($bool);
-    $this->conf->query = ['bool' => $bool];
-    unset($this->conf->filterId);
+    // Merge filter with any query specified in the config.
+    $this->conf['query'] = $this->conf['query'] ?? [];
+    $this->conf['query']['bool'] = $this->conf['query']['bool'] ?? [];
+
+    foreach ($bool as $op => $filters) {
+      $this->conf['query']['bool'][$op] = $this->conf['query']['bool'][$op] ?? [];
+      $this->conf['query']['bool'][$op] = array_merge($this->conf['query']['bool'][$op], $filters);
+    }
+    unset($this->conf['filterId']);
   }
 
   /**
@@ -1182,11 +1189,11 @@ class BuildDwcHelper {
    *   File name.
    */
   private function getOutputCsvFileName() {
-    if ($this->conf->outputType === 'csv') {
-      return $this->conf->outputFile;
+    if ($this->conf['outputType'] === 'csv') {
+      return $this->conf['outputFile'];
     }
     else {
-      $info = pathinfo($this->conf->outputFile);
+      $info = pathinfo($this->conf['outputFile']);
       return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '.csv';
     }
   }
@@ -1198,13 +1205,13 @@ class BuildDwcHelper {
    */
   private function updateDwcaFile() {
     $zip = new ZipArchive();
-    $zip->open($this->conf->outputFile, ZipArchive::CREATE);
+    $zip->open($this->conf['outputFile'], ZipArchive::CREATE);
     echo "Zip archive file opened\n";
     $zip->addFile($this->getOutputCsvFileName(), 'occurrences.csv');
     // If the EML and metadata files are specified then add them.
-    if (!empty($this->conf->xmlFilesInDir)) {
-      $zip->addFile($this->conf->xmlFilesInDir . DIRECTORY_SEPARATOR . 'eml.xml', 'eml.xml');
-      $zip->addFile($this->conf->xmlFilesInDir . DIRECTORY_SEPARATOR . 'meta.xml', 'meta.xml');
+    if (!empty($this->conf['xmlFilesInDir'])) {
+      $zip->addFile($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'eml.xml', 'eml.xml');
+      $zip->addFile($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml', 'meta.xml');
     }
     $zip->close();
     // Don't need the CSV file.
@@ -1241,9 +1248,9 @@ class BuildDwcHelper {
     $points = explode(',', $source['location']['point']);
     $sensitiveOrNotPoint = (isset($source['metadata']['sensitive']) && $source['metadata']['sensitive'] === 'true') ||
       (isset($source['location']['input_sref_system']) && !preg_match('/^\d+$/', $source['location']['input_sref_system']));
-    $useGridRefsIfPossible = in_array('useGridRefsIfPossible', $this->conf->options);
+    $useGridRefsIfPossible = in_array('useGridRefsIfPossible', $this->conf['options']);
     $row = [
-      'occurrenceID' => $this->conf->occurrenceIdPrefix . $source['id'],
+      'occurrenceID' => $this->conf['occurrenceIdPrefix'] . $source['id'],
       'otherCatalogNumbers' => empty($source['occurrence']['source_system_key']) ? '' : $source['occurrence']['source_system_key'],
       'eventID' => $source['event']['event_id'],
       'scientificName' => isset($source['taxon']['accepted_name'])
@@ -1256,18 +1263,18 @@ class BuildDwcHelper {
       'vernacularName' => empty($source['taxon']['vernacular_name']) ? '' : $source['taxon']['vernacular_name'],
       'eventDate' => $this->getDate($source),
       'recordedBy' => empty($source['event']['recorded_by']) ? '' : $source['event']['recorded_by'],
-      'licence' => empty($source['metadata']['licence_code']) ? $this->conf->defaultLicenceCode : $source['metadata']['licence_code'],
-      'rightsHolder' => $this->conf->rightsHolder,
+      'licence' => empty($source['metadata']['licence_code']) ? $this->conf['defaultLicenceCode'] : $source['metadata']['licence_code'],
+      'rightsHolder' => $this->conf['rightsHolder'],
       'coordinateUncertaintyInMeters' => empty($source['location']['coordinate_uncertainty_in_meters']) ? '' : $source['location']['coordinate_uncertainty_in_meters'],
       'gridReference' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? $source['location']['output_sref'] : '',
       'decimalLatitude' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? '' : $points[0],
       'decimalLongitude' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? '' : $points[1],
       'geodeticDatum' => 'WGS84',
-      'datasetName' => $this->conf->datasetName,
+      'datasetName' => $this->conf['datasetName'],
       'datasetID' => $this->getDatasetId($source),
       'collectionCode' => $this->getCollectionCode($source),
       'locality' => empty($source['location']['verbatim_locality']) ? '' : $source['location']['verbatim_locality'],
-      'basisOfRecord' => $this->conf->basisOfRecord,
+      'basisOfRecord' => $this->conf['basisOfRecord'],
       'identificationVerificationStatus' => $this->getIdentificationVerificationStatus($source),
       'identifiedBy' => empty($source['identification']['identified_by']) ? '' : $source['identification']['identified_by'],
       'occurrenceStatus' => $source['occurrence']['zero_abundance'] === 'true' ? 'absent' : 'present',
@@ -1305,9 +1312,9 @@ class BuildDwcHelper {
    *   Dataset ID or empty string if not present.
    */
   private function getDatasetId(array $source) {
-    if (!empty($this->conf->datasetIdSampleAttrId) && !empty($source['event']['attributes'])) {
+    if (!empty($this->conf['datasetIdSampleAttrId']) && !empty($source['event']['attributes'])) {
       foreach ($source['event']['attributes'] as $attr) {
-        if ($attr['id'] == $this->conf->datasetIdSampleAttrId) {
+        if ($attr['id'] == $this->conf['datasetIdSampleAttrId']) {
           return $attr['value'];
         }
       }
