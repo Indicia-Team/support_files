@@ -11,7 +11,7 @@ Run the script from the command line by invoking PHP.exe, providing the location
 file (dwc-generate.php) and a configuration file as parameters.
 
 ```bash
-$ c:\PHP\php.exe "c:\dwc-generate\dwc-generate.php "config\my export.json"
+$ c:\PHP\php.exe c:\dwc-generate\dwc-generate.php "config\my export.json"
 ```
 
 This can be saved as a batch file or shell script and invoked using Windows Task Scheduler or cron.
@@ -27,17 +27,21 @@ The config file passed as a parameter JSON file containing the following setting
   must be specified. For example:
   ```json
   {
-    "bool": {
-      "must": {
-        "term": {"metadata.website.id": 2}
+    ...
+    "query": {
+      "bool": {
+        "must": {
+          "term": {"metadata.website.id": 2}
+        }
       }
     }
+    ...
   }
   ```
-* filterId - optional, but either query or filterId must be specified. ID of the filter record on
-  the warehouse which will be used to dynamically generate the query. The list of websites
-  available for data flow (according to the website registration configured in warehouse.json) will
-  be automatically applied to the filter.
+* filterId - optional, but either query or filterId must be specified and both are applied if both
+  are present. ID of the filter record on the warehouse which will be used to dynamically generate
+  the query. The list of websites available for data flow (according to the website registration
+  configured in warehouse.json) will be automatically applied to the filter.
 * outputType - specify either dwca (Darwin Core Archive) or csv.
 * options - array of options to extend data with.
   * useGridRefsIfPossible - for NBN Atlas export compatibility, switch to using the gridReference
