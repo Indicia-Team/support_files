@@ -8,7 +8,7 @@
     echo("5) taxon list ids - a comma separated list of taxon_list ids. If more than one, separate with commas - but no spaces\n");
     echo("6) output folder - the location where the output files will be generated (no trailing slash)\n\n");
     echo("Example call:\n");
-    echo("php -d memory_limit=512M es-taxon-lookups.php 123.123.123.123 warehouselive indicia_user pasword 15,251,258,260,261,265,277 .\n");
+    echo("php -d memory_limit=512M es-taxon-lookups.php 123.123.123.123 warehouselive indicia_user pasword 15,251,258,260,261,265,277,282 .\n");
     exit;
   } else {
     // $argv[0] is the script name
