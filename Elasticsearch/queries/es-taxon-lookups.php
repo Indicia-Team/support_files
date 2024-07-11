@@ -45,7 +45,7 @@
   fclose($file);
 
   $rows = pg_fetch_all($taxon_paths);
-  $file = fopen("$folder/taxon_paths.yml", "w");
+  $file = fopen("$folder/taxon-paths.yml", "w");
   foreach ($rows as $row) {
     fwrite($file, array_shift($row) . "\n");
   }
