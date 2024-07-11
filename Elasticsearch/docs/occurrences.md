@@ -468,10 +468,6 @@ of the support files folder which can be shared between the pipelines.
 
 #### Prepare the lookups for taxon data
 
-Normally it will be acceptable to use the taxa.csv and taxon-paths.csv files
-provided in the repository. Use the following instructions to regenerate them
-if there are taxonomic changes that need to be applied to your imports.
-
 Rather than expect all data sources to provide all the taxonomic information
 related to a record in a single consistent format, we will use the UKSI dataset
 copied into a YML file to create a lookup table containing the information,
@@ -481,42 +477,30 @@ can provide just a taxon NBN key and Logstash will be configured to use this
 YML file to populate all the required taxon information to add to the search
 index.
 
-A second YML file is constructed from the UKSI data to provide path information
+A second YML file (Elasticsearch/data/taxon-paths.yml) is constructed from 
+the UKSI data to provide path information
 from the taxon's root through the taxonomic levels down to the taxon itself.
-This makes queries based on higher taxa easy and performant. Normally you can
-just use the copies of the 2 YML files provided in the repository, but
-instructions for generating or updating them are provided below.
+This makes queries based on higher taxa easy and performant. 
+Instructions for generating or updating them are provided below.
 
-To update the taxa.yml file with a fresh copy of the data:
+To generate the taxa.yml and taxon-paths.yml files, run the PHP script
+es-taxon-lookups. You must supply six arguments to the script:
 
-* Open the queries/prepare-taxa-lookup.sql file in pgAdmin, connecting to an
-  Indicia database that has the UKSI dataset loaded.
-* Search and replace <taxon_list_id> with the ID of the UKSI list. If there are
-  multiple lists then change this filter to an ` IN (...)` clause. For the BRC
-  warehouse1 for example, this filter is set to ` IN (15, 251, 258, 260, 261, 265, 277)`
-  to support use of the UK Species Inventory and the various lists for ABLE as
-  well as the list for MammalNet-Europe.
-* In pgAdmin 4, if indicia, public is not your logged in users default search path, then
-  edit the query to add "indicia." in front of all the table names (use a
-  different prefix if your schema is different).
-* In pgAdmin's preferences, set CSV/Text output CSV Quoting option to "None".
-* Click the Download as CSV button. Note that I had problems using this under
-  Internet Explorer with Enhanced Security Configuration enabled so ending up
-  using Chrome instead.
-* Rename the downloaded file to taxa.yml and replace the file in
-  Elasticsearch/data in your working folder.
-* Edit the file in a text editor. Remove the first row (column titles), then
-  ensure the line endings are set to LF and save it.
+1. **host** - the hostname or IP address of the postgres host.
+2. **database** - the name of the indicia database that has the UKSI dataset loaded.
+3. **user** - database user with sufficient access, e.g. indicia_user.
+4. **password** - the password for the database user.
+5. **taxon list ids** - a comma separated list of taxon_list ids to be indexed. This could be just the UKSI list id, but can be several. If more than one, separate with commas - but no spaces.
+6. **output folder** - the location where the output files will be generated (no trailing slash). Set to a period - '.' - to specify the current folder.
 
-To update the taxon-paths.yml file with a fresh copy of the data, repeat the
-steps above to download the output from the prepare-taxon-paths.sql file.
-Save the results as taxon-paths.yml.
-
-Note that if multiple taxon lists are used to define the taxonomic hierarchy
-then you should repeat the extraction for both lists and append the YAML data
-together. For example in the BRC warehouse1 there is a list ID 15 for the UKSI
-and also list 251 for European Butterflies since not all taxa are on the UK
-list.
+An example call:
+```
+php -d memory_limit=512M es-taxon-lookups.php 123.123.123.123 warehouselive indicia_user password 15,251,258,260,261,265,277,282 .
+```
+You need to run this command from a location that has php installed and
+access to the postgres host. Here the `memory_limit` parameter for the php command temporarily increases the PHP memory which will likely be required.
+In the example above, the files are generated in the working directory, but
+you could specify the directory on your system where the logstash files are found, e.g. /etc/logstash/data.
 
 #### Prepare the lookup for location data
 
