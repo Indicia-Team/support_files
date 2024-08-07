@@ -23,9 +23,13 @@ function login_to_allocate_message(features) {
     setSelectedSquareLinks(features[0])
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
-      alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.")
+      setTimeout(function() {
+        alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.");
+      }, 1);
     } else {
-      alert("You have clicked on square "+features[0].attributes.entered_sref+ ". Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.")
+      setTimeout(function() {
+        alert("You have clicked on square "+features[0].attributes.entered_sref+ ". Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.")
+      }, 1);
     }    
   }
 }
@@ -40,7 +44,9 @@ function allocate_square_to_user(features) {
   if (features.length<2) {
     if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
       setSelectedSquareLinks(features[0])
-      var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
+      setTimeout(function() {
+        var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
+      }, 1);
     }
     //Only perform if user confirms.
     if (r == true) {
