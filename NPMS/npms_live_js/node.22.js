@@ -9,27 +9,37 @@ jQuery(document).ready(function () {
   jQuery('#report-grid-3').hide();
 });
 
+function setSelectedSquareLinks(ftr) {
+  // console.log(ftr);
+  gr = ftr.attributes.entered_sref;
+  $('#selected-square-link').html(`<b>${gr}<b> - <a href="/site-details?gr=${gr}">see details</a>`);
+  $('#selected-square-link').css('background-color', 'yellow');
+}
+
 //Warning to display on the public version of the Request a Square page.
 function login_to_allocate_message(features) { 
   //Only show the warning if there is a feature that has actually been clicked on, rather than for ever click on the map.
   if (features[0]&&features[0].attributes.id&& features[0].attributes.entered_sref) {
+    setSelectedSquareLinks(features[0])
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
       alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.")
     } else {
       alert("You have clicked on square "+features[0].attributes.entered_sref+ ". Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.")
-    }
+    }    
   }
 }
 
 //Called if the user clicks on a square on the authorised version of the request a square page.
 function allocate_square_to_user(features) { 
+
   if (!indiciaData.website_id || !indiciaData.mySitesPsnAttrId || !indiciaData.postUrl||!indiciaData.indiciaUserId) {
     alert('The page has not been setup correctly. Please contact an administrator (the supply_indicia_data_to_map_square_allocator extension is not setup correctly).');
     return false;
   }
   if (features.length<2) {
     if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
+      setSelectedSquareLinks(features[0])
       var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
     }
     //Only perform if user confirms.

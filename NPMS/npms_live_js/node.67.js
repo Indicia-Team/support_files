@@ -9,10 +9,18 @@ jQuery(document).ready(function () {
   jQuery('#report-grid-3').hide();
 });
 
+function setSelectedSquareLinks(ftr) {
+  // console.log(ftr);
+  gr = ftr.attributes.entered_sref;
+  $('#selected-square-link').html(`<b>${gr}<b> - <a href="/site-details?gr=${gr}">see details</a>`);
+  $('#selected-square-link').css('background-color', 'yellow');
+}
+
 //Warning to display on the public version of the Request a Square page.
 function login_to_allocate_message(features) { 
   //Only show the warning if there is a feature that has actually been clicked on, rather than for ever click on the map.
   if (features[0]&&features[0].attributes.id&& features[0].attributes.entered_sref) {
+    setSelectedSquareLinks(features[0])
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
       alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.")
@@ -29,6 +37,7 @@ function allocate_square_to_user(features) {
     return false;
   }
   if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
+    setSelectedSquareLinks(features[0])
     var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
   }
   //Only perform if user confirms.
