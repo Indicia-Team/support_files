@@ -46,15 +46,16 @@ function allocate_square_to_user(features) {
       setSelectedSquareLinks(features[0])
       setTimeout(function() {
         var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
+        //Only perform if user confirms.
+        if (r == true) {
+          var locationId, userId;
+          locationId = features[0].attributes.id;    
+          userId = indiciaData.indiciaUserId;
+          duplicateCheck(locationId,userId,features);
+        }
       }, 1);
     }
-    //Only perform if user confirms.
-    if (r == true) {
-      var locationId, userId;
-      locationId = features[0].attributes.id;    
-      userId = indiciaData.indiciaUserId;
-      duplicateCheck(locationId,userId,features);
-    }
+
   } else {
     alert("You are currently zoomed out too far to get an accurate reading on the square you have clicked on.\n\
 \n\
