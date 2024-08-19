@@ -1,26 +1,71 @@
 //Note the code in this file requires the supply_indicia_data_to_map_square_allocator splash_extension
 
-//We want to hide the grid on the page, the ID seems to vary. Using a few separate exact selectors as I think it is possibly faster than
-//one vague selector...not sure
 jQuery(document).ready(function () {
-  jQuery('#report-grid-0').hide();
-  jQuery('#report-grid-1').hide();
-  jQuery('#report-grid-2').hide();
-  jQuery('#report-grid-3').hide();
+  // AVB, this is a temporary measure until the grid filter can be fixed with html tags
+  $('.filter-row').hide();
+
+  // By default, Indicia just selects squares without zooming on single grid row clicks.
+  // Change to zoom map when user single clicks on grid
+  $('#report-grid-0').find('tbody').click(function (e) {
+    if (e.target.nodeName != 'A') {
+      var tr = $(e.target).parents('tr')[0];
+      var featureId = tr.id.substr(3);
+      highlightFeatureById(featureId, true);
+    }
+  });
 });
 
-function setSelectedSquareLinks(ftr) {
-  // console.log(ftr);
-  gr = ftr.attributes.entered_sref;
-  $('#selected-square-link').html(`<b>${gr}<b> - <a href="/site-details?gr=${gr}">see details</a>`);
-  $('#selected-square-link').css('background-color', 'yellow');
-}
+// Not this code is based on code from jquery.reportgrid.js from the media folder.
+// There are a couple of changes that were need to get it working, but it might contain
+// extra code that isn't really needed here but was not removed to avoid extending testing.
+function highlightFeatureById(featureId, zoomIn) {
+  var featureArr;
+  var map;
+  var extent;
+  var zoom;
+  var zoomToFeature;
+  if (typeof div === 'undefined') {
+    div = this[0];
+  }
+  if (typeof indiciaData.reportlayer !== 'undefined') {
+    map = indiciaData.reportlayer.map;
+    featureArr = map.div.getFeaturesByVal(indiciaData.reportlayer, featureId, 'id');
+    zoomToFeature = function () {
+      var i;
+      if (featureArr.length !== 0) {
+        extent = featureArr[0].geometry.getBounds().clone();
+        for (i = 1; i < featureArr.length; i++) {
+          extent.extend(featureArr[i].geometry.getBounds());
+        }
+        if (zoomIn) {
+          zoom = Math.min(
+            indiciaData.reportlayer.map.getZoomForExtent(extent) - 2, 11);
+            indiciaData.reportlayer.map.setCenter(extent.getCenterLonLat(), zoom
+          );
+        } else {
+          indiciaData.reportlayer.map.setCenter(extent.getCenterLonLat());
+        }
+        indiciaData.mapdiv.map.events.triggerEvent('moveend');
+      }
+    };
+    if (featureArr.length === 0) {
+      // feature not available on the map, probably because we are loading just the viewport and
+      // and the point is not visible. So try to load it with a callback to zoom in.
+      mapRecords(div, false, featureId, function () {
+        featureArr = map.div.getFeaturesByVal(indiciaData.reportlayer, featureId, 'id');
+        zoomToFeature();
+      });
+    } else {
+      // feature available on the map, so we can pan and zoom to show it.
+      zoomToFeature();
+    }
+  }
+};
 
 //Warning to display on the public version of the Request a Square page.
 function login_to_allocate_message(features) { 
   //Only show the warning if there is a feature that has actually been clicked on, rather than for ever click on the map.
   if (features[0]&&features[0].attributes.id&& features[0].attributes.entered_sref) {
-    setSelectedSquareLinks(features[0])
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
       setTimeout(function() {
@@ -43,7 +88,6 @@ function allocate_square_to_user(features) {
   }
   if (features.length<2) {
     if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
-      setSelectedSquareLinks(features[0])
       setTimeout(function() {
         var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
         //Only perform if user confirms.
