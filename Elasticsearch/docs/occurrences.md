@@ -29,161 +29,7 @@ easily. Finally, we include a version identifier in the index name, so that we
 can use the Elasticsearch REINDEX API to copy the index to a new version if
 we need to change mappings.
 
-#### Elasticsearch 6.*
-
-```json
-PUT occurrence_brc1_v1?include_type_name=true
-{
-  "settings": {
-    "number_of_shards": 4,
-    "number_of_replicas": 1
-  },
-  "mappings": {
-    "doc": {
-      "date_detection": false,
-      "properties": {
-        "id": { "type": "integer" },
-        "@timestamp": { "type": "date"},
-        "event.date_start": { "type": "date" },
-        "event.date_end": { "type": "date" },
-        "event.date_type": { "type": "keyword" },
-        "event.day_of_year": { "type": "short" },
-        "event.event_id": { "type": "integer" },
-        "event.event_remarks": { "type": "text" },
-        "event.parent_event_id": { "type": "integer" },
-        "event.source_system_key": { "type": "keyword" },
-        "event.week": { "type": "byte" },
-        "event.ukbms_week": { "type": "byte" },
-        "event.month": { "type": "byte" },
-        "event.year": { "type": "short" },
-        "event.attributes": {
-          "type": "nested"
-        },
-        "event.parent_attributes": {
-          "type": "nested"
-        },
-        "metadata.created_by_id": { "type": "integer" },
-        "metadata.updated_by_id": { "type": "integer" },
-        "metadata.created_on": {
-          "type": "date",
-          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
-        },
-        "metadata.updated_on": {
-          "type": "date",
-          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
-        },
-        "metadata.group.id": { "type": "integer" },
-        "metadata.input_form": { "type": "keyword" },
-        "metadata.survey.id": { "type": "integer" },
-        "metadata.website.id": { "type": "integer" },
-        "metadata.privacy_precision": { "type": "integer" },
-        "metadata.private": { "type": "boolean" },
-        "metadata.sensitive": { "type": "boolean" },
-        "metadata.sensitivity_precision": { "type": "integer" },
-        "metadata.sensitivity_blur": { "type": "keyword" },
-        "metadata.confidential": { "type": "boolean" },
-        "metadata.release_status": { "type": "keyword" },
-        "metadata.trial": { "type": "boolean" },
-        "metadata.tracking": { "type": "integer" },
-        "identification.custom_verification_rule_flags": {
-          "type": "nested",
-          "properties": {
-            "custom_verification_ruleset_id": { "type": "integer" },
-            "custom_verification_rule_id": { "type": "integer" },
-            "created_by_id": { "type": "integer" },
-            "result": { "type": "keyword" },
-            "icon": { "type": "keyword" },
-            "message": { "type": "text" },
-            "check_date_time": {
-              "type": "date",
-              "format": "8yyyy-MM-dd HH:mm:ss"
-            }
-          }
-        },
-        "identification.verifier.id": { "type": "integer" },
-        "identification.verified_on": {
-          "type": "date",
-          "format": "8yyyy-MM-dd HH:mm:ss||8yyyy-MM-dd HH:mm:ss.SSSS||8yyyy-MM-dd"
-        },
-        "identification.verification_status": { "type": "keyword" },
-        "identification.verification_substatus": { "type": "integer" },
-        "identification.verification_decision_source": { "type": "keyword" },
-        "identification.auto_checks.enabled": { "type": "boolean" },
-        "identification.auto_checks.identification_difficulty": { "type": "integer" },
-        "identification.auto_checks.result": { "type": "boolean" },
-        "identification.auto_checks.verification_rule_types_applied": { "type": "keyword" },
-        "location.geom": { "type": "geo_shape" },
-        "location.point": { "type": "geo_point" },
-        "location.grid_square.srid": { "type": "integer" },
-        "location.grid_square.1km.centre": { "type": "keyword" },
-        "location.grid_square.2km.centre": { "type": "keyword" },
-        "location.grid_square.10km.centre": { "type": "keyword" },
-        "location.higher_geography": {
-          "type": "nested",
-          "properties": {
-            "id": { "type": "integer" },
-            "code": { "type": "keyword" }
-          }
-        },
-        "location.location_id": { "type": "integer" },
-        "location.parent.location_id": { "type": "integer" },
-        "location.code": { "type": "keyword" },
-        "location.parent.code": { "type": "keyword" },
-        "location.coordinate_uncertainty_in_meters": { "type": "integer" },
-        "occurrence.source_system_key": { "type": "keyword" },
-        "occurrence.individual_count": { "type": "integer" },
-        "occurrence.zero_abundance": { "type": "boolean" },
-        "occurrence.occurrence_remarks": { "type": "text" },
-        "occurrence.attributes": {
-          "type": "nested"
-        },
-        "occurrence.media": {
-          "type": "nested"
-        },
-        "occurrence.associations": {
-          "type": "nested",
-          "properties": {
-            "id": { "type": "integer" },
-            "association_type": { "type": "keyword" },
-            "accepted_name": {
-              "type": "keyword",
-              "fields": {
-                "text": {
-                  "type": "text"
-                }
-              }
-            },
-            "vernacular_name": {
-              "type": "keyword",
-              "fields": {
-                "text": {
-                  "type": "text"
-                }
-              }
-            }
-          }
-        },
-        "taxon.accepted_taxon_id": { "type": "keyword" },
-        "taxon.group_id": { "type": "integer" },
-        "taxon.input_group_id": { "type": "integer" },
-        "taxon.higher_taxon_ids": { "type": "keyword" },
-        "taxon.species_taxon_id": { "type": "keyword" },
-        "taxon.taxon_id": { "type": "keyword" },
-        "taxon.taxon_list.id": { "type": "integer" },
-        "taxon.marine": { "type": "boolean" },
-        "taxon.freshwater": { "type": "boolean" },
-        "taxon.terrestrial": { "type": "boolean" },
-        "taxon.non_native": { "type": "boolean" },
-        "taxon.taxa_taxon_list_id": { "type": "integer" },
-        "taxon.taxon_meaning_id": { "type": "integer" },
-        "taxon.taxon_rank_sort_order": { "type": "short" }
-      }
-    }
-  }
-}
-```
-
-#### Elasticsearch 7.*
+#### Elasticsearch 8.*
 
 ```json
 PUT occurrence_brc1_v1
@@ -468,10 +314,6 @@ of the support files folder which can be shared between the pipelines.
 
 #### Prepare the lookups for taxon data
 
-Normally it will be acceptable to use the taxa.csv and taxon-paths.csv files
-provided in the repository. Use the following instructions to regenerate them
-if there are taxonomic changes that need to be applied to your imports.
-
 Rather than expect all data sources to provide all the taxonomic information
 related to a record in a single consistent format, we will use the UKSI dataset
 copied into a YML file to create a lookup table containing the information,
@@ -481,42 +323,30 @@ can provide just a taxon NBN key and Logstash will be configured to use this
 YML file to populate all the required taxon information to add to the search
 index.
 
-A second YML file is constructed from the UKSI data to provide path information
+A second YML file (Elasticsearch/data/taxon-paths.yml) is constructed from 
+the UKSI data to provide path information
 from the taxon's root through the taxonomic levels down to the taxon itself.
-This makes queries based on higher taxa easy and performant. Normally you can
-just use the copies of the 2 YML files provided in the repository, but
-instructions for generating or updating them are provided below.
+This makes queries based on higher taxa easy and performant. 
+Instructions for generating or updating them are provided below.
 
-To update the taxa.yml file with a fresh copy of the data:
+To generate the taxa.yml and taxon-paths.yml files, run the PHP script
+es-taxon-lookups. You must supply six arguments to the script:
 
-* Open the queries/prepare-taxa-lookup.sql file in pgAdmin, connecting to an
-  Indicia database that has the UKSI dataset loaded.
-* Search and replace <taxon_list_id> with the ID of the UKSI list. If there are
-  multiple lists then change this filter to an ` IN (...)` clause. For the BRC
-  warehouse1 for example, this filter is set to ` IN (15, 251, 258, 260, 261, 265, 277)`
-  to support use of the UK Species Inventory and the various lists for ABLE as
-  well as the list for MammalNet-Europe.
-* In pgAdmin 4, if indicia, public is not your logged in users default search path, then
-  edit the query to add "indicia." in front of all the table names (use a
-  different prefix if your schema is different).
-* In pgAdmin's preferences, set CSV/Text output CSV Quoting option to "None".
-* Click the Download as CSV button. Note that I had problems using this under
-  Internet Explorer with Enhanced Security Configuration enabled so ending up
-  using Chrome instead.
-* Rename the downloaded file to taxa.yml and replace the file in
-  Elasticsearch/data in your working folder.
-* Edit the file in a text editor. Remove the first row (column titles), then
-  ensure the line endings are set to LF and save it.
+1. **host** - the hostname or IP address of the postgres host.
+2. **database** - the name of the indicia database that has the UKSI dataset loaded.
+3. **user** - database user with sufficient access, e.g. indicia_user.
+4. **password** - the password for the database user.
+5. **taxon list ids** - a comma separated list of taxon_list ids to be indexed. This could be just the UKSI list id, but can be several. If more than one, separate with commas - but no spaces.
+6. **output folder** - the location where the output files will be generated (no trailing slash). Set to a period - '.' - to specify the current folder.
 
-To update the taxon-paths.yml file with a fresh copy of the data, repeat the
-steps above to download the output from the prepare-taxon-paths.sql file.
-Save the results as taxon-paths.yml.
-
-Note that if multiple taxon lists are used to define the taxonomic hierarchy
-then you should repeat the extraction for both lists and append the YAML data
-together. For example in the BRC warehouse1 there is a list ID 15 for the UKSI
-and also list 251 for European Butterflies since not all taxa are on the UK
-list.
+An example call:
+```
+php -d memory_limit=512M es-taxon-lookups.php 123.123.123.123 warehouselive indicia_user password 15,251,258,260,261,265,277,282 .
+```
+You need to run this command from a location that has php installed and
+access to the postgres host. Here the `memory_limit` parameter for the php command temporarily increases the PHP memory which will likely be required.
+In the example above, the files are generated in the working directory, but
+you could specify the directory on your system where the logstash files are found, e.g. /etc/logstash/data.
 
 #### Prepare the lookup for location data
 
