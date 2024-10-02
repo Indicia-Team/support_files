@@ -1,8 +1,6 @@
 //Note the code in this file requires the supply_indicia_data_to_map_square_allocator splash_extension
 
 jQuery(document).ready(function () {
-  // AVB, this is a temporary measure until the grid filter can be fixed with html tags
-  $('.filter-row').hide();
 
   // By default, Indicia just selects squares without zooming on single grid row clicks.
   // Change to zoom map when user single clicks on grid
@@ -62,10 +60,18 @@ function highlightFeatureById(featureId, zoomIn) {
   }
 };
 
+function setSelectedSquareLinks(ftr) {
+  // console.log(ftr);
+  gr = ftr.attributes.entered_sref;
+  $('#selected-square-link').html(`<b>${gr}<b> - <a href="/content/site-details?gr=${gr}">see details</a>`);
+  $('#selected-square-link').css('background-color', 'yellow');
+}
+
 //Warning to display on the public version of the Request a Square page.
 function login_to_allocate_message(features) { 
   //Only show the warning if there is a feature that has actually been clicked on, rather than for ever click on the map.
   if (features[0]&&features[0].attributes.id&& features[0].attributes.entered_sref) {
+    setSelectedSquareLinks(features[0]);
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
       setTimeout(function() {
@@ -88,6 +94,7 @@ function allocate_square_to_user(features) {
   }
   if (features.length<2) {
     if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
+      setSelectedSquareLinks(features[0]);
       setTimeout(function() {
         var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
         //Only perform if user confirms.

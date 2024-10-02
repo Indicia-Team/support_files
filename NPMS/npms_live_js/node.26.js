@@ -11,8 +11,6 @@ function map_square_info_popup(features, div,columns) {
 }
 
 jQuery(document).ready(function () {
-  // AVB, this is a temporary measure until the grid filter can be fixed with html tags
-  $('.filter-row').hide();
   // By default, Indicia just selects squares without zooming on single grid row clicks.
   // Change to zoom map when user single clicks on grid
   $('#report-grid-1').find('tbody').click(function (e) {
