@@ -689,6 +689,8 @@ class BuildDwcHelper {
   /**
    * Converts an Indicia filter definition quality filter to an ES query.
    *
+   * Note that option 'OV' (decision by other verifiers) is not supported.
+   *
    * @param array $definition
    *   Definition loaded for the Indicia filter.
    * @param array $bool
@@ -697,124 +699,212 @@ class BuildDwcHelper {
   private function applyUserFiltersQuality(array $definition, array &$bool) {
     $filter = $this->getDefinitionFilter($definition, ['quality']);
     if (!empty($filter)) {
-      switch ($filter['value']) {
-        case 'V1':
-          $bool['must'][] = ['match' => ['identification.verification_status' => 'V']];
-          $bool['must'][] = ['match' => ['identification.verification_substatus' => 1]];
-          break;
+      $valueList = explode(',', $filter['value']);
+      $defs = [];
+      foreach ($valueList as $value) {
+        switch ($value) {
+          // Answered query.
+          case 'A':
+            $defs[] = [
+              'term' => ['identification.query.keyword' => 'A'],
+            ];
+            break;
 
-        case 'V':
-          $bool['must'][] = ['match' => ['identification.verification_status' => 'V']];
-          break;
-
-        case '-3':
-          $bool['must'][] = [
-            'bool' => [
-              'should' => [
-                [
-                  'bool' => [
-                    'must' => [
-                      ['term' => ['identification.verification_status' => 'V']],
-                    ],
-                  ],
+          // Plausible.
+          case 'C3':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.verification_status' => 'C']],
+                  ['term' => ['identification.verification_substatus' => 3]],
                 ],
-                [
-                  'bool' => [
-                    'must' => [
-                      ['term' => ['identification.verification_status' => 'C']],
-                      ['term' => ['identification.verification_substatus' => 3]],
+              ],
+            ];
+            break;
+
+          // Queried.
+          case 'D':
+            $defs[] = [
+              'term' => ['identification.query.keyword' => 'Q'],
+            ];
+            break;
+
+          case 'P':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.verification_status' => 'C']],
+                  ['term' => ['identification.verification_substatus' => 0]],
+                ],
+                'must_not' => [
+                  ['exists' => ['field' => 'identification.query']],
+                ],
+              ],
+            ];
+            break;
+
+          // Not accepted.
+          case 'R':
+            $defs[] = [
+              'term' => ['identification.verification_status' => 'R'],
+            ];
+            break;
+
+          case 'R4':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                  ['term' => ['identification.verification_substatus' => 4]],
+                ],
+              ],
+            ];
+            break;
+
+          case 'R5':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                  ['term' => ['identification.verification_substatus' => 5]],
+                ],
+              ],
+            ];
+            break;
+
+          // Accepted.
+          case 'V':
+            $defs[] = ['term' => ['identification.verification_status' => 'V']];
+            break;
+
+          case 'V1':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.verification_status' => 'V']],
+                  ['term' => ['identification.verification_substatus' => 1]],
+                ],
+              ],
+            ];
+            break;
+
+          case 'V2':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.verification_status' => 'V']],
+                  ['term' => ['identification.verification_substatus' => 2]],
+                ],
+              ],
+            ];
+            break;
+
+          // Legacy parameters to support old filters.
+          // Accepted or plausible.
+          case '-3':
+            $defs[] = [
+              'bool' => [
+                'should' => [
+                  // Verified.
+                  ['term' => ['identification.verification_status' => 'V']],
+                  // Or plausible.
+                  [
+                    'bool' => [
+                      'must' => [
+                        ['term' => ['identification.verification_status' => 'C']],
+                        ['term' => ['identification.verification_substatus' => 3]],
+                      ],
                     ],
                   ],
                 ],
               ],
-            ],
-          ];
-          break;
+            ];
+            break;
 
-        case 'C3':
-          $bool['must'][] = ['match' => ['identification.verification_status' => 'C']];
-          $bool['must'][] = ['match' => ['identification.verification_substatus' => 3]];
-          break;
-
-        case 'C':
-          $bool['must'][] = ['match' => ['identification.recorder_certainty' => 'Certain']];
-          $bool['must_not'][] = ['match' => ['identification.verification_status' => 'R']];
-          break;
-
-        case 'L':
-          $bool['must'][] = [
-            'terms' => [
-              'identification.recorder_certainty.keyword' => [
-                'Certain',
-                'Likely',
+          // Not queried or rejected.
+          case '!D':
+            $defs[] = [
+              'bool' => [
+                'must_not' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                  ['terms' => ['identification.query.keyword' => ['Q', 'A']]],
+                ],
               ],
-            ],
-          ];
-          $bool['must_not'][] = ['match' => ['identification.verification_status' => 'R']];
-          break;
+            ];
+            break;
 
-        case 'P':
-          $bool['must'][] = ['match' => ['identification.verification_status' => 'C']];
-          $bool['must'][] = ['match' => ['identification.verification_substatus' => 0]];
-          $bool['must_not'][] = ['exists' => ['field' => 'identification.query']];
-          break;
+          // Not rejected.
+          case '!R':
+            $defs[] = [
+              'bool' => [
+                'must_not' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                ],
+              ],
+            ];
+            break;
 
-        case '!R':
-          $bool['must_not'][] = ['match' => ['identification.verification_status' => 'R']];
-          break;
+          // Recorder certain.
+          case 'C':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  ['term' => ['identification.recorder_certainty.keyword' => 'Certain']],
+                ],
+                'must_not' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                ],
+              ],
+            ];
+            break;
 
-        case '!D':
-          $bool['must_not'][] = [
-            'match' => ['identification.verification_status' => 'R'],
-          ];
-          $bool['must_not'][] = [
-            'terms' => ['identification.query.keyword' => ['Q', 'A']],
-          ];
-          break;
-
-        case 'D':
-          $bool['must'][] = ['match' => ['identification.query' => 'Q']];
-          break;
-
-        case 'A':
-          $bool['must'][] = ['match' => ['identification.query' => 'A']];
-          break;
-
-        case 'R':
-          $bool['must'][] = ['match' => ['identification.verification_status' => 'R']];
-          break;
-
-        case 'R4':
-          $bool['must'][] = ['match' => ['identification.verification_status' => 'R']];
-          $bool['must'][] = ['match' => ['identification.verification_substatus' => 4]];
-          break;
-
-        case 'DR':
           // Queried or not accepted.
-          $bool['must'][] = [
-            'bool' => [
-              'should' => [
-                [
-                  'bool' => [
-                    'must' => [
-                      ['term' => ['identification.verification_status' => 'R']],
-                    ],
-                  ],
-                ],
-                [
-                  'bool' => [
-                    'must' => [
-                      ['match' => ['identification.query' => 'Q']],
-                    ],
-                  ],
+          case 'DR':
+            $defs[] = [
+              'bool' => [
+                'should' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                  ['match' => ['identification.query' => 'Q']],
                 ],
               ],
-            ],
-          ];
-          break;
+            ];
+            break;
 
-        default:
-          // Nothing to do for 'all'.
+          // Recorder thinks record identification is likely.
+          case 'L':
+            $defs[] = [
+              'bool' => [
+                'must' => [
+                  [
+                    'terms' => [
+                      'identification.recorder_certainty.keyword' => [
+                        'Certain',
+                        'Likely',
+                      ],
+                    ],
+                  ],
+                ],
+                'must_not' => [
+                  ['term' => ['identification.verification_status' => 'R']],
+                ],
+              ],
+            ];
+            break;
+
+          default:
+            // Nothing to do for 'all'.
+        }
+      }
+      if (!empty($defs)) {
+        $boolGroup = !empty($filter['op']) && $filter['op'] === 'not in' ? 'must_not' : 'must';
+        if (count($defs) === 1) {
+          // Single filter can be simplified.
+          $bool[$boolGroup][] = [array_keys($defs[0])[0] => array_values($defs[0])[0]];
+        }
+        else {
+          // Join multiple filters with OR.
+          $bool[$boolGroup][] = ['bool' => ['should' => $defs]];
+        }
       }
     }
   }
@@ -850,6 +940,7 @@ class BuildDwcHelper {
    * Converts an Indicia filter definition rule checks filter to an ES query.
    *
    * Handles both automatic checks and a user's custom verification rule flags.
+   * Note that custom rule checks are not supported.
    *
    * @param array $definition
    *   Definition loaded for the Indicia filter.
@@ -871,21 +962,6 @@ class BuildDwcHelper {
             'query_string' => ['query' => '_exists_:identification.auto_checks.verification_rule_types_applied'],
           ];
         }
-      }
-      elseif (in_array($filter['value'], ['PC', 'FC'])) {
-        // Pass Custom or Fail Custom options are for custom verification rule
-        // checks.
-        $test = $filter['value'] === 'PC' ? 'must_not' : 'must';
-        $bool[$test][] = [
-          'nested' => [
-            'path' => 'identification.custom_verification_rule_flags',
-            'query' => [
-              'term' => [
-                'identification.custom_verification_rule_flags.created_by_id' => hostsite_get_user_field('indicia_user_id'),
-              ],
-            ],
-          ],
-        ];
       }
     }
   }
