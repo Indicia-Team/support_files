@@ -80,6 +80,7 @@ PUT occurrence_brc1_v1
       "metadata.website.id": { "type": "integer" },
       "metadata.privacy_precision": { "type": "integer" },
       "metadata.private": { "type": "boolean" },
+      "metadata.hide_sample_as_private": { "type": "boolean" },
       "metadata.sensitive": { "type": "boolean" },
       "metadata.sensitivity_precision": { "type": "integer" },
       "metadata.sensitivity_blur": { "type": "keyword" },
@@ -268,18 +269,18 @@ visualisation.
 
 ### Prepare the Logstash User
 
-The Logstash user only needs to be prepared once - it can be shared with the 
+The Logstash user only needs to be prepared once - it can be shared with the
 samples pipeline if both are configured.  This is not required if security is
 disabled.
 
 ```json
 PUT _security/role/logstash_writer
 {
-  "cluster": ["manage_index_templates", "monitor"], 
+  "cluster": ["manage_index_templates", "monitor"],
   "indices": [
     {
-      "names": [ "*_brc1_*" ], 
-      "privileges": ["write","create","create_index"]  
+      "names": [ "*_brc1_*" ],
+      "privileges": ["write","create","create_index"]
     }
   ]
 }
@@ -323,10 +324,10 @@ can provide just a taxon NBN key and Logstash will be configured to use this
 YML file to populate all the required taxon information to add to the search
 index.
 
-A second YML file (Elasticsearch/data/taxon-paths.yml) is constructed from 
+A second YML file (Elasticsearch/data/taxon-paths.yml) is constructed from
 the UKSI data to provide path information
 from the taxon's root through the taxonomic levels down to the taxon itself.
-This makes queries based on higher taxa easy and performant. 
+This makes queries based on higher taxa easy and performant.
 Instructions for generating or updating them are provided below.
 
 To generate the taxa.yml and taxon-paths.yml files, run the PHP script

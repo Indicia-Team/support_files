@@ -317,15 +317,21 @@ aliases should filter out documents where `metadata.confidential` = true.
 
 `metadata.privacy_precision`||
 -----|-----
-**Data type**|boolean
+**Data type**|integer
 **Warehouse field**|`samples.privacy_precision`
-**Description**|True if the sample is flagged as private.
+**Description**|For samples that are private, indicates the size of the grid square to blur to.
 
 `metadata.private`||
 -----|-----
 **Data type**|boolean
 **Warehouse field**|derived from `samples.privacy_precision`
-**Description**|For samples that are private, indicates the size of the grid square to blur to.
+**Description**|True if the sample is flagged as private.
+
+`metadata.hide_sample_as_private`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|derived from `samples.privacy_precision`
+**Description**|By default, private samples are visible but blurred. Setting privacy_precision to 0 sets this flag, resulting in a private sample that is hidden from public view.
 
 `metadata.sensitive`||
 -----|-----

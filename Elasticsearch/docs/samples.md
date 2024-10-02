@@ -29,100 +29,7 @@ easily. Finally, we include a version identifier in the index name, so that we
 can use the Elasticsearch REINDEX API to copy the index to a new version if
 we need to change mappings.
 
-#### Elasticsearch 6.*
-
-```json
-PUT sample_brc1_v1?include_type_name=true
-{
-  "settings": {
-    "number_of_shards": 4,
-    "number_of_replicas": 1
-  },
-  "mappings": {
-    "doc": {
-      "date_detection": false,
-      "properties": {
-        "id": { "type": "integer" },
-        "@timestamp": { "type": "date"},
-        "event.date_start": { "type": "date" },
-        "event.date_end": { "type": "date" },
-        "event.date_type": { "type": "keyword" },
-        "event.day_of_year": { "type": "short" },
-        "event.event_id": { "type": "integer" },
-        "event.event_remarks": { "type": "text" },
-        "event.parent_event_id": { "type": "integer" },
-        "event.source_system_key": { "type": "keyword" },
-        "event.week": { "type": "byte" },
-        "event.ukbms_week": { "type": "byte" },
-        "event.month": { "type": "byte" },
-        "event.year": { "type": "short" },
-        "event.attributes": {
-          "type": "nested"
-        },
-        "event.parent_attributes": {
-          "type": "nested"
-        },
-        "event.media": {
-          "type": "nested"
-        },
-        "metadata.created_by_id": { "type": "integer" },
-        "metadata.updated_by_id": { "type": "integer" },
-        "metadata.created_on": {
-          "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
-        },
-        "metadata.updated_on": {
-          "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
-        },
-        "metadata.group.id": { "type": "integer" },
-        "metadata.input_form": { "type": "keyword" },
-        "metadata.survey.id": { "type": "integer" },
-        "metadata.website.id": { "type": "integer" },
-        "metadata.privacy_precision": { "type": "integer" },
-        "metadata.private": { "type": "boolean" },
-        "metadata.sensitive": { "type": "boolean" },
-        "metadata.sensitivity_precision": { "type": "integer" },
-        "metadata.sensitivity_blur": { "type": "keyword" },
-        "metadata.confidential": { "type": "boolean" },
-        "metadata.release_status": { "type": "keyword" },
-        "metadata.trial": { "type": "boolean" },
-        "metadata.tracking": { "type": "integer" },
-        "metadata.verifier.id": { "type": "integer" },
-        "metadata.verified_on": {
-          "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSSS||yyyy-MM-dd"
-        },
-        "metadata.verification_status": { "type": "keyword" },
-        "stats.count_occurrences": { "type": "integer" },
-        "stats.count_taxa": { "type": "integer" },
-        "stats.count_taxon_groups": { "type": "integer" },
-        "stats.sum_individual_count": { "type": "integer" },
-        "location.geom": { "type": "geo_shape" },
-        "location.point": { "type": "geo_point" },
-        "location.grid_square.srid": { "type": "integer" },
-        "location.grid_square.1km.centre": { "type": "keyword" },
-        "location.grid_square.2km.centre": { "type": "keyword" },
-        "location.grid_square.10km.centre": { "type": "keyword" },
-        "location.higher_geography": {
-          "type": "nested",
-          "properties": {
-            "id": { "type": "integer" },
-            "code": { "type": "keyword" }
-          }
-        },
-        "location.location_id": { "type": "integer" },
-        "location.parent.location_id": { "type": "integer" },
-        "location.code": { "type": "keyword" },
-        "location.parent.code": { "type": "keyword" },
-        "location.coordinate_uncertainty_in_meters": { "type": "integer" }
-      }
-    }
-  }
-}
-```
-
-#### Elasticsearch 7.*
+#### Elasticsearch 8.*
 
 ```json
 PUT sample_brc1_v1
@@ -173,6 +80,7 @@ PUT sample_brc1_v1
       "metadata.website.id": { "type": "integer" },
       "metadata.privacy_precision": { "type": "integer" },
       "metadata.private": { "type": "boolean" },
+      "metadata.hide_sample_as_private": { "type": "boolean" },
       "metadata.sensitive": { "type": "boolean" },
       "metadata.sensitivity_precision": { "type": "integer" },
       "metadata.sensitivity_blur": { "type": "keyword" },
@@ -295,18 +203,18 @@ visualisation.
 
 ### Prepare the Logstash User
 
-The Logstash user only needs to be prepared once - it can be shared with the 
+The Logstash user only needs to be prepared once - it can be shared with the
 occurrences pipeline if both are configured. This is not required if security is
 disabled.
 
 ```json
 PUT _security/role/logstash_writer
 {
-  "cluster": ["manage_index_templates", "monitor"], 
+  "cluster": ["manage_index_templates", "monitor"],
   "indices": [
     {
-      "names": [ "*_brc1_*" ], 
-      "privileges": ["write","create","create_index"]  
+      "names": [ "*_brc1_*" ],
+      "privileges": ["write","create","create_index"]
     }
   ]
 }

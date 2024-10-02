@@ -246,6 +246,21 @@ filter {
       "occurrence_attrs_orig"
     ]
   }
+  mutate {
+    add_field => {
+      "hide_sample_as_private" => false
+    }
+  }
+  # Set hide_sample_as_private using privacy_precision value.
+  translate {
+    source => "privacy_precision"
+    target => "hide_sample_as_private"
+    override => true
+    dictionary => {
+      "0" => true
+    }
+    fallback => false
+  }
   # Convert our list of fields into a nicely structured occurrence document.
   # Also cleanup remaining report fields that we don't need in doc.
   mutate {
@@ -264,6 +279,7 @@ filter {
       "website_title" => "[metadata][website][title]"
       "private" => "[metadata][private]"
       "privacy_precision" => "[metadata][privacy_precision]"
+      "hide_sample_as_private" => "[metadata][hide_sample_as_private]"
       "sensitive" => "[metadata][sensitive]"
       "sensitivity_precision" => "[metadata][sensitivity_precision]"
       "sensitivity_blur" => "[metadata][sensitivity_blur]"
