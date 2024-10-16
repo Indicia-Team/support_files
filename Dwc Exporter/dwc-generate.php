@@ -43,83 +43,20 @@ class BuildDwcHelper {
   private $conf;
 
   /**
+   * Array of metadata for the output data files.
+   *
+   * List of files to output, each an array containing type (Occurrence or
+   * Event), filename, columns (array of DwC terms). The first file is the core
+   * file, any extra files described are extensions.
+   */
+  private array $dataFiles;
+
+  /**
    * Auth tokens.
    *
    * @var array
    */
   private array $readAuth;
-
-  /**
-   * CSV header row for Darwin Core standard output.
-   *
-   * @var array
-   */
-  private $headerRowDwc = [
-    'occurrenceID',
-    'otherCatalogNumbers',
-    'eventID',
-    'scientificName',
-    'taxonID',
-    'lifeStage',
-    'sex',
-    'individualCount',
-    'vernacularName',
-    'eventDate',
-    'recordedBy',
-    'licence',
-    'rightsHolder',
-    'coordinateUncertaintyInMeters',
-    'decimalLatitude',
-    'decimalLongitude',
-    'geodeticDatum',
-    'datasetName',
-    'datasetID',
-    'collectionCode',
-    'locality',
-    'basisOfRecord',
-    'identificationVerificationStatus',
-    'identifiedBy',
-    'occurrenceStatus',
-    'eventRemarks',
-    'occurrenceRemarks',
-  ];
-
-  /**
-   * CSV header row for Darwin Core NBN variant output.
-   *
-   * Differs in the way grid references are handled.
-   *
-   * @var array
-   */
-  private $headerRowNbn = [
-    'occurrenceID',
-    'otherCatalogNumbers',
-    'eventID',
-    'scientificName',
-    'taxonID',
-    'lifeStage',
-    'sex',
-    'individualCount',
-    'vernacularName',
-    'eventDate',
-    'recordedBy',
-    'licence',
-    'rightsHolder',
-    'coordinateUncertaintyInMeters',
-    'gridReference',
-    'decimalLatitude',
-    'decimalLongitude',
-    'datasetName',
-    'datasetID',
-    'collectionCode',
-    'locality',
-    'basisOfRecord',
-    'identificationVerificationStatus',
-    'identifiedBy',
-    'occurrenceStatus',
-    'eventRemarks',
-    'occurrenceRemarks',
-  ];
 
   /**
    * CSV header row that is in use for the loaded config.
@@ -142,6 +79,8 @@ class BuildDwcHelper {
       $this->loadConfig($configFileName);
       $this->validateConfig();
       echo "Config file \"$configFileName\" loaded\n";
+      $this->loadMetafile();
+      echo 'Metafile ' . $this->conf['xmlFilesInDir'] . "meta.xml loaded\n";
     }
     catch (Exception $e) {
       die("Error loading \"$configFileName\"\n" . $e->getMessage());
@@ -180,7 +119,9 @@ class BuildDwcHelper {
     if (empty(trim($configFileContents))) {
       throw new Exception("Empty configuration file");
     }
-    $this->conf = json_decode($configFileContents, TRUE);
+    $this->conf = array_merge([
+      'options' => [],
+    ], json_decode($configFileContents, TRUE));
     if (empty($this->conf)) {
       throw new Exception("Invalid configuration file - JSON parse failure");
     }
@@ -192,8 +133,6 @@ class BuildDwcHelper {
     if (empty($this->conf['outputFile'])) {
       $this->conf['outputFile'] = 'exports/' . preg_replace('/[^a-z0-9]/', '_', strtolower($baseName)) . '.zip';
     }
-    // Set the appropriate columns list.
-    $this->headerRow = in_array('useGridRefsIfPossible', $this->conf['options']) ? $this->headerRowNbn : $this->headerRowDwc;
     if (!empty($this->conf['filterId'])) {
       $this->loadFilterIntoConfig();
     }
@@ -235,10 +174,10 @@ class BuildDwcHelper {
         if (!file_exists($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'eml.xml')) {
           throw new exception('EML file missing: ' . $this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'eml.xml');
         }
-        if (!file_exists($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml')) {
-          throw new exception('Metadata file missing: ' . $this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml');
-        }
       }
+    }
+    if (!file_exists($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml')) {
+      throw new exception('Metadata file missing: ' . $this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml');
     }
     if (empty($this->conf['rightsHolder'])) {
       throw new Exception("Missing rightsHolder setting in configuration");
@@ -252,21 +191,113 @@ class BuildDwcHelper {
     if (!isset($this->conf['occurrenceIdPrefix'])) {
       $this->conf['occurrenceIdPrefix'] = '';
     }
+    if (!isset($this->conf['eventIdPrefix'])) {
+      $this->conf['eventIdPrefix'] = '';
+    }
     if (empty($this->conf['defaultLicenceCode'])) {
       $this->conf['defaultLicenceCode'] = '';
     }
   }
 
   /**
-   * Performs the task of building the file.
+   * Load the meta.xml file.
+   *
+   * Loads the file which describes the event and/or occurrence output files
+   * required.
    */
-  public function buildFile() {
+  function loadMetafile() {
+    $dom = new DOMDocument();
+    $dom->loadXML(file_get_contents($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml'));
+    $archive = $dom->getElementsByTagName('archive');
+    if (count($archive) !== 1) {
+      throw new Exception('Meta.xml file must have exactly 1 archive element.');
+    }
+    $core = $archive->item(0)->getElementsByTagName('core');
+    if (count($core) !== 1) {
+      throw new Exception('Meta.xml file must have exactly 1 core element in the archive element.');
+    }
+    $this->dataFiles[] = $this->getFileMetadataFromXml($core->item(0));
+    $extensions = $archive->item(0)->getElementsByTagName('extension');
+    if (count($extensions) > 0 && !in_array('id', $this->dataFiles[0]['columns'])) {
+      throw new Exception('Meta.xml file must describe an id column for the core file when extensions are present.');
+    }
+    foreach ($extensions as $extension) {
+      $extMetadata = $this->getFileMetadataFromXml($extension);
+      if (!in_array('coreid', $extMetadata['columns'])) {
+        throw new Exception('Meta.xml file must describe a coreid column for each extension.');
+      }
+      $this->dataFiles[] = $extMetadata;
+    }
+  }
+
+  /**
+   * Read the metadata needed for a data file from it's meta.xml element.
+   *
+   * @param DOMElement $el
+   *   XML file element for the data file (core or extension).
+   *
+   * @return array
+   *   Metadata, including the type (Occurrence or Event), filename and list
+   *   of columns.
+   */
+  private function getFileMetadataFromXml(DOMElement $el): array {
+    $rowType = $el->getAttribute('rowType');
+    // We currently only support occurrence and event types but this could be
+    // extended in future.
+    if (!preg_match('/^http(s)?:\/\/rs.tdwg.org\/dwc\/terms\/(?P<type>(Occurrence|Event))$/', $rowType, $matches)) {
+      throw new Exception('Unrecognised rowType given for the core element.');
+    }
+    $r = [
+      'type' => $matches['type'],
+      'columns' => [],
+    ];
+    // The filename in the metadata files locations elements are only used for
+    // the components of a DwC-A export, or if there are multiple CSV files
+    // specified.
+    if ($this->conf['outputType'] === 'dwca' || count($this->dataFiles) > 1) {
+      $r['filename'] = $el->getElementsByTagName('files')->item(0)->getElementsByTagName('location')->item(0)->textContent;
+    }
+    foreach ($el->childNodes as $pos => $childEl) {
+      if (is_a($childEl, 'DOMElement')) {
+        $index = (integer) $childEl->getAttribute('index') === '' ? $pos : $childEl->getAttribute('index');
+        if (isset($r['columns'][$index])) {
+          throw new Exception("Duplicate index $index in meta.xml list of fields.");
+        }
+        if ($childEl->nodeName === 'id' || $childEl->nodeName === 'coreid') {
+          $r['columns'][$index] = $childEl->nodeName;
+        }
+        elseif ($childEl->nodeName === 'field') {
+          $r['columns'][$index] = basename($childEl->getAttribute('term'));
+        }
+      }
+    }
+    ksort($r['columns']);
+    return $r;
+  }
+
+  /**
+   * Return true if an occurrence is valid and complete.
+   *
+   * Currently this is any occurrence with a taxonID.
+   *
+   * @param array $source
+   *   Occurrence data from ES.
+   *
+   * @return bool
+   *   True if valid and complete.
+   */
+  private function isOccurrenceValid(array $source): bool {
+    return !empty($source['taxon']['taxon_id']);
+  }
+
+  /**
+   * Performs the task of building an occurrences data file.
+   */
+  private function buildOccurrenceFile(array $fileMetadata) {
     $client = ClientBuilder::create()->setHosts([$this->conf['elasticsearchHost']])->build();
     $params = [
       // How long between scroll requests. Should be small!
       'scroll' => '30s',
-      // How many results *per shard* you want back. Set this too high will
-      // cause PHP memory errors.
       'size'   => 1000,
       'index'  => $this->conf['index'],
       'body'   => [
@@ -278,15 +309,16 @@ class BuildDwcHelper {
     // and a scroll_id.
     $response = $client->search($params);
 
-    $file = fopen($this->getOutputCsvFileName(), 'w');
-    fputcsv($file, $this->headerRow);
+    $file = fopen($this->getOutputCsvFileName($fileMetadata), 'w');
+    fputcsv($file, $fileMetadata['columns']);
 
     // Now we loop until the scroll "cursors" are exhausted.
     while (isset($response['hits']['hits']) && count($response['hits']['hits']) > 0) {
       foreach ($response['hits']['hits'] as $hit) {
-        fputcsv($file, $this->getRowData($hit['_source']));
+        if ($this->isOccurrenceValid($hit['_source'])) {
+          fputcsv($file, $this->getOccurrenceRowData($hit['_source'], $fileMetadata));
+        }
       }
-
       // When done, get the new scroll_id in case it changes.
       $scroll_id = $response['_scroll_id'];
 
@@ -304,6 +336,75 @@ class BuildDwcHelper {
     }
     echo "\n";
     fclose($file);
+  }
+
+  /**
+   * Performs the task of building an events data file.
+   */
+  private function buildEventFile(array $fileMetadata) {
+    if (empty($this->conf['eventIndex'])) {
+      throw new Exception("Missing eventIndex setting in configuration");
+    }
+    $client = ClientBuilder::create()->setHosts([$this->conf['elasticsearchHost']])->build();
+
+    $params = [
+      // How long between scroll requests. Should be small!
+      'scroll' => '30s',
+      'size'   => 1000,
+      'index'  => $this->conf['eventIndex'],
+      'body'   => [
+        'query' => $this->conf['query'],
+      ],
+    ];
+    // Execute the search.
+    // The response will contain the first batch of documents
+    // and a scroll_id.
+    $response = $client->search($params);
+
+    // Execute the search.
+    // The response will contain the first batch of documents
+    // and a scroll_id.
+    $response = $client->search($params);
+
+    $file = fopen($this->getOutputCsvFileName($fileMetadata), 'w');
+    fputcsv($file, $fileMetadata['columns']);
+
+    // Now we loop until the scroll "cursors" are exhausted.
+    while (isset($response['hits']['hits']) && count($response['hits']['hits']) > 0) {
+      foreach ($response['hits']['hits'] as $hit) {
+        fputcsv($file, $this->getEventRowData($hit['_source'], $fileMetadata));
+      }
+      // When done, get the new scroll_id in case it changes.
+      $scroll_id = $response['_scroll_id'];
+
+      // Execute a Scroll request and repeat.
+      $response = $client->scroll([
+        'body' => [
+          // Using our previously obtained _scroll_id.
+          'scroll_id' => $scroll_id,
+          // Plus the same timeout window.
+          'scroll'    => '30s',
+        ],
+      ]);
+      // Progress.
+      echo '.';
+    }
+    echo "\n";
+    fclose($file);
+  }
+
+  /**
+   * Build the output dataset files described by meta.xml.
+   */
+  public function buildFiles() {
+    foreach ($this->dataFiles as $fileMetadata) {
+      if ($fileMetadata['type'] === 'Occurrence') {
+        $this->buildOccurrenceFile($fileMetadata);
+      }
+      else {
+        $this->buildEventFile($fileMetadata);
+      }
+    }
     if ($this->conf['outputType'] === 'dwca') {
       echo "Preparing Darwin Core archive file\n";
       $this->updateDwcaFile();
@@ -327,7 +428,7 @@ class BuildDwcHelper {
         ['term' => ['metadata.release_status' => 'R']],
         [
           'query_string' => [
-            'query' => '((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*)) AND _exists_:taxon.taxon_id',
+            'query' => '((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))',
           ],
         ],
       ],
@@ -1258,20 +1359,14 @@ class BuildDwcHelper {
   /**
    * Return the CSV file to output raw data into.
    *
-   * Either returns the specified file name, or modifies the extension if the
-   * output type is Darwin Core Archive.
-   *
    * @return string
    *   File name.
    */
-  private function getOutputCsvFileName() {
-    if ($this->conf['outputType'] === 'csv') {
+  private function getOutputCsvFileName(array $fileMetadata) {
+    if ($this->conf['outputType'] === 'csv' && count($this->dataFiles) === 1) {
       return $this->conf['outputFile'];
     }
-    else {
-      $info = pathinfo($this->conf['outputFile']);
-      return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '.csv';
-    }
+    return $fileMetadata['filename'];
   }
 
   /**
@@ -1283,52 +1378,45 @@ class BuildDwcHelper {
     $zip = new ZipArchive();
     $zip->open($this->conf['outputFile'], ZipArchive::CREATE);
     echo "Zip archive file opened\n";
-    $zip->addFile($this->getOutputCsvFileName(), 'occurrences.csv');
+    echo $this->conf['outputFile'] . "\n";
+    foreach ($this->dataFiles as $fileMetadata) {
+      $zip->addFile($this->getOutputCsvFileName($fileMetadata));
+    }
     // If the EML and metadata files are specified then add them.
     if (!empty($this->conf['xmlFilesInDir'])) {
       $zip->addFile($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'eml.xml', 'eml.xml');
       $zip->addFile($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml', 'meta.xml');
     }
     $zip->close();
-    // Don't need the CSV file.
-    unlink($this->getOutputCsvFileName());
-  }
-
-  /**
-   * Converts an occurrence data array into the correct row order for CSV.
-   *
-   * @param array $row
-   *   Associative array of occurrence values.
-   *
-   * @return array
-   *   Values array in same order as the header row.
-   */
-  private function convertToHeaderRowOrder(array $row) {
-    $converted = [];
-    foreach ($this->headerRow as $column) {
-      $converted[] = $row[$column];
+    foreach ($this->dataFiles as $fileMetadata) {
+      // Don't need the CSV file - has to be done after zip close.
+      unlink($this->getOutputCsvFileName($fileMetadata));
     }
-    return $converted;
   }
 
   /**
-   * Return the array to represent a document as DwcA CSV.
+   * Return the array to represent an occurrence document as DwcA CSV.
    *
    * @param array $source
-   *   ES document source.
+   *   ES occurrence document source.
    *
    * @return array
    *   CSV data.
    */
-  private function getRowData(array $source) {
+  private function getOccurrenceRowData(array $source, array $fileMetadata) {
     $points = explode(',', $source['location']['point']);
     $sensitiveOrNotPoint = (isset($source['metadata']['sensitive']) && $source['metadata']['sensitive'] === 'true') ||
       (isset($source['location']['input_sref_system']) && !preg_match('/^\d+$/', $source['location']['input_sref_system']));
     $useGridRefsIfPossible = in_array('useGridRefsIfPossible', $this->conf['options']);
-    $row = [
+    $row = [];
+    $mappings = [
       'occurrenceID' => $this->conf['occurrenceIdPrefix'] . $source['id'],
+      'id' => $this->conf['occurrenceIdPrefix'] . $source['id'],
       'otherCatalogNumbers' => empty($source['occurrence']['source_system_key']) ? '' : $source['occurrence']['source_system_key'],
-      'eventID' => $source['event']['event_id'],
+      'eventID' => $this->conf['eventIdPrefix'] . $source['event']['event_id'],
+      // If an extension, we only support occurrences being an extension of
+      // events, so the coreid will always point to an event.
+      'coreid' => $this->conf['eventIdPrefix'] . $source['event']['event_id'],
       'scientificName' => isset($source['taxon']['accepted_name'])
         ? ($source['taxon']['accepted_name'] . (empty($source['taxon']['accepted_name_authorship']) ? '' : ' ' . $source['taxon']['accepted_name_authorship']))
         : $source['taxon']['taxon_name'],
@@ -1339,7 +1427,9 @@ class BuildDwcHelper {
       'vernacularName' => empty($source['taxon']['vernacular_name']) ? '' : $source['taxon']['vernacular_name'],
       'eventDate' => $this->getDate($source),
       'recordedBy' => empty($source['event']['recorded_by']) ? '' : $source['event']['recorded_by'],
+      // Tolerate DwC/US English or UK English.
       'licence' => empty($source['metadata']['licence_code']) ? $this->conf['defaultLicenceCode'] : $source['metadata']['licence_code'],
+      'license' => empty($source['metadata']['licence_code']) ? $this->conf['defaultLicenceCode'] : $source['metadata']['licence_code'],
       'rightsHolder' => $this->conf['rightsHolder'],
       'coordinateUncertaintyInMeters' => empty($source['location']['coordinate_uncertainty_in_meters']) ? '' : $source['location']['coordinate_uncertainty_in_meters'],
       'gridReference' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? $source['location']['output_sref'] : '',
@@ -1357,8 +1447,47 @@ class BuildDwcHelper {
       'eventRemarks' => empty($source['event']['event_remarks']) ? '' : $source['event']['event_remarks'],
       'occurrenceRemarks' => empty($source['occurrence']['occurrence_remarks']) ? '' : $source['occurrence']['occurrence_remarks'],
     ];
+    foreach ($fileMetadata['columns'] as $dwcTerm) {
+      $row[] = $mappings[$dwcTerm] ?? '';
+    }
+    return $row;
+  }
 
-    return $this->convertToHeaderRowOrder($row);
+  /**
+   * Return the array to represent an event document as DwcA CSV.
+   *
+   * @param array $source
+   *   ES event document source.
+   *
+   * @return array
+   *   CSV data.
+   */
+  private function getEventRowData(array $source, array $fileMetadata) {
+    $points = explode(',', $source['location']['point']);
+    $sensitiveOrNotPoint = (isset($source['metadata']['sensitive']) && $source['metadata']['sensitive'] === 'true') ||
+      (isset($source['location']['input_sref_system']) && !preg_match('/^\d+$/', $source['location']['input_sref_system']));
+    $useGridRefsIfPossible = in_array('useGridRefsIfPossible', $this->conf['options']);
+    $row = [];
+    $mappings = [
+      'eventID' => $this->conf['eventIdPrefix'] . $source['id'],
+      'id' => $this->conf['eventIdPrefix'] . $source['id'],
+      'parentEventID' => isset($source['event']['parent_event_id']) ? $this->conf['eventIdPrefix'] . $source['event']['parent_event_id'] : NULL,
+      'eventDate' => $this->getDate($source),
+      'year' => $source['event']['year'],
+      'month' => $source['event']['month'],
+      'coordinateUncertaintyInMeters' => empty($source['location']['coordinate_uncertainty_in_meters']) ? '' : $source['location']['coordinate_uncertainty_in_meters'],
+      'gridReference' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? $source['location']['output_sref'] : '',
+      'decimalLatitude' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? '' : $points[0],
+      'decimalLongitude' => $useGridRefsIfPossible && $sensitiveOrNotPoint ? '' : $points[1],
+      'geodeticDatum' => 'WGS84',
+      'habitat' => empty($source['event']['habitat']) ? '' : $source['event']['habitat'],
+      'eventRemarks' => empty($source['event']['event_remarks']) ? '' : $source['event']['event_remarks'],
+      'samplingProtocol' => empty($source['event']['sampling_protocol']) ? '' : $source['event']['sampling_protocol'],
+    ];
+    foreach ($fileMetadata['columns'] as $dwcTerm) {
+      $row[] = $mappings[$dwcTerm] ?? '';
+    }
+    return $row;
   }
 
   /**
@@ -1455,4 +1584,4 @@ if (count($argv) !== 2) {
 }
 $configFile = $argv[1];
 $helper = new BuildDwcHelper($configFile);
-$helper->buildFile();
+$helper->buildFiles();
