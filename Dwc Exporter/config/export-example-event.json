@@ -1,0 +1,35 @@
+{
+  "elasticsearchHost": "{{ Elasticsearch host address }}",
+  "index": "{{ index name }}",
+  "query": {
+    "bool": {
+			"must": [
+				{
+					"query_string": {
+						"query": "metadata.confidential:false AND ((metadata.sensitivity_blur:B) OR (!metadata.sensitivity_blur:*))",
+						"analyze_wildcard": true,
+						"default_field": "*"
+					}
+				},
+				{
+					"term": {"metadata.website.id": 2}
+				},
+				{
+					"term": {"metadata.release_status": "R"}
+				}
+			]
+    }
+  },
+  "outputType": "dwca",
+  "options": [
+	  "useGridRefsIfPossible"
+  ],
+  "outputFile": "exports/export-example-event.zip",
+  "occurrenceIdPrefix": "",
+  "defaultLicenceCode": "",
+  "rightsHolder": "{{ Rights holder }}",
+  "datasetName": "{{ Dataset name }}",
+  "datasetIdSampleAttrId": 123,
+  "basisOfRecord": "HumanObservation",
+  "xmlFilesInDir": "metadata/export-example-event"
+}

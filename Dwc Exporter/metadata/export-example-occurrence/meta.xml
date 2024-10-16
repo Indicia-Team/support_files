@@ -5,7 +5,6 @@
     <files>
       <location>occurrences.csv</location>
     </files>
-    <id index="0"/>
     <field index="0" term="http://rs.tdwg.org/dwc/terms/occurrenceID" />
     <field index="1" term="http://rs.tdwg.org/dwc/terms/otherCatalogNumbers" />
     <field index="2" term="http://rs.tdwg.org/dwc/terms/eventID" />

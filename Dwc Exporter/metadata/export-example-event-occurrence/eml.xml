@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<eml:eml xmlns:d="eml://ecoinformatics.org/dataset-2.1.0" xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/terms/" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml-gbif-profile.xsd" system="ALA-Registry" scope="system" xml:lang="en" packageId="a0ecd057-0a7e-37f0-9af8-73328191f64d/v8">
+<eml:eml xmlns:d="eml://ecoinformatics.org/dataset-2.1.0"
+  xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/terms/"
+  xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml-gbif-profile.xsd"
+  system="ALA-Registry" scope="system" xml:lang="en"
+  packageId="a0ecd057-0a7e-37f0-9af8-73328191f64d/v8">
   <dataset>
     <title xmlns:lang="en">DWC generate example export</title>
 
@@ -13,13 +18,11 @@
     </additionalInfo>
 
     <intellectualRights>
-      	<para>CC BY
-      		<ulink url="https://creativecommons.org/licenses/by/4.0/">
-      			<citetitle>Creative Commons Attribution</citetitle>
-      		</ulink>
-      	</para>
+      <para>CC BY <ulink url="https://creativecommons.org/licenses/by/4.0/">
+          <citetitle>Creative Commons Attribution</citetitle>
+        </ulink>
+      </para>
     </intellectualRights>
-
 
 
     <coverage>
@@ -62,22 +65,22 @@
     </methods>
 
     <creator>
-    <individualName>
+      <individualName>
         <givenName></givenName>
         <surName></surName>
-    </individualName>
-    <phone></phone>
-    <electronicMailAddress>test@example.com</electronicMailAddress>
-	</creator>
+      </individualName>
+      <phone></phone>
+      <electronicMailAddress>test@example.com</electronicMailAddress>
+    </creator>
 
-	<contact>
-     <positionName></positionName>
+    <contact>
+      <positionName></positionName>
       <address>
-          <deliveryPoint></deliveryPoint>
-          <city></city>
-          <administrativeArea></administrativeArea>
-          <postalCode></postalCode>
-          <country></country>
+        <deliveryPoint></deliveryPoint>
+        <city></city>
+        <administrativeArea></administrativeArea>
+        <postalCode></postalCode>
+        <country></country>
       </address>
       <phone></phone>
       <electronicMailAddress></electronicMailAddress>
@@ -85,14 +88,13 @@
 
   </dataset>
 
-   <additionalMetadata>
-        <metadata>
-             <gbif>
-                <citation></citation>
-             </gbif>
-        </metadata>
-   </additionalMetadata>
-
+  <additionalMetadata>
+    <metadata>
+      <gbif>
+        <citation></citation>
+      </gbif>
+    </metadata>
+  </additionalMetadata>
 
 
 </eml:eml>

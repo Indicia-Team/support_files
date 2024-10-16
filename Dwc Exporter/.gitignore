@@ -3,6 +3,5 @@ metadata/*/*
 config/*
 exports/
 
-!/metadata/export-example/meta.xml
-!/metadata/export-example/eml.xml
-!/config/export-example.json
+!/metadata/export-example-*/*
+!/config/export-example-*
