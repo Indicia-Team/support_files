@@ -18,7 +18,7 @@
 					"term": {"identification.verification_status": "V"}
 				},
 				{
-					"term": {"metadata.   release_status": "R"}
+					"term": {"metadata.release_status": "R"}
 				}
 			]
     }
@@ -27,12 +27,12 @@
   "options": [
 	  "useGridRefsIfPossible"
   ],
-  "outputFile": "exports/export-example.zip",
+  "outputFile": "exports/export-example-occurrence.zip",
   "occurrenceIdPrefix": "",
   "defaultLicenceCode": "",
   "rightsHolder": "{{ Rights holder }}",
   "datasetName": "{{ Dataset name }}",
   "datasetIdSampleAttrId": 123,
   "basisOfRecord": "HumanObservation",
-  "xmlFilesInDir": "metadata/export-example"
+  "xmlFilesInDir": "metadata/export-example-occurrence"
 }

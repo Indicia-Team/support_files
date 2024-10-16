@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<archive xmlns="http://rs.tdwg.org/dwc/text/">
+  <core encoding="UTF-8" linesTerminatedBy="
+" fieldsTerminatedBy="," fieldsEnclosedBy="&quot;" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Event">
+    <files>
+      <location>events.csv</location>
+    </files>
+    <field index="1" term="http://rs.tdwg.org/dwc/terms/eventID" />
+    <field index="2" term="http://rs.tdwg.org/dwc/terms/parentEventID" />
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/eventDate" />
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters" />
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/decimalLatitude" />
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/decimalLongitude" />
+    <field index="7" term="http://rs.tdwg.org/dwc/terms/locality" />
+    <field index="8" term="http://rs.tdwg.org/dwc/terms/eventRemarks" />
+  </core>
+</archive>
