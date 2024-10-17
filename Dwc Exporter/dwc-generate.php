@@ -36,11 +36,18 @@ class BuildDwcHelper {
 
 
   /**
-   * Configuration.
+   * Configuration for current export.
    *
    * @var object
    */
   private $conf;
+
+  /**
+   * Configuration as loaded.
+   *
+   * @var object
+   */
+  private $confAsLoaded;
 
   /**
    * Array of metadata for the output data files.
@@ -59,13 +66,6 @@ class BuildDwcHelper {
   private array $readAuth;
 
   /**
-   * CSV header row that is in use for the loaded config.
-   *
-   * @var array
-   */
-  private $headerRow;
-
-  /**
    * Constructor loads and checks config.
    *
    * @param string $configFileName
@@ -77,10 +77,6 @@ class BuildDwcHelper {
     $this->readAuth = $this->getReadAuth();
     try {
       $this->loadConfig($configFileName);
-      $this->validateConfig();
-      echo "Config file \"$configFileName\" loaded\n";
-      $this->loadMetafile();
-      echo 'Metafile ' . $this->conf['xmlFilesInDir'] . "meta.xml loaded\n";
     }
     catch (Exception $e) {
       die("Error loading \"$configFileName\"\n" . $e->getMessage());
@@ -119,22 +115,51 @@ class BuildDwcHelper {
     if (empty(trim($configFileContents))) {
       throw new Exception("Empty configuration file");
     }
-    $this->conf = array_merge([
+    $this->confAsLoaded = array_merge([
       'options' => [],
     ], json_decode($configFileContents, TRUE));
-    if (empty($this->conf)) {
+    if (empty($this->confAsLoaded)) {
       throw new Exception("Invalid configuration file - JSON parse failure");
     }
+    // If repeatExport not configured, set up a default so a single file is
+    // export using the base config.
+    if (empty($this->confAsLoaded['repeatExport'])) {
+      $this->confAsLoaded['repeatExport'] = [
+        [],
+      ];
+    }
+    echo "Config file \"$configFileName\" loaded\n";
+  }
+
+  private function initConfig($configFileName) {
     // Apply conventional defaults.
     $baseName = pathinfo($configFileName, PATHINFO_FILENAME);
     if (empty($this->conf['xmlFilesInDir']) && is_dir("metadata/$baseName")) {
       $this->conf['xmlFilesInDir'] = "metadata/$baseName";
     }
-    if (empty($this->conf['outputFile'])) {
-      $this->conf['outputFile'] = 'exports/' . preg_replace('/[^a-z0-9]/', '_', strtolower($baseName)) . '.zip';
-    }
+    $this->conf = array_merge([
+      'basisOfRecord' => 'HumanObservation',
+      'defaultLicenceCode' => '',
+      'eventIdPrefix' => '',
+      'occurrenceIdPrefix' => '',
+      'outputFile' => 'exports/' . preg_replace('/[^a-z0-9]/', '_', strtolower($baseName)) . '.zip',
+    ], $this->conf);
     if (!empty($this->conf['filterId'])) {
       $this->loadFilterIntoConfig();
+    }
+    // Apply shortcut filters for survey ID and higher geography.
+    if (!empty($this->conf['surveyId'])) {
+      $this->conf['query']['bool']['must'][] = ['term' => ['metadata.survey.id' => $this->conf['surveyId']]];
+    }
+    if (!empty($this->conf['higherGeographyId'])) {
+      $this->conf['query']['bool']['must'][] = [
+        'nested' => [
+          'path' => 'location.higher_geography',
+          'query' => [
+            'term' => ['location.higher_geography.id' => $this->conf['higherGeographyId']],
+          ],
+        ],
+      ];
     }
   }
 
@@ -185,17 +210,11 @@ class BuildDwcHelper {
     if (empty($this->conf['datasetName'])) {
       throw new Exception("Missing datasetName setting in configuration");
     }
-    if (empty($this->conf['basisOfRecord'])) {
-      $this->conf['basisOfRecord'] = 'HumanObservation';
+    if (!empty($this->conf['surveyId']) && preg_match('/^\d+$/', $this->conf['surveyId'])) {
+      throw new Exception('The surveyId setting should be an integer.');
     }
-    if (!isset($this->conf['occurrenceIdPrefix'])) {
-      $this->conf['occurrenceIdPrefix'] = '';
-    }
-    if (!isset($this->conf['eventIdPrefix'])) {
-      $this->conf['eventIdPrefix'] = '';
-    }
-    if (empty($this->conf['defaultLicenceCode'])) {
-      $this->conf['defaultLicenceCode'] = '';
+    if (!empty($this->conf['higherGeographyId']) && !preg_match('/^[0-9]+$/', $this->conf['higherGeographyId'])) {
+      throw new Exception('The higherGeographyId setting should be an integer containing a location ID.');
     }
   }
 
@@ -206,6 +225,7 @@ class BuildDwcHelper {
    * required.
    */
   function loadMetafile() {
+    $this->dataFiles = [];
     $dom = new DOMDocument();
     $dom->loadXML(file_get_contents($this->conf['xmlFilesInDir'] . DIRECTORY_SEPARATOR . 'meta.xml'));
     $archive = $dom->getElementsByTagName('archive');
@@ -308,7 +328,6 @@ class BuildDwcHelper {
     // The response will contain the first batch of documents
     // and a scroll_id.
     $response = $client->search($params);
-
     $file = fopen($this->getOutputCsvFileName($fileMetadata), 'w');
     fputcsv($file, $fileMetadata['columns']);
 
@@ -396,18 +415,25 @@ class BuildDwcHelper {
   /**
    * Build the output dataset files described by meta.xml.
    */
-  public function buildFiles() {
-    foreach ($this->dataFiles as $fileMetadata) {
-      if ($fileMetadata['type'] === 'Occurrence') {
-        $this->buildOccurrenceFile($fileMetadata);
+  public function buildFiles($configFileName) {
+    foreach ($this->confAsLoaded['repeatExport'] as $exportOverrideInfo) {
+      $this->conf = array_merge($this->confAsLoaded, $exportOverrideInfo);
+      $this->initConfig($configFileName);
+      $this->validateConfig();
+      $this->loadMetafile();
+      echo 'Metafile ' . $this->conf['xmlFilesInDir'] . "/meta.xml loaded\n";
+      foreach ($this->dataFiles as $fileMetadata) {
+        if ($fileMetadata['type'] === 'Occurrence') {
+          $this->buildOccurrenceFile($fileMetadata);
+        }
+        else {
+          $this->buildEventFile($fileMetadata);
+        }
       }
-      else {
-        $this->buildEventFile($fileMetadata);
+      if ($this->conf['outputType'] === 'dwca') {
+        echo "Preparing Darwin Core archive file\n";
+        $this->updateDwcaFile();
       }
-    }
-    if ($this->conf['outputType'] === 'dwca') {
-      echo "Preparing Darwin Core archive file\n";
-      $this->updateDwcaFile();
     }
     echo "OK\n";
   }
@@ -1584,4 +1610,4 @@ if (count($argv) !== 2) {
 }
 $configFile = $argv[1];
 $helper = new BuildDwcHelper($configFile);
-$helper->buildFiles();
+$helper->buildFiles($configFile);

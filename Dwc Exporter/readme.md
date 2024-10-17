@@ -46,6 +46,11 @@ script. This file contains the following options:
   are present. ID of the filter record on the warehouse which will be used to dynamically generate
   the query. The list of websites available for data flow (according to the website registration
   configured in warehouse.json) will be automatically applied to the filter.
+* surveyId - this is a shortcut to specifying a term filter on the survey ID (`metadata.survey.id`)
+  which limits the output to a single survey dataset.
+* higherGeographyID - this is a shortcut to specifying a nested term filter on a higher geography
+  id which limits the output to records which intersect the provided location ID. The location must
+  be indexed by the spatial_index_builder module.
 * outputType - specify either dwca (Darwin Core Archive) or csv.
 * options - array of options to extend data with.
   * useGridRefsIfPossible - for NBN Atlas export compatibility, switch to using the gridReference
@@ -77,6 +82,14 @@ script. This file contains the following options:
   meta.xml file.
 * datasetIdSampleAttrId - ID of the sample attribute which holds the datasetID value.
 * basisOfRecord - optional, defaults to "HumanObservation".
+* repeatExport - optional. Allows a single configuration file to define a set of several similar
+  exports, for example you might want to create a series of exports which are identical but divide
+  the data by country. Provide an array, containing an object per export file with properties that
+  will be merged with the top-level configuration provided in the configuration. E.g. you can
+  specify `datasetName` in the `repeatExport` property's objects to define a different dataset name
+  per file. You can also use the `surveyId` and `higherGeographyId` filter shortcut options to
+  easily divide the files on either survey or location. An example of the `repeatExport`
+  configuration is provided in the file `config/export-example-occurrence-bulk.json`.
 
 # Metafile
 
