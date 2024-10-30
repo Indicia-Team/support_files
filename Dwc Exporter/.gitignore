@@ -1,7 +1,0 @@
-vendor/
-metadata/*/*
-config/*
-exports/
-
-!/metadata/export-example-*/*
-!/config/export-example-*
