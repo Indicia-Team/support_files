@@ -115,7 +115,9 @@ PUT sample_brc1_v1
       "location.parent.location_id": { "type": "integer" },
       "location.code": { "type": "keyword" },
       "location.parent.code": { "type": "keyword" },
-      "location.coordinate_uncertainty_in_meters": { "type": "integer" }
+      "location.coordinate_uncertainty_in_meters": { "type": "integer" },
+      "location.supplied_higher_geography.id": { "type": "integer" },
+      "location.supplied_higher_geography.code": { "type": "keyword" },
     }
   }
 }

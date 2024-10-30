@@ -133,6 +133,8 @@ PUT occurrence_brc1_v1
       "location.code": { "type": "keyword" },
       "location.parent.code": { "type": "keyword" },
       "location.coordinate_uncertainty_in_meters": { "type": "integer" },
+      "location.supplied_higher_geography.id": { "type": "integer" },
+      "location.supplied_higher_geography.code": { "type": "keyword" },
       "occurrence.source_system_key": { "type": "keyword" },
       "occurrence.individual_count": { "type": "integer" },
       "occurrence.zero_abundance": { "type": "boolean" },

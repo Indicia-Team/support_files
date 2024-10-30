@@ -252,7 +252,9 @@ rule coverage. E.g. ["period","period_within_year","without_polygon"].
 `location.higher_geography`||
 -----|-----
 **Data type**|object[]
-**Warehouse field**|List of objects that represent locations this sample has been identified as falling inside. Each object contains an ID (`locations.id`), name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).
+**Warehouse field**|List of objects that represent locations this sample has been identified as falling inside via a
+spatial intersection query. Each object contains an ID (`locations.id`), name (`locations.name`), optional code
+(`locations.code)`, type (term derived from `locations.location_type_id`).
 **Description**|`locations.*`
 
 `location.location_id`||
@@ -348,6 +350,38 @@ precision reference.
 **Data type**|geo\_point
 **Warehouse field**|`samples.geom`
 **Description**|Centroid point of the occurrence’s sample. Provided for mapping tools which do not make use of the `location.geom` geo_shape field (e.g. Kibana).
+
+`location.supplied_higher_geography.id`||
+-----|-----
+**Data type**|number
+**Warehouse field**|`location.id`
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
+to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
+provides the ID of the chosen location.
+
+`location.supplied_higher_geography.code`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`location.code`
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
+to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
+provides the code of the chosen location if provided.
+
+`location.supplied_higher_geography.name`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`location.name`
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
+to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
+provides the name of the chosen location.
+
+`location.supplied_higher_geography.type`||
+-----|-----
+**Data type**|string
+**Warehouse field**|term derived from `locations.location_type_id`
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
+to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
+provides the location type term of the chosen location.
 
 `location.verbatim_locality`||
 -----|-----
