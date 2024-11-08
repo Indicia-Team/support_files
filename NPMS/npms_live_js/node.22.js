@@ -178,6 +178,12 @@ function addUserSiteData(locationId, userIdToAdd,features) {
 mapInitialisationHooks.push(function (div) {
   //Switch off WMS layers by default
   jQuery.each(div.map.layers, function(idx, layer) {
+    if (layer.name === "Ordnance Survey Outdoor") {
+      layer.name = "OS Outdoor";
+    }
+    if (layer.name === "Dynamic (*OpenStreetMap* > Ordnance Survey Leisure > Google Satellite)") {
+      layer.name = "Dynamic";
+    }
     if (layer.name === "SSSIs" ||
         layer.name === "National Parks" ||
         layer.name === "National Nature Reserves" ||
