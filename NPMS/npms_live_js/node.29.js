@@ -1,10 +1,17 @@
 jQuery(document).ready(function () {
   jQuery("#square-details-pdf-link").prop('href', 'https://www.npms.org.uk/sites/default/files/PDF/squares/' + jQuery('#imp-sref').val() + '.pdf');
+  jQuery("#square-details-page-link").prop('href', '/content/site-details?gr=' + jQuery('#imp-sref').val());
 });
 
 mapInitialisationHooks.push(function (div) {
-  //Switch off WMS layers by default
   jQuery.each(div.map.layers, function(idx, layer) {
+    if (layer.name === "Ordnance Survey Outdoor") {
+      layer.name = "OS Outdoor";
+    }
+    if (layer.name === "Dynamic (*OpenStreetMap* > Ordnance Survey Leisure > Google Satellite)") {
+      layer.name = "Dynamic";
+    }
+    //Switch off WMS layers by default
     if (layer.name === "SSSIs" ||
         layer.name === "National Parks" ||
         layer.name === "National Nature Reserves" ||
