@@ -1,0 +1,37 @@
+.hierarchical-select select {
+  font-family: tahoma;
+  width: 100%;
+}
+
+.hierarchical-select.control-box {
+  width: 924px;
+}
+
+#tab-biotope br {
+  display: none;
+}
+
+#tab-biotope br {
+  display: none;
+}
+
+#tab-biotope .helpText {
+  margin-left: 0;
+  margin-bottom: 30px;
+}
+
+span.code-char {
+  font-weight: bold;
+  color: red;
+}
+
+td {
+  text-align: center;
+}
+
+span.readonly {
+  padding: 4px;
+  display: inline-block;
+  font-weight: bold;
+  color: #707070;
+}

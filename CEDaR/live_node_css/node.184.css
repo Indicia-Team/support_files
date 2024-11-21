@@ -1,0 +1,14 @@
+.hierarchical-select.control-box {
+  width: 60%;
+}
+
+.hierarchical-select.control-box  select{
+  width: 100%;
+}
+
+span.readonly {
+  padding: 4px;
+  display: inline-block;
+  font-weight: bold;
+  color: #707070;
+}

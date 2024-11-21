@@ -1,0 +1,18 @@
+a.action-button {
+  display: inline-block;
+}
+table {
+  width: 100%;
+}
+tbody tr td:last-child {
+  width: 120px;
+}
+.type-V, .type-R, .type-D {
+  display: inline-block;
+  vertical-align: top;
+  width: 16px;
+}
+.note-type-V, .note-type-R, .note-type-D {
+  display: inline-block;
+  width: 90%;
+}

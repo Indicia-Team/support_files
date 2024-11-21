@@ -1,0 +1,27 @@
+.param-container {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+}
+
+.param-container * {
+  vertical-align: middle;
+}
+
+.param-container input {
+  width: 100px;
+}
+
+.param-container label {
+  margin: 0 0.5em 0 2em;
+  width: auto;
+}
+
+#report-params .helpText, #report-params legend {
+  display: none;
+}
+
+#report-params fieldset {
+  border: none;
+  margin: 0;
+}

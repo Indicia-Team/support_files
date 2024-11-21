@@ -1,0 +1,51 @@
+@charset "utf-8";
+/* CSS Document */
+
+#map-container {
+	margin-right: auto;
+	margin-left: auto;
+}
+label {
+	width: 180px !important;
+}
+/*.ui-state-highlight{
+	border: 1px solid #6e8c4e;
+	background: #6e8c4e;
+	color: #FFFFFF;
+	font-weight: bold;
+}*/
+#tab-where label {
+	width: 520px !important;
+}
+.ui-widget-header {
+	color: #000;
+	text-align:center;
+	background: #CCC;
+}
+#whoandwhen label {
+	width:150px;
+}
+#fieldset-your-contact-details legend {
+	color:#6e8c4e;
+	font-weight:bold;	
+}
+#fieldset-your-contact-details label {
+	width:140px;	
+}
+#fieldset-your-contact-details input {
+	width:220px;
+	width:210px\9; /* IE 8 and below */	
+}
+.species-table {
+	width:900px;
+	margin-bottom:20px;
+	margin-left:auto;
+	margin-right:auto;
+}
+#species label {
+	width:200px;
+}
+
+/*.required {
+	background-color:#FFFF99;
+}*/

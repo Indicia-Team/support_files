@@ -1,0 +1,15 @@
+#report-params, #report-params label, #report-params input, #report-params select {
+  vertical-align: middle;
+  width: auto;
+  margin: 0;
+}
+
+#report-params input, #report-params select  {
+  margin-right: 1em;
+}
+
+.param-container {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+}

@@ -1,0 +1,19 @@
+body {
+  background-color: #eeeeee !important; 
+}
+
+#layers {
+  float: right;
+}
+
+#map-container {
+  float: left;
+}
+
+#layers  li {
+  background: none;
+}
+
+span.layer-title {
+  display: none;
+}

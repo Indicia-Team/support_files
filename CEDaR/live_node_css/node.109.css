@@ -1,0 +1,60 @@
+#header > a, #header form, #sitename, .breadcrumb, h2 {
+  display: none;
+}
+
+div#header {
+  margin-bottom: -1em;
+  height: auto;
+  background: none;
+}
+
+div#nav {
+  margin: 0;
+}
+
+#main {
+  clear: left;
+}
+
+body div.container {
+  margin: 0 1em;
+  width: auto;
+}
+
+#tabs-wrapper {
+  clear: left;
+}
+
+#verification-grid-th-occurrence_id {
+  width: 40px;
+}
+
+#verification-grid-th-date {
+  width: 80px;
+}
+
+/* No disease */
+div.status-C0, div.status-V0 {
+  border: solid #77ff77 1px;
+}
+
+/* Disease unchecked */
+div.status-C1 {
+  background-color: #74C8FC;
+}
+
+/* Disease unclear */
+div.status-S0, div.status-S1  {
+  background-color: #F6FF4A;
+}
+
+/* Disease investigated */
+div.status-D1 {
+  background-color: #FF7700;
+}
+
+/* Disease confirmed */
+div.status-V1 {
+  background-color: #ff0000;
+  color: #777777;
+}

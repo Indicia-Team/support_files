@@ -1,0 +1,58 @@
+@charset "utf-8";
+/* CSS Document */
+
+div.totals {
+    background-color: rgb(39, 107, 138);
+    border: 1px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    font-size: 200%;
+    text-align: center;
+    padding: 0.5em;
+}
+ul.cloud li {
+    display: inline-block;
+    background: none repeat scroll 0% 0% transparent;
+}
+ul li {
+    list-style-image: none;
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px 0px 0px 1.5em;
+}
+.columns.two > .column:first-child {
+    width: 58%;
+}
+.columns.two > div.column {
+    width: 38%;
+}
+#groups-pie {
+    margin: auto;
+}
+div.jqplot-data-label {
+  color: #333333;
+  text-shadow: 1px 1px #ffffff;
+}
+table.league {
+  width: 80%;
+}
+.helpText {
+  margin-left: 0;
+}
+div.social-buttons {
+  padding: 10px 0;
+}
+div#map {
+  color: #ffffff;
+}
+div#map-click-info td, div#map-click-info th {
+  padding: 0 0.5em;
+}
+h2 {
+  font-size: 18px;
+}
+div#header img#logo, div#header img#scheme-logo {
+  height: 80px;
+}
+div#nav {
+  margin-bottom: 10px;
+} 

@@ -1,0 +1,49 @@
+#ctrl-wrap-occAttr-93, #ctrl-wrap-occAttr-105, #ctrl-wrap-occAttr-106 {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  width: 48%;
+}
+#map-container {
+	margin-right: auto;
+	margin-left: auto;
+}
+/*label {
+	width: 200px;
+}
+.ui-state-highlight{
+	border: 1px solid #6e8c4e;
+	background: #6e8c4e;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+#tab-where label {
+	width: 520px;
+}*/
+.ui-widget-header {
+	color: #000;
+	text-align:center;
+	background: #CCC;
+}
+#whoandwhen label {
+	width:150px;
+}
+#fieldset-your-contact-details legend {
+	color:#6e8c4e;
+	font-weight:bold;	
+}
+#fieldset-your-contact-details label {
+	width:140px;	
+}
+#fieldset-your-contact-details input {
+	width:220px;	
+}
+.species-table {
+	width:900px;
+	margin-bottom:20px;
+	margin-left:auto;
+	margin-right:auto;
+}
+#species label {
+	width:200px;
+}

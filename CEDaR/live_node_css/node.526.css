@@ -1,0 +1,9 @@
+div#map-footer {
+  font-size: 85%;
+}
+div#map-footer div {
+  width: 33%;
+}
+#map-footer h3 {
+  display: none;
+}

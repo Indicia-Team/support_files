@@ -1,0 +1,9 @@
+@charset "utf-8";
+/* CSS Document */
+
+ul li {
+	background:none;
+	list-style-type: disc !important;
+	margin: 0px;
+	padding: 0px 0px 0px 1.5em;
+}

@@ -1,0 +1,40 @@
+#ctrl-wrap-occAttr-54,
+#ctrl-wrap-occAttr-121,
+#ctrl-wrap-occAttr-118,
+#ctrl-wrap-occAttr-119,
+#ctrl-wrap-occAttr-122,
+#ctrl-wrap-occAttr-18 {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: top;
+  *vertical-align: auto;
+  *display: inline;
+  width: 48%;
+  margin: 0 1.5% 0 0;
+}
+
+#ctrl-wrap-sample-comment textarea {
+  width: 450px;
+  height: 210px;
+}
+
+#ctrl-wrap-occAttr-118 label {
+  width: 147px;
+}
+
+#ctrl-wrap-occAttr-118 .helpText {
+  margin-left: 151px;
+}
+
+span.readonly {
+  padding: 4px;
+  display: inline-block;
+  font-weight: bold;
+  color: #707070;
+}
+
+#ctrl-wrap-occAttr-54 label, #ctrl-wrap-occAttr-120 label, #ctrl-wrap-occAttr-122 label{
+  margin-left: 13px;
+  width: 147px;
+}
