@@ -1,0 +1,38 @@
+#ticklist td {
+  background-color: #ffffff;
+  border: none;
+  text-align: center;
+  vertical-align: top;
+  padding-bottom: 1em;
+}
+
+#ticklist h3 {
+  color: #333333;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.5em;
+}
+
+#ticklist h4 {
+  color: #333333;
+  font-style: italic;
+  font-size: 90%;
+  margin: 0 0 0.25em 0;
+}
+
+#ticklist .scPresenceCell {
+  vertical-align: top;
+  width: 20px;
+}
+
+#ticklist .scPresenceCell input {
+  margin-left: -60px;
+}
+
+#tab-whatelsedidyousee p.helpTextLeft {
+  margin-bottom: 2em;
+}
+
+#tab-whatelsedidyousee label {
+  display: inline;
+}

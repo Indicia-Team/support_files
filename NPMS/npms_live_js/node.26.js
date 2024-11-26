@@ -68,3 +68,36 @@ function highlightFeatureById(featureId, zoomIn) {
     }
   }
 };
+
+mapInitialisationHooks.push(function (div) {
+  jQuery.each(div.map.layers, function(idx, layer) {
+    if (layer.name === "Ordnance Survey Outdoor") {
+      layer.name = "OS Outdoor";
+    }
+    if (layer.name === "Dynamic (*OpenStreetMap* > Ordnance Survey Leisure > Google Satellite)") {
+      layer.name = "Dynamic";
+    }
+  });
+
+  // Set the layer name, this actually only takes effect on the label when the layer
+  // checkbox is switch on and off
+  jQuery.each(div.map.layers, function(idx, lay) {
+    if (lay.name === 'Report output') {
+      lay.name = 'Display Square Search';
+    }
+  });
+
+  jQuery.each(div.map.controls, function(idx, ctrl) {
+    // Need to set the layer checkbox name, otherwise it isn't what we want when the page initially
+    // loads
+    if (ctrl.dataLayers) {
+      jQuery.each(ctrl.dataLayers, function(idx, dataLayer) {
+        if (dataLayer.labelSpan.innerHTML === 'Report output') {
+          dataLayer.labelSpan.innerHTML = 'Display Square Search';
+          dataLayer.inputElem.defaultValue = 'Display Square Search';
+          dataLayer.inputElem.name = 'Display Square Search';
+        }
+      });
+    }
+  });
+});

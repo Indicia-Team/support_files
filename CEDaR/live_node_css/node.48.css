@@ -1,0 +1,10 @@
+.hierarchy-select, .hierarchical-select {
+  width: 100%;
+}
+
+.columns.two > div.column {
+    width: 47%;
+}
+label, form label {
+    width: 150px;
+}

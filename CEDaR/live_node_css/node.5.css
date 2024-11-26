@@ -1,0 +1,29 @@
+.two .column label {
+  display: block;
+  width: auto;
+}
+
+.two .column textarea {
+  width: 100%;
+}
+
+.two .column .helpText {
+  margin-left: 0;
+}
+
+.two .column .hierarchy-select {
+  font-size: 9px;
+}
+
+.two .column .page-notice {
+  margin-top: 0.5em;
+}
+
+.two .column p.inline-error {
+  margin: 0;
+  display:-moz-inline-stack;
+  display:inline-block;
+  zoom:1;
+  *display:inline;
+}
+

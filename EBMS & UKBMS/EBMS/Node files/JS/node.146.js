@@ -1,22 +1,29 @@
 (function($){
   // Closure.
   
-  // Function to calculate quantity attribute 
+  // Change handlers for quantity inputs. 
   function changeQty() {
     // Get the row of the input which changed.
-    var $tr = $(this).closest('tr');
+    setPresence($(this).closest('tr'));
+  }
 
-    // Get the inputs of each part of the quantity change function.
-    var $qtyInside = $tr.find('.scQty');
-    var $qtyOutside = $tr.find('.scQtyOutside');
-    var $presence = $tr.find('.scPresence');
+  // Event handler for new row (or taxon changed which also triggers this).
+  function newRow(data, row){
+    setPresence($(row));
+  }
+
+  // Set presence checkbox according to quantity inputs.
+  function setPresence($row) {
+    // Get the quantity inputs.
+    var $qtyInside = $row.find('.scQty');
+    var $qtyOutside = $row.find('.scQtyOutside');
 
     // Get the inside and outside values in the changed row.
     var qtyInside = parseInt($qtyInside.val());
     var qtyOutside = parseInt($qtyOutside.val());
 
-    // Determine the presence
-    var qty;
+    // Set the presence checkbox.
+    var $presence = $row.find('.scPresence');
     if (isNaN(qtyInside) && isNaN(qtyOutside)) {
       $presence.prop('checked', false);
     }
@@ -25,25 +32,14 @@
     }
   }
 
-  // Function to ensure new species rows are marked as not present when
-  // added to the table.
-  function uncheckPresence(data, row){
-    $(row).find('.scPresence').prop('checked', false);
-  }
-
   // The jQuery.ready function.
   $(function(){
     // Add event handlers for changes to any inside or outside quantity input
     // present now or added in the future.
     $(document).on('change', '.scQty', changeQty);
     $(document).on('change', '.scQtyOutside', changeQty);
-    // Hide the presence column as we will set its value with this script.
-    $('table.species-grid th:nth-of-type(2)').hide();
-    $('table.species-grid td.scPresenceCell').hide();
-    $('table tr.scClonableRow td.scPresenceCell').hide();
-    // Add the hideQty function to the array of functions called when a new
+    // Add the newRow function to the array of functions called when a new
     // row is added to a checklist.
-    // $('table.species-grid tr.scClonableRow .scPresence').prop('checked', false);
-    hook_species_checklist_new_row.push(uncheckPresence);
+    hook_species_checklist_new_row.push(newRow);
   });
 })(jQuery);

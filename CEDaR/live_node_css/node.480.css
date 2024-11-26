@@ -1,0 +1,9 @@
+.complex-attr-grid {
+  font-size: 10px;
+}
+.complex-attr-grid th {
+  vertical-align: top;
+}
+.complex-attr-grid  input {
+  width: 40px;
+}

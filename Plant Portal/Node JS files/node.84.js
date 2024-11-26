@@ -15,3 +15,14 @@ jQuery(document).ready(function () {
     jQuery('#square-name-label').text(jQuery('#location\\:parent_id option:selected').text());
   }, 2000);
 });
+
+mapInitialisationHooks.push(function (div) {
+  jQuery.each(div.map.layers, function(idx, layer) {
+    if (layer.name === "Ordnance Survey Outdoor") {
+      layer.name = "OS Outdoor";
+    }
+    if (layer.name === "Dynamic (*OpenStreetMap* > Ordnance Survey Leisure > Google Satellite)") {
+      layer.name = "Dynamic";
+    }
+  });
+});

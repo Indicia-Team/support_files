@@ -1,0 +1,14 @@
+#ctrl-wrap-occAttr-54, #ctrl-wrap-occAttr-18, #ctrl-wrap-occAttr-93, #ctrl-wrap-occAttr-138 {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  width: 48%;
+}
+
+textarea {
+  width: 100%;
+}
+
+#ctrl-wrap-smpAttr-285 p.helpText {
+  margin-top: -18px;
+}

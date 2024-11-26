@@ -1,0 +1,11 @@
+@charset "utf-8";
+/* CSS Document */
+
+#lft1 {
+	float:left;	
+	width:340px;
+}
+#rte1 {
+	float:right;
+	width:590px;
+}

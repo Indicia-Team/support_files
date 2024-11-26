@@ -1,0 +1,10 @@
+.input-group-btn .btn {
+  margin-top: 0;
+}
+#land-usage label {
+  min-width: 400px;
+}
+/* Undo a style change in the EBMS theme which breaks checkbox positions. */
+#extra-controls-cntr div.form-group input[type="checkbox"] {
+  margin-left: 8px !important;
+}

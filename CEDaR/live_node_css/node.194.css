@@ -1,0 +1,65 @@
+.small-font, .small-font * {
+  font-size: 9px;
+  font-family: tahoma,sans-serif;
+}
+
+.two .column label {
+  width: 105px;
+}
+
+.two .column .control-box label {
+  display: inline;
+}
+
+.two .column textarea {
+  width: 100%;
+}
+
+.two .column .helpText {
+  margin-left: 105px;
+}
+
+.two .column .hierarchy-select {
+  display: block;
+}
+
+.two .column .page-notice {
+  margin-top: 0.5em;
+}
+
+.two .column p.inline-error, #ctrl-wrap-imp-sref, #imp-sref-system  {
+  display:-moz-inline-stack;
+  display:inline-block;
+  zoom:1;
+  *display:inline;
+}
+
+.two .column p.inline-error {
+  margin: 0;
+}
+
+#imp-sref-system {
+  width: auto;
+}
+
+#imp-sref {
+  width: 100px;
+}
+
+
+#ctrl-wrap-sample-date, #ctrl-wrap-smpAttr-127, 
+#ctrl-wrap-occurrence-taxa_taxon_list_id, #ctrl-wrap-occAttr-54,
+#ctrl-wrap-occAttr-47, #ctrl-wrap-occAttr-135 {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  width: 48%;
+}
+
+#tab-place fieldset input, #tab-place fieldset select {
+  width: 200px;
+}
+
+textarea {
+  width: 100%;
+}

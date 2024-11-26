@@ -1,0 +1,10 @@
+#fieldset-contact label {
+  width: auto;
+  margin-right: 1em;
+}
+#fieldset-contact * {
+  vertical-align: middle;
+}
+.value-label, input, label, select {
+  vertical-align: middle;
+}

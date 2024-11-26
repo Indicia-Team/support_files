@@ -1,0 +1,11 @@
+#dynamic-params {
+  display: none;
+}
+
+.columns.two div.column:first-child {
+  width: 43%;
+}
+
+.columns.two div.column:last-child {
+  width: 54%;
+}

@@ -1,0 +1,8 @@
+div.columns.two > .column:first-child {
+    padding-left: 0;
+    width: 40%;
+}
+div.columns.two > .column {
+    padding: 0 1%;
+    width: 56%;
+}

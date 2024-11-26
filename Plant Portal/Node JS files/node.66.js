@@ -8,6 +8,7 @@ jQuery(document).ready(function () {
   jQuery('[value="location:fk_location_type"]').prop('label','Plot type');
   jQuery('[value="location:centroid_sref"]').prop('label','Spatial reference');
   jQuery('[value="location:centroid_sref_system"]').prop('label','Spatial reference system');
+  jQuery('[value="location:fk_parent"]').prop('label','Square name');
   jQuery('[value="location:fk_parent:id"]').prop('label','Square ID number');
   jQuery('[value="locAttr:fk_30"]').prop('label','Plot direction');
   jQuery('[value="locAttr:fk_31"]').prop('label','Plot slope');
@@ -20,6 +21,7 @@ jQuery(document).ready(function () {
         jQuery(this).val() !== 'location:fk_location_type' &&
         jQuery(this).val() !== 'location:centroid_sref' &&
         jQuery(this).val() !== 'location:centroid_sref_system' &&
+        jQuery(this).val() !== 'location:fk_parent' &&
         jQuery(this).val() !== 'location:fk_parent:id' &&
         jQuery(this).val() !== 'location:comment' &&
         jQuery(this).val() !== 'locAttr:fk_30' &&

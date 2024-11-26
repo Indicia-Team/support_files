@@ -1,0 +1,19 @@
+textarea {
+  width: 100%;
+}
+div.field {
+  margin-bottom: 6px;
+}
+div.field span {
+  float: right;
+  width: 270px;
+}
+div.field span:first-child {
+  font-weight: bold;
+  width: 180px;
+  float: left;
+  clear: left;	
+}
+a.button {
+  margin 1em 0;
+}
