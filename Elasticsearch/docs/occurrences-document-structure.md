@@ -294,10 +294,7 @@ mapped projection. Empty if sensitivity or privacy of the records means this pre
 -----|-----
 **Data type**|string
 **Warehouse field**|`cache_samples_functional.public_entered_sref`, derived from `samples.entered_sref`
-**Description**|Spatial reference in notation as input by the recorder. If the record is sensitive or private, then the
-`location.output_sref` value is used, blurred to the appropriate precision unless this is the full precision version of
-the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index
-aliases). For the full precision version of a sensitive or private record, shows the original full precision reference.
+**Description**|Spatial reference in notation as input by the recorder. If the record is sensitive or private, then the `location.output_sref` value is used, blurred to the appropriate precision unless this is the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive or private record, shows the original full precision reference.
 
 `location.input_sref_system`||
 -----|-----
@@ -315,11 +312,7 @@ aliases). For the full precision version of a sensitive or private record, shows
 -----|-----
 **Data type**|string
 **Warehouse field**|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
-**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid
-Reference). If the record is sensitive or private, then blurred to the appropriate precision unless this is the full
-precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out
-from default index aliases). For the full precision version of a sensitive or private record, shows the original full
-precision reference.
+**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid Reference). If the record is sensitive or private, then blurred to the appropriate precision unless this is the full precision  version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive or private record, shows the original full precision  reference.
 
 `location.output_sref_system`||
 -----|-----
