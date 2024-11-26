@@ -67,7 +67,7 @@ LEFT JOIN cache_taxa_taxon_lists tfamily ON tfamily.taxon_meaning_id = ANY(tp.pa
   and tfamily.taxon_rank='Family' AND tfamily.preferred=true AND tfamily.taxon_list_id=<taxon_list_id>
   AND (tfamily.allow_data_entry=true OR cttl.allow_data_entry=false)
 LEFT JOIN cache_taxa_taxon_lists tsubfamily ON tsubfamily.taxon_meaning_id = ANY(tp.path)
-  and tsubfamily.taxon_rank='Subfamily' AND tkingdom.preferred=true AND tsubfamily.taxon_list_id=<taxon_list_id>
+  and tsubfamily.taxon_rank='Subfamily' AND tsubfamily.preferred=true AND tsubfamily.taxon_list_id=<taxon_list_id>
   AND (tsubfamily.allow_data_entry=true OR cttl.allow_data_entry=false)
 LEFT JOIN cache_taxa_taxon_lists tgenus ON tgenus.taxon_meaning_id = ANY(tp.path)
   and tgenus.taxon_rank='Genus' AND tgenus.preferred=true AND tgenus.taxon_list_id=<taxon_list_id>
