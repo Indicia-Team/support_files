@@ -20,10 +20,7 @@ the occurrences index will contain documents structured as described below. Note
 -----|-----
 **Data type**|string
 **Warehouse field**|Derived from `occurrences.id`
-**Description**|Elasticsearch index unique ID. This is the Indicia warehouse ID, with a prefix that denotes the
-warehouse the record was sourced from, ensuring that \_id is always unique. E.g. BRC1&#124;123456. Where a record is
-sensitive or belongs to a sample flagged as private, the index stores 2 copies of the record with a default blurred
-view and a full precision view - in the latter case ! is appended to the \_id value, e.g. BRCSMP&#124;123456!.
+**Description**|Elasticsearch index unique ID. This is the Indicia warehouse ID, with a prefix that denotes the warehouse the record was sourced from, ensuring that \_id is always unique. E.g. BRC1&#124;123456. Where a record is sensitive or  belongs to a sample flagged as private, the index stores 2 copies of the record with a default blurred view and a full precision view - in the latter case ! is appended to the \_id value, e.g. BRCSMP&#124;123456!.
 
 `id`||
 -----|-----
@@ -53,9 +50,7 @@ view and a full precision view - in the latter case ! is appended to the \_id va
 -----|-----
 **Data type**|nested
 **Warehouse field**|`sample_attribute_values.*`
-**Description**|List of custom attribute values for the parent event sampling event if it exists.
-Each item has an `id` and `value` and should be read in conjuction with the sample_attributes
-table.
+**Description**|List of custom attribute values for the parent event sampling event if it exists. Each item has an `id` and `value` and should be read in conjuction with the sample_attributes table.
 
 `event.date_end`||
 -----|-----
@@ -169,8 +164,7 @@ table.
 -----|-----
 **Data type**|string array
 **Warehouse field**|`cache_occurrences_functional.applied_verification_rule_types`
-**Description**|List of key verification rule types that have been applied to an occurrence, giving an indication of
-rule coverage. E.g. ["period","period_within_year","without_polygon"].
+**Description**|List of key verification rule types that have been applied to an occurrence, giving an indication of rule coverage. E.g. ["period","period_within_year","without_polygon"].
 
 `identification.custom_verification_rule_flags`||
 -----|-----
@@ -252,10 +246,8 @@ rule coverage. E.g. ["period","period_within_year","without_polygon"].
 `location.higher_geography`||
 -----|-----
 **Data type**|object[]
-**Warehouse field**|List of objects that represent locations this sample has been identified as falling inside via a
-spatial intersection query. Each object contains an ID (`locations.id`), name (`locations.name`), optional code
-(`locations.code)`, type (term derived from `locations.location_type_id`).
-**Description**|`locations.*`
+**Warehouse field**|`locations.*`
+**Description**|List of objects that represent locations this sample has been identified as falling inside via a spatial intersection query. Each object contains an ID (`locations.id`), name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).
 
 `location.location_id`||
 -----|-----
@@ -273,10 +265,7 @@ spatial intersection query. Each object contains an ID (`locations.id`), name (`
 -----|-----
 **Data type**|keyword
 **Warehouse field**|`map_squares.geom`
-**Description**|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection
-to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries).
-Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the
-mapped projection. Empty if sensitivity or privacy of the records means this precision should not be visible.
+**Description**|Centre of 1km grid square for the record, in WGS84 (EPSG:4326) but using the preferred local projection to align the square. Formatted as a string with a space between X and Y value (as easier for aggregation queries). Client mapping code can use this and the location.grid_square.srid field to calculate the actual square to draw in the mapped projection. Empty if sensitivity or privacy of the records means this precision should not be visible.
 
 `location.grid_square.2km.centre`||
 -----|-----
@@ -348,33 +337,25 @@ mapped projection. Empty if sensitivity or privacy of the records means this pre
 -----|-----
 **Data type**|number
 **Warehouse field**|`location.id`
-**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
-to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
-provides the ID of the chosen location.
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field provides the ID of the chosen location.
 
 `location.supplied_higher_geography.code`||
 -----|-----
 **Data type**|string
 **Warehouse field**|`location.code`
-**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
-to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
-provides the code of the chosen location if provided.
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field provides the code of the chosen location if provided.
 
 `location.supplied_higher_geography.name`||
 -----|-----
 **Data type**|string
 **Warehouse field**|`location.name`
-**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
-to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
-provides the name of the chosen location.
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field provides the name of the chosen location.
 
 `location.supplied_higher_geography.type`||
 -----|-----
 **Data type**|string
 **Warehouse field**|term derived from `locations.location_type_id`
-**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply
-to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field
-provides the location type term of the chosen location.
+**Description**|If the user inputting the data was asked to resolve which of 2 or more higher geography locations apply to the record in the instance of the sample falling across the boundary between 2 or more locations, then this field provides the location type term of the chosen location.
 
 `location.verbatim_locality`||
 -----|-----
@@ -464,9 +445,7 @@ provides the location type term of the chosen location.
 -----|-----
 **Data type**|string
 **Warehouse field**|derived from `occurrences.sensitivity_precision`
-**Description**|Where the index contains 2 copies of sensitive, private or confidential records, identifies which copy
-of the record this document relates to. F = full precision, B = blurred. Default index aliases should filter out
-documents where sensitivity\_blur = F.
+**Description**|Where the index contains 2 copies of sensitive, private or confidential records, identifies which copy of the record this document relates to. F = full precision, B = blurred. Default index aliases should filter out documents where sensitivity\_blur = F.
 
 `metadata.sensitivity_precision`||
 -----|-----
