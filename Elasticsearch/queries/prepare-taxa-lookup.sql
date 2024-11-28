@@ -9,7 +9,9 @@ ORDER BY tp.external_key, tp.taxon_list_id, cttlcheck.allow_data_entry DESC;
 
 CREATE INDEX ix_master_list_paths ON master_list_paths(external_key);
 
-SELECT DISTINCT ('"' || t.search_code
+DROP TABLE IF EXISTS distinct_on_search_code;
+
+SELECT DISTINCT ON (t.search_code) '"' || t.search_code
     || '": "' || replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(
     t.taxon
     || '~' || coalesce(t.authority, '')
@@ -46,7 +48,8 @@ SELECT DISTINCT ('"' || t.search_code
   E'\u008A', 'Š'),
   E'\u009A', 'š'),
   E'\u009C', 'œ'),
-  E'\u009E', 'ž') || '"') AS taxon_data
+  E'\u009E', 'ž') || '"' AS taxon_data
+INTO TEMPORARY distinct_on_search_code
 FROM cache_taxa_taxon_lists cttl
 JOIN taxa_taxon_lists ttl ON ttl.id=cttl.id AND ttl.deleted=false
 JOIN taxa t ON t.id=ttl.taxon_id AND t.deleted=false
@@ -78,4 +81,8 @@ LEFT JOIN cache_taxa_taxon_lists tspecies ON tspecies.taxon_meaning_id = ANY(tp.
 WHERE cttl.taxon_list_id=<taxon_list_id>
 AND cttl.external_key IS NOT NULL
 AND t.search_code IS NOT NULL
+ORDER BY t.search_code, cttl.preferred DESC, cttl.allow_data_entry DESC, taxon_data;
+
+SELECT DISTINCT taxon_data 
+FROM distinct_on_search_code
 ORDER BY taxon_data;
