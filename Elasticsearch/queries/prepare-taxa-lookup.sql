@@ -83,6 +83,6 @@ AND cttl.external_key IS NOT NULL
 AND t.search_code IS NOT NULL
 ORDER BY t.search_code, cttl.preferred DESC, cttl.allow_data_entry DESC, taxon_data;
 
-SELECT DISTINCT taxon_data 
+SELECT taxon_data 
 FROM distinct_on_search_code
 ORDER BY taxon_data;
