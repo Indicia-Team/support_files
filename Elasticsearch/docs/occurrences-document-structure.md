@@ -327,6 +327,12 @@ the occurrences index will contain documents structured as described below. Note
 **Warehouse field**|`locations.name`
 **Description**|If there is a parent sample (e.g. for a transect) which has an explicitly linked location record, then gives the name of this location.
 
+`location.parent.verbatim_locality`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`samples.location_name` or `locations.name`
+**Description**|If there is a parent sample (e.g. for a transect) then location name associated with the parent sample, either the name of the explicitly linked location or the verbatim location description.
+
 `location.point`||
 -----|-----
 **Data type**|geo\_point

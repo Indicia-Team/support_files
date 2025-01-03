@@ -182,6 +182,7 @@ filter {
       "recorded_parent_location_id" => "[location][parent][location_id]"
       "recorded_parent_location_name" => "[location][parent][name]"
       "recorded_parent_location_code" => "[location][parent][code]"
+      "given_parent_locality_name" => "[location][parent][verbatim_locality]"
       "supplied_higher_geography_id" => "[location][supplied_higher_geography][id]"
       "supplied_higher_geography_code" => "[location][supplied_higher_geography][code]"
       "supplied_higher_geography_name" => "[location][supplied_higher_geography][name]"
