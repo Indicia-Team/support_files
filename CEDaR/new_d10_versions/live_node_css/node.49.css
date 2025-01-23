@@ -1,0 +1,11 @@
+.content ul.nice-menu {
+  border-top: solid 10px orange;
+}
+
+.hierarchy-select, .hierarchical-select {
+  width: 100%;
+}
+
+.columns.two > div.column {
+    width: 47%;
+}
