@@ -76,8 +76,10 @@ function determine_column_to_show_hide(abundanceType, action) {
 
 function set_column_to_show_hide(attrId, inputClass, action) {
   if (action === 'show') {
+    jQuery('#fulllist-attr' + attrId + '-0').show();
     jQuery('.'+ inputClass + 'Cell').show();
   } else {
+    jQuery('#fulllist-attr' + attrId + '-0').hide();
     jQuery('.'+ inputClass + 'Cell').hide();
     jQuery('.'+ inputClass).val('');
   }
