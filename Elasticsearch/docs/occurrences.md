@@ -88,6 +88,24 @@ PUT occurrence_brc1_v1
       "metadata.release_status": { "type": "keyword" },
       "metadata.trial": { "type": "boolean" },
       "metadata.tracking": { "type": "integer" },
+      "identification.classifier.current_determination.probability_given": { "type": "scaled_float", "scaling_factor": 100 },
+      "identification.classifier.current_determination.human_chosen": { "type": "boolean" },
+      "identification.classifier.current_determination.classifier_chosen": { "type": "boolean" },
+      "identification.classifier.suggestions": {
+        "type": "nested",
+        "properties": {
+          "taxa_taxon_list_id": { "type": "integer" },
+          "probability_given": { "type": "scaled_float", "scaling_factor": 100 },
+          "human_chosen": { "type": "boolean" },
+          "classifier_chosen": { "type": "boolean" },
+          "classifier": { "type": "keyword" },
+          "classifier_version": { "type": "keyword" },
+          "created_on": {
+            "type": "date",
+            "format": "uuuu-MM-dd HH:mm:ss||uuuu-MM-dd HH:mm:ss.SSS||uuuu-MM-dd"
+          }
+        }
+      },
       "identification.custom_verification_rule_flags": {
         "type": "nested",
         "properties": {
@@ -111,6 +129,7 @@ PUT occurrence_brc1_v1
       "identification.verification_status": { "type": "keyword" },
       "identification.verification_substatus": { "type": "integer" },
       "identification.verification_decision_source": { "type": "keyword" },
+      "identification.verifier_comment": { "type": "text" },
       "identification.auto_checks.enabled": { "type": "boolean" },
       "identification.auto_checks.identification_difficulty": { "type": "integer" },
       "identification.auto_checks.result": { "type": "boolean" },
@@ -669,17 +688,25 @@ sensitive records in the dataset:
 ```
 - pipeline.id: indicia_records
   path.config: "<path>/occurrences-http-indicia.config"
+  pipeline.ecs_compatibility: disabled
 - pipeline.id: indicia_records_sensitive
   path.config: "<path>/occurrences-http-indicia-sensitive.config"
+  pipeline.ecs_compatibility: disabled
 - pipeline.id: indicia_records_deletions
   path.config: "<path>/occurrences-http-indicia-deletions.config"
+  pipeline.ecs_compatibility: disabled
   pipeline.workers: 1
 ```
 
-Replace <path> with the path to your working directory's logstash-config folder to make a
+Replace `<path>` with the path to your working directory's logstash-config folder to make a
 valid path search string then save the pipelines.yml file. Specifying a single pipeline
 worker for the deletions means it won't hog all the cores for the deletion pipeline,
 giving it a slightly lower resource usage than the main inserts/updates pipeline.
+
+Make sure that each pipeline configuration has `pipeline.ecs_compatibility: disabled` specified
+to disable the Elasticsearch ECS standard schema behaviour, as this adds fields such as
+`event.source` which waste space and are not required by Indicia. Alternatively you can add this
+setting globally to the `logstash.yml` file.
 
 **Note** - the path must use forward
 slashes rather than backslashes as a directory separator (Unix style) and will need to
@@ -693,7 +720,7 @@ run it from their with a relative path.
 
 ### Running Logstash to import the data
 
-To initiate Logstahs run the following command from the terminal/command
+To initiate Logstash run the following command from the terminal/command
 prompt:
 
 #### Windows

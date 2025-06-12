@@ -139,13 +139,13 @@ the occurrences index will contain documents structured as described below. Note
 `identification.auto_checks.enabled`||
 -----|-----
 **Data type**|boolean
-**Warehouse field**|websites.verification_checks_enabled`
+**Warehouse field**|`websites.verification_checks_enabled`
 **Description**|True if from a dataset that has automated rule checking enabled (warehouse Data Cleaner module).
 
 `identification.auto_checks.identification_difficulty`||
 -----|-----
 **Data type**|boolean
-**Warehouse field**|occurrence_comments.sub_type`
+**Warehouse field**|`occurrence_comments.sub_type`
 **Description**|If the record is flagged by an identification difficulty rule, specifies the difficulty from 1 to 5.
 
 `identification.auto_checks.output`||
@@ -165,6 +165,42 @@ the occurrences index will contain documents structured as described below. Note
 **Data type**|string array
 **Warehouse field**|`cache_occurrences_functional.applied_verification_rule_types`
 **Description**|List of key verification rule types that have been applied to an occurrence, giving an indication of rule coverage. E.g. ["period","period_within_year","without_polygon"].
+
+`identification.classifier.current_determination.classifier_chosen`||
+-----|-----
+**Data type**|scaled_float
+**Warehouse field**|`classification_suggestions.classifier_chosen`
+**Description**|If the current determination matches a determination suggested by an image classifier, then true if this determination was the one with the highest probability according to the classifier.
+
+`identification.classifier.current_determination.human_chosen`||
+-----|-----
+**Data type**|scaled_float
+**Warehouse field**|`classification_suggestions.human_chosen`
+**Description**|If the current determination matches a determination suggested by an image classifier, then true if this determination was used at the time the record was originally input.
+
+`identification.classifier.current_determination.probability_given`||
+-----|-----
+**Data type**|scaled_float
+**Warehouse field**|`classification_suggestions.probability_given`
+**Description**|If the current determination matches a determination suggested by an image classifier, then the probability the suggested matching determination is correct according to the classifier. A value of 0 indicates that the current determination differs from any given by a classifier.
+
+`identification.classifier.current_determination.taxa_taxon_list_id`||
+-----|-----
+**Data type**|scaled_float
+**Warehouse field**|`classification_suggestions.taxa_taxon_list_id`
+**Description**|If the current determination matches a determination suggested by an image classifier, then the primary key of the suggested name (`taxa_taxon_lists.id`).
+
+`identification.classifier.current_determination.taxon_name_given`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`classification_suggestions.taxon_name_given`
+**Description**|If the current determination matches a determination suggested by an image classifier, then the name of the suggested taxon as given by the classifier.
+
+`identification.classifier.suggestions`||
+-----|-----
+**Data type**|nested
+**Warehouse field**|`classification_suggestions.*`
+**Description**|List of all suggestions made by image classifiers. Includes fields `taxon_name_given`, `taxa_taxon_list_id`, `probability_given`, `human_chosen`, `classifier_chosen`, `classifier` (name of the classifier), `classifier_version`, `created_on` (date/time of the classification suggestion). Human chosen indicates a determination that matches the one originally input by the recorder, even if the recorder manually input the determination without using the classification results.
 
 `identification.custom_verification_rule_flags`||
 -----|-----
@@ -224,6 +260,12 @@ the occurrences index will contain documents structured as described below. Note
 **Data type**|string
 **Warehouse field**|`people.first_name`, `people.surname`
 **Description**|If reviewed by a verifier, name of verifier.
+
+`identification.verifier_comment`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`occurrence_comments.comment`
+**Description**|If reviewed by a verifier, comment given by the verifier when the record was verified.
 
 `location.code`||
 -----|-----

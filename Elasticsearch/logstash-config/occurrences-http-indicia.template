@@ -222,6 +222,11 @@ filter {
     target => "verification_rule_types_applied"
     remove_field => "verification_rule_types_applied_json"
   }
+  json {
+    source => "classifier_suggestions"
+    target => "classifier_suggestions_list"
+    remove_field => "classifier_suggestions"
+  }
   ruby {
     code => "
     require 'uri'
@@ -295,11 +300,17 @@ filter {
       "record_status" => "[identification][verification_status]"
       "record_substatus" => "[identification][verification_substatus]"
       "record_decision_source" => "[identification][verification_decision_source]"
+      "verifier_comment" => "[identification][verifier_comment]"
       "data_cleaner_list" => "[identification][auto_checks][output]"
       "data_cleaner_result" => "[identification][auto_checks][result]"
       "verification_rule_types_applied" => "[identification][auto_checks][verification_rule_types_applied]"
       "identification_difficulty" => "[identification][auto_checks][identification_difficulty]"
       "verification_checks_enabled" => "[identification][auto_checks][enabled]"
+      "classifier_current_det_probability_given" => "[identification][classifier][current_determination][probability_given]"
+      "classifier_current_det_taxon_name_given" => "[identification][classifier][current_determination][taxon_name_given]"
+      "classifier_current_det_human_chosen" => "[identification][classifier][current_determination][human_chosen]"
+      "classifier_current_det_classifier_chosen" => "[identification][classifier][current_determination][classifier_chosen]"
+      "classifier_suggestions_list" => "[identification][classifier][suggestions]"
       "query" => "[identification][query]"
       "attr_certainty" => "[identification][recorder_certainty]"
       "point" => "[location][point]"
