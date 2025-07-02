@@ -343,13 +343,34 @@ the occurrences index will contain documents structured as described below. Note
 -----|-----
 **Data type**|string
 **Warehouse field**|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
-**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid Reference). If the record is sensitive or private, then blurred to the appropriate precision unless this is the full precision  version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be filtered out from default index aliases). For the full precision version of a sensitive or private record, shows the original full precision  reference.
+**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid
+Reference). If the record is sensitive or in a private sample, then blurred to the appropriate precision unless this is
+the full precision version of the occurrence document in the index (`metadata.sensitivity_blur` = F which should be
+filtered out from default index aliases). For the full precision version of a sensitive or private record, shows the
+original full precision reference.
+
+`location.output_sref_blurred`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`cache_samples_functional.output_sref`, derived from `samples.entered_sref`
+**Description**|Spatial reference in preferred local system format (e.g. an Ordnance Survey British National Grid
+Reference). Provides the blurred copy of a sensitive record's spatial reference in all cases, so can be used to provide
+a "safe" copy of the spatial reference even when viewing the full precision copy. For non-sensitive records this will
+be the same as the `location.output_sref` field.
 
 `location.output_sref_system`||
 -----|-----
 **Data type**|string
 **Warehouse field**|`cache_samples_functional.output_sref_system`, derived from `samples.entered_sref_system`
-**Description**|Spatial reference system code, e.g. OSGB or an EPSG projection ID.
+**Description**|Spatial reference system code used for the reference in location.output_sref, e.g. OSGB or an EPSG
+projection ID.
+
+`location.output_sref_system_blurred`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`cache_samples_functional.output_sref_system`, derived from `samples.entered_sref_system`
+**Description**|Spatial reference system code used for the reference in location.output_sref_blurred, e.g. OSGB or an
+EPSG projection ID.
 
 `location.parent.location_id`||
 -----|-----
