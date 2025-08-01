@@ -111,13 +111,20 @@ PUT sample_brc1_v1
           "code": { "type": "keyword" }
         }
       },
+      "location.higher_geography_blurred": {
+        "type": "nested",
+        "properties": {
+          "id": { "type": "integer" },
+          "code": { "type": "keyword" }
+        }
+      },
       "location.location_id": { "type": "integer" },
       "location.parent.location_id": { "type": "integer" },
       "location.code": { "type": "keyword" },
       "location.parent.code": { "type": "keyword" },
       "location.coordinate_uncertainty_in_meters": { "type": "integer" },
       "location.supplied_higher_geography.id": { "type": "integer" },
-      "location.supplied_higher_geography.code": { "type": "keyword" },
+      "location.supplied_higher_geography.code": { "type": "keyword" }
     }
   }
 }

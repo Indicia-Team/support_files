@@ -289,7 +289,15 @@ the occurrences index will contain documents structured as described below. Note
 -----|-----
 **Data type**|object[]
 **Warehouse field**|`locations.*`
-**Description**|List of objects that represent locations this sample has been identified as falling inside via a spatial intersection query. Each object contains an ID (`locations.id`), name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).
+**Description**|List of objects that represent indexed locations this occurrence has been identified as falling inside via a spatial intersection query. Each object contains an ID (`locations.id`),
+name (`locations.name`), optional code (`locations.code)`, type (term derived from `locations.location_type_id`).
+
+`location.higher_geography_blurred`||
+-----|-----
+**Data type**|object[]
+**Warehouse field**|`locations.*`
+**Description**|Only present for the full-precision copy of a sensitive record. As `location.higher_geography`, but contains the list of locations from indexed location types which interesect the
+blurred version of the map reference. This provides a safe version of the higher geography list which cannot be used to infer a more precise locality of a sensitive record.
 
 `location.location_id`||
 -----|-----

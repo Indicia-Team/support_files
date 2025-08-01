@@ -147,6 +147,13 @@ PUT occurrence_brc1_v1
           "code": { "type": "keyword" }
         }
       },
+      "location.higher_geography_blurred": {
+        "type": "nested",
+        "properties": {
+          "id": { "type": "integer" },
+          "code": { "type": "keyword" }
+        }
+      },
       "location.location_id": { "type": "integer" },
       "location.parent.location_id": { "type": "integer" },
       "location.code": { "type": "keyword" },

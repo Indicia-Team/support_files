@@ -133,6 +133,37 @@ filter {
     "
     remove_field => "locations_blob"
   }
+  # Split the blurred indexed location IDs into separate items.
+  mutate {
+    split => {
+      "indexed_location_ids_blurred" => ","
+    }
+  }
+  # Map the blurred indexed locations keys list into a blob of location information.
+  translate {
+    dictionary_path => "{{ Working folder path }}/data/locations.yml"
+    source => "indexed_location_ids_blurred"
+    iterate_on => "indexed_location_ids_blurred"
+    target => "locations_blob_blurred"
+    remove_field => "indexed_location_ids_blurred"
+  }
+  # Split the blurred indexed locations blob into a list of structured location objects.
+  ruby {
+    code => "
+      if event.get('locations_blob_blurred')
+        event.set('locations_blurred', event.get('locations_blob_blurred').compact.collect { |t|
+          c = t.split '~'
+          {
+            'id' => c[0],
+            'name' =>  c[1],
+            'code' => c[2],
+            'type' => c[3]
+          }
+        })
+      end
+    "
+    remove_field => "locations_blob_blurred"
+  }
   # Split the media into separate items.
   mutate {
     split => {
@@ -339,6 +370,7 @@ filter {
       "supplied_higher_geography_name" => "[location][supplied_higher_geography][name]"
       "supplied_higher_geography_type" => "[location][supplied_higher_geography][type]"
       "locations" => "[location][higher_geography]"
+      "locations_blurred" => "[location][higher_geography_blurred]"
       "sample_id" => "[event][event_id]"
       "parent_sample_id" => "[event][parent_event_id]"
       "date_start" => "[event][date_start]"
