@@ -95,14 +95,10 @@ function allocate_square_to_user(features) {
     if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
       setSelectedSquareLinks(features[0]);
       setTimeout(function() {
-        var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
-        //Only perform if user confirms.
-        if (r == true) {
-          var locationId, userId;
-          locationId = features[0].attributes.id;    
-          userId = indiciaData.indiciaUserId;
-          duplicateCheck(locationId,userId,features);
-        }
+        allocationConfirmDialog(
+          'Would you like to assign square <a target="_blank" href="/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a> to yourself?',
+          features
+        );
       }, 1);
     }
 
@@ -114,6 +110,67 @@ If you use the distance box and Get Squares button, the system will automaticall
 Alternatively use the zoombar, or click on the navigation crosshair icon in the top-right and then double-click on the map.");    
   }
 }
+
+/**
+ * Don't use standard Javascript confirm, as that doesn't support HTML
+ */
+function allocationConfirmDialog(message, features) {
+  $('<div></div>').appendTo('body')
+    .html('<div>' + message + '?</div>')
+    .dialog({
+      open: function() {
+        $('.ui-dialog-titlebar-close').remove();
+      },
+      modal: true,
+      title: 'Allocate Square',
+      zIndex: 10000,
+      autoOpen: true,
+      width: 'auto',
+      resizable: false,
+      buttons: {
+        Yes: function() {
+          var locationId, userId;
+          locationId = features[0].attributes.id;    
+          userId = indiciaData.indiciaUserId;
+          duplicateCheck(locationId,userId,features);
+          $(this).dialog("close");
+        },
+        No: function() {
+          $(this).dialog("close");
+        }
+      },
+      close: function(event, ui) {
+        $(this).remove();
+      }
+    });
+};
+
+/**
+ * Don't use standard Javascript confirm, as that doesn't support HTML
+ */
+function simpleDialog(message, title) {
+  $('<div></div>').appendTo('body')
+    .html('<div>' + message + '</div>')
+    .dialog({
+      open: function() {
+        $('.ui-dialog-titlebar-close').remove();
+      },
+      modal: true,
+      title: title,
+      zIndex: 10000,
+      autoOpen: true,
+      width: 'auto',
+      resizable: false,
+      buttons: {
+        OK: function() {
+		  $(this).dialog("close");
+        },
+      },
+      close: function(event, ui) {
+        $(this).remove();
+      }
+    });
+};
 
 //This function is almost identical to the version that can be found in splash extensions. We could not call that code
 //to re-use, so a version of the code is here.
@@ -145,7 +202,7 @@ function duplicateCheck(locationId, userId,features) {
           }
         });
         if (duplicateDetected===true) {
-          alert('This square has already been allocated to someone. Squares shown in orange are already allocated, try a blue square instead. If the square is blue, it may have become allocated in the time since you initially loaded the screen.');
+          simpleDialog('This square has already been allocated to someone. Squares shown in orange are already allocated, try a blue square instead.<br>If the square is blue, it may have become allocated in the time since you initially loaded the screen.', 'Square Already Allocated');
         } else {
           addUserSiteData(locationId, userIdToAdd,features);
         }
@@ -164,8 +221,8 @@ function addUserSiteData(locationId, userIdToAdd,features) {
       {'website_id':indiciaData.website_id,'person_attribute_id':indiciaData.mySitesPsnAttrId,'user_id':userIdToAdd,'int_value':locationId,'updated_by_id':indiciaData.updatedBySystem},
       function (data) {
         if (typeof data.error === 'undefined') {
-          alert('The square '+features[0].attributes.entered_sref+' has been allocated to you, pending approval by the NPMS coordinator. Enjoy taking part, and thank you for participating.');
-          location.reload();
+          simpleDialog('The square '+features[0].attributes.entered_sref+' has been allocated to you, pending approval by the NPMS coordinator.<br>Enjoy taking part, and thank you for participating.',
+          'Square Successfully Allocated');
         } else {
           alert(data.error);
         }              

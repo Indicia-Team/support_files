@@ -6,3 +6,10 @@
   color: DarkSlateBlue !important;
 }
 
+.ui-dialog-buttonset {
+  font-size: 18px;
+}
+
+.ui-dialog-content {
+  font-size: 14px;
+}

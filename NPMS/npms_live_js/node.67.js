@@ -75,11 +75,11 @@ function login_to_allocate_message(features) {
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
       setTimeout(function() {
-        alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.")
+        simpleDialog('You have clicked on square <a target="_blank" href="/content/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a>. This square has already been allocated to someone.<br>Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.', 'Square Already Allocated');
       }, 1);
     } else {
       setTimeout(function() {
-        alert("You have clicked on square "+features[0].attributes.entered_sref+ ". Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.")
+        simpleDialog('You have clicked on square <a target="_blank" href="/content/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a>.<br>Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.', 'Sign Up To Allocate');
       }, 1);
     }
   }
@@ -115,6 +115,33 @@ If you use the distance box and Get Squares button, the system will automaticall
 Alternatively use the zoombar, or click on the navigation crosshair icon in the top-right and then double-click on the map.");    
   }
 }
+
+/**
+ * Don't use standard Javascript confirm, as that doesn't support HTML
+ */
+function simpleDialog(message, title) {
+  $('<div></div>').appendTo('body')
+    .html('<div>' + message + '</div>')
+    .dialog({
+      open: function() {
+        $('.ui-dialog-titlebar-close').remove();
+      },
+      modal: true,
+      title: title,
+      zIndex: 10000,
+      autoOpen: true,
+      width: 'auto',
+      resizable: false,
+      buttons: {
+        OK: function() {
+		  $(this).dialog("close");
+        },
+      },
+      close: function(event, ui) {
+        $(this).remove();
+      }
+    });
+};
 
 //This function is almost identical to the version that can be found in splash extensions. We could not call that code
 //to re-use, so a version of the code is here.
