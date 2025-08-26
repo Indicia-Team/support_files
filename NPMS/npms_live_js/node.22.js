@@ -148,7 +148,7 @@ function allocationConfirmDialog(message, features) {
 /**
  * Don't use standard Javascript confirm, as that doesn't support HTML
  */
-function simpleDialog(message, title) {
+function simpleDialog(message, title, forcePageReload) {
   $('<div></div>').appendTo('body')
     .html('<div>' + message + '</div>')
     .dialog({
@@ -164,6 +164,9 @@ function simpleDialog(message, title) {
       buttons: {
         OK: function() {
 		  $(this).dialog("close");
+		  if (forcePageReload === true) {
+		    location.reload();
+		  }
         },
       },
       close: function(event, ui) {
@@ -202,7 +205,9 @@ function duplicateCheck(locationId, userId,features) {
           }
         });
         if (duplicateDetected===true) {
-          simpleDialog('This square has already been allocated to someone. Squares shown in orange are already allocated, try a blue square instead.<br>If the square is blue, it may have become allocated in the time since you initially loaded the screen.', 'Square Already Allocated');
+          simpleDialog('This square has already been allocated to someone. Squares shown in orange are already allocated, try a blue square instead.<br>If the square is blue, it may have become allocated in the time since you initially loaded the screen.',
+            'Square Already Allocated',
+            false);
         } else {
           addUserSiteData(locationId, userIdToAdd,features);
         }
@@ -221,8 +226,10 @@ function addUserSiteData(locationId, userIdToAdd,features) {
       {'website_id':indiciaData.website_id,'person_attribute_id':indiciaData.mySitesPsnAttrId,'user_id':userIdToAdd,'int_value':locationId,'updated_by_id':indiciaData.updatedBySystem},
       function (data) {
         if (typeof data.error === 'undefined') {
+          // Send forcePageReload parameter as true. When the user closes the dialogue we want to update the map with the allocated square colour.
           simpleDialog('The square '+features[0].attributes.entered_sref+' has been allocated to you, pending approval by the NPMS coordinator.<br>Enjoy taking part, and thank you for participating.',
-          'Square Successfully Allocated');
+            'Square Successfully Allocated',
+            true);
         } else {
           alert(data.error);
         }              
