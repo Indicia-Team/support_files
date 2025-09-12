@@ -6,3 +6,7 @@
 #report-taxon_group_id {
   width:210px;
 }
+
+#report-params legend {
+  display:none;
+}
