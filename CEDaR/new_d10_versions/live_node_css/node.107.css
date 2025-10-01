@@ -1,0 +1,6 @@
+th:not(.footable-first-column):not(.col-12):not(.footable-last-column) {
+  width: 100px;
+}
+td:not(.field-status-icons):not(.field-occurrence-media):not(.col-actions):not(.footable-visible):(.showing) {
+  width: 100px;
+}
