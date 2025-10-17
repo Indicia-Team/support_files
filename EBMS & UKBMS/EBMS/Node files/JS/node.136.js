@@ -60,6 +60,10 @@ jQuery(document).ready(function($) {
     if (doc.metadata.survey.id == 562 || !inputForm) {
       inputForm = 'edit-generic-record';
     }
-    window.location.href = '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id;
+    if (doc.event.parent_event_id) {
+      window.location.href = '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id;
+    } else {
+      window.location.href = '/' + inputForm + '?occurrence_id=' + doc.id;
+    }
   }
 });
