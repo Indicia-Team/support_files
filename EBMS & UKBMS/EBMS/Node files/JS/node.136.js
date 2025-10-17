@@ -52,11 +52,13 @@ jQuery(document).ready(function($) {
     if (doc.metadata.survey.id == 565 || doc.metadata.survey.id == 645) {
       inputForm = 'mydata/samples/edit';
     }
-    if (doc.metadata.survey.id == 562) {
-      inputForm = 'walk-data-entry';
-    }
     if (doc.metadata.survey.id == 681) {
       inputForm = 'enter-moth-trap-records';
+    }
+    // Don't use walk data entry form for EBMS Transects records because
+    // that form doesn't currently support occurrence images which the app records do support
+    if (doc.metadata.survey.id == 562 || !inputForm) {
+      inputForm = 'edit-generic-record';
     }
     window.location.href = '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id;
   }
