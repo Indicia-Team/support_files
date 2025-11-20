@@ -4,7 +4,6 @@
     $('#dynamic-country_region_ttl_attr_id option[value=""]').text("<all>");
     $('#dynamic-species_presence_filter option[value=""]').text("<all>");
     // Default species presence to "P"
-    $('#dynamic-species_presence_filter option[value="16407"]').prop("selected","selected");
     $('#dynamic-common_names_language option[value=""]').text("<none>");
   });
 }) (jQuery);
