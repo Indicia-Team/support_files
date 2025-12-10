@@ -1,0 +1,27 @@
+.ctrl-wrap {
+  width:50% !important;
+}
+
+#dynamic-params legend {
+  display:none;
+}
+
+#container-dynamic-include_higher_level_taxa {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+}
+
+#container-dynamic-include_higher_level_taxa input[type="checkbox"] {
+  margin: 0;
+}
+
+#container-dynamic-include_synonyms {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+}
+
+#container-dynamic-include_synonyms input[type="checkbox"] {
+  margin: 0;
+}
