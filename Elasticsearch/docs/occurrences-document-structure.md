@@ -40,6 +40,96 @@ the occurrences index will contain documents structured as described below. Note
 **Warehouse field**|N/A
 **Description**|Timestamp of the moment that this occurrence was indexed in Elasticsearch.
 
+`dna_derived_data.associated_sequences`||
+-----|-----
+**Data type**|string[]
+**Warehouse field**|`dna_occurrence.associated_sequences`
+**Description**|A list (concatenated and separated) of identifiers (publication, global unique identifier, URI) of genetic sequence information associated with the record.
+
+`dna_derived_data.dna_sequence`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.dna_sequence`
+**Description**|The DNA sequence.
+
+`dna_derived_data.target_gene`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.target_gene`
+**Description**|Targeted gene or marker name for marker-based studies
+
+`dna_derived_data.pcr_primer_reference`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.pcr_primer_reference`
+**Description**|Reference for the primers
+
+`dna_derived_data.env_medium`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.env_medium`
+**Description**|The environmental medium which surrounded the sample or specimen prior to sampling.
+
+`dna_derived_data.env_broad_scale`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.env_broad_scale`
+**Description**|The broad-scale environment the sample or specimen came from.
+
+`dna_derived_data.otu_db`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.otu_db`
+**Description**|The OTU database (i.e. sequences not generated as part of the current study) used to assigning taxonomy to OTUs or ASVs.
+
+`dna_derived_data.otu_seq_comp_appr`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.otu_seq_comp_appr`
+**Description**|The OTU sequence comparison approach, such as tools and thresholds used to assign “species-level” names to OTUs or ASVs.
+
+`dna_derived_data.otu_class_appr`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.otu_class_appr`
+**Description**|The OTU classification approach / algorithm and clustering level (if relevant) when defining OTUs or ASVs.
+
+`dna_derived_data.dna_env_local_scale`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.dna_env_local_scale`
+**Description**|The local environmental context the sample or specimen came from.
+
+`dna_derived_data.target_subfragment`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.target_subfragment`
+**Description**|Name of subfragment of a gene or marker.
+
+`dna_derived_data.pcr_primer_name_forward`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.pcr_primer_name_forward`
+**Description**|Name of the forward PCR primer that were used to amplify the sequence of the targeted gene, locus or subfragment.
+
+`dna_derived_data.pcr_primer_forward`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.pcr_primer_forward`
+**Description**|Forward PCR primer that were used to amplify the sequence of the targeted gene, locus or subfragment.
+
+`dna_derived_data.pcr_primer_name_reverse`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.pcr_primer_name_reverse`
+**Description**|Name of the reverse PCR primer that were used to amplify the sequence of the targeted gene, locus or subfragment.
+
+`dna_derived_data.pcr_primer_reverse`||
+-----|-----
+**Data type**|string
+**Warehouse field**|`dna_occurrence.pcr_primer_reverse`
+**Description**|Reverse PCR primer that were used to amplify the sequence of the targeted gene, locus or subfragment.
+
 `event.attributes`||
 -----|-----
 **Data type**|nested
@@ -594,7 +684,13 @@ EPSG projection ID.
 -----|-----
 **Data type**|nested
 **Warehouse field**|`occurrence_attribute_values`
-**Description**|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table
+**Description**|List of custom attribute values for the record. Each item has an `id` and `value` and should be read in conjuction with the occurrence_attributes table.
+
+`occurrence.dna_derived`||
+-----|-----
+**Data type**|boolean
+**Warehouse field**|`occurrence.dna_derived`
+**Description**|Indicates if a record is derived from DNA.
 
 `occurrence.individual_count`||
 -----|-----
