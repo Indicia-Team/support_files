@@ -108,6 +108,12 @@ filter {
       "indexed_location_ids" => ","
     }
   }
+  # Split the DNA associated sequences into separate items.
+  mutate {
+    split => {
+      "dna_associated_sequences" => ";"
+    }
+  }
   # Map the indexed locations keys list into a blob of location information.
   translate {
     dictionary_path => "{{ Working folder path }}/data/locations.yml"
@@ -301,6 +307,21 @@ filter {
   # Also cleanup remaining report fields that we don't need in doc.
   mutate {
     rename => {
+      "dna_associated_sequences" => "[dna_derived_data][associated_sequences]"
+      "dna_sequence" => "[dna_derived_data][dna_sequence]"
+      "dna_target_gene" => "[dna_derived_data][target_gene]"
+      "dna_pcr_primer_reference" => "[dna_derived_data][pcr_primer_reference]"
+      "dna_env_medium" => "[dna_derived_data][env_medium]"
+      "dna_env_broad_scale" => "[dna_derived_data][env_broad_scale]"
+      "dna_otu_db" => "[dna_derived_data][otu_db]"
+      "dna_otu_seq_comp_appr" => "[dna_derived_data][otu_seq_comp_appr]"
+      "dna_otu_class_appr" => "[dna_derived_data][otu_class_appr]"
+      "dna_env_local_scale" => "[dna_derived_data][env_local_scale]"
+      "dna_target_subfragment" => "[dna_derived_data][target_subfragment]"
+      "dna_pcr_primer_name_forward" => "[dna_derived_data][pcr_primer_name_forward]"
+      "dna_pcr_primer_forward" => "[dna_derived_data][pcr_primer_forward]"
+      "dna_pcr_primer_name_reverse" => "[dna_derived_data][pcr_primer_name_reverse]"
+      "dna_pcr_primer_reverse" => "[dna_derived_data][pcr_primer_reverse]"
       "created_on" => "[metadata][created_on]"
       "updated_on" => "[metadata][updated_on]"
       "created_by_id" => "[metadata][created_by_id]"
@@ -422,6 +443,7 @@ filter {
       "taxon_species_authority" => "[taxon][species_authorship]"
       "taxon_species_common_name" => "[taxon][species_vernacular]"
       "taxon_path_keys" => "[taxon][higher_taxon_ids]"
+      "occurrence_dna_derived" => "[occurrence][dna_derived]"
       "occurrence_external_key" => "[occurrence][source_system_key]"
       "attr_sex" => "[occurrence][sex]"
       "attr_stage" => "[occurrence][life_stage]"
