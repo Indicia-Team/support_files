@@ -102,16 +102,16 @@ filter {
       "taxon_path_keys" => ","
     }
   }
-  # Split the indexed location IDs into separate items.
-  mutate {
-    split => {
-      "indexed_location_ids" => ","
-    }
-  }
   # Split the DNA associated sequences into separate items.
   mutate {
     split => {
       "dna_associated_sequences" => ";"
+    }
+  }
+  # Split the indexed location IDs into separate items.
+  mutate {
+    split => {
+      "indexed_location_ids" => ","
     }
   }
   # Map the indexed locations keys list into a blob of location information.
