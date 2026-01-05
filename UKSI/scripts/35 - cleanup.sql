@@ -85,7 +85,7 @@ FROM uksi.preferred_name_changes nc
 WHERE nc.old_taxon_meaning_id=ta.to_taxon_meaning_id
 AND ta.to_taxon_meaning_id<>nc.new_taxon_meaning_id;
 
--- Reference https://github.com/BiologicalRecordsCentre/iRecord/issues/636#issuecomment-520751086 
+-- Reference https://github.com/BiologicalRecordsCentre/iRecord/issues/636#issuecomment-520751086
 DELETE FROM cache_taxon_paths WHERE taxon_meaning_id IN (
   SELECT old_taxon_meaning_id FROM uksi.preferred_name_changes
 );
@@ -203,3 +203,28 @@ truncate cache_verification_rules_period_within_year;
 insert into cache_verification_rules_period_within_year
   select * from cache_verification_rules_period_within_year2;
 drop table cache_verification_rules_period_within_year2;
+
+-- Ensure that cache_taxa_taxon_lists has updated rule information.
+update cache_taxa_taxon_lists cttl
+set applicable_verification_rule_types=array[]::text[];
+
+update cache_taxa_taxon_lists cttl
+set applicable_verification_rule_types=array['period']
+from verification_rule_metadata vrm
+join verification_rules vr
+  on vr.id = vrm.verification_rule_id
+  and vr.test_type = 'Period'
+  and vr.deleted = false
+where vrm.key = 'Tvk'
+  and vrm.value = cttl.external_key
+  and vrm.deleted = false;
+
+update cache_taxa_taxon_lists cttl
+set applicable_verification_rule_types=applicable_verification_rule_types || array['period_within_year']
+from cache_verification_rules_period_within_year pwy
+where pwy.taxa_taxon_list_external_key=cttl.external_key;
+
+update cache_taxa_taxon_lists cttl
+set applicable_verification_rule_types=applicable_verification_rule_types || array['without_polygon']
+from cache_verification_rules_without_polygon wp
+where wp.taxa_taxon_list_external_key=cttl.external_key;
