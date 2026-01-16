@@ -44,7 +44,11 @@ jQuery(document).ready(function($) {
     if (doc.metadata.survey.id == 681) {
       inputForm = 'enter-moth-trap-records';
     }
-    window.location.href = '/' + inputForm + '?sample_id=' + doc.event.event_id;
+    // open in new window
+    window.open(
+      '/' + inputForm + '?sample_id=' + doc.event.event_id,
+      '_blank'
+    );
   }
   
   indiciaFns.editOccurrence = function(doc) {
@@ -61,9 +65,17 @@ jQuery(document).ready(function($) {
       inputForm = 'edit-generic-record';
     }
     if (doc.event.parent_event_id) {
-      window.location.href = '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id;
+      // open in new window
+      window.open(
+        '/' + inputForm + '?sample_id=' + doc.event.parent_event_id + '&occurrence_id=' + doc.id,
+        '_blank'
+      );
     } else {
-      window.location.href = '/' + inputForm + '?occurrence_id=' + doc.id;
+      // open in new window
+      window.open(
+        '/' + inputForm + '?occurrence_id=' + doc.id,
+        '_blank'
+      );
     }
   }
 });
