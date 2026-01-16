@@ -8,4 +8,6 @@ jQuery(document).ready(function($) {
   if ($('#sample\\:group_id').val()) {
     $('#sample\\:group_id').prop("disabled", true);
   }
+  // Change "Select group" label to "Select project"
+  $("[for='sample\\:group_id']").html('Select project:');
 });
