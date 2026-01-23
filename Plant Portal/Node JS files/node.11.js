@@ -6,6 +6,7 @@ function organise_project_links() {
 
   // Hide the links that are associated with a group but are accessed via other pages 
   // so shouldn't be in the links list. 
+  jQuery('.tti-data-entry').hide();
   jQuery('.wildflower-data-entry').hide();
   jQuery('.indicator-data-entry').hide();
   jQuery('.inventory-data-entry').hide();
