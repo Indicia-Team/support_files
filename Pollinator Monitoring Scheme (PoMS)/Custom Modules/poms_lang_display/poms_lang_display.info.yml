@@ -1,0 +1,8 @@
+name: 'PoMS Language Display'
+type: module
+description: 'Provides a read-only display of the current language setting and a link to user account page.'
+package: Multilingual
+core_version_requirement: ^9.3 || ^10 || ^11
+dependencies:
+  - drupal:language
+configure: block.admin_display

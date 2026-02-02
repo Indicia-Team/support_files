@@ -1,0 +1,33 @@
+.form-item-poms-lang-display-select {
+  display: inline;
+}
+
+/* AVB */
+
+.poms-lang-display-form {
+	float: right !important;
+	margin:46px 80px 22px 80px !important;
+	min-width: 225px !important;
+}
+
+#edit-poms-lang-display-select {
+	float: right !important;
+	font-size: 16px;
+    line-height: 1.2em; /* Adjust this as needed */
+    height: auto;
+}
+
+.edit-poms-lang-display-read-only {
+	float: right;
+	font-size: 20px !important;
+	line-height: 1.5em !important; /* Adjust this as needed */
+}
+
+.poms-lang-display-form img.language-icon {
+  float: right !important;
+  width: 24px;
+}
+
+.poms-lang-display-form div {
+	float: left !important;
+}

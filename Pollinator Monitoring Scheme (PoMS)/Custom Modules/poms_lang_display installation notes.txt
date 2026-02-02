@@ -1,0 +1,38 @@
+
+Make sure any existing Language Switcher drop-down module is disabled.
+
+Install Poms Lang Display module..
+
+Place Poms Language Displayer block at bottom of Navigation area, making sure block Title checkbox is switched off.
+
+In Accounts->Fields area of site, make sure the Language Settings field is moved to the top of the "Manage form display" so it appears at the top of user's account page.
+
+Enable Drupal "Markup" module (install if required).
+
+Add a new "Return home" field (type Formatted Text->Markup) and move above the Language Settings
+Field html can be this
+<div>
+    <h5>
+        <a href="/home">Go to homepage</a>
+    </h5>
+</div>
+
+Also move the "Return home" field to the top of the "Manage display" area, so it appears at top of My Account "View" area.
+
+Add another markup field, place directly below the "Language Settings" area.
+<p style="color:red;">
+    <em>Please note that changes, including any change made to the site language setting, will not take effect until the Save button is clicked at the bottom of this page.</em>
+</p>
+,
+Remove "Save reminder" field from "Manage display" so that instruction is not on the My Account View tab.
+
+Set the "Form display" Label option to Hidden for "Return home" on the Manage display" (so the link displays on the page okay without its title)
+
+Make sure the translation for the words for "English" and "Welsh" have been added to User Interface Translation (Saesneg and Cymraeg).
+
+In Languages area, "Detection and selection". Make sure "User" checkbox is selected, this allows the system to use the account lamnguage setting to influence site language.
+
+Create a new Home link weight -49. path "/home".
+Set its Welsh translation "Hafan"
+Disable existing home menu item (doing these steps avoids a problem where clicking on the Home link in Welsh mode caused the page to incorrectly display in English).
+
