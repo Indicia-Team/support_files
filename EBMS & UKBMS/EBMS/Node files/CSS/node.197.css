@@ -25,3 +25,13 @@
 #container-dynamic-include_synonyms input[type="checkbox"] {
   margin: 0;
 }
+
+#container-dynamic-one_common_name_per_language {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+}
+
+#container-dynamic-one_common_name_per_language input[type="checkbox"] {
+  margin: 0;
+}
