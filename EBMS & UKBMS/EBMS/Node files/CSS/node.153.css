@@ -1,0 +1,6 @@
+#countryFilterCheckboxLabel {
+  margin-left: 12px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
