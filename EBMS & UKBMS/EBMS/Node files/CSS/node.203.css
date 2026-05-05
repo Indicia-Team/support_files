@@ -1,0 +1,13 @@
+Label[for="locations_grid-ownData"] {
+  width: 19ch !important;
+}
+
+#run-report {
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+  margin-bottom: 20px !important;
+}
+
+input[type="button"][value="Add New Location"] {
+  margin: 20px !important;
+}
