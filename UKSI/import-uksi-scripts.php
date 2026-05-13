@@ -18,10 +18,12 @@ $scripts = [
   [
     'file' => '1 - settings.sql',
     'description' => 'Prepare for script access to settings',
+    'connection' => 'su',
   ],
   [
     'file' => '2 - change tracker tables.sql',
     'description' => 'Create tables for tracking changes to existing records',
+    'connection' => 'su',
   ],
   [
     'file' => '3 - get duplicate tvks.sql',
@@ -40,6 +42,7 @@ $scripts = [
   [
     'file' => '6 - create tables in uksi schema.sql',
     'description' => 'Create interim tables for UKSI data',
+    'connection' => 'su',
   ],
   [
     'file' => '7 - import CSV data.sql',
@@ -48,8 +51,10 @@ $scripts = [
       "SELECT 'all names' as type, count(*) FROM uksi.all_names " .
       'UNION ' .
       "SELECT 'preferred names' as type, count(*) FROM uksi.preferred_names ",
-    // Run as superuser, because of COPY command.
+    // Keep superuser connection indicator for clarity, but we’ll use psql with SU creds.
     'connection' => 'su',
+    // New: run this via psql so we can use client-side \copy
+    'psql' => true,
   ],
   [
     'file' => '8 - remove not wellformed similar synonyms.sql',
@@ -185,6 +190,7 @@ $scripts = [
   [
     'file' => '33 - designations.sql',
     'description' => 'Update the taxon designations data',
+    'connection' => 'su',
   ],
   [
     'file' => '34 - expired names correct preferred name.sql',
@@ -202,5 +208,6 @@ $scripts = [
     'file' => '37 - update rss.sql',
     'description' => 'Load recording scheme data',
     'connection' => 'su',
+    'psql' => true,
   ]
 ];

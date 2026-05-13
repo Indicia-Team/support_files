@@ -1,4 +1,4 @@
-
+SET search_path = indicia, public;
 
 SELECT d1.taxa_taxon_list_id AS from_taxa_taxon_list_id, d1.taxon_id as from_taxon_id, d2.taxa_taxon_list_id AS to_taxa_taxon_list_id
 INTO TEMPORARY ttl_changes

@@ -1,36 +1,52 @@
+-- 7 - import CSV data.sql (psql; simple & portable)
 SET SESSION datestyle = 'ISO,DMY';
+SET search_path = uksi, public;
 
-SET search_path=uksi, public;
+BEGIN;
 
 TRUNCATE preferred_names;
-COPY preferred_names FROM '{{ data-path }}preferred_names.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy preferred_names FROM '{{ data-path }}preferred_names.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE all_names;
-COPY all_names FROM '{{ data-path }}all_names.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy all_names FROM '{{ data-path }}all_names.txt' CSV DELIMITER ','  QUOTE '"' ENCODING 'UTF8';
 
-UPDATE all_names SET language=lower(language);
+UPDATE all_names SET "language" = lower("language");
 
 TRUNCATE taxon_groups;
-COPY taxon_groups FROM '{{ data-path }}taxon_groups.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy taxon_groups FROM '{{ data-path }}taxon_groups.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE tcn_duplicates;
-COPY tcn_duplicates FROM '{{ data-path }}tcn_duplicates.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy tcn_duplicates FROM '{{ data-path }}tcn_duplicates.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE all_designation_kinds;
-COPY all_designation_kinds FROM '{{ data-path }}all_designation_kinds.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy all_designation_kinds FROM '{{ data-path }}all_designation_kinds.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE taxon_designations;
-COPY taxon_designations FROM '{{ data-path }}taxon_designations.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy taxon_designations FROM '{{ data-path }}taxon_designations.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE taxa_taxon_designations;
-COPY taxa_taxon_designations FROM '{{ data-path }}taxa_taxon_designations.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy taxa_taxon_designations FROM '{{ data-path }}taxa_taxon_designations.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE taxon_ranks;
-COPY taxon_ranks FROM '{{ data-path }}taxon_ranks.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy taxon_ranks FROM '{{ data-path }}taxon_ranks.txt' CSV DELIMITER ',' QUOTE '"'
 
 TRUNCATE all_taxon_version_keys;
-COPY all_taxon_version_keys FROM '{{ data-path }}all_taxon_version_keys.txt' DELIMITERS ',' QUOTE '"' ENCODING 'UTF-8' CSV;
+\copy all_taxon_version_keys FROM '{{ data-path }}all_taxon_version_keys.txt' CSV DELIMITER ',' QUOTE '"'
 
-CREATE INDEX ix_all_names_recommended_tvk ON all_names(recommended_taxon_version_key);
-CREATE INDEX ix_all_names_organism_key ON all_names(organism_key);
-CREATE INDEX ix_all_names_input_tvk ON all_names(input_taxon_version_key);
+-- Indexes (idempotent)
+CREATE INDEX IF NOT EXISTS ix_all_names_recommended_tvk ON all_names(recommended_taxon_version_key);
+CREATE INDEX IF NOT EXISTS ix_all_names_organism_key     ON all_names(organism_key);
+CREATE INDEX IF NOT EXISTS ix_all_names_input_tvk        ON all_names(input_taxon_version_key);
+
+-- Stats refresh
+ANALYZE uksi.preferred_names;
+ANALYZE uksi.all_names;
+ANALYZE uksi.taxon_groups;
+ANALYZE uksi.tcn_duplicates;
+ANALYZE uksi.all_designation_kinds;
+ANALYZE uksi.taxon_designations;
+ANALYZE uksi.taxa_taxon_designations;
+ANALYZE uksi.taxon_ranks;
+ANALYZE uksi.all_taxon_version_keys;
+
+COMMIT;

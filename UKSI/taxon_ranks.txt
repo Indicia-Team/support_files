@@ -31,7 +31,7 @@
 320,"SubSpp","Subspecies",1
 350,"Rac","Race",1
 350,"Frm","Form",1
-320,"Abb","Abberation",1
+320,"Ab","Aberation",1
 330,"Var","Variety",1
 80,"InfCls","Infraclass",0
 140,"SubSec(z)","Subsection",0
@@ -80,3 +80,4 @@
 85,"SubtCls","Subterclass",0
 115,"SupCoh","Supercohort",1
 117,"SubCoh","Subcohort",1
+350,"PthVar","Pathovar",1

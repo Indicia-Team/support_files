@@ -1,3 +1,6 @@
+-- Ensure correct base search path
+SET search_path = indicia, public;
+
 -- Following scripts fix errors due to script 3 & 4 which need debugging.
 select
 o.id, t.id as taxon_id, t.taxon, t.attribute, t.search_code, o.taxa_taxon_list_id, cttl.id as new_taxa_taxon_list_id
@@ -7,7 +10,7 @@ join taxa_taxon_lists ttl on ttl.id=o.taxa_taxon_list_id
 join taxa t on t.id=ttl.taxon_id
 join cache_taxa_taxon_lists cttl on cttl.search_code=t.search_code and cttl.taxon_list_id=ttl.taxon_list_id
 where o.deleted=false
-and (ttl.deleted=true or t.deleted=true)
+and (ttl.deleted=true or t.deleted=true);
 
 update cache_occurrences_functional o set taxa_taxon_list_id=tf.new_taxa_taxon_list_id
 from to_fix tf where tf.id=o.id;

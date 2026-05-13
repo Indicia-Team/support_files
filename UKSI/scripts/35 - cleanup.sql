@@ -228,3 +228,310 @@ update cache_taxa_taxon_lists cttl
 set applicable_verification_rule_types=applicable_verification_rule_types || array['without_polygon']
 from cache_verification_rules_without_polygon wp
 where wp.taxa_taxon_list_external_key=cttl.external_key;
+
+
+/* new script
+SET search_path = indicia, public;
+
+------------------------------------------------------------
+-- SCRIPT 35 — STRUCTURAL CLEANUP (UKSI-SAFE)
+--
+-- NON-TAXONOMIC CLEANUP ONLY.
+-- UKSI preferred name logic is authoritative in Script 32.
+------------------------------------------------------------
+
+
+
+/************************************************************
+ 35.0 — SAFETY REPAIR (REQUIRED)
+ ------------------------------------------------------------
+ Deleted TTLs must NEVER allow data entry or be preferred.
+ This repairs legacy/broken state once and prevents recurrence.
+************************************************************/
+UPDATE indicia.taxa_taxon_lists
+SET allow_data_entry = false,
+    preferred = false,
+    updated_on = now()
+WHERE deleted = true
+  AND (allow_data_entry = true OR preferred = true);
+
+
+
+/************************************************************
+ 35.1 — COLLAPSE DUPLICATE TTLs PER (taxon_id, taxon_list_id)
+ ------------------------------------------------------------
+ CRITICAL RULES:
+   * UKSI-preferred / entry TTL MUST survive
+   * allow_data_entry has absolute priority
+************************************************************/
+/*WITH ranked AS (
+  SELECT
+    id,
+    ROW_NUMBER() OVER (
+      PARTITION BY taxon_id, taxon_list_id
+      ORDER BY
+        allow_data_entry DESC,   -- ABSOLUTE PRIORITY
+        preferred DESC,
+        updated_on DESC,
+        id
+    ) AS rn
+  FROM indicia.taxa_taxon_lists
+  WHERE deleted = false
+)
+UPDATE indicia.taxa_taxon_lists ttl
+SET deleted = true,
+    allow_data_entry = false,
+    preferred = false,
+    updated_on = now()
+FROM ranked r
+WHERE ttl.id = r.id
+  AND r.rn > 1;
+*/
+------------------------------------------------------------
+-- 35.x — SAFE TTL DEDUPLICATION
+--
+-- Removes duplicate TTLs *only when*:
+--  * they are not preferred
+--  * they do not allow data entry
+--  * they are structural duplicates
+------------------------------------------------------------
+
+WITH ranked AS (
+  SELECT
+    id,
+    ROW_NUMBER() OVER (
+      PARTITION BY taxon_id, taxon_list_id
+      ORDER BY
+        updated_on DESC,
+        id
+    ) AS rn
+  FROM indicia.taxa_taxon_lists
+  WHERE deleted = false
+    AND preferred = false
+    AND allow_data_entry = false
+)
+UPDATE indicia.taxa_taxon_lists ttl
+SET deleted = true,
+    updated_on = now()
+FROM ranked r
+WHERE ttl.id = r.id
+  AND r.rn > 1;
+
+
+
+/************************************************************
+ 35.2 — REMOVE UNUSED TAXON RANKS
+ ************************************************************/
+DELETE FROM taxon_ranks
+WHERE id IN (
+  SELECT tr.id
+  FROM taxon_ranks tr
+  JOIN taxa t
+    ON t.taxon_rank_id = tr.id
+  JOIN taxa_taxon_lists ttl
+    ON ttl.taxon_id = t.id
+   AND ttl.taxon_list_id = (
+     SELECT uksi_taxon_list_id FROM uksi.uksi_settings
+   )
+  LEFT JOIN taxa t2
+    ON t2.taxon_rank_id = tr.id
+   AND t2.deleted = false
+  WHERE tr.deleted = false
+    AND (t.deleted = true OR ttl.deleted = true)
+    AND t2.id IS NULL
+    AND tr.short_name NOT IN (
+      SELECT short_name FROM uksi.taxon_ranks
+    )
+);
+
+
+
+/************************************************************
+ 35.3 — REMOVE UNUSED TAXON GROUPS
+ ************************************************************/
+DELETE FROM taxon_groups
+WHERE id IN (
+  SELECT tg.id
+  FROM taxon_groups tg
+  JOIN taxa t
+    ON t.taxon_group_id = tg.id
+  JOIN taxa_taxon_lists ttl
+    ON ttl.taxon_id = t.id
+   AND ttl.taxon_list_id = (
+     SELECT uksi_taxon_list_id FROM uksi.uksi_settings
+   )
+  LEFT JOIN taxa t2
+    ON t2.taxon_group_id = tg.id
+   AND t2.deleted = false
+  WHERE tg.deleted = false
+    AND (t.deleted = true OR ttl.deleted = true)
+    AND t2.id IS NULL
+    AND tg.title NOT IN (
+      SELECT taxon_group_name FROM uksi.taxon_groups
+    )
+);
+
+
+
+/************************************************************
+ 35.4 — REMOVE ORPHAN TAXON ASSOCIATIONS
+ ************************************************************/
+DELETE FROM taxon_associations
+WHERE from_taxon_meaning_id IN (
+  SELECT tm.id
+  FROM taxon_meanings tm
+  LEFT JOIN taxa_taxon_lists ttl
+    ON ttl.taxon_meaning_id = tm.id
+  WHERE ttl.id IS NULL
+);
+
+DELETE FROM taxon_associations
+WHERE to_taxon_meaning_id IN (
+  SELECT tm.id
+  FROM taxon_meanings tm
+  LEFT JOIN taxa_taxon_lists ttl
+    ON ttl.taxon_meaning_id = tm.id
+  WHERE ttl.id IS NULL
+);
+
+
+
+/************************************************************
+ 35.5 — CACHE CONSISTENCY SAFETY
+ ************************************************************/
+UPDATE cache_taxa_taxon_lists cttl
+SET taxon_meaning_id = ttl.taxon_meaning_id
+FROM taxa_taxon_lists ttl
+WHERE ttl.id = cttl.id
+  AND cttl.taxon_meaning_id <> ttl.taxon_meaning_id;
+
+UPDATE cache_taxon_searchterms cts
+SET taxon_meaning_id = ttl.taxon_meaning_id
+FROM taxa_taxon_lists ttl
+WHERE ttl.id = cts.taxa_taxon_list_id
+  AND cts.taxon_meaning_id <> ttl.taxon_meaning_id;
+
+
+
+/************************************************************
+ 35.6 — UPDATE VERIFICATION RULE REFERENCES (TVK-BASED)
+ ************************************************************/
+UPDATE verification_rule_metadata vrm
+SET value = t.external_key
+FROM taxa t
+JOIN taxa_taxon_lists ttl
+  ON ttl.taxon_id = t.id
+ AND ttl.taxon_list_id = (
+   SELECT uksi_taxon_list_id FROM uksi.uksi_settings
+ )
+ AND ttl.deleted = false
+WHERE (vrm.key ILIKE 'Tvk' OR vrm.key ILIKE 'DataRecordId')
+  AND t.search_code = vrm.value
+  AND t.external_key <> vrm.value
+  AND t.deleted = false;
+
+
+
+UPDATE verification_rule_data vrd
+SET key = t.external_key
+FROM taxa t
+JOIN taxa_taxon_lists ttl
+  ON ttl.taxon_id = t.id
+ AND ttl.taxon_list_id = 15
+ AND ttl.deleted = false
+WHERE vrd.header_name ILIKE 'Data'
+  AND t.search_code = vrd.key
+  AND t.external_key <> t.search_code
+  AND t.deleted = false;
+
+
+
+/************************************************************
+ 35.7 — HARD ASSERTION (OPTIONAL, STRONGLY RECOMMENDED)
+************************************************************/
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM indicia.taxa_taxon_lists
+    WHERE deleted = true
+      AND allow_data_entry = true
+  ) THEN
+    RAISE EXCEPTION
+      'SCRIPT 35 FAILED: deleted TTL has allow_data_entry=true';
+  END IF;
+END;
+$$;
+
+
+------------------------------------------------------------
+-- 35.8 — CLEAN UP UNUSED UKSI TAXONOMY RECORDS
+--
+-- This removes structural debris left after UKSI alignment.
+-- It ONLY affects:
+--   * UKSI-managed taxon lists
+--   * soft-deleted TTLs
+--   * globally unused taxa
+--
+-- No cache manipulation is performed here.
+------------------------------------------------------------
+
+/*
+-- Delete attribute values for unused UKSI TTLs
+
+DELETE FROM indicia.taxa_taxon_list_attribute_values av
+USING indicia.taxa_taxon_lists ttl
+WHERE av.taxa_taxon_list_id = ttl.id
+  AND ttl.taxon_list_id IN (
+    SELECT uksi_taxon_list_id FROM uksi.uksi_settings
+  )
+  AND ttl.deleted = true
+  AND NOT EXISTS (
+    SELECT 1
+    FROM indicia.occurrences o
+    WHERE o.taxa_taxon_list_id = ttl.id
+      AND o.deleted = false
+  );
+
+
+-- Delete unused taxa_taxon_lists rows (UKSI lists only)
+DELETE FROM indicia.taxa_taxon_lists ttl
+WHERE ttl.deleted = true
+  AND ttl.taxon_list_id IN (
+    SELECT uksi_taxon_list_id
+    FROM uksi.uksi_settings
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM indicia.occurrences o
+    WHERE o.taxa_taxon_list_id = ttl.id
+      AND o.deleted = false
+  );
+
+
+-- Delete globally unused taxa
+DELETE FROM indicia.taxa t
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM indicia.taxa_taxon_lists ttl
+  WHERE ttl.taxon_id = t.id
+)
+AND NOT EXISTS (
+  SELECT 1
+  FROM indicia.occurrences o
+  WHERE o.deleted = false
+);
+
+
+-- Delete orphan taxon_meanings
+DELETE FROM indicia.taxon_meanings tm
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM indicia.taxa_taxon_lists ttl
+  WHERE ttl.taxon_meaning_id = tm.id
+);
+
+*/
+-- END SCRIPT 35
+
+*/

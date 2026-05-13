@@ -1,4 +1,3 @@
-
 SET search_path=indicia, public;
 
 -- Grab all the missing but used taxon group names

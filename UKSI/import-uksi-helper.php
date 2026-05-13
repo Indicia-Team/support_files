@@ -67,7 +67,7 @@ HELP;
           }
         }
         elseif ($tokens[0] === '--help') {
-          $settings['help'] === TRUE;
+          $settings['help'] = TRUE;
         }
       }
     }
@@ -111,33 +111,100 @@ HELP;
    * @return array
    *   Array containing default and su connections objects.
    */
-  public static function getConnections(array $settings) {
-    // Fake define so we can load kohana config.
-    define('SYSPATH', 0);
-    $config = [];
-    $dbConfigFilePath = $settings['warehouse-path'] . 'application' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
-    if (!file_exists($dbConfigFilePath)) {
-      die ('Database config file not found at ' . $dbConfigFilePath);
-    }
-    require_once $dbConfigFilePath;
+    public static function getConnections(array $settings) {
+      $dbConfigFilePath = $settings['warehouse-path']
+        . 'application' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
 
-    // Connect to PostgreSQL.
-    $dbConf = $config['default']['connection'];
-    $conn = pg_connect(
-      "host=$dbConf[host] port=$dbConf[port] dbname=$dbConf[database] user=$dbConf[user] password=$dbConf[pass]"
-    );
-    $conn or die("Unable to connect to PostgreSQL\n");
-    echo "Database connection OK\n";
-    $connSu = pg_connect(
-      "host=$dbConf[host] port=$dbConf[port] dbname=$dbConf[database] user=$settings[su] password=$settings[supass]"
-    );
-    $connSu or die("Unable to connect to PostgreSQL as superuser\n");
-    echo "Superuser database connection OK\n";
-    return [
-      'default' => $conn,
-      'su' => $connSu
-    ];
+      if (!file_exists($dbConfigFilePath)) {
+        die("Database config file not found at {$dbConfigFilePath}");
+      }
+
+      // Load Kohana config properly
+      $dbConf = self::loadWarehouseConfig($dbConfigFilePath);
+
+      // Connect using normal warehouse user
+      $conn = pg_connect(
+        "host=$dbConf[host] port=$dbConf[port] dbname=$dbConf[database] user=$dbConf[user] password=$dbConf[pass]"
+      );
+      $conn or die("Unable to connect to PostgreSQL\n");
+      echo "Database connection OK\n";
+
+      // Connect using superuser
+      $connSu = pg_connect(
+        "host=$dbConf[host] port=$dbConf[port] dbname=$dbConf[database] user={$settings['su']} password={$settings['supass']}"
+      );
+      $connSu or die("Unable to connect to PostgreSQL as superuser\n");
+      echo "Superuser database connection OK\n";
+
+      return [
+        'default' => $conn,
+        'su'      => $connSu
+      ];
+    }
+
+
+/**
+   * Retrieves the warehouse database username from the warehouse's Kohana config.
+   *
+   * The username is read from:
+   *   {warehouse-path}/application/config/database.php
+   * and returned so it can be injected into SQL templates (e.g. {{ warehouse_db_user }}),
+   * allowing DDL scripts to set ownership (AUTHORIZATION / ALTER OWNER) or switch role
+   * (SET ROLE) without hard-coding the account name.
+   *
+   * @param array $settings
+   *   Script settings; expects 'warehouse-path' to be an absolute path ending with a
+   *   directory separator (as ensured by ::getSettings()).
+   *
+   * @return string
+   *   The warehouse database username from the Kohana database configuration.
+   *
+   * @throws \RuntimeException
+   *   Thrown if the database config file is not found or is missing a 'user'.
+   */
+    public static function getWarehouseDbUser(array $settings) {
+      $dbConfigFilePath = $settings['warehouse-path']
+        . 'application' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
+
+      if (!file_exists($dbConfigFilePath)) {
+        throw new \RuntimeException("Database config file not found at {$dbConfigFilePath}");
+      }
+
+      // Load Kohana config in correct scope
+      $dbConf = self::loadWarehouseConfig($dbConfigFilePath);
+
+      if (empty($dbConf['user'])) {
+        throw new \RuntimeException("Warehouse DB user missing in {$dbConfigFilePath}");
+      }
+
+      return $dbConf['user'];
+    }
+  
+  /**
+   * Loads the Kohana database config and returns the connection array.
+   *
+   * Ensures SYSPATH is defined, ensures $config is global, and always loads the
+   * config fresh (no require_once).
+   */
+  private static function loadWarehouseConfig(string $databaseConfigPath): array {
+    // Required by Kohana config guard
+    if (!defined('SYSPATH')) {
+      define('SYSPATH', 0);
+    }
+
+    // The Kohana config populates a global $config array
+    global $config;
+    $config = [];
+
+    require $databaseConfigPath;   // NOT require_once
+
+    if (empty($config['default']['connection'])) {
+      throw new \RuntimeException("Failed to load 'default' DB config from {$databaseConfigPath}");
+    }
+
+    return $config['default']['connection'];
   }
+
 
   /**
    * Outputs any script results or output data.
@@ -192,73 +259,50 @@ HELP;
    *   Script settings.
    */
   public static function updateCaches($conn, array $settings) {
-    require_once $settings['warehouse-path'] . 'modules/cache_builder/config/cache_builder.php';
-    $tables = [
-      'termlists_terms',
-      'taxa_taxon_lists',
-      'taxon_searchterms',
-      'occurrences',
-    ];
-    $needsUpdateJoins = [
-      'termlists_terms' => "join termlists_terms nu on nu.id=tlt.id and nu.updated_on>(select last_scheduled_task_check from system where name='cache_builder')",
-      'taxa_taxon_lists' => 'join uksi.changed_taxa_taxon_list_ids nu on nu.id=ttl.id',
-      'taxon_searchterms' => 'join uksi.changed_taxa_taxon_list_ids nu on nu.id=cttl.id',
-      'occurrences' => 'join uksi.changed_occurrence_ids nu on nu.id=o.id',
-    ];
-    foreach ($tables as $table) {
-      echo "Processing cache for $table\n";
-      $updates = $config[$table]['update'];
-      if (!is_array($updates)) {
-        $updates = ['default' => $updates];
-      }
-      foreach ($updates as $queryName => $qry) {
-        echo "  - $queryName (UPDATE)";
-        $startScript = microtime(TRUE);
-        $qry = str_replace(
-          ['#join_needs_update#', '#master_list_id#'],
-          [$needsUpdateJoins[$table], $settings['taxon_list_id']],
-          $qry
-        );
-        pg_query($conn, $qry);
-        $time = round(microtime(TRUE) - $startScript, 1);
-        echo " - OK ({$time}s)\n";
-      }
-      $inserts = $config[$table]['insert'];
-      if (!is_array($inserts)) {
-        $inserts = ['default' => $inserts];
-      }
-      foreach ($inserts as $queryName => $qry) {
-        echo "  - $queryName (INSERT)";
-        $startScript = microtime(TRUE);
-        $qry = str_replace(
-          ['#join_needs_update#', '#master_list_id#'],
-          [$needsUpdateJoins[$table], $settings['taxon_list_id']],
-          $qry
-        );
-        $result = @pg_query($conn, $qry);
-        if ($result === FALSE) {
-          echo "\nQuery failed:\n";
-          echo "$qry\n";
-          die("\nError in script: " . pg_last_error($conn) . "\n");
+    pg_query($conn, "SELECT pg_advisory_lock(78172345)");
+    try {
+      require_once $settings['warehouse-path'] . 'modules/cache_builder/config/cache_builder.php';
+      $tables = [
+        'termlists_terms',
+        'taxa_taxon_lists',
+        'taxon_searchterms',
+        'occurrences',
+      ];
+      $needsUpdateJoins = [
+        'termlists_terms' => "join termlists_terms nu on nu.id=tlt.id and nu.updated_on>(select last_scheduled_task_check from system where name='cache_builder')",
+        'taxa_taxon_lists' => 'join uksi.changed_taxa_taxon_list_ids nu on nu.id=ttl.id',
+        'taxon_searchterms' => 'join uksi.changed_taxa_taxon_list_ids nu on nu.id=cttl.id',
+        'occurrences' => 'join uksi.changed_occurrence_ids nu on nu.id=o.id',
+      ];
+      foreach ($tables as $table) {
+        echo "Processing cache for $table\n";
+        $updates = $config[$table]['update'];
+        if (!is_array($updates)) {
+          $updates = ['default' => $updates];
         }
-        $time = round(microtime(TRUE) - $startScript, 1);
-        echo " - OK ({$time}s)\n";
-      }
-      if (!empty($config[$table]['extra_multi_record_updates'])) {
-        foreach ($config[$table]['extra_multi_record_updates'] as $queryName => $qry) {
-          echo "  - $queryName (EXTRAS)";
+        foreach ($updates as $queryName => $qry) {
+          echo "  - $queryName (UPDATE)";
           $startScript = microtime(TRUE);
-          $singularTable = preg_replace('/s$/', '', $table);
-          // Ensure that the hierarchical data is fully populated. Easier just
-          // to redo the whole lot rather than scan up and down the hierarchy
-          // to ensure changes are properly applied. So for the ranks query,
-          // remove the needs update join.
-          if ($table === 'taxa_taxon_lists' && $queryName === 'ranks') {
-            $qry = str_replace('JOIN needs_update_taxa_taxon_lists nu ON nu.id=ttl1.id', '', $qry);
-          }
           $qry = str_replace(
-            ["needs_update_$table", '#master_list_id#'],
-            ["uksi.changed_{$singularTable}_ids", $settings['taxon_list_id']],
+            ['#join_needs_update#', '#master_list_id#'],
+            [$needsUpdateJoins[$table], $settings['taxon_list_id']],
+            $qry
+          );
+          pg_query($conn, $qry);
+        
+          $time = round(microtime(TRUE) - $startScript, 1);
+          echo " - OK ({$time}s)\n";
+        }
+        $inserts = $config[$table]['insert'];
+        if (!is_array($inserts)) {
+          $inserts = ['default' => $inserts];
+        }
+        foreach ($inserts as $queryName => $qry) {
+          echo "  - $queryName (INSERT)";
+          $startScript = microtime(TRUE);
+          $qry = str_replace(
+            ['#join_needs_update#', '#master_list_id#'],
+            [$needsUpdateJoins[$table], $settings['taxon_list_id']],
             $qry
           );
           $result = @pg_query($conn, $qry);
@@ -270,11 +314,67 @@ HELP;
           $time = round(microtime(TRUE) - $startScript, 1);
           echo " - OK ({$time}s)\n";
         }
+
+        if (!empty($settings['no-extras']) && $settings['no-extras'] === 'true') {
+            if (!empty($config[$table]['extra_multi_record_updates'])) {
+                echo "  - Skipping EXTRAS (--no-extras flag enabled)\n";
+            }
+        }
+        else {
+          if (!empty($config[$table]['extra_multi_record_updates'])) {
+            foreach ($config[$table]['extra_multi_record_updates'] as $queryName => $qry) {
+              echo "  - $queryName (EXTRAS)";
+              $startScript = microtime(TRUE);
+              $singularTable = preg_replace('/s$/', '', $table);
+              // Ensure that the hierarchical data is fully populated. Easier just
+              // to redo the whole lot rather than scan up and down the hierarchy
+              // to ensure changes are properly applied. So for the ranks query,
+              // remove the needs update join.
+              if ($table === 'taxa_taxon_lists' && $queryName === 'ranks') {
+                $qry = str_replace('JOIN needs_update_taxa_taxon_lists nu ON nu.id=ttl1.id', '', $qry);
+              }
+              $qry = str_replace(
+                ["needs_update_$table", '#master_list_id#'],
+                ["uksi.changed_{$singularTable}_ids", $settings['taxon_list_id']],
+                $qry
+              );
+              // $result = @pg_query($conn, $qry);
+              $result = self::safeQuery($conn, $qry);
+              if ($result === FALSE) {
+                echo "\nQuery failed:\n";
+                echo "$qry\n";
+                die("\nError in script: " . pg_last_error($conn) . "\n");
+              }
+              $time = round(microtime(TRUE) - $startScript, 1);
+              echo " - OK ({$time}s)\n";
+            }
+          }
+        }
       }
+      pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='cache_builder'");
+      // @todo Consider if the following is best way to prevent data cleaner firing a load of messages
+      pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='data_cleaner'");
+
+    } finally {
+      pg_query($conn, "SELECT pg_advisory_unlock(78172345)");
     }
-    pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='cache_builder'");
-    // @todo Consider if the following is best way to prevent data cleaner firing a load of messages
-    pg_query($conn, "UPDATE system SET last_scheduled_task_check=now() WHERE name='data_cleaner'");
+  }
+  private static function safeQuery($conn, $qry, $retries = 3) {
+    for ($i = 0; $i < $retries; $i++) {
+      $result = @pg_query($conn, $qry);
+      if ($result !== false) {
+        return $result;
+      }
+
+      $error = pg_last_error($conn);
+      if (strpos($error, 'deadlock detected') === false) {
+        throw new Exception($error);
+      }
+
+      usleep(250000); // 250ms backoff
+    }
+
+    throw new Exception("Repeated deadlock failure:\n$qry");
   }
 
 }

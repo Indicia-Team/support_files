@@ -1,6 +1,13 @@
-SET search_path=uksi, public;
+-- Ensure correct base search path
+SET search_path = uksi, public;
 
+-- Make sure the schema exists and is owned by the warehouse DB user
+CREATE SCHEMA IF NOT EXISTS uksi AUTHORIZATION {{ warehouse_db_user }};
+GRANT USAGE, CREATE ON SCHEMA uksi TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.preferred_names
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS preferred_names;
 
@@ -23,11 +30,13 @@ CREATE TABLE preferred_names
   sort_code integer,
   redundant boolean
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
--- Table: all_names
+ALTER TABLE preferred_names OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
+-- Table: uksi.all_names
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS all_names;
 
@@ -38,7 +47,7 @@ CREATE TABLE all_names
   input_taxon_version_key character(16),
   item_name character varying,
   authority character varying,
-  taxon_version_form character(1), -- U = unverified, I=irregular, W=well-formed
+  taxon_version_form character(1), -- U=unverified, I=irregular, W=well-formed
   taxon_version_status character(1),
   taxon_type character(1),
   "language" character(2),
@@ -50,11 +59,13 @@ CREATE TABLE all_names
   organism_deprecated boolean,
   name_deprecated boolean
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE all_names OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.taxon_groups
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS taxon_groups;
 
@@ -65,11 +76,13 @@ CREATE TABLE taxon_groups
   description character varying,
   parent character(16)
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE taxon_groups OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.tcn_duplicates
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS tcn_duplicates;
 
@@ -78,11 +91,13 @@ CREATE TABLE tcn_duplicates
   organism_key character(16),
   taxon_version_key character(16)
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE tcn_duplicates OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.all_designation_kinds
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS all_designation_kinds;
 
@@ -91,11 +106,13 @@ CREATE TABLE all_designation_kinds
   taxon_designation_type_kind_key character(16),
   kind character varying
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE all_designation_kinds OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.taxon_designations
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS taxon_designations;
 
@@ -108,11 +125,13 @@ CREATE TABLE taxon_designations
   kind character varying,
   status_abbreviation character varying
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE taxon_designations OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.taxa_taxon_designations
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS taxa_taxon_designations;
 
@@ -125,11 +144,13 @@ CREATE TABLE taxa_taxon_designations
   detail character varying,
   recommended_taxon_version_key character(16)
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE taxa_taxon_designations OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.taxon_ranks
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS taxon_ranks;
 
@@ -140,11 +161,13 @@ CREATE TABLE taxon_ranks
   long_name character varying,
   list_font_italic integer -- capture 0 or 1 and convert to bool later
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
 
+ALTER TABLE taxon_ranks OWNER TO {{ warehouse_db_user }};
+
+--------------------------------------------------------------------------------
 -- Table: uksi.all_taxon_version_keys
+--------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS all_taxon_version_keys;
 
@@ -153,6 +176,6 @@ CREATE TABLE all_taxon_version_keys
   input_taxon_version_key character(16),
   recommended_taxon_version_key character(16)
 )
-WITH (
-  OIDS=FALSE
-);
+WITH (OIDS = FALSE);
+
+ALTER TABLE all_taxon_version_keys OWNER TO {{ warehouse_db_user }};

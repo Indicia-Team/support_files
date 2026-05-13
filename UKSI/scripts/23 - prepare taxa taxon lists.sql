@@ -58,9 +58,44 @@ SELECT DISTINCT null::integer AS id,
 FROM uksi.prepared_taxa pt
 JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key and pn.organism_key=pt.organism_key
 JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code and an.organism_key=pn.organism_key
--- Find names already on each child list
+-- Find names already on each child list added back in
 JOIN taxa t ON t.search_code=pt.search_code
 JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false
 JOIN uksi.all_uksi_taxon_lists child_lists
   ON child_lists.id=ttl.taxon_list_id
   AND child_lists.id<>(select uksi_taxon_list_id from uksi.uksi_settings);
+
+/*
+-- Add the existing names from child lists
+INSERT INTO uksi.prepared_taxa_taxon_lists
+SELECT DISTINCT null::integer AS id,
+  child_lists.id AS taxon_list_id,
+  pt.id::integer AS taxon_id,
+  null::integer AS parent_id,
+  null::integer AS taxon_meaning_id,
+  pn.sort_code AS taxonomic_sort_order,
+  pt.search_code=pt.external_key AS preferred,
+  null::integer AS common_taxon_id,
+  -- not used by Indicia, but will make matching easier.
+  pt.search_code AS input_taxon_version_key,
+  pt.external_key AS recommended_taxon_version_key,
+  pt.organism_key AS organism_key,
+  pn.parent_key AS parent_organism_key,
+  null::varchar AS common_taxon_tvk,
+  false AS is_new,
+  false AS changed,
+  null::boolean as orig_preferred,
+  null::integer AS orig_taxon_meaning_id,
+  null::integer AS orig_parent_id,
+  null::integer AS orig_common_taxon_id,
+  null::varchar as orig_organism_key,
+  not an.redundant as allow_data_entry
+FROM uksi.prepared_taxa pt
+JOIN uksi.preferred_names pn ON pn.taxon_version_key=pt.external_key and pn.organism_key=pt.organism_key
+JOIN uksi.all_names an ON an.input_taxon_version_key=pt.search_code and an.organism_key=pn.organism_key
+-- Find names already on each child list
+JOIN taxa t ON t.search_code=pt.search_code
+JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false
+JOIN uksi.all_uksi_taxon_lists child_lists
+  ON child_lists.id=ttl.taxon_list_id
+  AND child_lists.id<>(select uksi_taxon_list_id from uksi.uksi_settings); */
