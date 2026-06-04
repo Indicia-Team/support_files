@@ -1,6 +1,13 @@
 #countryFilterCheckboxLabel {
-  margin-left: 12px;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
+  display:inline !important;
+  align-items:center !important;
+  width: 70ch !important;
+}
+
+.countryFilterCheckbox {
+  display:inline !important;
+  align-items:center !important;
+  width: 2ch !important;
+  margin-left: 1ch !important;
+  margin-right: 0.5ch !important;
 }
