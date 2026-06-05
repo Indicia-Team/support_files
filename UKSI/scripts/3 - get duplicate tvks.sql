@@ -1,5 +1,10 @@
 SET search_path=indicia, public;
 
+/*
+-- This script is no longer needed and should not be run, as duplicate search
+-- codes can exist, e.g when a redundant organism exists at a different
+-- taxonomic level.
+
 DROP TABLE IF EXISTS uksi.duplicates;
 
 -- Gets a list of all taxa/taxa_taxon_list details where the search_code is duplicated because of errors in previous imports.
@@ -16,3 +21,5 @@ WHERE t.search_code IN (
 	HAVING count(t.id)>1
 )
 AND t.deleted=false;
+
+*/
