@@ -12,7 +12,7 @@ SET id=ttl.id,
   orig_taxon_meaning_id=ttl.taxon_meaning_id,
   orig_parent_id=ttl.parent_id,
   orig_common_taxon_id=ttl.common_taxon_id,
-  changed=changed OR ttl.allow_data_entry<>pttl.allow_data_entry
+  changed=changed OR ttl.allow_data_entry<>pttl.allow_data_entry OR ttl.preferred<>pttl.preferred
 FROM taxa t
 JOIN taxa_taxon_lists ttl
   ON ttl.taxon_id=t.id
