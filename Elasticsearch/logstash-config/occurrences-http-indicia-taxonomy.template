@@ -98,6 +98,15 @@ filter {
     source => "accepted_taxon_key"
     target => "taxon_path_keys"
   }
+  # Informal taxon lists may not have an entry in taxon-paths.yml.
+  # Include the accepted taxon itself so direct higher-taxon queries still work.
+  if ![taxon_path_keys] and [accepted_taxon_key] {
+    mutate {
+      replace => {
+        "taxon_path_keys" => "%{accepted_taxon_key}"
+      }
+    }
+  }
   # Split the taxon path keys into separate items.
   mutate {
     split => {

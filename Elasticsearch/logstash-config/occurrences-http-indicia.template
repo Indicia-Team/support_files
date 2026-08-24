@@ -96,6 +96,15 @@ filter {
     source => "accepted_taxon_key"
     target => "taxon_path_keys"
   }
+  # Informal taxon lists may not have an entry in taxon-paths.yml.
+  # Include the accepted taxon itself so direct higher-taxon queries still work.
+  if ![taxon_path_keys] and [accepted_taxon_key] {
+    mutate {
+      replace => {
+        "taxon_path_keys" => "%{accepted_taxon_key}"
+      }
+    }
+  }
   # Split the taxon path keys into separate items.
   mutate {
     split => {
@@ -476,6 +485,20 @@ output {
       index => "occurrence_{{ Indicia warehouse unique name }}_index"
       # Our records need a unique ID in the index for updates.
       document_id => "{{ Indicia warehouse unique name }}|%{id}"
+    }
+    # Remove orphan full-precision sensitive copy when record is not blurred/public-sensitive.
+    # In this feed, blurred records have metadata.sensitivity_blur = B.
+    # Non-sensitive records have no blur flag, so this condition catches them.
+    if [metadata][sensitivity_blur] != "B" {
+      elasticsearch {
+        hosts => ["{{ Elasticsearch address }}"]
+        # cacert => "{{ Certificate file }}"
+        # user => "{{ Logstash user }}"
+        # password => "{{ Logstash password }}"
+        index => "occurrence_{{ Indicia warehouse unique name }}_index"
+        document_id => "{{ Indicia warehouse unique name }}|%{id}!"
+        action => "delete"
+      }
     }
     # Uncomment the following to see the normal events output to the terminal.
     # stdout { codec => json }
