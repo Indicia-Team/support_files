@@ -254,8 +254,18 @@ mapInitialisationHooks.push(function (div) {
         layer.name === "AONBs" ||
         layer.name === "National Trust Properties" ||
         layer.name === "Vice County Boundaries" ||
-        layer.name === "RSPB Reserves") {
+        layer.name === "RSPB Reserves" ||
+        layer.name === "Elevation (GB)" ||
+        layer.name === "Parks Gardens (NI)" ||
+        layer.name === "Open Access Land (Wales)" ||
+        layer.name === "RoW (England)" ||
+        layer.name === "Transport Hubs (GB)" ||
+        layer.name === "Transport Hubs (NI)") {
       layer.setVisibility(false);
+    }
+    if (layer.name === 'Parks Gardens (NI)' ||
+        layer.name === 'Open Access Land (Wales)') {
+      layer.setOpacity(0.5);
     }
   });
 
