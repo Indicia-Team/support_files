@@ -19,9 +19,9 @@ function change_tab_names_hide_fields() {
     // Change tab/field names
     jQuery('#tab-where-tab span:first-child').text('Community Group Details');
     jQuery('#tab-otherinformation-tab span:first-child').text('Contact Details');
-    jQuery("label[for='sample\\:location_name']").text("Community Group Name");
+    jQuery("label[for='sample\\:location_name']").text("Community group name");
     
-    // Hide school year
+    // Hide Class Year Group
     jQuery('#ctrl-wrap-smpAttr-2104').hide();
   }
   else if (jQuery('#smpAttr\\:2103 option:selected').val() == '24893') {
@@ -31,9 +31,9 @@ function change_tab_names_hide_fields() {
     
     jQuery('#tab-where-tab span:first-child').text('School Details');
     jQuery('#tab-otherinformation-tab span:first-child').text('Teacher Details');
-    jQuery("label[for='sample\\:location_name']").text("School Name");
+    jQuery("label[for='sample\\:location_name']").text("School name");
     
-    // Show school year for schools
+    // Show Class Year Group for schools
     jQuery('#ctrl-wrap-smpAttr-2104').show();
   } else {
     // Only show Introduction tab to begin with
@@ -49,7 +49,7 @@ function clear_fields() {
     // Make sure we clear the Name field if the user decides to change their mind
     // and switch from School to Community Group, and a name has previously been entered
     jQuery('#sample\\:location_name').val('');
-    // Make sure the School Year cleared too for same reason
+    // Make sure the Class Year Group cleared too for same reason
     jQuery('#smpAttr\\:2104').val('');
   }
   else if (jQuery('#smpAttr\\:2103 option:selected').val() == '24893') {
