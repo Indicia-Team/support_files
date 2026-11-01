@@ -122,6 +122,7 @@ function allocationConfirmDialog(message, features) {
         $('.ui-dialog-titlebar-close').remove();
       },
       modal: true,
+      dialogClass: 'allocation_dialog',
       title: 'Allocate Square',
       zIndex: 10000,
       autoOpen: true,
@@ -149,30 +150,32 @@ function allocationConfirmDialog(message, features) {
  * Don't use standard Javascript confirm, as that doesn't support HTML
  */
 function simpleDialog(message, title, forcePageReload) {
-  $('<div></div>').appendTo('body')
-    .html('<div>' + message + '</div>')
-    .dialog({
-      open: function() {
-        $('.ui-dialog-titlebar-close').remove();
-      },
-      modal: true,
-      title: title,
-      zIndex: 10000,
-      autoOpen: true,
-      width: 'auto',
-      resizable: false,
-      buttons: {
-        OK: function() {
-		  $(this).dialog("close");
-		  if (forcePageReload === true) {
-		    location.reload();
-		  }
+  if (!$('.ui-dialog').length) {
+    $('<div></div>').appendTo('body')
+      .html('<div>' + message + '</div>')
+      .dialog({
+        open: function() {
+          $('.ui-dialog-titlebar-close').remove();
         },
-      },
-      close: function(event, ui) {
-        $(this).remove();
-      }
-    });
+        modal: true,
+        title: title,
+        zIndex: 10000,
+        autoOpen: true,
+        width: 'auto',
+        resizable: false,
+        buttons: {
+          OK: function() {
+	        $(this).dialog("close");
+		    if (forcePageReload === true) {
+		      location.reload();
+		    }
+          },
+        },
+        close: function(event, ui) {
+          $(this).remove();
+        }
+      });
+  }  
 };
 
 //This function is almost identical to the version that can be found in splash extensions. We could not call that code
@@ -238,8 +241,173 @@ function addUserSiteData(locationId, userIdToAdd,features) {
     );
   }
 }
+
+function getOnScreenLayerName(actualLayerName) {
+  switch (actualLayerName) {
+    case 'NPMS SSSIs':
+      onScreenLayerName = 'SSSIs';
+      break;
+    case 'NPMS National Parks':
+      onScreenLayerName = 'National Parks';
+      break;
+    case 'NPMS NNRs':
+      onScreenLayerName = 'National Nature Reserves';
+      break;
+    case 'NPMS AONBs':
+      onScreenLayerName = 'AONBs';
+      break;
+    case 'NPMS National Trust Properties':
+      onScreenLayerName = 'National Trust Properties';
+      break;
+    case 'NPMS Vice Counties':
+      onScreenLayerName = 'Vice County Boundaries';
+      break;
+    case 'NPMS RSPB reserves':
+      onScreenLayerName = 'RSPB Reserves';
+      break;
+    case 'GB Contour Lines':
+      onScreenLayerName = 'Elevation (GB)';
+      break;
+    case 'NI Historic Parks and Gardens':
+      onScreenLayerName = 'Parks Gardens (NI)';
+      break;
+    case 'Wales Open Access Land':
+      onScreenLayerName = 'Open Access Land (Wales)';
+      break;
+    case 'England_Right_of_Way_500m_Buffer':
+      onScreenLayerName = 'RoW (England)';
+      break;
+    case 'GB_Public_Transport_500m_Buffer':
+      onScreenLayerName = 'Transport Hubs (GB)';
+      break;
+    case 'NIBusstops500mb_4326':
+      onScreenLayerName = 'Transport Hubs (NI)';
+      break;
+    default:
+      onScreenLayerName = '';
+  }
+  return onScreenLayerName;
+}
     
 mapInitialisationHooks.push(function (div) {
+  div.map.events.register('click', div.map, function (event) {
+    // if the info balloon icon is selected, attempt to
+    // get layer feature information (e.g. National Park name)
+    if ($('.olControlSelectFeatureItemActive').length) {
+      var selectedWMSLayerNames = [];
+      var wmsUrl = '';
+      var onScreenLayerName = '';
+      // Cycle layers
+      $.each(div.map.layers, function () {
+        // We are only interested in WMS layers
+        if (this.CLASS_NAME === 'OpenLayers.Layer.WMS') {
+          // Get layer name as it appears on screen.
+		  onScreenLayerName = getOnScreenLayerName(this.params.LAYERS);
+          // If the layer is selected then keep it for use
+          if ($('[name="' + onScreenLayerName + '"]').is(":checked")) {
+            selectedWMSLayerNames.push(this.params.LAYERS);
+          }
+          if (wmsUrl === '') {
+            // store just the first wms layer's URL since all clickable layers must be from the same url.
+            wmsUrl = this.url;
+          }
+        }
+      });
+      selectedWMSLayerNames = selectedWMSLayerNames.join(',');  
+      //Click point
+      var x = event.xy.x;
+      var y = event.xy.y;
+      // Setup the request to the Warehouse.
+      var params = {
+        REQUEST: 'GetFeatureInfo',
+        EXCEPTIONS: 'text/javascript',
+        VERSION: '1.1.0',
+        STYLES: '',
+        BBOX: div.map.getExtent().toBBOX(),
+        X: Math.round(x),
+        Y: Math.round(y),
+        INFO_FORMAT: 'text/javascript',
+        LAYERS: selectedWMSLayerNames,
+        QUERY_LAYERS: selectedWMSLayerNames,
+        WIDTH: div.map.size.w,
+        HEIGHT: div.map.size.h,
+        SRS: div.map.projection,
+        BUFFER: div.settings.clickPixelTolerance,
+        FEATURE_COUNT: 13
+      };
+      
+      // Decode the Warehouse response.
+      var handleWarehouseWMSResponse = function(response) {
+        var onScreenFeatureDetails = '';
+        var previousLayerName = '';
+        var layerName;
+        // Cycle through the layers returned for the click point
+        for (const [key, value] of Object.entries(response)) {
+          if (key === 'data') {
+            if (value.features) {
+              for (const [key, feature] of Object.entries(value.features)) {
+                layerName = feature.id.split(".")[0];
+                if (feature.id) {
+                  onScreenLayerName = getOnScreenLayerName(layerName);
+                }
+                // When we display the dialog, we might have more than one feature
+                // for each layer, so we can group them together.
+                // Only show the Layer Name title itself if a feature is found to be from 
+                // a different layer
+                if (layerName != previousLayerName) {
+                  if (feature.properties.name) {
+                    onScreenFeatureDetails += onScreenLayerName + ':<br>' + 
+                        // Chop off the 3 letter country code at the end of the name in brackets
+                        '&emsp;&emsp;' + feature.properties.name.split(' (')[0] + '<br>';
+                  }
+                  if (feature.properties.SITE) {
+                    onScreenFeatureDetails += onScreenLayerName + ':<br>' + 
+                       '&emsp;&emsp;' + feature.properties.SITE.split(' (')[0] + '<br>';
+                  }
+                }
+                else {
+                  if (feature.properties.name) {
+                    onScreenFeatureDetails += 
+                        '&emsp;&emsp;' + feature.properties.name.split(' (')[0] + '<br>';
+                  }
+                  else if (feature.properties.SITE) {
+                    onScreenFeatureDetails += 
+                        '&emsp;&emsp;' + feature.properties.SITE.split(' (')[0] + '<br>';
+                  }
+                }
+                previousLayerName = feature.id.split(".")[0];
+              }
+            }
+          }
+        }
+        // Remove line break from last line
+        onScreenFeatureDetails = onScreenFeatureDetails.substring(0, onScreenFeatureDetails.length - 4);
+        if (onScreenFeatureDetails) {
+          simpleDialog(
+            onScreenFeatureDetails,
+            'Selected Layer Details',
+            false
+          );
+        }
+      }
+      
+      // Call the Warehouse
+      var protocol = new OpenLayers.Protocol.Script({
+        url: wmsUrl,
+        params: params,
+        callback: handleWarehouseWMSResponse,
+        callbackKey: 'format_options',
+        callbackPrefix: 'callback:'
+      });
+
+      protocol.read({
+        params: params,
+        callback: handleWarehouseWMSResponse
+      });
+      
+    }
+  });
+
   //Switch off WMS layers by default
   jQuery.each(div.map.layers, function(idx, layer) {
     if (layer.name === "Ordnance Survey Outdoor") {
