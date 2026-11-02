@@ -264,7 +264,7 @@ mapInitialisationHooks.push(function (div) {
         if (onScreenFeatureDetails) {
           simpleDialog(
             onScreenFeatureDetails,
-            'Location Details',
+            'Layers',
             false
           );
         }
