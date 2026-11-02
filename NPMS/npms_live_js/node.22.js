@@ -66,24 +66,6 @@ function setSelectedSquareLinks(ftr) {
   $('#selected-square-link').css('background-color', 'yellow');
 }
 
-//Warning to display on the public version of the Request a Square page.
-function login_to_allocate_message(features) { 
-  //Only show the warning if there is a feature that has actually been clicked on, rather than for ever click on the map.
-  if (features[0]&&features[0].attributes.id&& features[0].attributes.entered_sref) {
-    setSelectedSquareLinks(features[0]);
-    //Detect if it has been allocated by the square colour
-    if (features[0].attributes.fc==='#FFA62F') {
-      setTimeout(function() {
-        alert("You have clicked on square "+features[0].attributes.entered_sref+ ". This square has already been allocated to someone. Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.");
-      }, 1);
-    } else {
-      setTimeout(function() {
-        alert("You have clicked on square "+features[0].attributes.entered_sref+ ". Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.")
-      }, 1);
-    }    
-  }
-}
-
 //Called if the user clicks on a square on the authorised version of the request a square page.
 function allocate_square_to_user(features) { 
 
@@ -103,11 +85,13 @@ function allocate_square_to_user(features) {
     }
 
   } else {
-    alert("You are currently zoomed out too far to get an accurate reading on the square you have clicked on.\n\
-\n\
-If you use the distance box and Get Squares button, the system will automatically zoom the map (located next to the Return All Squares button above the map).\n\
-\n\
-Alternatively use the zoombar, or click on the navigation crosshair icon in the top-right and then double-click on the map.");    
+    simpleDialog('<p>You are currently zoomed out too far to get an accurate<br>reading on the square you have clicked on.</p>' +
+        '<p>If you use the distance box and Get Squares button, the<br>system will automatically zoom the map<br>' +
+        '(located next to the Return All Squares button above the map).</p>' +
+        '<p>Alternatively use the zoombar, or click on the navigation<br>crosshair icon in the top-right and then double-click on the<br>map.</p>',
+        "",
+       false
+    );    
   }
 }
 
@@ -358,21 +342,21 @@ mapInitialisationHooks.push(function (div) {
                   if (feature.properties.name) {
                     onScreenFeatureDetails += onScreenLayerName + ':<br>' + 
                         // Chop off the 3 letter country code at the end of the name in brackets
-                        '&emsp;&emsp;' + feature.properties.name.split(' (')[0] + '<br>';
+                        '&emsp;&emsp;<em>' + feature.properties.name.split(' (')[0] + '</em><br>';
                   }
                   if (feature.properties.SITE) {
                     onScreenFeatureDetails += onScreenLayerName + ':<br>' + 
-                       '&emsp;&emsp;' + feature.properties.SITE.split(' (')[0] + '<br>';
+                       '&emsp;&emsp;<em>' + feature.properties.SITE.split(' (')[0] + '</em><br>';
                   }
                 }
                 else {
                   if (feature.properties.name) {
                     onScreenFeatureDetails += 
-                        '&emsp;&emsp;' + feature.properties.name.split(' (')[0] + '<br>';
+                        '&emsp;&emsp;<em>' + feature.properties.name.split(' (')[0] + '</em><br>';
                   }
                   else if (feature.properties.SITE) {
                     onScreenFeatureDetails += 
-                        '&emsp;&emsp;' + feature.properties.SITE.split(' (')[0] + '<br>';
+                        '&emsp;&emsp;<em>' + feature.properties.SITE.split(' (')[0] + '</em><br>';
                   }
                 }
                 previousLayerName = feature.id.split(".")[0];
@@ -385,7 +369,7 @@ mapInitialisationHooks.push(function (div) {
         if (onScreenFeatureDetails) {
           simpleDialog(
             onScreenFeatureDetails,
-            'Selected Layer Details',
+            'Location Details',
             false
           );
         }

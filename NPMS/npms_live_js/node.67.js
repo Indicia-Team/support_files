@@ -75,135 +75,218 @@ function login_to_allocate_message(features) {
     //Detect if it has been allocated by the square colour
     if (features[0].attributes.fc==='#FFA62F') {
       setTimeout(function() {
-        simpleDialog('You have clicked on square <a target="_blank" href="/content/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a>. This square has already been allocated to someone.<br>Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.', 'Square Already Allocated');
+        simpleDialog('You have clicked on square <a target="_blank" href="/content/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a>. This square has already been allocated to someone.<br>Simply sign up (or login using your existing account details) to allocate any blue square to yourself using this map.',
+            'Square Already Allocated',
+            false);
       }, 1);
     } else {
       setTimeout(function() {
-        simpleDialog('You have clicked on square <a target="_blank" href="/content/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a>.<br>Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.', 'Sign Up To Allocate');
+        simpleDialog('You have clicked on square <a target="_blank" href="/content/site-details?gr=' + features[0].attributes.entered_sref + '">' + features[0].attributes.entered_sref + '</a>.<br>Simply sign up (or login using your existing account details) to allocate this square to yourself using this map.',
+            'Sign Up To Allocate',
+            false);
       }, 1);
     }
-  }
-}
-
-//Called if the user clicks on a square on the authorised version of the request a square page.
-function allocate_square_to_user(features) { 
-
-  if (!indiciaData.website_id || !indiciaData.mySitesPsnAttrId || !indiciaData.postUrl||!indiciaData.indiciaUserId) {
-    alert('The page has not been setup correctly. Please contact an administrator (the supply_indicia_data_to_map_square_allocator extension is not setup correctly).');
-    return false;
-  }
-  if (features.length<2) {
-    if (features[0]&&features[0].attributes.id && features[0].attributes.entered_sref) {
-      setSelectedSquareLinks(features[0]);
-      setTimeout(function() {
-        var r = confirm("Would you like to assign square "+features[0].attributes.entered_sref+ " to yourself?");
-        //Only perform if user confirms.
-        if (r == true) {
-          var locationId, userId;
-          locationId = features[0].attributes.id;    
-          userId = indiciaData.indiciaUserId;
-          duplicateCheck(locationId,userId,features);
-        }
-      }, 1);
-    }
-
-  } else {
-    alert("You are currently zoomed out too far to get an accurate reading on the square you have clicked on.\n\
-\n\
-If you use the distance box and Get Squares button, the system will automatically zoom the map (located next to the Return All Squares button above the map).\n\
-\n\
-Alternatively use the zoombar, or click on the navigation crosshair icon in the top-right and then double-click on the map.");    
   }
 }
 
 /**
  * Don't use standard Javascript confirm, as that doesn't support HTML
  */
-function simpleDialog(message, title) {
-  $('<div></div>').appendTo('body')
-    .html('<div>' + message + '</div>')
-    .dialog({
-      open: function() {
-        $('.ui-dialog-titlebar-close').remove();
-      },
-      modal: true,
-      title: title,
-      zIndex: 10000,
-      autoOpen: true,
-      width: 'auto',
-      resizable: false,
-      buttons: {
-        OK: function() {
-		  $(this).dialog("close");
+function simpleDialog(message, title, forcePageReload) {
+  if (!$('.ui-dialog').length) {
+    $('<div></div>').appendTo('body')
+      .html('<div>' + message + '</div>')
+      .dialog({
+        open: function() {
+          $('.ui-dialog-titlebar-close').remove();
         },
-      },
-      close: function(event, ui) {
-        $(this).remove();
-      }
-    });
+        modal: true,
+        title: title,
+        zIndex: 10000,
+        autoOpen: true,
+        width: 'auto',
+        resizable: false,
+        buttons: {
+          OK: function() {
+	        $(this).dialog("close");
+		    if (forcePageReload === true) {
+		      location.reload();
+		    }
+          },
+        },
+        close: function(event, ui) {
+          $(this).remove();
+        }
+      });
+  }  
 };
 
-//This function is almost identical to the version that can be found in splash extensions. We could not call that code
-//to re-use, so a version of the code is here.
-//It is different to the splash extensions function, in this one we just check a square hasn't been allocated at all.
-//The duplicate check in splash extensions checks if the square hasn't been allocated to exactly the same user.
-//This is different because the map used here still shows allocated squares.
-function duplicateCheck(locationId, userId,features) {
-  var userIdToAdd = userId;
-  var locationIdToAdd = locationId;
-  var sitesReport = indiciaData.read.url +'/index.php/services/report/requestReport?report=library/locations/all_user_sites.xml&mode=json&mode=json&callback=?';
-
-  var sitesReportParameters = {
-    'person_site_attr_id': indiciaData.mySitesPsnAttrId,
-    'auth_token': indiciaData.read.auth_token,
-    'nonce': indiciaData.read.nonce,
-    'reportSource':'local'
-  };
-  if (!userIdToAdd||!locationIdToAdd) {
-    alert('Please select both a user and a location to add.');
-  } else {
-    jQuery.getJSON (
-      sitesReport,
-      sitesReportParameters,
-      function (data) {
-        var duplicateDetected=false;
-        jQuery.each(data, function(i, dataItem) {
-          if (locationIdToAdd==dataItem.location_id) {
-              duplicateDetected=true;
-          }
-        });
-        if (duplicateDetected===true) {
-          alert('This square has already been allocated to someone. Squares shown in orange are already allocated, try a blue square instead. If the square is blue, it may have become allocated in the time since you initially loaded the screen.');
-        } else {
-          addUserSiteData(locationId, userIdToAdd,features);
-        }
-      }
-    );
-  }    
-}
-
-//Again this is almost identical to the version of the function from the splash_extensions file.
-function addUserSiteData(locationId, userIdToAdd,features) {
-  if (!indiciaData.updatedBySystem) {
-    indiciaData.updatedBySystem='';
+function getOnScreenLayerName(actualLayerName) {
+  switch (actualLayerName) {
+    case 'NPMS SSSIs':
+      onScreenLayerName = 'SSSIs';
+      break;
+    case 'NPMS National Parks':
+      onScreenLayerName = 'National Parks';
+      break;
+    case 'NPMS NNRs':
+      onScreenLayerName = 'National Nature Reserves';
+      break;
+    case 'NPMS AONBs':
+      onScreenLayerName = 'AONBs';
+      break;
+    case 'NPMS National Trust Properties':
+      onScreenLayerName = 'National Trust Properties';
+      break;
+    case 'NPMS Vice Counties':
+      onScreenLayerName = 'Vice County Boundaries';
+      break;
+    case 'NPMS RSPB reserves':
+      onScreenLayerName = 'RSPB Reserves';
+      break;
+    case 'GB Contour Lines':
+      onScreenLayerName = 'Elevation (GB)';
+      break;
+    case 'NI Historic Parks and Gardens':
+      onScreenLayerName = 'Parks Gardens (NI)';
+      break;
+    case 'Wales Open Access Land':
+      onScreenLayerName = 'Open Access Land (Wales)';
+      break;
+    case 'England_Right_of_Way_500m_Buffer':
+      onScreenLayerName = 'RoW (England)';
+      break;
+    case 'GB_Public_Transport_500m_Buffer':
+      onScreenLayerName = 'Transport Hubs (GB)';
+      break;
+    case 'NIBusstops500mb_4326':
+      onScreenLayerName = 'Transport Hubs (NI)';
+      break;
+    default:
+      onScreenLayerName = '';
   }
-  if (!isNaN(locationId) && locationId!=='') {
-    jQuery.post(indiciaData.postUrl, 
-      {'website_id':indiciaData.website_id,'person_attribute_id':indiciaData.mySitesPsnAttrId,'user_id':userIdToAdd,'int_value':locationId,'updated_by_id':indiciaData.updatedBySystem},
-      function (data) {
-        if (typeof data.error === 'undefined') {
-          alert('The square '+features[0].attributes.entered_sref+' has been allocated to you, pending approval by the NPMS coordinator. Enjoy taking part, and thank you for participating.');
-          location.reload();
-        } else {
-          alert(data.error);
-        }              
-      },
-      'json'
-    );
-  }
+  return onScreenLayerName;
 }
     
 mapInitialisationHooks.push(function (div) {
+  div.map.events.register('click', div.map, function (event) {
+    // if the info balloon icon is selected, attempt to
+    // get layer feature information (e.g. National Park name)
+    if ($('.olControlSelectFeatureItemActive').length) {
+      var selectedWMSLayerNames = [];
+      var wmsUrl = '';
+      var onScreenLayerName = '';
+      // Cycle layers
+      $.each(div.map.layers, function () {
+        // We are only interested in WMS layers
+        if (this.CLASS_NAME === 'OpenLayers.Layer.WMS') {
+          // Get layer name as it appears on screen.
+		  onScreenLayerName = getOnScreenLayerName(this.params.LAYERS);
+          // If the layer is selected then keep it for use
+          if ($('[name="' + onScreenLayerName + '"]').is(":checked")) {
+            selectedWMSLayerNames.push(this.params.LAYERS);
+          }
+          if (wmsUrl === '') {
+            // store just the first wms layer's URL since all clickable layers must be from the same url.
+            wmsUrl = this.url;
+          }
+        }
+      });
+      selectedWMSLayerNames = selectedWMSLayerNames.join(',');  
+      //Click point
+      var x = event.xy.x;
+      var y = event.xy.y;
+      // Setup the request to the Warehouse.
+      var params = {
+        REQUEST: 'GetFeatureInfo',
+        EXCEPTIONS: 'text/javascript',
+        VERSION: '1.1.0',
+        STYLES: '',
+        BBOX: div.map.getExtent().toBBOX(),
+        X: Math.round(x),
+        Y: Math.round(y),
+        INFO_FORMAT: 'text/javascript',
+        LAYERS: selectedWMSLayerNames,
+        QUERY_LAYERS: selectedWMSLayerNames,
+        WIDTH: div.map.size.w,
+        HEIGHT: div.map.size.h,
+        SRS: div.map.projection,
+        BUFFER: div.settings.clickPixelTolerance,
+        FEATURE_COUNT: 13
+      };
+      
+      // Decode the Warehouse response.
+      var handleWarehouseWMSResponse = function(response) {
+        var onScreenFeatureDetails = '';
+        var previousLayerName = '';
+        var layerName;
+        // Cycle through the layers returned for the click point
+        for (const [key, value] of Object.entries(response)) {
+          if (key === 'data') {
+            if (value.features) {
+              for (const [key, feature] of Object.entries(value.features)) {
+                layerName = feature.id.split(".")[0];
+                if (feature.id) {
+                  onScreenLayerName = getOnScreenLayerName(layerName);
+                }
+                // When we display the dialog, we might have more than one feature
+                // for each layer, so we can group them together.
+                // Only show the Layer Name title itself if a feature is found to be from 
+                // a different layer
+                if (layerName != previousLayerName) {
+                  if (feature.properties.name) {
+                    onScreenFeatureDetails += onScreenLayerName + ':<br>' + 
+                        // Chop off the 3 letter country code at the end of the name in brackets
+                        '&emsp;&emsp;<em>' + feature.properties.name.split(' (')[0] + '</em><br>';
+                  }
+                  if (feature.properties.SITE) {
+                    onScreenFeatureDetails += onScreenLayerName + ':<br>' + 
+                       '&emsp;&emsp;<em>' + feature.properties.SITE.split(' (')[0] + '</em><br>';
+                  }
+                }
+                else {
+                  if (feature.properties.name) {
+                    onScreenFeatureDetails += 
+                        '&emsp;&emsp;<em>' + feature.properties.name.split(' (')[0] + '</em><br>';
+                  }
+                  else if (feature.properties.SITE) {
+                    onScreenFeatureDetails += 
+                        '&emsp;&emsp;<em>' + feature.properties.SITE.split(' (')[0] + '</em><br>';
+                  }
+                }
+                previousLayerName = feature.id.split(".")[0];
+              }
+            }
+          }
+        }
+        // Remove line break from last line
+        onScreenFeatureDetails = onScreenFeatureDetails.substring(0, onScreenFeatureDetails.length - 4);
+        if (onScreenFeatureDetails) {
+          simpleDialog(
+            onScreenFeatureDetails,
+            'Location Details',
+            false
+          );
+        }
+      }
+      
+      // Call the Warehouse
+      var protocol = new OpenLayers.Protocol.Script({
+        url: wmsUrl,
+        params: params,
+        callback: handleWarehouseWMSResponse,
+        callbackKey: 'format_options',
+        callbackPrefix: 'callback:'
+      });
+
+      protocol.read({
+        params: params,
+        callback: handleWarehouseWMSResponse
+      });
+      
+    }
+  });
+
   //Switch off WMS layers by default
   jQuery.each(div.map.layers, function(idx, layer) {
     if (layer.name === "Ordnance Survey Outdoor") {
