@@ -21,9 +21,9 @@ SELECT
   td.description,
   tlt.id,
   now(),
-  1,
+  (select updated_by_user_id from uksi.uksi_settings),
   now(),
-  1
+  (select updated_by_user_id from uksi.uksi_settings)
 FROM uksi.taxon_designations td
 JOIN terms t ON t.term=td.kind
 JOIN termlists_terms tlt on tlt.term_id=t.id and tlt.deleted=false
@@ -35,16 +35,25 @@ WHERE tdexist.id IS NULL;
 -- several lists).
 DROP TABLE IF EXISTS uksi_taxa_taxon_designations;
 
-SELECT DISTINCT ON (cttl.taxon_id, td.id)
+SELECT DISTINCT ON (ttl.taxon_id, td.id)
 	uttd.*,
 	td.id as taxon_designation_id,
-	cttl.taxon_id,
+	ttl.taxon_id,
 	SUBSTRING(uttd.detail FROM 'Source: (.+)') as processed_source
 INTO TEMPORARY uksi_taxa_taxon_designations
 FROM uksi.taxa_taxon_designations uttd
 JOIN taxon_designations td ON td.abbreviation=uttd.short_name
-JOIN cache_taxa_taxon_lists cttl ON cttl.external_key=uttd.recommended_taxon_version_key AND cttl.preferred=true
-ORDER BY cttl.taxon_id, td.id, uttd.date_to IS NOT NULL, SUBSTRING(uttd.detail FROM 'Source: (.+)') IS NULL, uttd.status_geographic_area IS NULL;
+-- Use raw tables here, as cache_taxa_taxon_lists may be stale.
+JOIN taxa t ON t.external_key=uttd.recommended_taxon_version_key AND t.deleted=false
+JOIN taxa_taxon_lists ttl ON ttl.taxon_id=t.id AND ttl.deleted=false AND ttl.preferred=true
+  AND ttl.taxon_list_id=(select uksi_taxon_list_id from uksi.uksi_settings)
+ORDER BY ttl.taxon_id, td.id, uttd.date_to IS NOT NULL,
+  SUBSTRING(uttd.detail FROM 'Source: (.+)') IS NULL,
+  uttd.status_geographic_area IS NULL,
+  uttd.date_from DESC NULLS LAST,
+  uttd.date_to DESC NULLS LAST,
+  uttd.detail, uttd.status_geographic_area,
+  uttd.recommended_taxon_version_key, uttd.short_name;
 
 -- Update existing links with the latest source, constraints etc. Also remove links between designations and
 -- taxa that are no longer required, if the date_to has kicked in.
@@ -52,17 +61,65 @@ UPDATE taxa_taxon_designations ttd
 SET start_date=uttd.date_from,
   geographical_constraint=uttd.status_geographic_area,
   source=substring(uttd.detail FROM 'Source: (.+)'),
-  deleted=CASE WHEN uttd.date_to IS NULL THEN false else true END
+  deleted=CASE WHEN uttd.date_to IS NULL THEN false else true END,
+  updated_on=now(),
+  updated_by_id=(select updated_by_user_id from uksi.uksi_settings)
 FROM uksi_taxa_taxon_designations uttd
-WHERE uttd.taxon_id=ttd.taxon_id AND uttd.taxon_designation_id=ttd.id;
+WHERE uttd.taxon_id=ttd.taxon_id AND uttd.taxon_designation_id=ttd.taxon_designation_id
+AND NOT EXISTS (
+  SELECT 1 FROM taxa_taxon_designations ttdkeep
+  WHERE ttdkeep.taxon_id=ttd.taxon_id
+  AND ttdkeep.taxon_designation_id=ttd.taxon_designation_id
+  AND ttdkeep.id<ttd.id
+);
+
+-- Soft delete duplicate links, retaining the lowest ID even if it is deleted.
+UPDATE taxa_taxon_designations ttd
+SET deleted=true,
+  updated_on=now(),
+  updated_by_id=(select updated_by_user_id from uksi.uksi_settings)
+FROM uksi_taxa_taxon_designations uttd
+WHERE uttd.taxon_id=ttd.taxon_id AND uttd.taxon_designation_id=ttd.taxon_designation_id
+AND ttd.deleted=false
+AND EXISTS (
+  SELECT 1 FROM taxa_taxon_designations ttdkeep
+  WHERE ttdkeep.taxon_id=ttd.taxon_id
+  AND ttdkeep.taxon_designation_id=ttd.taxon_designation_id
+  AND ttdkeep.id<ttd.id
+);
+
+-- Soft delete designations links which no longer exist.
+UPDATE taxa_taxon_designations ttd
+SET deleted=true,
+  updated_on=now(),
+  updated_by_id=(select updated_by_user_id from uksi.uksi_settings)
+WHERE ttd.deleted=false
+AND EXISTS (
+  SELECT 1 FROM taxa_taxon_lists ttl
+  WHERE ttl.taxon_id=ttd.taxon_id
+  AND ttl.taxon_list_id=(select uksi_taxon_list_id from uksi.uksi_settings)
+)
+AND EXISTS (
+  SELECT 1 FROM taxon_designations td
+  JOIN uksi.taxon_designations utd ON utd.short_name=td.abbreviation
+  WHERE td.id=ttd.taxon_designation_id
+)
+AND NOT EXISTS (
+  SELECT 1 FROM uksi_taxa_taxon_designations uttd
+  WHERE uttd.taxon_id=ttd.taxon_id
+  AND uttd.taxon_designation_id=ttd.taxon_designation_id
+);
 
 -- Insert any missing links.
 INSERT INTO taxa_taxon_designations (
 	taxon_id, taxon_designation_id, created_on, created_by_id, updated_on, updated_by_id,
 	start_date, source, geographical_constraint
 )
-SELECT uttd.taxon_id, uttd.taxon_designation_id, now(), 1, now(), 1,
+SELECT uttd.taxon_id, uttd.taxon_designation_id,
+	now(), (select updated_by_user_id from uksi.uksi_settings),
+	now(), (select updated_by_user_id from uksi.uksi_settings),
 	uttd.date_from, processed_source, uttd.status_geographic_area
 FROM uksi_taxa_taxon_designations uttd
 LEFT join taxa_taxon_designations ttd ON ttd.taxon_id=uttd.taxon_id AND ttd.taxon_designation_id=uttd.taxon_designation_id and ttd.deleted=false
-WHERE ttd.id IS NULL;
+WHERE ttd.id IS NULL
+AND uttd.date_to IS NULL;
