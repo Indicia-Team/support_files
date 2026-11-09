@@ -34,6 +34,14 @@
 
   // The jQuery.ready function.
   $(function(){
+    // Check if less than 2 items before hiding as there is always a Please Select item
+    // that we shouldn't count.
+    if ($('#sample\\:group_id > option').length < 2) {
+      $('#ctrl-wrap-sample-group_id').hide();
+    }
+    // Change "Select group" label to "Select project"
+    $("[for='sample\\:group_id']").html('Select project:');
+  
     // Add event handlers for changes to any inside or outside quantity input
     // present now or added in the future.
     $(document).on('change', '.scQty', changeQty);
